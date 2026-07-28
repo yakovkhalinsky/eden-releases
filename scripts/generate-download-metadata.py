@@ -1,26 +1,15 @@
 #!/usr/bin/env python3
-"""generate-download-metadata.py
+"""Generate download metadata for the docs site from binaries/manifest.json."""
 
-Reads the packaged release archives in a directory and emits a JSON file
-with download URLs and metadata suitable for rendering on a docs site.
-
-Example:
-    python3 scripts/generate-download-metadata.py \
-        --release-tag v2026.0728.1601-eden-releases.1 \
-        --repo yakovkhalinsky/eden-releases \
-        --packages dist/packages \
-        --source-tag v2026.0728.1601 \
-        --source-sha abc123 \
-        --out dist/download-metadata.json
-"""
-
-import argparse
-import hashlib
 import json
 import os
-import re
+import hashlib
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parent.parent
+BINARIES = ROOT / "binaries"
+OUTPUT = ROOT / "docs-site" / "src" / "data" / "downloads.json"
+RELEASE_BASE = "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download"
 
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
@@ -29,64 +18,40 @@ def sha256_file(path: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+def main():
+    manifest_path = BINARIES / "manifest.json"
+    if not manifest_path.exists():
+        print(f"No manifest at {manifest_path}; nothing to generate.")
+        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        OUTPUT.write_text(json.dumps({"platforms": {}}, indent=2))
+        return
 
-def platform_from_archive(name: str) -> str | None:
-    m = re.search(r"eden-memory-[^-]+-([^-]+-[^.]+)\.tar\.gz$", name)
-    if m:
-        return m.group(1)
-    return None
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate eden-releases download metadata")
-    parser.add_argument("--release-tag", required=True)
-    parser.add_argument("--repo", required=True, help="owner/repo for GitHub Release URL construction")
-    parser.add_argument("--packages", required=True, help="directory containing packaged archives")
-    parser.add_argument("--source-tag", required=True)
-    parser.add_argument("--source-sha", required=True)
-    parser.add_argument("--out", required=True)
-    args = parser.parse_args()
-
-    packages_dir = Path(args.packages)
-    base_url = f"https://github.com/{args.repo}/releases/download/{args.release_tag}"
-
-    archives = []
-    for archive in sorted(packages_dir.glob("eden-memory-*.tar.gz")):
-        platform = platform_from_archive(archive.name)
-        if not platform:
+    manifest = json.loads(manifest_path.read_text())
+    platforms = {}
+    for key, meta in manifest.get("platforms", {}).items():
+        filename = meta["filename"]
+        fpath = BINARIES / filename
+        if not fpath.exists():
+            print(f"Warning: {filename} listed in manifest but not found in binaries/")
             continue
-        archives.append(
-            {
-                "platform": platform,
-                "name": archive.name,
-                "url": f"{base_url}/{archive.name}",
-                "size": archive.stat().st_size,
-                "sha256": sha256_file(archive),
-            }
-        )
+        checksum = sha256_file(fpath)
+        platforms[key] = {
+            "os": meta.get("os", key.split("-", 1)[0]),
+            "arch": meta.get("arch", key.split("-", 1)[1]),
+            "filename": filename,
+            "downloadUrl": f"{RELEASE_BASE}/{filename}",
+            "checksumUrl": f"{RELEASE_BASE}/{filename}.sha256",
+            "sha256": checksum,
+            "sizeBytes": fpath.stat().st_size,
+        }
 
-    metadata = {
-        "release_tag": args.release_tag,
-        "source": {
-            "owner_repo": "yakovkhalinsky/eden-memory",
-            "tag": args.source_tag,
-            "commit_sha": args.source_sha,
-            "release_url": f"https://github.com/yakovkhalinsky/eden-memory/releases/tag/{args.source_tag}",
-        },
-        "download_base_url": base_url,
-        "checksums_url": f"{base_url}/CHECKSUMS.sha256",
-        "archives": archives,
-        "generated_at": "",
-    }
-
-    out_path = Path(args.out)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(metadata, f, indent=2)
-        f.write("\n")
-
-    print(f"Wrote {out_path}")
-
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT.write_text(json.dumps({
+        "version": manifest.get("version", ""),
+        "released": manifest.get("released", ""),
+        "platforms": platforms,
+    }, indent=2) + "\n")
+    print(f"Wrote {OUTPUT} with {len(platforms)} platform(s).")
 
 if __name__ == "__main__":
     main()

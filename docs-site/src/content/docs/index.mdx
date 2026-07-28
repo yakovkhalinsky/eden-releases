@@ -1,15 +1,18 @@
 ---
-title: eden-memory documentation
-description: Public releases, documentation, and agent harness skills for eden-memory.
+title: eden-memory
+description: Download and use the eden-memory agent harness.
 template: splash
 hero:
-  tagline: Public releases, documentation, and agent harness skills for eden-memory.
+  tagline: A local-first memory layer for AI agents. Download the binary, wire it to your MCP client, and start remembering.
   image:
     file: ../../assets/houston.webp
   actions:
     - text: Getting Started
       link: /guides/getting-started/
       icon: right-arrow
+    - text: Download
+      link: /guides/install/
+      icon: download
     - text: Source on GitHub
       link: https://github.com/yakovkhalinsky/eden-memory
       icon: external
@@ -21,16 +24,16 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## Explore
 
 <CardGrid stagger>
-	<Card title="Releases" icon="rocket">
-		Download the latest agent harness release from the release page.
+	<Card title="Download" icon="download">
+		Grab the latest static binary for your platform from the install page.
 	</Card>
-	<Card title="Skills" icon="puzzle">
-		Find ready-to-use skills and reference docs for the agent harness.
+	<Card title="Wire it up" icon="puzzle">
+		Connect eden-memory to Claude Desktop, Cursor, Hermes, or any stdio MCP client.
 	</Card>
-	<Card title="Documentation" icon="open-book">
-		Read guides and reference material for eden-memory.
+	<Card title="Use memory" icon="open-book">
+		Learn the tool surface and agent patterns for durable, private memory.
 	</Card>
-	<Card title="Contribute" icon="github">
-		Source code is private; public docs live in `eden-releases`.
+	<Card title="Stay local" icon="approve-check">
+		No cloud account, no external API. Your memories stay on your machine.
 	</Card>
 </CardGrid>

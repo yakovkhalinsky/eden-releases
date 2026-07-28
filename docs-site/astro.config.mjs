@@ -19,11 +19,15 @@ export default defineConfig({
 					label: 'Guides',
 					items: [
 						{ label: 'Getting Started', slug: 'guides/getting-started' },
+						{ label: 'Install', slug: 'guides/install' },
+						{ label: 'MCP Clients', slug: 'guides/mcp-clients' },
 					],
 				},
 				{
 					label: 'Reference',
-					items: [{ autogenerate: { directory: 'reference' } }],
+					items: [
+						{ label: 'Tools', slug: 'reference/tools' },
+					],
 				},
 			],
 		}),

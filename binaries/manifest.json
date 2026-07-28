@@ -1,0 +1,12 @@
+{
+  "version": "0.3.16",
+  "released": "2026-07-28",
+  "platforms": {
+    "linux-arm64": {
+      "filename": "eden-memory-linux-arm64",
+      "checksum": "eden-memory-linux-arm64.sha256",
+      "arch": "arm64",
+      "os": "linux"
+    }
+  }
+}

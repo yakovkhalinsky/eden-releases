@@ -1,0 +1,15 @@
+{
+  "version": "0.3.16",
+  "released": "2026-07-28",
+  "platforms": {
+    "linux-arm64": {
+      "os": "linux",
+      "arch": "arm64",
+      "filename": "eden-memory-linux-arm64",
+      "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64",
+      "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64.sha256",
+      "sha256": "e01c3247a562de7adda0a86641e4a31f355d94bbe5cd7be797a4594fc199c7a8",
+      "sizeBytes": 74121508
+    }
+  }
+}

@@ -1,188 +1,26 @@
 name: eden-memory Public Release
 
 on:
-  # Manual trigger with optional overrides.
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
-    inputs:
-      source_tag:
-        description: 'Specific eden-memory source tag to publish (leave empty to use latest green release)'
-        required: false
-        default: ''
-      skip_poll:
-        description: 'Skip polling the source repo (requires source_tag to be set)'
-        required: false
-        default: 'false'
-
-  # Poll daily at 06:00 UTC for a new green eden-memory release.
-  schedule:
-    - cron: '0 6 * * *'
-
-  # Optional external trigger from the source repo or a webhook.
-  repository_dispatch:
-    types: [eden-memory-released]
-
-env:
-  SOURCE_OWNER: yakovkhalinsky
-  SOURCE_REPO: eden-memory
-  # SemVer-ish date tag produced by the source repo: vYYYY.MMDD.HHMM
-  SOURCE_TAG_PATTERN: '^v[0-9]{4}\.[0-9]{4}\.[0-9]{4}$'
-  # Target platforms published by the source repo.
-  PLATFORMS: 'linux-amd64 linux-arm64 darwin-amd64 darwin-arm64'
-  # Skills to bundle. Comma-separated paths relative to the skills source root.
-  SKILLS_PATHS: 'software-development/agent-harness-rollout'
 
 permissions:
   contents: write
 
 jobs:
   release:
-    name: Package and publish eden-memory release
+    name: Publish binaries from this repo
     runs-on: ubuntu-latest
-    outputs:
-      source_tag: ${{ steps.source.outputs.tag }}
-      source_sha: ${{ steps.source.outputs.sha }}
-      release_tag: ${{ steps.version.outputs.release_tag }}
-      release_url: ${{ steps.publish.outputs.upload_url }}
     steps:
-      - name: Checkout eden-releases
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -y jq
-          gh --version
-          jq --version
-
-      - name: Determine latest green eden-memory release
-        id: source
-        env:
-          GH_TOKEN: ${{ secrets.EDEN_MEMORY_TOKEN || secrets.GITHUB_TOKEN }}
-          INPUT_SOURCE_TAG: ${{ github.event.inputs.source_tag || '' }}
-        run: |
-          set -euo pipefail
-          chmod +x scripts/fetch-latest-eden-memory.sh
-          if [ -n "$INPUT_SOURCE_TAG" ]; then
-            echo "Using user-supplied source tag: $INPUT_SOURCE_TAG"
-            TAG="$INPUT_SOURCE_TAG"
-            SHA="$(gh api "repos/${SOURCE_OWNER}/${SOURCE_REPO}/git/refs/tags/${TAG}" --jq '.object.sha')"
-            echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-            echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
-          else
-            scripts/fetch-latest-eden-memory.sh \
-              --owner "${SOURCE_OWNER}" \
-              --repo "${SOURCE_REPO}" \
-              --pattern "${SOURCE_TAG_PATTERN}" \
-              --require-green \
-              --output "$GITHUB_OUTPUT"
-          fi
-
-      - name: Download eden-memory release artifacts
-        id: download
-        env:
-          GH_TOKEN: ${{ secrets.EDEN_MEMORY_TOKEN || secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          mkdir -p dist/source
-          SOURCE_TAG="${{ steps.source.outputs.tag }}"
-          echo "Downloading artifacts for ${SOURCE_OWNER}/${SOURCE_REPO}@${SOURCE_TAG}"
-          gh release download "${SOURCE_TAG}" \
-            --repo "${SOURCE_OWNER}/${SOURCE_REPO}" \
-            --dir dist/source \
-            --pattern 'eden-memory-*'
-          ls -lh dist/source
-
-      - name: Stage skills bundle
-        run: |
-          set -euo pipefail
-          mkdir -p dist/skills
-          # If SKILLS_REPO is provided, clone it and copy skills from there.
-          # Otherwise package whatever is already committed under skills/.
-          if [ -n "${SKILLS_REPO:-}" ]; then
-            git clone --depth 1 "${SKILLS_REPO}" "${RUNNER_TEMP}/skills-source"
-            for p in ${SKILLS_PATHS//,/ }; do
-              src="${RUNNER_TEMP}/skills-source/${p}"
-              if [ -d "$src" ]; then
-                cp -r "$src" "dist/skills/$(basename "$p")"
-              else
-                echo "WARNING: skills path not found: $src" >&2
-              fi
-            done
-          else
-            for p in ${SKILLS_PATHS//,/ }; do
-              src="skills/${p}"
-              if [ -d "$src" ]; then
-                cp -r "$src" "dist/skills/$(basename "$p")"
-              else
-                echo "WARNING: committed skills path not found: $src" >&2
-              fi
-            done
-          fi
-          find dist/skills -type f | sort
-
-      - name: Compute next eden-releases tag
-        id: version
-        run: |
-          set -euo pipefail
-          SOURCE_TAG="${{ steps.source.outputs.tag }}"
-          # Strip leading 'v'.
-          BASE="${SOURCE_TAG#v}"
-          # eden-releases tag: v<eden-memory-version>-eden-releases.<build>
-          EXISTING="$(git tag -l "v${BASE}-eden-releases.*" --sort=-v:refname | head -1)"
-          if [ -n "$EXISTING" ]; then
-            BUILD="$(echo "$EXISTING" | sed -E "s/.*-eden-releases\.([0-9]+).*/\1/")"
-            NEXT_BUILD="$((BUILD + 1))"
-          else
-            NEXT_BUILD=1
-          fi
-          RELEASE_TAG="v${BASE}-eden-releases.${NEXT_BUILD}"
-          echo "release_tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
-          echo "base_version=${BASE}" >> "$GITHUB_OUTPUT"
-
-      - name: Package release artifacts with skills
-        id: package
-        run: |
-          set -euo pipefail
-          SOURCE_TAG="${{ steps.source.outputs.tag }}"
-          RELEASE_TAG="${{ steps.version.outputs.release_tag }}"
-          BASE_VERSION="${{ steps.version.outputs.base_version }}"
-          chmod +x scripts/package-release.sh
-          scripts/package-release.sh \
-            --source dist/source \
-            --skills dist/skills \
-            --version "${BASE_VERSION}" \
-            --release-tag "${RELEASE_TAG}" \
-            --platforms "${PLATFORMS}" \
-            --out dist/packages
-
-      - name: Generate download metadata for docs site
-        run: |
-          set -euo pipefail
-          python3 scripts/generate-download-metadata.py \
-            --release-tag "${{ steps.version.outputs.release_tag }}" \
-            --repo "${{ github.repository }}" \
-            --packages dist/packages \
-            --source-tag "${{ steps.source.outputs.tag }}" \
-            --source-sha "${{ steps.source.outputs.sha }}" \
-            --out dist/download-metadata.json
-          cat dist/download-metadata.json
-
-      - name: Create GitHub Release
-        id: publish
+      - name: Attach binaries and checksums to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.release_tag }}
-          name: ${{ steps.version.outputs.release_tag }}
-          body: |
-            Public release bundle for [${{ env.SOURCE_OWNER }}/${{ env.SOURCE_REPO }}@${{ steps.source.outputs.tag }}](https://github.com/${{ env.SOURCE_OWNER }}/${{ env.SOURCE_REPO }}/releases/tag/${{ steps.source.outputs.tag }}).
-
-            Includes eden-memory static binaries and bundled agent-harness skills.
-
-            Source commit: `${{ steps.source.outputs.sha }}`.
           files: |
-            dist/packages/*
-            dist/download-metadata.json
-          fail_on_unmatched_files: true
-          generate_release_notes: false
+            binaries/*
+          fail_on_unmatched_files: false
+          generate_release_notes: true
