@@ -30,3 +30,13 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Workflow / packaging scratch space
+dist/
+*.tar.gz
+*.sha256
+download-metadata.json
+
+# Built binaries are published as GitHub Release assets only
+binaries/eden-memory-*
+!binaries/manifest.json

@@ -1,0 +1,23 @@
+.astro/
+dist/
+.cache/
+
+# Node / pnpm
+node_modules/
+.pnpm-debug.log*
+
+# Logs
+*.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated data files are committed intentionally for Pages builds
+# src/data/downloads.json

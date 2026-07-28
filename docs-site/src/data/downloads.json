@@ -1,0 +1,42 @@
+{
+  "version": "0.3.17",
+  "released": "2026-07-28",
+  "platforms": {
+    "linux-amd64": {
+      "os": "linux",
+      "arch": "amd64",
+      "filename": "eden-memory-linux-amd64",
+      "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64",
+      "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64.sha256",
+      "sha256": "3ff1fd0ed62bd0093d0851224903d6eeb4e7f8ea7014ef342422ede576bf88a5",
+      "sizeBytes": 112787640
+    },
+    "linux-arm64": {
+      "os": "linux",
+      "arch": "arm64",
+      "filename": "eden-memory-linux-arm64",
+      "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64",
+      "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64.sha256",
+      "sha256": "cf4a45d71a449cebe5ede367ab74eb16f28fac87c79fb693e0e570bd1544a8b0",
+      "sizeBytes": 67961016
+    },
+    "darwin-amd64": {
+      "os": "darwin",
+      "arch": "amd64",
+      "filename": "eden-memory-darwin-amd64",
+      "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64",
+      "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64.sha256",
+      "sha256": "d44879a4b8d848b06a26f043958cd068683f512fe0052ea6485e66aede0ace80",
+      "sizeBytes": 64472256
+    },
+    "darwin-arm64": {
+      "os": "darwin",
+      "arch": "arm64",
+      "filename": "eden-memory-darwin-arm64",
+      "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64",
+      "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64.sha256",
+      "sha256": "e558abfa460b41e23cf4ba8dc7d02aae071c956a686cb39a907b5dd0700e1082",
+      "sizeBytes": 64566658
+    }
+  }
+}

@@ -1,0 +1,26 @@
+name: eden-memory Public Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish binaries from this repo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Attach binaries and checksums to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            binaries/*
+          fail_on_unmatched_files: false
+          generate_release_notes: true
