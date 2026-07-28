@@ -1,0 +1,30 @@
+{
+  "version": "0.3.17",
+  "released": "2026-07-28",
+  "platforms": {
+    "linux-amd64": {
+      "filename": "eden-memory-linux-amd64",
+      "checksum": "eden-memory-linux-amd64.sha256",
+      "arch": "amd64",
+      "os": "linux"
+    },
+    "linux-arm64": {
+      "filename": "eden-memory-linux-arm64",
+      "checksum": "eden-memory-linux-arm64.sha256",
+      "arch": "arm64",
+      "os": "linux"
+    },
+    "darwin-amd64": {
+      "filename": "eden-memory-darwin-amd64",
+      "checksum": "eden-memory-darwin-amd64.sha256",
+      "arch": "amd64",
+      "os": "darwin"
+    },
+    "darwin-arm64": {
+      "filename": "eden-memory-darwin-arm64",
+      "checksum": "eden-memory-darwin-arm64.sha256",
+      "arch": "arm64",
+      "os": "darwin"
+    }
+  }
+}
