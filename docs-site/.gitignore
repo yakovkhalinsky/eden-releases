@@ -1,0 +1,21 @@
+# Astro build output
+.astro/
+dist/
+.cache/
+
+# Node / pnpm
+node_modules/
+.pnpm-debug.log*
+
+# Logs
+*.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
