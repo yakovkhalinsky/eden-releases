@@ -1,26 +1,104 @@
-name: eden-memory Public Release
+name: eden-memory Public Release (manual fallback)
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
+    inputs:
+      source_tag:
+        description: 'Source tag in eden-memory (e.g. v0.3.18)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 jobs:
   release:
-    name: Publish binaries from this repo
+    name: Promote existing eden-memory release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Attach binaries and checksums to GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Generate cross-repo token
+        id: token
+        uses: actions/create-github-app-token@v3
         with:
-          files: |
-            binaries/*
-          fail_on_unmatched_files: false
-          generate_release_notes: true
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            eden-memory
+            eden-releases
+
+      - name: Checkout eden-releases
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.token.outputs.token }}
+          persist-credentials: false
+
+      - name: Install GitHub CLI
+        run: |
+          type gh >/dev/null 2>&1 || (apt-get update && apt-get install -y gh)
+
+      - name: Download source release assets
+        run: |
+          mkdir -p public-binaries
+          gh release download "${{ github.event.inputs.source_tag }}" \
+            --repo ${{ github.repository_owner }}/eden-memory \
+            --dir public-binaries \
+            --pattern 'eden-memory-*'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+
+      - name: Generate SHA-256 checksums
+        working-directory: public-binaries
+        run: |
+          for f in eden-memory-*; do
+            [ -f "$f" ] || continue
+            sha256sum "$f" > "$f.sha256"
+          done
+
+      - name: Update manifest
+        run: |
+          VERSION="${{ github.event.inputs.source_tag }}"
+          DATE=$(date -u +%Y-%m-%d)
+          jq --arg version "${VERSION#v}" --arg date "$DATE" '
+            .version = $version |
+            .released = $date
+          ' binaries/manifest.json > binaries/manifest.json.tmp
+          mv binaries/manifest.json.tmp binaries/manifest.json
+
+      - name: Regenerate download metadata
+        run: |
+          python3 scripts/generate-download-metadata.py --assets-dir public-binaries
+
+      - name: Commit and push metadata
+        id: publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add binaries/manifest.json docs-site/src/data/downloads.json
+          if git diff --cached --quiet; then
+            echo "No metadata changes to commit."
+          else
+            VERSION="${{ github.event.inputs.source_tag }}"
+            git commit -m "Publish eden-memory ${VERSION}"
+            git push "https://x-access-token:${TOKEN}@github.com/${{ github.repository_owner }}/eden-releases.git" main
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          TOKEN: ${{ steps.token.outputs.token }}
+
+      - name: Create or update public release
+        if: steps.publish.outputs.sha != ''
+        uses: ncipollo/release-action@v1
+        with:
+          repo: eden-releases
+          owner: ${{ github.repository_owner }}
+          token: ${{ steps.token.outputs.token }}
+          tag: ${{ github.event.inputs.source_tag }}
+          commit: ${{ steps.publish.outputs.sha }}
+          name: eden-memory ${{ github.event.inputs.source_tag }}
+          generateReleaseNotes: true
+          artifacts: "public-binaries/eden-memory-*"
+          artifactErrorsFailBuild: true
+          makeLatest: true
+          allowUpdates: true
+          replacesArtifacts: true

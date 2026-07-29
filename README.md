@@ -27,14 +27,19 @@ source files. Commit the generated pages so Pages builds them.
 
 ## Publish a new binary set
 
-1. Build or fetch binaries for all target platforms and generate SHA-256 checksums:
-   ```bash
-   for f in eden-memory-*; do sha256sum "$f" > "$f.sha256"; done
-   ```
-2. Update `binaries/manifest.json` if filenames or platforms changed.
-3. Run `./scripts/generate-download-metadata.py --assets-dir </path/to/binaries>`.
-4. Commit and push the manifest + metadata changes.
-5. Create a GitHub Release and attach the binary files and their `.sha256` files.
+This is normally handled automatically by the `eden-memory` CI workflow. On
+every green build on `master`, that workflow:
+
+1. Creates a release in `yakovkhalinsky/eden-memory`.
+2. Downloads the per-platform binaries.
+3. Updates `binaries/manifest.json`.
+4. Regenerates `docs-site/src/data/downloads.json`.
+5. Commits and pushes the metadata changes to this repo.
+6. Creates or updates the GitHub Release here with the binaries and `.sha256` files.
+
+To do it manually (for example, to promote an older release), use the
+**eden-memory Public Release (manual fallback)** workflow in this repository
+and provide the source tag from `eden-memory`.
 
 Binaries are stored as GitHub Release assets only — they are not committed to git.
 
