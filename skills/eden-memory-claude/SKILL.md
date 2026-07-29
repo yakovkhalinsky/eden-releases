@@ -17,7 +17,7 @@ tools:
     - eden_forget_expired
     - eden_health
     - eden_vacuum
-install_hint: curl -fsSL https://0d3sa.com/install.sh | sh
+install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 related_skills:
   - eden-memory-mcp-usage
 ---

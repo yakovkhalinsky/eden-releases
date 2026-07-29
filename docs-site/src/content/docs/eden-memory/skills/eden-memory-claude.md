@@ -1,6 +1,15 @@
 ---
-title: Claude Code CLI
-description: Agent skill for working with eden-memory.
+title: Eden Memory Claude
+description: Use eden-memory as a persistent skill inside Claude Code CLI.
+template: doc
+skill_name: eden-memory-claude
+skill_version: 2.0.0
+skill_tags: mcp, eden-memory, claude-code, skill, prompt, subagent
+skill_discoverable: true
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_inherits: eden-memory-mcp-usage
+skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
+skill_related: eden-memory-mcp-usage
 ---
 
 # eden-memory + Claude Code CLI

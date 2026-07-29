@@ -1,6 +1,14 @@
 ---
-title: eden-memory MCP usage
-description: Agent skill for working with eden-memory.
+title: Eden Memory MCP Usage
+description: Use eden-memory as a persistent memory skill inside any stdio MCP client.
+template: doc
+skill_name: eden-memory-mcp-usage
+skill_version: 3.0.0
+skill_tags: mcp, eden-memory, memory-first, stdio, skill
+skill_discoverable: true
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
+skill_related: eden-memory-claude, eden-memory-cursor, eden-memory-hermes
 ---
 
 # eden-memory MCP usage

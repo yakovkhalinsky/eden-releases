@@ -150,7 +150,7 @@ def generate():
             "## Install hint",
             "",
             "```bash",
-            "curl -fsSL https://0d3sa.com/install.sh | sh",
+            "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
             "```",
         ]
     )

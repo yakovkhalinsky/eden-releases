@@ -8,7 +8,7 @@ description: Download eden-memory, verify it, connect a client, and test memory.
 Run the installer:
 
 ```bash
-curl -fsSL https://0d3sa.com/install.sh | sh
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 ```
 
 This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin`.

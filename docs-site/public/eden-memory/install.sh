@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Installer for eden-memory.
-# Usage: curl -fsSL https://0d3sa.com/install.sh | sh
+# Usage: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 
 set -eu
 
@@ -55,7 +55,12 @@ fi
 echo "Installing to ${PREFIX}/eden-memory..."
 chmod +x "${TMPDIR}/${BIN}"
 mkdir -p "${PREFIX}"
-cp "${TMPDIR}/${BIN}" "${PREFIX}/eden-memory"
+
+# Avoid "Text file busy" when overwriting a running binary by installing via a
+# temporary file and an atomic rename.
+TMP_BIN="${PREFIX}/eden-memory.tmp.$$"
+cp "${TMPDIR}/${BIN}" "${TMP_BIN}"
+mv -f "${TMP_BIN}" "${PREFIX}/eden-memory"
 
 if ! command -v eden-memory >/dev/null 2>&1; then
     echo ""

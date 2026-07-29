@@ -17,7 +17,7 @@ You can copy the same shape for any private-source project you want to distribut
 | `docs-site/` | Astro + Starlight site that becomes the public docs site. |
 | `.github/workflows/` | CI for building docs and attaching release binaries. |
 | `scripts/` | Helpers that generate metadata and package releases. |
-| `public/install.sh` | One-line installer served from the custom domain. |
+| `public/eden-memory/install.sh` | One-line installer served from the custom domain. |
 
 The actual binaries are not committed to git.
 They are attached to a GitHub Release as release assets and downloaded by URL.
@@ -126,7 +126,7 @@ Users download from the release asset URL, for example:
 https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64
 ```
 
-The install script at `public/install.sh` resolves `latest/download` to the most recent release and picks the correct platform.
+The install script at `public/eden-memory/install.sh` resolves `latest/download` to the most recent release and picks the correct platform.
 
 ## Multi-product structure
 
