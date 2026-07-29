@@ -1,15 +1,6 @@
 ---
-title: Eden Memory Claude
-description: Use eden-memory as a persistent skill inside Claude Code CLI.
-template: doc
-skill_name: eden-memory-claude
-skill_version: 2.0.0
-skill_tags: mcp, eden-memory, claude-code, skill, prompt, subagent
-skill_discoverable: true
-skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
-skill_inherits: eden-memory-mcp-usage
-skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
-skill_related: eden-memory-mcp-usage
+title: Claude Code CLI
+description: Agent skill for working with eden-memory.
 ---
 
 # eden-memory + Claude Code CLI
@@ -22,6 +13,16 @@ claude config set mcpServers '{"eden-memory":{"command":"eden-memory","args":["-
 
 Use your real username and restart Claude Code.
 
+## Verify the server
+
+At the start of every session, call `mcp__eden-memory__eden_health`. If the call fails or returns `healthy: false`, stop and ask the user to check the install:
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
+
+Do not proceed with memory-dependent work until `eden_health` succeeds.
+
 ## Tool names in Claude Code
 
 - `mcp__eden-memory__eden_remember`
@@ -30,13 +31,23 @@ Use your real username and restart Claude Code.
 - `mcp__eden-memory__eden_search_semantic`
 - `mcp__eden-memory__eden_edit`
 - `mcp__eden-memory__eden_forget`
+- `mcp__eden-memory__eden_forget_expired`
 - `mcp__eden-memory__eden_health`
+- `mcp__eden-memory__eden_vacuum`
 
 ## System prompt pattern
 
 Add this to your project instructions:
 
-> At the start of every task, call `eden_recall` with the user’s task summary. Before finishing, call `eden_remember` for any durable preferences, conventions, or working solutions you learned.
+```text
+MEMORY-FIRST RULES:
+1. Immediately after the user gives a task, call mcp__eden-memory__eden_recall with the task summary and kind "convention" or "preference".
+2. Before any decision that touches user preferences, coding style, security, or tooling, call mcp__eden-memory__eden_recall first.
+3. After corrections, working solutions, or settled conventions, call mcp__eden-memory__eden_remember.
+4. At the end of every task, batch 3–5 durable takeaways into mcp__eden-memory__eden_remember calls.
+5. Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
+6. If eden_recall/eden_remember tools are unavailable, ask the user to wire the eden-memory MCP server and stop.
+```
 
 ## Example task prompt
 
@@ -78,6 +89,14 @@ Context: Alice prefers testify/require for assertions. Use eden_recall if you ne
 ```
 
 The subagent can use the inherited MCP tools to recall and remember while it works.
+
+## If tools are missing
+
+If you cannot call the eden-memory tools:
+1. Stop task execution.
+2. Tell the user: "eden-memory MCP server is not configured. Run the install and add the server config, then restart."
+3. Provide the one-line wiring command or setup script from this skill.
+4. Do not silently continue without memory.
 
 ## Troubleshooting
 

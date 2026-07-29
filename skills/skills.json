@@ -1,0 +1,181 @@
+{
+  "schema_version": "1.0.0",
+  "package": "eden-memory-skills",
+  "skills": [
+    {
+      "name": "eden-memory-claude",
+      "slug": "eden-memory-claude",
+      "title": "Claude Code CLI",
+      "description": "Use eden-memory as a persistent skill inside Claude Code CLI.",
+      "version": "2.0.0",
+      "tags": [
+        "mcp",
+        "eden-memory",
+        "claude-code",
+        "skill",
+        "prompt",
+        "subagent"
+      ],
+      "tools": {
+        "discoverable": true,
+        "list": [
+          "eden_remember",
+          "eden_recall",
+          "eden_search",
+          "eden_search_semantic",
+          "eden_edit",
+          "eden_forget",
+          "eden_forget_expired",
+          "eden_health",
+          "eden_vacuum"
+        ],
+        "inherits": "eden-memory-mcp-usage",
+        "prefix": "mcp__eden-memory__"
+      },
+      "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "harness": "claude-code",
+      "mcp_config": {
+        "server_name": "eden-memory",
+        "transport": "stdio",
+        "command": "eden-memory",
+        "args": [
+          "--db",
+          "/home/yourname/.eden-memory/default.db"
+        ]
+      },
+      "related_skills": [
+        "eden-memory-mcp-usage",
+        "eden-memory-cursor",
+        "eden-memory-hermes"
+      ]
+    },
+    {
+      "name": "eden-memory-cursor",
+      "slug": "eden-memory-cursor",
+      "title": "Cursor",
+      "description": "Use eden-memory as a persistent skill inside Cursor.",
+      "version": "2.0.0",
+      "tags": [
+        "mcp",
+        "eden-memory",
+        "cursor",
+        "skill",
+        "prompt",
+        "composer"
+      ],
+      "tools": {
+        "discoverable": true,
+        "list": [
+          "eden_remember",
+          "eden_recall",
+          "eden_search",
+          "eden_search_semantic",
+          "eden_edit",
+          "eden_forget",
+          "eden_forget_expired",
+          "eden_health",
+          "eden_vacuum"
+        ],
+        "inherits": "eden-memory-mcp-usage",
+        "prefix": "mcp__eden-memory__"
+      },
+      "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "harness": "cursor",
+      "mcp_config": {
+        "server_name": "eden-memory",
+        "transport": "stdio",
+        "command": "eden-memory",
+        "args": [
+          "--db",
+          "/home/yourname/.eden-memory/default.db"
+        ]
+      },
+      "related_skills": [
+        "eden-memory-mcp-usage",
+        "eden-memory-claude",
+        "eden-memory-hermes"
+      ]
+    },
+    {
+      "name": "eden-memory-hermes",
+      "slug": "eden-memory-hermes",
+      "title": "Hermes Agent",
+      "description": "Use eden-memory as a persistent skill inside Hermes Agent.",
+      "version": "2.0.0",
+      "tags": [
+        "mcp",
+        "eden-memory",
+        "hermes",
+        "skill",
+        "prompt",
+        "subagent"
+      ],
+      "tools": {
+        "discoverable": true,
+        "list": [
+          "eden_remember",
+          "eden_recall",
+          "eden_search",
+          "eden_search_semantic",
+          "eden_edit",
+          "eden_forget",
+          "eden_forget_expired",
+          "eden_health",
+          "eden_vacuum"
+        ],
+        "inherits": "eden-memory-mcp-usage",
+        "prefix": "mcp__eden__"
+      },
+      "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "harness": "hermes",
+      "mcp_config": {
+        "server_name": "eden",
+        "transport": "stdio",
+        "command": "eden-memory",
+        "args": [
+          "--db",
+          "/home/yourname/.eden-memory/default.db"
+        ]
+      },
+      "related_skills": [
+        "eden-memory-mcp-usage",
+        "eden-memory-claude",
+        "eden-memory-cursor"
+      ]
+    },
+    {
+      "name": "eden-memory-mcp-usage",
+      "slug": "eden-memory-mcp-usage",
+      "title": "eden-memory MCP usage",
+      "description": "Use eden-memory as a persistent memory skill inside any stdio MCP client.",
+      "version": "3.0.0",
+      "tags": [
+        "mcp",
+        "eden-memory",
+        "memory-first",
+        "stdio",
+        "skill"
+      ],
+      "tools": {
+        "discoverable": true,
+        "list": [
+          "eden_remember",
+          "eden_recall",
+          "eden_search",
+          "eden_search_semantic",
+          "eden_edit",
+          "eden_forget",
+          "eden_forget_expired",
+          "eden_health",
+          "eden_vacuum"
+        ]
+      },
+      "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "related_skills": [
+        "eden-memory-claude",
+        "eden-memory-cursor",
+        "eden-memory-hermes"
+      ]
+    }
+  ]
+}

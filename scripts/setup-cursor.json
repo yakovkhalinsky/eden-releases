@@ -1,0 +1,11 @@
+// Paste this JSON snippet into Cursor's MCP server settings.
+// Replace /home/yourname with your real home directory.
+{
+  "eden-memory": {
+    "command": "eden-memory",
+    "args": [
+      "--db",
+      "/home/yourname/.eden-memory/default.db"
+    ]
+  }
+}

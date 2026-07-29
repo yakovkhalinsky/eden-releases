@@ -62,6 +62,10 @@ Use `ttl_ms: null` for facts that should persist until the user changes them.
 2. Do the work.
 3. `eden_remember` — store durable takeaways.
 
+Efficiency notes:
+- Prefer `eden_search` for exact keyword lookups.
+- Keep recalled context concise; do not dump large raw outputs into memories.
+
 ## Tool summary
 
 | Tool | Purpose |
@@ -88,6 +92,8 @@ Use `ttl_ms: null` for facts that should persist until the user changes them.
 }
 ```
 
+Use a stable `agent_id` that matches the harness (e.g. `claude-code-cli`, `cursor-agent`, `hermes`, `my-agent`). Do not change it per conversation; consistency improves recall relevance.
+
 ## Recall example
 
 ```json
@@ -108,3 +114,11 @@ Context: Alice prefers Python examples and short sentences. Call eden_recall if 
 ```
 
 The subagent can then call `eden_recall` to load additional context before acting.
+
+## Memory checkpoint
+
+Before finishing any task:
+1. Confirm at least one `eden_recall` happened at task start.
+2. For each takeaway, call `eden_search` or `eden_search_semantic` to avoid storing near-duplicates.
+3. Write missing memories with `ttl_ms: null` for durable facts.
+4. Confirm at least one `eden_remember` happened at task end.

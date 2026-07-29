@@ -49,6 +49,8 @@ def generate():
         sys.exit(1)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    skills_dir = SKILLS_DIR
+    skills_manifest_path = skills_dir / "skills.json"
     registry = []
 
     for skill_dir in sorted(SKILLS_DIR.iterdir()):
@@ -104,19 +106,30 @@ def generate():
         out_path.write_text("\n".join(front) + "\n\n" + body, encoding="utf-8")
         print(f"Generated {out_path}")
 
-        registry.append(
-            {
-                "name": name,
-                "slug": slug,
-                "title": title,
-                "description": description,
-                "version": version,
+        registry_entry = {
+            "name": name,
+            "slug": slug,
+            "title": fm.get("title", title),
+            "description": description,
+            "version": version,
+            "tags": fm.get("tags", []),
+            "tools": {
                 "discoverable": discoverable,
-                "tools": tool_list,
-                "install_hint": install_hint,
-                "related": related,
-            }
-        )
+                "list": tool_list,
+            },
+            "install_hint": install_hint,
+        }
+        if inherits:
+            registry_entry["tools"]["inherits"] = inherits
+        if "harness" in fm:
+            registry_entry["harness"] = fm["harness"]
+        if fm.get("tools", {}).get("prefix"):
+            registry_entry["tools"]["prefix"] = fm["tools"]["prefix"]
+        if "mcp_config" in fm:
+            registry_entry["mcp_config"] = fm["mcp_config"]
+        if related:
+            registry_entry["related_skills"] = related
+        registry.append(registry_entry)
 
     lines = [
         "---",
@@ -130,10 +143,26 @@ def generate():
         "These skills teach an agent how to use eden-memory. They declare which MCP tools they use,",
         "how to install the binary, and which harness-specific skills to load next.",
         "",
+        "## I use…",
+        "",
+        "- [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)",
+        "- [Cursor](/eden-memory/skills/eden-memory-cursor/)",
+        "- [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)",
+        "- [Another MCP client](/eden-memory/skills/eden-memory-mcp-usage/)",
+        "",
         "| Skill | Description |",
         "|-------|-------------|",
     ]
-    for entry in registry:
+    # Keep eden-memory-mcp-usage first, then harness-specific skills, then anything else.
+    registry_sorted = sorted(
+        registry,
+        key=lambda e: (
+            e["name"] != "eden-memory-mcp-usage",
+            e.get("harness", ""),
+            e["name"],
+        ),
+    )
+    for entry in registry_sorted:
         lines.append(
             f"| [{entry['title']}](/eden-memory/skills/{entry['slug']}/) | {entry['description']} |"
         )
@@ -158,6 +187,17 @@ def generate():
     index_path = OUT_DIR / "index.md"
     index_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Generated {index_path}")
+
+    import json
+    manifest = {
+        "schema_version": "1.0.0",
+        "package": "eden-memory-skills",
+        "skills": registry,
+    }
+    with open(skills_manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+    print(f"Generated {skills_manifest_path}")
 
 
 if __name__ == "__main__":

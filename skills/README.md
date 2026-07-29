@@ -18,7 +18,9 @@ This directory contains agent skills for the eden-memory MCP server.
 | `eden-memory-cursor` | Wiring for Cursor |
 | `eden-memory-hermes` | Wiring for Hermes Agent |
 
-## Autodiscovery
+Each harness-specific `SKILL.md` includes an install/setup section for its agent.
+
+## Install hints
 
 Each `SKILL.md` declares:
 
