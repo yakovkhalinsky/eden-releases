@@ -19,7 +19,7 @@
     <div class="wrap nav">
       <a href="/" class="brand">
         <span class="brand-mark">0</span>
-        <span>0d3sa</span>
+        <span>0d3sa — local-first AI tools</span>
       </a>
       <nav class="nav-links">
         <a href="#install">Install</a>
@@ -36,9 +36,10 @@
           <span class="dot"></span>
           <span>v0.1 alpha · Apache-2.0 · macOS + Linux</span>
         </div>
-        <h1>eden-memory: persistent memory for AI agents.</h1>
+        <p class="product-label">Product on 0d3sa</p>
+        <h1>eden-memory</h1>
         <p class="lead">
-          A single local binary that stores what your agents learn across sessions. Wire it to Claude, Cursor, or any MCP client through one config file.
+          Persistent memory for AI agents. One local binary that stores what your agents learn across sessions. Wire it to Claude, Cursor, or any MCP client through a single config file.
         </p>
 
         <div class="terminal-hero">
@@ -143,7 +144,23 @@
         </div>
       </div>
     </section>
-  </main>
+
+    <section class="section products-section">
+      <div class="wrap">
+        <h2 class="section-title">Products on <strong>0d3sa</strong></h2>
+        <div class="product-grid">
+          <a href="/eden-memory/" class="product-card">
+            <div class="product-meta">
+              <span class="product-tag">Available now</span>
+            </div>
+            <h3>eden-memory</h3>
+            <p>Local-first memory layer for AI agents. Install one binary and wire it to any MCP client.</p>
+            <span class="product-link">Read docs →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    </main>
 
   <footer class="site-footer">
     <div class="wrap footer-row">
@@ -192,6 +209,7 @@
     --accent-600: #5f6fff;
     --accent-glow: rgba(124, 140, 255, 0.18);
     --amber: #f2b65a;
+    --amber-soft: rgba(242, 182, 90, 0.12);
     --green: #5df0a8;
     --radius: 14px;
     --max: 960px;
@@ -304,28 +322,20 @@
 
   h1 {
     font-family: Inter, sans-serif;
-    font-size: clamp(1.9rem, 4vw, 2.8rem);
-    line-height: 1.15;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 14px;
-    max-width: 760px;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
   }
 
-  h2 {
-    font-family: Inter, sans-serif;
-    font-size: clamp(1.3rem, 2.5vw, 1.7rem);
-    font-weight: 700;
-    margin-bottom: 18px;
-  }
-
-  h3 {
-    font-family: Inter, sans-serif;
-    font-size: 1rem;
+  .product-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   .lead {
@@ -487,8 +497,67 @@
     gap: 40px;
     align-items: center;
   }
-
+  .feature-copy h2 { font-size: 1.7rem; margin-bottom: 12px; }
+  .feature-copy h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
   .feature-copy p { color: var(--text-muted); margin-bottom: 16px; }
+
+  .products-section { background: var(--bg-elevated); border-top: 1px solid var(--border); }
+  .section-title {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 28px;
+  }
+  .section-title strong { color: var(--text); }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .product-card {
+    display: block;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    color: var(--text);
+  }
+  .product-card:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .product-meta { margin-bottom: 10px; }
+  .product-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--amber-soft);
+    color: var(--amber);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .product-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .product-card p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 14px;
+  }
+  .product-link {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
 
   .checklist { list-style: none; padding: 0; margin: 0; }
   .checklist li {
