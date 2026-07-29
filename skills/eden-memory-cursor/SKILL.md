@@ -1,8 +1,9 @@
 ---
 name: eden-memory-cursor
-description: Wire eden-memory into the Cursor editor over MCP stdio.
-version: 1.0.0
-tags: [mcp, eden-memory, cursor, integration]
+title: Cursor
+description: Use eden-memory as a persistent skill inside Cursor.
+version: 2.0.0
+tags: [mcp, eden-memory, cursor, skill, prompt, composer]
 tools:
   discoverable: true
   inherits: eden-memory-mcp-usage
@@ -23,7 +24,7 @@ related_skills:
 
 # eden-memory + Cursor
 
-## Add the server
+## Wire the MCP server
 
 In Cursor, open **Settings** → **MCP** and add a new stdio server:
 
@@ -33,11 +34,52 @@ In Cursor, open **Settings** → **MCP** and add a new stdio server:
 | Command | `eden-memory` |
 | Arguments | `--db /home/yourname/.eden-memory/default.db` |
 
-Use your real username.
+Use your real username and start a new chat.
 
-## Verify
+## Usage pattern
 
-Ask Cursor to remember something, then recall it in a fresh chat.
+Add this instruction to your project prompt or `.cursorrules`:
+
+> At the start of each task, call `eden_recall` to load context about the user’s preferences and conventions. Before finishing, call `eden_remember` to store durable takeaways.
+
+## Example `.cursorrules` snippet
+
+```text
+Memory conventions:
+- Recall at task start with the task summary.
+- Remember after corrections or working solutions.
+- Do not remember secrets, raw output, or unvalidated guesses.
+- Use kind: "preference" for lasting user preferences, kind: "convention" for project rules.
+```
+
+## Remember / recall template
+
+```json
+{
+  "agent_id": "cursor-agent",
+  "user_id": "alice",
+  "kind": "preference",
+  "content": "Keep frontend components under 200 lines. Split earlier rather than later.",
+  "ttl_ms": null
+}
+```
+
+```json
+{
+  "agent_id": "cursor-agent",
+  "user_id": "alice",
+  "kind": "preference",
+  "query": "component size limits"
+}
+```
+
+## Composer / agent delegation
+
+When delegating to Cursor’s composer, include the memory context in the prompt:
+
+```text
+Build a settings page. Alice prefers small components and Tailwind. Recall if you need more details.
+```
 
 ## Troubleshooting
 

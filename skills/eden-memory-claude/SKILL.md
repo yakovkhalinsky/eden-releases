@@ -1,8 +1,9 @@
 ---
 name: eden-memory-claude
-description: Wire eden-memory into Claude Code or any CLI MCP agent.
-version: 1.0.0
-tags: [mcp, eden-memory, claude-code, cli, integration]
+title: Claude Code CLI
+description: Use eden-memory as a persistent skill inside Claude Code CLI.
+version: 2.0.0
+tags: [mcp, eden-memory, claude-code, skill, prompt, subagent]
 tools:
   discoverable: true
   inherits: eden-memory-mcp-usage
@@ -23,26 +24,70 @@ related_skills:
 
 # eden-memory + Claude Code CLI
 
-## Config
-
-Claude Code stores MCP servers in a JSON config. Run:
-
-```bash
-claude config get mcpServers
-```
-
-to see the current value. To add eden-memory, run:
+## Wire the MCP server
 
 ```bash
 claude config set mcpServers '{"eden-memory":{"command":"eden-memory","args":["--db","/home/yourname/.eden-memory/default.db"]}}'
 ```
 
-Use your real username.
+Use your real username and restart Claude Code.
 
-## Verify
+## Tool names in Claude Code
 
-Start Claude Code and ask it to remember something, then recall it in a fresh
-session.
+- `mcp__eden-memory__eden_remember`
+- `mcp__eden-memory__eden_recall`
+- `mcp__eden-memory__eden_search`
+- `mcp__eden-memory__eden_search_semantic`
+- `mcp__eden-memory__eden_edit`
+- `mcp__eden-memory__eden_forget`
+- `mcp__eden-memory__eden_health`
+
+## System prompt pattern
+
+Add this to your project instructions:
+
+> At the start of every task, call `eden_recall` with the user’s task summary. Before finishing, call `eden_remember` for any durable preferences, conventions, or working solutions you learned.
+
+## Example task prompt
+
+```text
+We are refactoring a Go service. Please:
+1. Call eden_recall to see if Alice has preferences about Go style or testing.
+2. Read the current code and propose a refactor.
+3. After we agree on the changes, call eden_remember with the conventions we settled on.
+```
+
+## Remember / recall template
+
+```json
+{
+  "agent_id": "claude-code-cli",
+  "user_id": "alice",
+  "kind": "convention",
+  "content": "Prefer table-driven tests with testify/require.",
+  "ttl_ms": null
+}
+```
+
+```json
+{
+  "agent_id": "claude-code-cli",
+  "user_id": "alice",
+  "kind": "convention",
+  "query": "testing style"
+}
+```
+
+## Subagent delegation
+
+If you spawn a subagent in Claude Code, pass memory context explicitly:
+
+```text
+Subagent: fix-lint-issues
+Context: Alice prefers testify/require for assertions. Use eden_recall if you need more conventions.
+```
+
+The subagent can use the inherited MCP tools to recall and remember while it works.
 
 ## Troubleshooting
 

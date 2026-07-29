@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "sync-skills": "node ../scripts/sync-skills-to-docs.js",
+    "build": "node ../scripts/sync-skills-to-docs.js && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

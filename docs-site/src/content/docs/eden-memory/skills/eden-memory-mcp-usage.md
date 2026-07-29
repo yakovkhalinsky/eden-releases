@@ -1,51 +1,31 @@
 ---
 title: eden-memory MCP usage
-description: Use the eden-memory MCP server with any stdio MCP client.
+description: Agent skill for working with eden-memory.
 ---
 
-## What this covers
+# eden-memory MCP usage
 
-This page explains the core usage loop. For per-client wiring, see:
+## Overview
 
-- [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)
-- [Cursor](/eden-memory/skills/eden-memory-cursor/)
-- [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)
+`eden-memory` is a self-contained Go binary that exposes the Model Context Protocol (MCP) over stdio. It stores memories in a local SQLite database with 256-dimensional embeddings.
 
-## Install the server
+This skill describes the memory-first loop. Load a child skill for your specific harness to get wiring instructions.
 
-```bash
-curl -fsSL https://0d3sa.com/install.sh | sh
-```
+## When to use memory
 
-The installer downloads the right binary, verifies its checksum, and places it in your PATH.
-
-## CLI basics
-
-```bash
-# Start the MCP stdio server (requires --db)
-eden-memory --db ~/.eden-memory/default.db
-
-# Subcommands
-eden-memory version
-eden-memory health --db ~/.eden-memory/default.db
-eden-memory forget-expired --db ~/.eden-memory/default.db
-```
-
-## Memory-first loop
-
-1. **At task start.** Call `eden_recall` once after the user states their task.
-2. **Before finalizing.** Recall when a decision touches preferences, conventions, security, or tooling.
-3. **After a correction.** Recall related memories, then `eden_edit` or `eden_remember`.
-4. **At task end.** Store at most 3–5 concise, durable takeaways.
+- **At task start.** Call `eden_recall` once after the user states their goal.
+- **Before decisions that touch preferences, conventions, security, or tooling.** Recall first.
+- **After corrections or working solutions.** Update or store durable takeaways.
+- **At task end.** Store 3–5 concise, durable facts.
 
 ## What to remember
 
 - Preferences and conventions
-- Corrections
-- Working solutions
-- Identity facts
+- Corrections from the user
+- Working solutions to recurring problems
+- Identity facts (role, stack, constraints)
 
-Set `ttl_ms: null` for things that should persist until the user changes them.
+Use `ttl_ms: null` for facts that should persist until the user changes them.
 
 ## What not to remember
 
@@ -55,10 +35,16 @@ Set `ttl_ms: null` for things that should persist until the user changes them.
 - Generic knowledge already in docs
 - Unvalidated guesses
 
-## Tools
+## Basic loop
+
+1. `eden_recall` — pull relevant context.
+2. Do the work.
+3. `eden_remember` — store durable takeaways.
+
+## Tool summary
 
 | Tool | Purpose |
-|---|---|
+|------|---------|
 | `eden_remember` | Store a durable fact |
 | `eden_recall` | Semantic recall for this user |
 | `eden_search` | Keyword search |
@@ -69,4 +55,35 @@ Set `ttl_ms: null` for things that should persist until the user changes them.
 | `eden_health` | Combined health snapshot |
 | `eden_vacuum` | Compact the SQLite store (manual/admin) |
 
-See the [tools reference](/eden-memory/reference/tools/) for full schemas.
+## Remember example
+
+```json
+{
+  "agent_id": "my-agent",
+  "user_id": "alice",
+  "kind": "preference",
+  "content": "Use Python for examples and keep sentences short.",
+  "ttl_ms": null
+}
+```
+
+## Recall example
+
+```json
+{
+  "agent_id": "my-agent",
+  "user_id": "alice",
+  "kind": "preference",
+  "query": "How should I write examples?"
+}
+```
+
+## Subagent delegation
+
+When delegating to a subagent, include the memory context in the prompt:
+
+```text
+Context: Alice prefers Python examples and short sentences. Call eden_recall if you need more conventions.
+```
+
+The subagent can then call `eden_recall` to load additional context before acting.

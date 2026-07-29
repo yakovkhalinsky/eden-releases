@@ -1,8 +1,9 @@
 ---
 name: eden-memory-hermes
-description: Wire eden-memory into the Hermes Agent MCP harness.
-version: 1.0.0
-tags: [mcp, eden-memory, hermes, integration]
+title: Hermes Agent
+description: Use eden-memory as a persistent skill inside Hermes Agent.
+version: 2.0.0
+tags: [mcp, eden-memory, hermes, skill, prompt, subagent]
 tools:
   discoverable: true
   inherits: eden-memory-mcp-usage
@@ -23,7 +24,7 @@ related_skills:
 
 # eden-memory + Hermes Agent
 
-## Add the server
+## Wire the MCP server
 
 Add to your Hermes profile `config.yaml` under `mcp.servers`:
 
@@ -37,12 +38,72 @@ mcp:
         - /home/yourname/.eden-memory/default.db
 ```
 
-Use your real username.
+Use your real username and restart Hermes or reload the profile.
 
-## Verify
+## Tool names in Hermes
 
-Restart Hermes or reload the profile. In Hermes, the tools appear as
-`mcp__eden__eden_remember`, `mcp__eden__eden_recall`, etc.
+Hermes exposes MCP tools as:
+
+- `mcp__eden__eden_remember`
+- `mcp__eden__eden_recall`
+- `mcp__eden__eden_search`
+- `mcp__eden__eden_search_semantic`
+- `mcp__eden__eden_edit`
+- `mcp__eden__eden_forget`
+- `mcp__eden__eden_health`
+
+## Usage pattern
+
+Add this to your profile or system prompt:
+
+> At task start, call `eden_recall` with the task summary. After corrections or working solutions, call `eden_remember`. Do not remember secrets, raw output, or unvalidated guesses.
+
+## Calling tools from a skill
+
+From inside a Hermes skill, call eden-memory tools directly:
+
+```yaml
+# inside your skill's reasoning
+- tool: mcp__eden__eden_recall
+  arguments:
+    agent_id: "hermes"
+    user_id: "{{user.id}}"
+    kind: "convention"
+    query: "project testing preferences"
+```
+
+## Subagent delegation
+
+When spawning a subagent in Hermes, pass memory context in the prompt:
+
+```yaml
+delegate_task:
+  goal: Refactor the auth module
+  context: |
+    User alice prefers table-driven tests with testify/require.
+    Call eden_recall if you need more conventions.
+```
+
+## Remember / recall template
+
+```json
+{
+  "agent_id": "hermes",
+  "user_id": "alice",
+  "kind": "convention",
+  "content": "Use table-driven tests with testify/require.",
+  "ttl_ms": null
+}
+```
+
+```json
+{
+  "agent_id": "hermes",
+  "user_id": "alice",
+  "kind": "convention",
+  "query": "testing preferences"
+}
+```
 
 ## Troubleshooting
 

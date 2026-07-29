@@ -1,10 +1,10 @@
 ---
 name: eden-memory-mcp-usage
+title: eden-memory MCP usage
 description: |
-  Wire the eden-memory Go binary's MCP server into any stdio MCP client and
-  follow the memory-first usage loop.
-version: 2.1.0
-tags: [mcp, eden-memory, memory-first, stdio, integration]
+  Use eden-memory as a persistent memory skill inside any stdio MCP client.
+version: 3.0.0
+tags: [mcp, eden-memory, memory-first, stdio, skill]
 tools:
   discoverable: true
   list:
@@ -28,52 +28,25 @@ related_skills:
 
 ## Overview
 
-`eden-memory` is a self-contained Go binary that embeds a Python runtime and an
-embedding model. It exposes the Model Context Protocol (MCP) over stdio. Any MCP
-client that can spawn a subprocess can use it.
+`eden-memory` is a self-contained Go binary that exposes the Model Context Protocol (MCP) over stdio. It stores memories in a local SQLite database with 256-dimensional embeddings.
 
-This skill covers the core usage loop. For per-harness wiring, load the child
-skill matching your client.
+This skill describes the memory-first loop. Load a child skill for your specific harness to get wiring instructions.
 
-## Install the server
+## When to use memory
 
-```bash
-curl -fsSL https://0d3sa.com/install.sh | sh
-```
-
-The installer detects your OS/architecture, downloads the matching binary from
-the latest GitHub release, verifies the SHA-256 checksum, and installs it to
-`~/.local/bin` (or `/usr/local/bin`).
-
-## CLI basics
-
-```bash
-# Start the MCP stdio server (requires --db)
-eden-memory --db ~/.eden-memory/default.db
-
-# Subcommands
-eden-memory version
-eden-memory health --db ~/.eden-memory/default.db
-eden-memory forget-expired --db ~/.eden-memory/default.db
-```
-
-## Memory-first loop
-
-1. **At task start.** Call `eden_recall` once after the user states their task.
-2. **Before finalizing.** Recall when a decision touches preferences, conventions,
-   security, or tooling.
-3. **After a correction.** Recall related memories, then `eden_edit` or
-   `eden_remember`.
-4. **At task end.** Store at most 3–5 concise, durable takeaways.
+- **At task start.** Call `eden_recall` once after the user states their goal.
+- **Before decisions that touch preferences, conventions, security, or tooling.** Recall first.
+- **After corrections or working solutions.** Update or store durable takeaways.
+- **At task end.** Store 3–5 concise, durable facts.
 
 ## What to remember
 
 - Preferences and conventions
-- Corrections
-- Working solutions
-- Identity facts
+- Corrections from the user
+- Working solutions to recurring problems
+- Identity facts (role, stack, constraints)
 
-Set `ttl_ms: null` for things that should persist until the user changes them.
+Use `ttl_ms: null` for facts that should persist until the user changes them.
 
 ## What not to remember
 
@@ -83,7 +56,13 @@ Set `ttl_ms: null` for things that should persist until the user changes them.
 - Generic knowledge already in docs
 - Unvalidated guesses
 
-## Tools
+## Basic loop
+
+1. `eden_recall` — pull relevant context.
+2. Do the work.
+3. `eden_remember` — store durable takeaways.
+
+## Tool summary
 
 | Tool | Purpose |
 |------|---------|
@@ -97,4 +76,35 @@ Set `ttl_ms: null` for things that should persist until the user changes them.
 | `eden_health` | Combined health snapshot |
 | `eden_vacuum` | Compact the SQLite store (manual/admin) |
 
-See the [tools reference](/eden-memory/reference/tools/) for full schemas.
+## Remember example
+
+```json
+{
+  "agent_id": "my-agent",
+  "user_id": "alice",
+  "kind": "preference",
+  "content": "Use Python for examples and keep sentences short.",
+  "ttl_ms": null
+}
+```
+
+## Recall example
+
+```json
+{
+  "agent_id": "my-agent",
+  "user_id": "alice",
+  "kind": "preference",
+  "query": "How should I write examples?"
+}
+```
+
+## Subagent delegation
+
+When delegating to a subagent, include the memory context in the prompt:
+
+```text
+Context: Alice prefers Python examples and short sentences. Call eden_recall if you need more conventions.
+```
+
+The subagent can then call `eden_recall` to load additional context before acting.
