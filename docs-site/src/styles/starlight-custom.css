@@ -1,0 +1,187 @@
+/* Starlight dark theme override to match the 0d3sa landing page. */
+
+:root {
+  --sl-color-white: #f0f2f6;
+  --sl-color-gray-1: #e1e5ec;
+  --sl-color-gray-2: #8b94a7;
+  --sl-color-gray-3: #5e677a;
+  --sl-color-gray-4: #3a4254;
+  --sl-color-gray-5: #232834;
+  --sl-color-gray-6: #181a21;
+  --sl-color-gray-7: #11141a;
+  --sl-color-black: #0b0d10;
+
+  --sl-color-bg: var(--sl-color-black);
+  --sl-color-bg-nav: var(--sl-color-gray-7);
+  --sl-color-bg-sidebar: var(--sl-color-gray-7);
+  --sl-color-bg-inline-code: var(--sl-color-gray-6);
+  --sl-color-bg-accent: rgba(124, 140, 255, 0.12);
+  --sl-color-text: var(--sl-color-white);
+  --sl-color-text-accent: #7c8cff;
+  --sl-color-text-invert: #05060a;
+  --sl-color-border: var(--sl-color-gray-5);
+
+  --sl-font: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --sl-font-mono: JetBrains Mono, ui-monospace, monospace;
+}
+
+/* Header / nav */
+header.header {
+  background: var(--sl-color-gray-7) !important;
+  border-bottom: 1px solid var(--sl-color-border) !important;
+}
+
+.site-title {
+  color: var(--sl-color-white);
+  font-weight: 700;
+}
+
+/* Sidebar */
+nav.sidebar {
+  background: var(--sl-color-gray-7) !important;
+  border-right: 1px solid var(--sl-color-border) !important;
+}
+
+.sidebar-content ul li a {
+  color: var(--sl-color-gray-2);
+  border-radius: 8px;
+}
+
+.sidebar-content ul li a:hover {
+  color: var(--sl-color-white);
+  background: var(--sl-color-gray-6);
+}
+
+.sidebar-content ul li a[aria-current="page"] {
+  color: var(--sl-color-text-accent);
+  background: var(--sl-color-bg-accent);
+  font-weight: 600;
+}
+
+/* Main content area */
+main {
+  background: var(--sl-color-black);
+  color: var(--sl-color-white);
+}
+
+.content-panel {
+  background: var(--sl-color-black);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--sl-color-white);
+  font-weight: 700;
+}
+
+p, li {
+  color: var(--sl-color-gray-1);
+}
+
+/* Code */
+code {
+  font-family: var(--sl-font-mono);
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  border: 1px solid var(--sl-color-border);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+pre {
+  background: var(--sl-color-gray-7) !important;
+  border: 1px solid var(--sl-color-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Links */
+a {
+  color: var(--sl-color-text-accent);
+}
+
+a:hover {
+  color: #9ca7ff;
+}
+
+/* Cards / asides */
+.starlight-aside {
+  background: var(--sl-color-gray-7);
+  border: 1px solid var(--sl-color-border);
+  border-radius: 12px;
+}
+
+/* Tables */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--sl-color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background: var(--sl-color-gray-7);
+  color: var(--sl-color-white);
+  font-weight: 600;
+}
+
+td {
+  border-top: 1px solid var(--sl-color-border);
+  color: var(--sl-color-gray-1);
+}
+
+/* Buttons in splash */
+.hero .sl-flex a[role="button"] {
+  background: var(--sl-color-text-accent);
+  color: var(--sl-color-text-invert);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.hero .sl-flex a[role="button"].secondary {
+  background: transparent;
+  color: var(--sl-color-white);
+  border: 1px solid var(--sl-color-border);
+}
+
+/* Search input */
+#starlight__search button {
+  background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-border);
+  color: var(--sl-color-gray-2);
+  border-radius: 8px;
+}
+
+/* Mobile menu button */
+button[aria-label="Menu"] {
+  color: var(--sl-color-white);
+}
+
+/* Footer */
+footer.meta {
+  border-top: 1px solid var(--sl-color-border);
+  color: var(--sl-color-gray-2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--sl-color-gray-7);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sl-color-gray-4);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sl-color-gray-3);
+}

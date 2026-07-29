@@ -1,9 +1,9 @@
 ---
-title: Tools Reference
+title: Tools reference
 description: What each eden-memory tool does and when to use it.
 ---
 
-eden-memory advertises these stdio tools. All inputs are JSON objects.
+All inputs are JSON objects. `agent_id` and `user_id` are required for tools that read or write memories.
 
 ## `eden_remember`
 
@@ -23,7 +23,7 @@ Store a durable memory.
 
 - `agent_id` and `user_id` are required.
 - `ttl_ms: null` means the memory never expires. A positive integer sets an expiry in milliseconds.
-- `workspace_id` scopes the memory to a project; `org_id` is for fleet/SaaS contexts.
+- `workspace_id` scopes the memory to a project; `org_id` is for fleet contexts.
 
 Response:
 
@@ -120,7 +120,7 @@ Remove all memories past their TTL. This is a housekeeping tool; do not call it 
 
 ## `eden_health`
 
-Return a combined health, sync, usage, and telemetry snapshot.
+Return a combined health, usage, and telemetry snapshot.
 
 ```json
 {}

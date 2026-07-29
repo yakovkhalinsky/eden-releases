@@ -39,7 +39,7 @@
         <p class="product-label">Product on 0d3sa</p>
         <h1>eden-memory</h1>
         <p class="lead">
-          Persistent memory for AI agents. One local binary that stores what your agents learn across sessions. Wire it to Claude, Cursor, or any MCP client through a single config file.
+          Persistent memory for AI agents. One local binary with a bundled embedding model and a SQLite store. Wire it to Claude, Cursor, or any MCP client through a single config file.
         </p>
 
         <div class="terminal-hero">
@@ -54,15 +54,15 @@
             </div>
             <div class="line">
               <span class="prompt">$</span>
-              <span class="cmd">eden-memory setup</span>
+              <span class="cmd">eden-memory version</span>
             </div>
             <div class="line">
               <span class="prompt">$</span>
-              <span class="cmd">eden-memory mcp install --client claude-code</span>
+              <span class="cmd">eden-memory health</span>
             </div>
           </div>
           <div class="copy-row">
-            <span class="mono hint">Copy the installer and paste it in your terminal.</span>
+            <span class="mono hint">Install, check the version, then check health.</span>
             <button class="copy-btn" data-cmd="curl -fsSL https://0d3sa.com/install.sh | sh">Copy command</button>
           </div>
         </div>
@@ -85,9 +85,10 @@
           <div class="step">
             <div class="step-num">2</div>
             <div class="step-body">
-              <h3>Run setup</h3>
-              <p>Creates the data directory and starts the local core on port 7788.</p>
-              <code class="mono">eden-memory setup</code>
+              <h3>Check version and health</h3>
+              <p>Confirm the binary is on your PATH and can open its SQLite database.</p>
+              <code class="mono">eden-memory version</code>
+              <code class="mono">eden-memory health</code>
             </div>
           </div>
 
@@ -95,21 +96,21 @@
             <div class="step-num">3</div>
             <div class="step-body">
               <h3>Wire your client</h3>
-              <p>Pick the client you use. Restart it after running the command.</p>
+              <p>Pick the client you use. Restart it after adding the server.</p>
               <div class="client-grid">
-                <div class="client">
+                <a href="/eden-memory/skills/eden-memory-claude/" class="client client-link">
                   <span class="client-name">◈ Claude Code</span>
-                  <code class="mono">eden-memory mcp install --client claude-code</code>
-                </div>
-                <div class="client">
+                  <span class="client-hint">See setup →</span>
+                </a>
+                <a href="/eden-memory/skills/eden-memory-cursor/" class="client client-link">
                   <span class="client-name">✦ Cursor</span>
-                  <code class="mono">eden-memory mcp install --client cursor</code>
-                </div>
-                <div class="client">
-                  <span class="client-name">⌘ Anything else</span>
-                  <code class="mono">{'{'}{'"'}mcpServers{'"'}: {'{'}{'"'}eden-memory{'"'}: {'{'}{'"'}command{'"'}: {'"'}eden-memory{'"'}, {'"'}args{'"'}: [{'"'}mcp{'"'}] {'}'} {'}'} {'}'}</code>
-                </div>
+                  <span class="client-hint">See setup →</span>
+                </a>
               </div>
+              <p class="client-hint" style="margin-top:14px">For any other MCP client, use this server command:</p>
+              <code class="mono">eden-memory --db /home/yourname/.eden-memory/default.db</code>
+              <p class="client-hint" style="margin-top:10px">Or this JSON shape:</p>
+              <code class="mono">{'{'}{'"'}mcpServers{'"'}: {'{'}{'"'}eden-memory{'"'}: {'{'}{'"'}command{'"'}: {'"'}eden-memory{'"'}, {'"'}args{'"'}: [{'"'}--db{'"'}, {'"'}/home/yourname/.eden-memory/default.db{'"'}] {'}'} {'}'} {'}'}</code>
             </div>
           </div>
 
@@ -118,7 +119,8 @@
             <div class="step-body">
               <h3>Verify it works</h3>
               <p>Tell the agent to remember something, then start a new session and ask it back.</p>
-              <code class="mono">eden-memory read --kind preference --query "tabs vs spaces"</code>
+              <code class="mono">Remember that I prefer Python examples and short sentences.</code>
+              <code class="mono">What do you know about my communication preferences?</code>
             </div>
           </div>
         </div>
@@ -130,12 +132,12 @@
         <div class="feature-split">
           <div class="feature-copy">
             <h2>What it does</h2>
-            <p>eden-memory stores prompts, tool calls, and facts in a local append-only event log. A background worker turns that log into a searchable knowledge graph. When your agent starts a new conversation, it gets the exact context it needs — not the whole history.</p>
+            <p>eden-memory stores facts and context your agents collect in a local SQLite database. Each memory gets a 256-dimensional embedding. When your agent asks a question, eden-memory runs cosine-similarity search over the vectors and returns the most relevant results. Keyword search is also available. Everything stays on your machine.</p>
             <ul class="checklist">
-              <li>One static binary, no cloud account</li>
-              <li>MCP server that works with any client</li>
-              <li>Hybrid search: BM25 + vector + graph</li>
-              <li>Everything stored in plain text under <code class="mono">~/.eden-memory/</code></li>
+              <li>One static binary with embedded Python runtime and model weights</li>
+              <li>MCP server over stdio — works with any client</li>
+              <li>Semantic and keyword search over memories</li>
+              <li>Everything stored in <code class="mono">~/.eden-memory/default.db</code></li>
             </ul>
           </div>
           <div class="art-frame">
@@ -471,24 +473,39 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+  }
+
+  .client-link:hover {
+    border-color: var(--accent);
   }
 
   .client-name {
     display: block;
     font-weight: 600;
     font-size: 0.9rem;
-    margin-bottom: 8px;
     color: var(--text);
   }
 
   .client code {
     display: block;
     background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px;
     font-size: 0.75rem;
     color: var(--text-muted);
     overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .client-hint {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
   }
 
   .feature-split {

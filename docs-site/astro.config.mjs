@@ -10,6 +10,26 @@ export default defineConfig({
 		starlight({
 			title: '0d3sa',
 			description: 'Public releases and documentation for 0d3sa projects.',
+			customCss: [
+				'./src/styles/starlight-custom.css',
+			],
+			head: [
+				{
+					tag: 'link',
+					attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+				},
+				{
+					tag: 'link',
+					attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
+				},
+				{
+					tag: 'link',
+					attrs: {
+						rel: 'stylesheet',
+						href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap',
+					},
+				},
+			],
 			social: [
 				{ icon: 'github', label: 'Releases', href: 'https://github.com/yakovkhalinsky/eden-releases' },
 			],

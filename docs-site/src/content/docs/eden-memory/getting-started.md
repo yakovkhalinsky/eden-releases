@@ -5,13 +5,15 @@ description: Download eden-memory, verify it, connect a client, and test memory.
 
 ## Install
 
-The installer downloads the right binary for your platform, verifies the checksum, and installs it to `~/.local/bin`:
+Run the installer:
 
 ```bash
 curl -fsSL https://0d3sa.com/install.sh | sh
 ```
 
-If you prefer to install by hand, see the [download table](#manual-download) below.
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin`.
+
+If you prefer to install by hand, use the download table below.
 
 ## Verify
 
@@ -19,25 +21,46 @@ If you prefer to install by hand, see the [download table](#manual-download) bel
 eden-memory version
 ```
 
-You should see a version string. If not, make sure `~/.local/bin` is on your PATH.
+You should see a version string. If you do not, make sure `~/.local/bin` is on your PATH.
+
+Then check that the binary can open its database:
+
+```bash
+eden-memory health
+```
 
 ## Connect a client
 
-eden-memory speaks MCP over stdio. We publish [agent skills](/eden-memory/skills/) for popular clients:
+eden-memory speaks MCP over stdio. The exact setup depends on your client:
 
 - [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)
 - [Cursor](/eden-memory/skills/eden-memory-cursor/)
 - [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)
 
-For other clients the server command is:
+For any other client, add a server with this command:
 
 ```bash
 eden-memory --db /home/yourname/.eden-memory/default.db
 ```
 
+Use your real username. The JSON shape is:
+
+```json
+{
+  "mcpServers": {
+    "eden-memory": {
+      "command": "eden-memory",
+      "args": ["--db", "/home/yourname/.eden-memory/default.db"]
+    }
+  }
+}
+```
+
+Restart your client after adding the server.
+
 ## Test it
 
-Once your client is connected, ask it to remember something:
+Ask your agent to remember something:
 
 ```text
 Remember that I prefer Python examples and short sentences.
@@ -49,11 +72,11 @@ Then start a new conversation and ask:
 What do you know about my communication preferences?
 ```
 
-The client should recall the preference from the local store.
+The agent should recall the preference from the local store.
 
-## What eden-memory does
+## What it does
 
-eden-memory lets your AI agent remember things across conversations. It runs locally, stores memories in a SQLite database, and connects to any MCP client over stdio.
+eden-memory stores memories in a SQLite database at `~/.eden-memory/default.db`. Each memory gets a 256-dimensional embedding. When the agent runs `eden_recall`, eden-memory compares the query embedding to stored vectors and returns the closest matches.
 
 ## Manual download
 
@@ -80,5 +103,6 @@ Replace `linux-arm64` with your platform.
 
 ## Next steps
 
-- [Skills registry](/eden-memory/skills/) — agent skills for every harness with autodiscoverable tools.
-- [Tools reference](/eden-memory/reference/tools/) — what each tool does and when to use it.
+- [Connect your client](/eden-memory/mcp-clients/)
+- [Tools reference](/eden-memory/reference/tools/)
+- [Skills registry](/eden-memory/skills/)

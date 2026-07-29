@@ -1,26 +1,15 @@
 ---
-title: Eden Memory MCP Usage
-description: Wire the eden-memory Go binary's MCP server into any stdio MCP client and follow the memory-first usage loop.
-template: doc
-skill_name: eden-memory-mcp-usage
-skill_version: 2.1.0
-skill_tags: mcp, eden-memory, memory-first, stdio, integration
-skill_discoverable: true
-skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
-skill_install_hint: 'curl -fsSL https://0d3sa.com/install.sh | sh'
-skill_related: eden-memory-claude, eden-memory-cursor, eden-memory-hermes
+title: eden-memory MCP usage
+description: Use the eden-memory MCP server with any stdio MCP client.
 ---
 
-# eden-memory MCP usage
+## What this covers
 
-## Overview
+This page explains the core usage loop. For per-client wiring, see:
 
-`eden-memory` is a self-contained Go binary that embeds a Python runtime and an
-embedding model. It exposes the Model Context Protocol (MCP) over stdio. Any MCP
-client that can spawn a subprocess can use it.
-
-This skill covers the core usage loop. For per-harness wiring, load the child
-skill matching your client.
+- [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)
+- [Cursor](/eden-memory/skills/eden-memory-cursor/)
+- [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)
 
 ## Install the server
 
@@ -28,9 +17,7 @@ skill matching your client.
 curl -fsSL https://0d3sa.com/install.sh | sh
 ```
 
-The installer detects your OS/architecture, downloads the matching binary from
-the latest GitHub release, verifies the SHA-256 checksum, and installs it to
-`~/.local/bin` (or `/usr/local/bin`).
+The installer downloads the right binary, verifies its checksum, and places it in your PATH.
 
 ## CLI basics
 
@@ -47,10 +34,8 @@ eden-memory forget-expired --db ~/.eden-memory/default.db
 ## Memory-first loop
 
 1. **At task start.** Call `eden_recall` once after the user states their task.
-2. **Before finalizing.** Recall when a decision touches preferences, conventions,
-   security, or tooling.
-3. **After a correction.** Recall related memories, then `eden_edit` or
-   `eden_remember`.
+2. **Before finalizing.** Recall when a decision touches preferences, conventions, security, or tooling.
+3. **After a correction.** Recall related memories, then `eden_edit` or `eden_remember`.
 4. **At task end.** Store at most 3–5 concise, durable takeaways.
 
 ## What to remember
@@ -73,7 +58,7 @@ Set `ttl_ms: null` for things that should persist until the user changes them.
 ## Tools
 
 | Tool | Purpose |
-|------|---------|
+|---|---|
 | `eden_remember` | Store a durable fact |
 | `eden_recall` | Semantic recall for this user |
 | `eden_search` | Keyword search |

@@ -1,38 +1,36 @@
 ---
 title: eden-memory
-description: Download, install, and use the eden-memory MCP memory layer.
+description: Local-first memory for AI agents. Install one binary, connect any MCP client.
 template: splash
 hero:
-  tagline: A local-first memory layer for AI agents. Download, connect, and start remembering.
-  image:
-    file: ../../../assets/houston.webp
+  tagline: Local-first memory for AI agents. One binary. One SQLite store. Any MCP client.
   actions:
-    - text: Install & get started
+    - text: Get started
       link: /eden-memory/getting-started/
       icon: download
-    - text: Skills
-      link: /eden-memory/skills/
-      icon: right-arrow
+    - text: Tools reference
+      link: /eden-memory/reference/tools/
+      icon: open-book
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+## What it is
 
-## Explore
+`eden-memory` is a single Go binary that gives your AI agent persistent memory. It bundles its own Python embedding runtime and stores memories with 256-dimensional embeddings in a local SQLite database. Your agent connects to it over MCP stdio.
 
-<CardGrid stagger>
-	<Card title="Install & get started" icon="download" link="/eden-memory/getting-started/">
-		One-line installer, manual downloads, and your first memory test.
-	</Card>
-	<Card title="Connect" icon="puzzle" link="/eden-memory/mcp-clients/">
-		Wire eden-memory into Claude Code CLI, Cursor, Hermes, or any other MCP client.
-	</Card>
-	<Card title="Skills" icon="document" link="/eden-memory/skills/">
-		Agent skills for every harness, with autodiscoverable MCP tools.
-	</Card>
-	<Card title="Use memory" icon="open-book" link="/eden-memory/reference/tools/">
-		Learn the tools and patterns for durable, private memory.
-	</Card>
-	<Card title="Stay local" icon="approve-check" link="/eden-memory/getting-started/">
-		No cloud account, no external API. Your memories stay on your machine.
-	</Card>
-</CardGrid>
+## How it works
+
+1. **Remember** — your agent stores a fact or context via `eden_remember`.
+2. **Embed** — the binary embeds the content as a 256-dim vector.
+3. **Store** — the memory and vector go into `~/.eden-memory/default.db`.
+4. **Recall** — later, your agent asks `eden_recall`; eden-memory returns the closest matches by cosine similarity.
+
+## Common tasks
+
+- [Install and verify](/eden-memory/getting-started/)
+- [Connect your client](/eden-memory/mcp-clients/)
+- [Read the tools reference](/eden-memory/reference/tools/)
+- [Browse skills](/eden-memory/skills/)
+
+## Data stays local
+
+There is no cloud account, no external API, and no network call for recall. First run extracts the embedded runtime and model weights to your platform cache; the SQLite database stays under `~/.eden-memory/`.
