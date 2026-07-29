@@ -1,6 +1,6 @@
 # eden-releases
 
-Public releases and documentation for [eden-memory](https://github.com/yakovkhalinsky/eden-memory).
+Public releases and documentation for eden-memory.
 
 Live docs: <https://0d3sa.com>
 
@@ -10,29 +10,33 @@ Latest release: <https://github.com/yakovkhalinsky/eden-releases/releases/latest
 
 - `binaries/manifest.json` — platform metadata for the published binaries.
 - `docs-site/` — Astro Starlight site that becomes <https://0d3sa.com>.
-- `.github/workflows/` — CI that deploys the site to GitHub Pages and attaches any files in `binaries/` to GitHub Releases.
-- `scripts/` — helpers for metadata generation and releases.
+- `skills/` — agent skills for eden-memory; generated into the site via `scripts/generate-skills-site.py`.
+- `.github/workflows/` — CI that deploys the site to GitHub Pages and cuts releases.
+- `scripts/` — helpers for metadata and skill-page generation.
+
+## Regenerate skill pages
+
+After editing skills under `skills/`, run:
+
+```bash
+python3 scripts/generate-skills-site.py
+```
+
+This updates `docs-site/src/content/docs/eden-memory/skills/` from the SKILL.md
+source files. Commit the generated pages so Pages builds them.
 
 ## Publish a new binary set
 
-1. Fetch the built binaries for all platforms from the private `eden-memory` release (or build them locally).
-2. Generate/refresh SHA-256 checksums:
+1. Build or fetch binaries for all target platforms and generate SHA-256 checksums:
    ```bash
    for f in eden-memory-*; do sha256sum "$f" > "$f.sha256"; done
    ```
-3. Update `binaries/manifest.json` with any new platforms or filenames.
-4. Run `./scripts/generate-download-metadata.py --assets-dir </path/to/binaries>`.
-5. Commit and push the manifest + metadata changes.
-6. Create a GitHub Release and attach the binary files and their `.sha256` files.
+2. Update `binaries/manifest.json` if filenames or platforms changed.
+3. Run `./scripts/generate-download-metadata.py --assets-dir </path/to/binaries>`.
+4. Commit and push the manifest + metadata changes.
+5. Create a GitHub Release and attach the binary files and their `.sha256` files.
 
-## Cutting a release
-
-```bash
-git tag -a vYYYY.MMDD.HHMM -m "eden-memory release vYYYY.MMDD.HHMM"
-git push origin vYYYY.MMDD.HHMM
-```
-
-Then upload the platform binaries to the drafted release. The `release.yml` workflow will attach any files already in `binaries/`; actual binary files are kept as release assets only, not committed to git.
+Binaries are stored as GitHub Release assets only — they are not committed to git.
 
 ## License
 

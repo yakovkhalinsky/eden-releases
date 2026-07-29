@@ -1,22 +1,18 @@
 ---
 title: eden-memory
-description: Download and use the eden-memory agent harness.
+description: Download, install, and use the eden-memory MCP memory layer.
 template: splash
 hero:
-  tagline: A local-first memory layer for AI agents. Download the binary, wire it to your MCP client, and start remembering.
+  tagline: A local-first memory layer for AI agents. Download, connect, and start remembering.
   image:
     file: ../../../assets/houston.webp
   actions:
-    - text: Getting Started
-      link: /eden-memory/guides/getting-started/
-      icon: right-arrow
-    - text: Download
-      link: /eden-memory/guides/install/
+    - text: Install & get started
+      link: /eden-memory/getting-started/
       icon: download
-    - text: Source on GitHub
-      link: https://github.com/yakovkhalinsky/eden-memory
-      icon: external
-      variant: minimal
+    - text: Skills
+      link: /eden-memory/skills/
+      icon: right-arrow
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
@@ -24,16 +20,19 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## Explore
 
 <CardGrid stagger>
-	<Card title="Download" icon="download">
-		Grab the latest static binary for your platform from the install page.
+	<Card title="Install & get started" icon="download" link="/eden-memory/getting-started/">
+		One-line installer, manual downloads, and your first memory test.
 	</Card>
-	<Card title="Wire it up" icon="puzzle">
-		Connect eden-memory to Claude Desktop, Cursor, Hermes, or any stdio MCP client.
+	<Card title="Connect" icon="puzzle" link="/eden-memory/mcp-clients/">
+		Wire eden-memory into Claude Code CLI, Cursor, Hermes, or any other MCP client.
 	</Card>
-	<Card title="Use memory" icon="open-book">
-		Learn the tool surface and agent patterns for durable, private memory.
+	<Card title="Skills" icon="document" link="/eden-memory/skills/">
+		Agent skills for every harness, with autodiscoverable MCP tools.
 	</Card>
-	<Card title="Stay local" icon="approve-check">
+	<Card title="Use memory" icon="open-book" link="/eden-memory/reference/tools/">
+		Learn the tools and patterns for durable, private memory.
+	</Card>
+	<Card title="Stay local" icon="approve-check" link="/eden-memory/getting-started/">
 		No cloud account, no external API. Your memories stay on your machine.
 	</Card>
 </CardGrid>
