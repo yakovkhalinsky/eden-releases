@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate docs-site content pages from SKILL.md files under skills/.
+"""Generate docs-site install guides from SKILL.md files under skills/.
 
 Each SKILL.md must have YAML frontmatter with at least:
   name, description, version, tags
@@ -7,14 +7,34 @@ and may have:
   tools: {discoverable: bool, list: [...], inherits: str}
   install_hint: str
   related_skills: [...]
+
+Generated pages are intentionally short install guides, not full renders of the
+SKILL.md body. The raw SKILL.md files are copied to docs-site/public so they can
+be downloaded as the installable artifact.
 """
 
+import json
 import re
 import sys
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).resolve().parent.parent / "skills"
-OUT_DIR = Path(__file__).resolve().parent.parent / "docs-site" / "src" / "content" / "docs" / "eden-memory" / "skills"
+OUT_DIR = (
+    Path(__file__).resolve().parent.parent
+    / "docs-site"
+    / "src"
+    / "content"
+    / "docs"
+    / "eden-memory"
+    / "skills"
+)
+PUBLIC_DIR = (
+    Path(__file__).resolve().parent.parent
+    / "docs-site"
+    / "public"
+    / "eden-memory"
+    / "skills"
+)
 
 
 def parse_frontmatter(text: str):
@@ -41,6 +61,156 @@ def title_from_name(name: str) -> str:
     return " ".join(acronyms.get(p.lower(), p.title()) for p in parts)
 
 
+def download_url(slug: str) -> str:
+    return f"/eden-memory/skills/{slug}/SKILL.md"
+
+
+def install_section(fm: dict, slug: str, name: str) -> str:
+    harness = fm.get("harness", "")
+    prefix = fm.get("tools", {}).get("prefix", "")
+    mcp_config = fm.get("mcp_config", {})
+
+    if harness == "hermes":
+        server_name = mcp_config.get("server_name", "eden")
+        return f"""## Install for Hermes Agent
+
+1. Install the binary:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
+
+2. Add the MCP server to your active Hermes profile `config.yaml` under `mcp.servers`:
+
+   ```yaml
+   mcp:
+     servers:
+       {server_name}:
+         command: eden-memory
+         args:
+           - --db
+           - /home/yourname/.eden-memory/default.db
+   ```
+
+3. Download the skill file:
+
+   ```bash
+   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
+   ```
+
+4. Copy it into your active Hermes profile so it loads automatically:
+
+   ```bash
+   PROFILE=$(hermes profile active)
+   mkdir -p ~/.hermes/profiles/${{PROFILE}}/skills/{name}
+   cp {name}/SKILL.md ~/.hermes/profiles/${{PROFILE}}/skills/{name}/SKILL.md
+   ```
+
+Restart Hermes or reload the profile after changing `config.yaml`.
+"""
+
+    if harness == "claude-code":
+        server_name = mcp_config.get("server_name", "eden-memory")
+        return f"""## Install for Claude Code CLI
+
+1. Install the binary:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
+
+2. Wire the MCP server:
+
+   ```bash
+   claude config set mcpServers '{{"{server_name}":{{"command":"eden-memory","args":["--db","/home/yourname/.eden-memory/default.db"]}}}}'
+   ```
+
+3. Download the skill file:
+
+   ```bash
+   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
+   ```
+
+4. Add it as a **project instruction** in Claude Code:
+   - Run `/memory` (or open **Settings → Project Instructions**) and paste the contents of `{name}/SKILL.md`.
+   - The file contains the memory-first rules and tool usage patterns for Claude Code CLI.
+
+Restart Claude Code after changing configuration.
+"""
+
+    if harness == "cursor":
+        server_name = mcp_config.get("server_name", "eden-memory")
+        return f"""## Install for Cursor
+
+1. Install the binary:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
+
+2. Wire the MCP server:
+
+   In Cursor, open **Settings** → **MCP** and add a new stdio server:
+
+   | Field | Value |
+   |-------|-------|
+   | Name | `{server_name}` |
+   | Command | `eden-memory` |
+   | Arguments | `--db /home/yourname/.eden-memory/default.db` |
+
+3. Download the skill file:
+
+   ```bash
+   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
+   ```
+
+4. Add the rules to Cursor:
+   - Paste the contents into a project `.cursorrules` file, **or**
+   - paste it into the **Composer / project prompt** in Cursor settings.
+
+Start a fresh chat after adding the server so the tools are discovered.
+"""
+
+    # Generic / core MCP usage skill
+    return f"""## Install for any stdio MCP client
+
+1. Install the binary:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
+
+2. Register the server with your MCP client. The exact command depends on the client; the server config is:
+
+   ```json
+   {{
+     "command": "eden-memory",
+     "args": ["--db", "/home/yourname/.eden-memory/default.db"]
+   }}
+   ```
+
+3. Download the skill file:
+
+   ```bash
+   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
+   ```
+
+4. Paste the contents of the skill file into your agent's system prompt or project instructions, or load it as a custom skill if your client supports skill files.
+"""
+
+
+def enforce_section(fm: dict) -> str:
+    return """## What this skill enforces
+
+- **Health check first.** Call `eden_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
+- **Recall before acting.** Use `eden_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
+- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `eden_remember`.
+- **Memory checkpoint.** Before finishing a task, confirm at least one recall happened at the start and at least one remember happened at the end.
+- **Stop if tools are missing.** If the eden-memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
+- **Do not remember secrets.** Never store tokens, passwords, raw command output, ephemeral reasoning, or unvalidated guesses.
+"""
+
+
 def generate():
     try:
         import yaml
@@ -49,6 +219,7 @@ def generate():
         sys.exit(1)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
     skills_dir = SKILLS_DIR
     skills_manifest_path = skills_dir / "skills.json"
     registry = []
@@ -80,7 +251,14 @@ def generate():
         install_hint = fm.get("install_hint", "")
         related = fm.get("related_skills", [])
 
-        front = ["---", f"title: {title}"]
+        # Copy raw SKILL.md to public/ for download
+        public_skill_dir = PUBLIC_DIR / slug
+        public_skill_dir.mkdir(parents=True, exist_ok=True)
+        public_skill_path = public_skill_dir / "SKILL.md"
+        public_skill_path.write_text(text, encoding="utf-8")
+        print(f"Copied {public_skill_path}")
+
+        front = ["---", f"title: Install {title} skill"]
         if description:
             front.append(f"description: {description}")
         front.extend(
@@ -102,8 +280,32 @@ def generate():
             front.append(f"skill_related: {', '.join(related)}")
         front.append("---")
 
+        body_md = f"""# Install {title} skill
+
+{description}
+
+## Download this skill
+
+The installable artifact is the raw `SKILL.md` file:
+
+- [Download `{name}/SKILL.md`]({download_url(slug)})
+- Or fetch it from the terminal:
+
+  ```bash
+  curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
+  ```
+
+{install_section(fm, slug, name)}
+{enforce_section(fm)}
+## Next steps
+
+- Browse the [skills registry](/eden-memory/skills/)
+- Read the [MCP clients guide](/eden-memory/mcp-clients/)
+- See the [tools reference](/eden-memory/reference/tools/)
+"""
+
         out_path = OUT_DIR / f"{slug}.md"
-        out_path.write_text("\n".join(front) + "\n\n" + body, encoding="utf-8")
+        out_path.write_text("\n".join(front) + "\n\n" + body_md, encoding="utf-8")
         print(f"Generated {out_path}")
 
         registry_entry = {
@@ -118,13 +320,14 @@ def generate():
                 "list": tool_list,
             },
             "install_hint": install_hint,
+            "download_url": f"https://0d3sa.com{download_url(slug)}",
         }
         if inherits:
             registry_entry["tools"]["inherits"] = inherits
-        if "harness" in fm:
-            registry_entry["harness"] = fm["harness"]
         if fm.get("tools", {}).get("prefix"):
             registry_entry["tools"]["prefix"] = fm["tools"]["prefix"]
+        if "harness" in fm:
+            registry_entry["harness"] = fm["harness"]
         if "mcp_config" in fm:
             registry_entry["mcp_config"] = fm["mcp_config"]
         if related:
@@ -134,21 +337,28 @@ def generate():
     lines = [
         "---",
         "title: Skills registry",
-        "description: Discoverable agent skills and harness integrations for eden-memory.",
+        "description: Install eden-memory skills for your agent or editor.",
         "template: doc",
         "---",
         "",
-        "# eden-memory skills registry",
+        "# Install an eden-memory skill for your agent",
         "",
-        "These skills teach an agent how to use eden-memory. They declare which MCP tools they use,",
-        "how to install the binary, and which harness-specific skills to load next.",
+        "The skill files below are installable prompts and rules. Download the raw `SKILL.md` for your harness and load it into your agent.",
         "",
         "## I use…",
         "",
-        "- [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)",
-        "- [Cursor](/eden-memory/skills/eden-memory-cursor/)",
-        "- [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)",
-        "- [Another MCP client](/eden-memory/skills/eden-memory-mcp-usage/)",
+        "- [Install for Claude Code CLI](/eden-memory/skills/eden-memory-claude/)",
+        "- [Install for Cursor](/eden-memory/skills/eden-memory-cursor/)",
+        "- [Install for Hermes Agent](/eden-memory/skills/eden-memory-hermes/)",
+        "- [Install for another MCP client](/eden-memory/skills/eden-memory-mcp-usage/)",
+        "",
+        "## Download all skills",
+        "",
+        "Fetch every skill as a tarball from the latest GitHub release:",
+        "",
+        "```bash",
+        "curl -fsSL https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-skills.tar.gz | tar -xz",
+        "```",
         "",
         "| Skill | Description |",
         "|-------|-------------|",
@@ -188,7 +398,6 @@ def generate():
     index_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Generated {index_path}")
 
-    import json
     manifest = {
         "schema_version": "1.0.0",
         "package": "eden-memory-skills",

@@ -1,20 +1,27 @@
 ---
 title: Skills registry
-description: Discoverable agent skills and harness integrations for eden-memory.
+description: Install eden-memory skills for your agent or editor.
 template: doc
 ---
 
-# eden-memory skills registry
+# Install an eden-memory skill for your agent
 
-These skills teach an agent how to use eden-memory. They declare which MCP tools they use,
-how to install the binary, and which harness-specific skills to load next.
+The skill files below are installable prompts and rules. Download the raw `SKILL.md` for your harness and load it into your agent.
 
 ## I use…
 
-- [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)
-- [Cursor](/eden-memory/skills/eden-memory-cursor/)
-- [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)
-- [Another MCP client](/eden-memory/skills/eden-memory-mcp-usage/)
+- [Install for Claude Code CLI](/eden-memory/skills/eden-memory-claude/)
+- [Install for Cursor](/eden-memory/skills/eden-memory-cursor/)
+- [Install for Hermes Agent](/eden-memory/skills/eden-memory-hermes/)
+- [Install for another MCP client](/eden-memory/skills/eden-memory-mcp-usage/)
+
+## Download all skills
+
+Fetch every skill as a tarball from the latest GitHub release:
+
+```bash
+curl -fsSL https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-skills.tar.gz | tar -xz
+```
 
 | Skill | Description |
 |-------|-------------|

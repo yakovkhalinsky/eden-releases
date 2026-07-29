@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "start": "astro dev",
     "sync-skills": "node ../scripts/sync-skills-to-docs.js",
-    "build": "node ../scripts/sync-skills-to-docs.js && astro build",
+    "generate-skills": "python3 ../scripts/generate-skills-site.py",
+    "build": "python3 ../scripts/generate-skills-site.py && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

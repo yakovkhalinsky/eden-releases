@@ -33,6 +33,7 @@
         "prefix": "mcp__eden-memory__"
       },
       "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "download_url": "https://0d3sa.com/eden-memory/skills/eden-memory-claude/SKILL.md",
       "harness": "claude-code",
       "mcp_config": {
         "server_name": "eden-memory",
@@ -80,6 +81,7 @@
         "prefix": "mcp__eden-memory__"
       },
       "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "download_url": "https://0d3sa.com/eden-memory/skills/eden-memory-cursor/SKILL.md",
       "harness": "cursor",
       "mcp_config": {
         "server_name": "eden-memory",
@@ -127,6 +129,7 @@
         "prefix": "mcp__eden__"
       },
       "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "download_url": "https://0d3sa.com/eden-memory/skills/eden-memory-hermes/SKILL.md",
       "harness": "hermes",
       "mcp_config": {
         "server_name": "eden",
@@ -171,6 +174,7 @@
         ]
       },
       "install_hint": "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+      "download_url": "https://0d3sa.com/eden-memory/skills/eden-memory-mcp-usage/SKILL.md",
       "related_skills": [
         "eden-memory-claude",
         "eden-memory-cursor",

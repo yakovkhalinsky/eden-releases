@@ -1,109 +1,73 @@
 ---
-title: Cursor
-description: Agent skill for working with eden-memory.
+title: Install Eden Memory Cursor skill
+description: Use eden-memory as a persistent skill inside Cursor.
+template: doc
+skill_name: eden-memory-cursor
+skill_version: 2.0.0
+skill_tags: mcp, eden-memory, cursor, skill, prompt, composer
+skill_discoverable: true
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_inherits: eden-memory-mcp-usage
+skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
+skill_related: eden-memory-mcp-usage, eden-memory-claude, eden-memory-hermes
 ---
 
-# eden-memory + Cursor
+# Install Eden Memory Cursor skill
 
-## Wire the MCP server
+Use eden-memory as a persistent skill inside Cursor.
 
-In Cursor, open **Settings** → **MCP** and add a new stdio server:
+## Download this skill
 
-| Field | Value |
-|-------|-------|
-| Name | `eden-memory` |
-| Command | `eden-memory` |
-| Arguments | `--db /home/yourname/.eden-memory/default.db` |
+The installable artifact is the raw `SKILL.md` file:
 
-Use your real username and start a new chat.
+- [Download `eden-memory-cursor/SKILL.md`](/eden-memory/skills/eden-memory-cursor/SKILL.md)
+- Or fetch it from the terminal:
 
-## Verify the server
+  ```bash
+  curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-cursor/SKILL.md -o eden-memory-cursor/SKILL.md
+  ```
 
-At the start of every session, call `mcp__eden-memory__eden_health`. If the call fails or returns `healthy: false`, stop and ask the user to check the install:
+## Install for Cursor
 
-```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-```
+1. Install the binary:
 
-Do not proceed with memory-dependent work until `eden_health` succeeds.
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
 
-## Tool names in Cursor
+2. Wire the MCP server:
 
-Cursor exposes MCP tools as:
+   In Cursor, open **Settings** → **MCP** and add a new stdio server:
 
-- `mcp__eden-memory__eden_remember`
-- `mcp__eden-memory__eden_recall`
-- `mcp__eden-memory__eden_search`
-- `mcp__eden-memory__eden_search_semantic`
-- `mcp__eden-memory__eden_edit`
-- `mcp__eden-memory__eden_forget`
-- `mcp__eden-memory__eden_forget_expired`
-- `mcp__eden-memory__eden_health`
-- `mcp__eden-memory__eden_vacuum`
+   | Field | Value |
+   |-------|-------|
+   | Name | `eden-memory` |
+   | Command | `eden-memory` |
+   | Arguments | `--db /home/yourname/.eden-memory/default.db` |
 
-## Usage pattern
+3. Download the skill file:
 
-Add this instruction to your project prompt or `.cursorrules`:
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-cursor/SKILL.md -o eden-memory-cursor/SKILL.md
+   ```
 
-```text
-MEMORY-FIRST RULES:
-1. Immediately after the user gives a task, call mcp__eden-memory__eden_recall with the task summary and kind "convention" or "preference".
-2. Before any decision that touches user preferences, coding style, security, or tooling, call mcp__eden-memory__eden_recall first.
-3. After corrections, working solutions, or settled conventions, call mcp__eden-memory__eden_remember.
-4. At the end of every task, batch 3–5 durable takeaways into mcp__eden-memory__eden_remember calls.
-5. Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-6. If eden_recall/eden_remember tools are unavailable, ask the user to wire the eden-memory MCP server and stop.
-```
+4. Add the rules to Cursor:
+   - Paste the contents into a project `.cursorrules` file, **or**
+   - paste it into the **Composer / project prompt** in Cursor settings.
 
-## Example `.cursorrules` snippet
+Start a fresh chat after adding the server so the tools are discovered.
 
-```text
-Memory conventions:
-- Recall at task start with the task summary.
-- Remember after corrections or working solutions.
-- Do not remember secrets, raw output, or unvalidated guesses.
-- Use kind: "preference" for lasting user preferences, kind: "convention" for project rules.
-```
+## What this skill enforces
 
-## Remember / recall template
+- **Health check first.** Call `eden_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
+- **Recall before acting.** Use `eden_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
+- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `eden_remember`.
+- **Memory checkpoint.** Before finishing a task, confirm at least one recall happened at the start and at least one remember happened at the end.
+- **Stop if tools are missing.** If the eden-memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
+- **Do not remember secrets.** Never store tokens, passwords, raw command output, ephemeral reasoning, or unvalidated guesses.
 
-```json
-{
-  "agent_id": "cursor-agent",
-  "user_id": "alice",
-  "kind": "preference",
-  "content": "Keep frontend components under 200 lines. Split earlier rather than later.",
-  "ttl_ms": null
-}
-```
+## Next steps
 
-```json
-{
-  "agent_id": "cursor-agent",
-  "user_id": "alice",
-  "kind": "preference",
-  "query": "component size limits"
-}
-```
-
-## Composer / agent delegation
-
-When delegating to Cursor’s composer, include the memory context in the prompt:
-
-```text
-Build a settings page. Alice prefers small components and Tailwind. Recall if you need more details.
-```
-
-## If tools are missing
-
-If you cannot call the eden-memory tools:
-1. Stop task execution.
-2. Tell the user: "eden-memory MCP server is not configured. Run the install and add the server config, then restart."
-3. Provide the one-line wiring command or setup script from this skill.
-4. Do not silently continue without memory.
-
-## Troubleshooting
-
-- Server exits: ensure `--db` uses an absolute path.
-- Command not found: add `~/.local/bin` to your PATH, or use the full binary path.
-- No tool calls: open a fresh chat after adding the server.
+- Browse the [skills registry](/eden-memory/skills/)
+- Read the [MCP clients guide](/eden-memory/mcp-clients/)
+- See the [tools reference](/eden-memory/reference/tools/)

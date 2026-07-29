@@ -49,8 +49,7 @@ jobs:
 
       - name: Create skills tarball
         run: |
-          VERSION="${{ github.event.inputs.source_tag }}"
-          tar -czf "eden-memory-skills-${VERSION}.tar.gz" \
+          tar -czf "eden-memory-skills.tar.gz" \
             skills/ \
             scripts/setup-claude.sh \
             scripts/setup-hermes.sh \
@@ -106,7 +105,7 @@ jobs:
           commit: ${{ steps.publish.outputs.sha }}
           name: eden-memory ${{ github.event.inputs.source_tag }}
           generateReleaseNotes: true
-          artifacts: "public-binaries/eden-memory-*,eden-memory-skills-*.tar.gz"
+          artifacts: "public-binaries/eden-memory-*,eden-memory-skills.tar.gz"
           artifactErrorsFailBuild: true
           makeLatest: true
           allowUpdates: true
