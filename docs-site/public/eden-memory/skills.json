@@ -6,8 +6,8 @@
       "name": "eden-memory-claude",
       "slug": "eden-memory-claude",
       "title": "Claude Code CLI",
-      "description": "Use eden-memory as a persistent skill inside Claude Code CLI.",
-      "version": "2.2.0",
+      "description": "Use eden-memory as a persistent memory layer inside Claude Code CLI.",
+      "version": "3.0.0",
       "tags": [
         "mcp",
         "eden-memory",
@@ -41,9 +41,11 @@
         "command": "${HOME}/.local/bin/eden-memory",
         "args": [
           "--db",
-          "${HOME}/.eden-memory/default.db",
-          "--mcp-stdio"
-        ]
+          "${HOME}/.eden-memory/default.db"
+        ],
+        "env": {
+          "EDEN_LOG_LEVEL": "INFO"
+        }
       },
       "related_skills": [
         "eden-memory-mcp-usage"

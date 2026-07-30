@@ -26,7 +26,7 @@ curl -fsSL https://github.com/yakovkhalinsky/eden-releases/releases/latest/downl
 | Skill | Description |
 |-------|-------------|
 | [eden-memory MCP usage](/eden-memory/skills/eden-memory-mcp-usage/) | Use eden-memory as a persistent memory skill inside any stdio MCP client. |
-| [Claude Code CLI](/eden-memory/skills/eden-memory-claude/) | Use eden-memory as a persistent skill inside Claude Code CLI. |
+| [Claude Code CLI](/eden-memory/skills/eden-memory-claude/) | Use eden-memory as a persistent memory layer inside Claude Code CLI. |
 | [Cursor](/eden-memory/skills/eden-memory-cursor/) | Use eden-memory as a persistent skill inside Cursor. |
 | [Hermes Agent](/eden-memory/skills/eden-memory-hermes/) | Use eden-memory as a persistent skill inside Hermes Agent. |
 
