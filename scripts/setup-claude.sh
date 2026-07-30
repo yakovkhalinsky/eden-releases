@@ -19,7 +19,7 @@ else
   COMMAND="${BIN}"
 fi
 
-CONFIG="{\"eden-memory\":{\"command\":\"${COMMAND}\",\"args\":[\"--db\",\"${DB}\"]}}"
+CONFIG="{\"eden-memory\":{\"command\":\"${COMMAND}\",\"args\":[\"--db\",\"${DB}\",\"--mcp-stdio\"]}}"
 
 claude config set mcpServers "${CONFIG}"
 

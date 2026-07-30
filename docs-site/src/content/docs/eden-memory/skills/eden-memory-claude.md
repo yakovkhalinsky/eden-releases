@@ -1,129 +1,69 @@
 ---
-title: Claude Code CLI
-description: Agent skill for working with eden-memory.
+title: Install Eden Memory Claude skill
+description: Use eden-memory as a persistent skill inside Claude Code CLI.
+template: doc
+skill_name: eden-memory-claude
+skill_version: 2.2.0
+skill_tags: mcp, eden-memory, claude-code, skill, prompt, subagent
+skill_discoverable: true
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_inherits: eden-memory-mcp-usage
+skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
+skill_related: eden-memory-mcp-usage
 ---
 
-# eden-memory + Claude Code CLI
+# Install Eden Memory Claude skill
 
-## Install the binary
+Use eden-memory as a persistent skill inside Claude Code CLI.
 
-```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-```
+## Download this skill
 
-This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
+The installable artifact is the raw `SKILL.md` file:
 
-## Wire the MCP server
+- [Download `eden-memory-claude/SKILL.md`](/eden-memory/skills/eden-memory-claude/SKILL.md)
+- Or fetch it from the terminal:
 
-Run this in your terminal (it expands `$HOME` automatically):
-
-```bash
-claude config set mcpServers "{\"eden-memory\":{\"command\":\"$HOME/.local/bin/eden-memory\",\"args\":[\"--db\",\"$HOME/.eden-memory/default.db\"]}}"
-```
-
-Then restart Claude Code completely (`/exit`, then reopen).
-
-If `eden-memory` is not on the PATH that Claude Code sees, use the absolute path:
-
-```bash
-claude config set mcpServers "{\"eden-memory\":{\"command\":\"/home/yourname/.local/bin/eden-memory\",\"args\":[\"--db\",\"/home/yourname/.eden-memory/default.db\"]}}"
-```
-
-Replace `yourname` with your actual username.
-
-## Verify the server
-
-At the start of every session, call `mcp__eden-memory__eden_health`. If the call fails or returns `healthy: false`, stop and re-run the install:
-
-```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-```
-
-Do not proceed with memory-dependent work until `eden_health` succeeds.
-
-## Tool names in Claude Code
-
-- `mcp__eden-memory__eden_remember`
-- `mcp__eden-memory__eden_recall`
-- `mcp__eden-memory__eden_search`
-- `mcp__eden-memory__eden_search_semantic`
-- `mcp__eden-memory__eden_edit`
-- `mcp__eden-memory__eden_forget`
-- `mcp__eden-memory__eden_forget_expired`
-- `mcp__eden-memory__eden_health`
-- `mcp__eden-memory__eden_vacuum`
-
-## System prompt pattern
-
-Add this to your project instructions:
-
-```text
-MEMORY-FIRST RULES:
-1. Immediately after the user gives a task, call mcp__eden-memory__eden_recall with the task summary and kind "convention" or "preference".
-2. Before any decision that touches user preferences, coding style, security, or tooling, call mcp__eden-memory__eden_recall first.
-3. After corrections, working solutions, or settled conventions, call mcp__eden-memory__eden_remember.
-4. At the end of every task, batch 3–5 durable takeaways into mcp__eden-memory__eden_remember calls.
-5. Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-6. If eden_recall/eden_remember tools are unavailable, ask the user to wire the eden-memory MCP server and stop.
-```
-
-## Example task prompt
-
-```text
-We are refactoring a Go service. Please:
-1. Call eden_recall to see if Alice has preferences about Go style or testing.
-2. Read the current code and propose a refactor.
-3. After we agree on the changes, call eden_remember with the conventions we settled on.
-```
-
-## Remember / recall template
-
-```json
-{
-  "agent_id": "claude-code-cli",
-  "user_id": "alice",
-  "kind": "convention",
-  "content": "Prefer table-driven tests with testify/require.",
-  "ttl_ms": null
-}
-```
-
-```json
-{
-  "agent_id": "claude-code-cli",
-  "user_id": "alice",
-  "kind": "convention",
-  "query": "testing style"
-}
-```
-
-## Subagent delegation
-
-If you spawn a subagent in Claude Code, pass memory context explicitly:
-
-```text
-Subagent: fix-lint-issues
-Context: Alice prefers testify/require for assertions. Use eden_recall if you need more conventions.
-```
-
-The subagent can use the inherited MCP tools to recall and remember while it works.
-
-## If tools are missing
-
-If you cannot call the eden-memory tools:
-1. Stop task execution.
-2. Tell the user: "eden-memory MCP server is not configured. Run the install and add the server config, then restart."
-3. Provide the one-line wiring command or setup script from this skill.
-4. Do not silently continue without memory.
-
-## Troubleshooting
-
-- **Server exits**: ensure `--db` uses an absolute path and the parent directory exists.
-- **Command not found**: add `~/.local/bin` to your PATH, or use the absolute binary path in the MCP config.
-- **Config not picked up**: restart Claude Code after changing the config. The `mcpServers` key lives in `~/.claude.json`.
-- **Stale Python wrapper from an old install**: if `eden-memory` fails with `ModuleNotFoundError: No module named 'eden_memory'`, remove the broken wrapper and reinstall:
   ```bash
-  rm -f ~/.local/bin/eden-memory
-  curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+  curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-claude/SKILL.md -o eden-memory-claude/SKILL.md
   ```
-- **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is Claude Code config or PATH.
+
+## Install for Claude Code CLI
+
+1. Install the binary:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
+
+2. Wire the MCP server. This command expands `$HOME` automatically:
+
+   ```bash
+   claude config set mcpServers "{\"eden-memory\":{\"command\":\"$HOME/.local/bin/eden-memory\",\"args\":[\"--db\",\"$HOME/.eden-memory/default.db\","--mcp-stdio"]}}"
+   ```
+
+3. Download the skill file:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-claude/SKILL.md -o eden-memory-claude/SKILL.md
+   ```
+
+4. Add it as a **project instruction** in Claude Code:
+   - Run `/memory` (or open **Settings → Project Instructions**) and paste the contents of `eden-memory-claude/SKILL.md`.
+   - The file contains the memory-first rules and tool usage patterns for Claude Code CLI.
+
+Restart Claude Code after changing configuration. The `mcpServers` key is written to `~/.claude.json`. If `eden-memory` is not on the PATH that Claude Code sees, replace `$HOME` with the absolute path (e.g., `/home/yourname/.local/bin/eden-memory`).
+
+## What this skill enforces
+
+- **Health check first.** Call `eden_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
+- **Recall before acting.** Use `eden_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
+- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `eden_remember`.
+- **Memory checkpoint.** Before finishing a task, confirm at least one recall happened at the start and at least one remember happened at the end.
+- **Stop if tools are missing.** If the eden-memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
+- **Do not remember secrets.** Never store tokens, passwords, raw command output, ephemeral reasoning, or unvalidated guesses.
+
+## Next steps
+
+- Browse the [skills registry](/eden-memory/skills/)
+- Read the [MCP clients guide](/eden-memory/mcp-clients/)
+- See the [tools reference](/eden-memory/reference/tools/)

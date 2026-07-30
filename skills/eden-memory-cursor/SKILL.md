@@ -2,7 +2,7 @@
 name: eden-memory-cursor
 title: Cursor
 description: Use eden-memory as a persistent skill inside Cursor.
-version: 2.1.0
+version: 2.2.0
 tags: [mcp, eden-memory, cursor, skill, prompt, composer]
 tools:
   discoverable: true
@@ -27,6 +27,7 @@ mcp_config:
   args:
     - --db
     - "${HOME}/.eden-memory/default.db"
+    - --mcp-stdio
 related_skills:
   - eden-memory-mcp-usage
 ---
@@ -48,7 +49,7 @@ In Cursor, open **Settings** → **MCP** and add a new stdio server:
 | Field | Value |
 |-------|-------|
 | Name | `eden-memory` |
-| Command | `eden-memory` |
+| Command | `/home/yourname/.local/bin/eden-memory --mcp-stdio` |
 | Arguments | `--db /home/yourname/.eden-memory/default.db` |
 
 Use your real username and start a new chat.

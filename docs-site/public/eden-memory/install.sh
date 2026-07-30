@@ -4,7 +4,7 @@
 
 set -eu
 
-REPO="yakovkhalinsky/eden-releases"
+REPO="yakovkhalinsky/eden-memory"
 PREFIX_DEFAULT="${HOME}/.local/bin"
 
 # Detect OS

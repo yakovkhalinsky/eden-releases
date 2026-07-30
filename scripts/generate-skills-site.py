@@ -15,6 +15,7 @@ be downloaded as the installable artifact.
 
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -69,6 +70,9 @@ def install_section(fm: dict, slug: str, name: str) -> str:
     harness = fm.get("harness", "")
     prefix = fm.get("tools", {}).get("prefix", "")
     mcp_config = fm.get("mcp_config", {})
+    mcp_stdio_arg = " --mcp-stdio" if "--mcp-stdio" in (mcp_config.get("args") or []) else ""
+    mcp_stdio_json = ',"--mcp-stdio"' if mcp_stdio_arg else ""
+    mcp_stdio_list = ' --mcp-stdio' if mcp_stdio_arg else ""
 
     if harness == "hermes":
         server_name = mcp_config.get("server_name", "eden")
@@ -86,10 +90,10 @@ def install_section(fm: dict, slug: str, name: str) -> str:
    mcp:
      servers:
        {server_name}:
-         command: ${{HOME}}/.local/bin/eden-memory
+         command: ${{HOME}}/.local/bin/eden-memory{mcp_stdio_arg}
          args:
            - --db
-           - ${{HOME}}/.eden-memory/default.db
+           - ${{HOME}}/.eden-memory/default.db{mcp_stdio_list}
    ```
 
 3. Download the skill file:
@@ -124,7 +128,7 @@ If `eden-memory` is on your PATH, you can use the bare command name. If you see 
 2. Wire the MCP server. This command expands `$HOME` automatically:
 
    ```bash
-   claude config set mcpServers "{{\\"{server_name}\\":{{\\"command\\":\\"$HOME/.local/bin/eden-memory\\",\\"args\\":[\\"--db\\",\\"$HOME/.eden-memory/default.db\\"]}}}}"
+   claude config set mcpServers "{{\\"{server_name}\\":{{\\"command\\":\\"$HOME/.local/bin/eden-memory\\",\\"args\\":[\\"--db\\",\\"$HOME/.eden-memory/default.db\\"{mcp_stdio_json}]}}}}"
    ```
 
 3. Download the skill file:
@@ -157,7 +161,7 @@ Restart Claude Code after changing configuration. The `mcpServers` key is writte
    | Field | Value |
    |-------|-------|
    | Name | `{server_name}` |
-   | Command | `/home/yourname/.local/bin/eden-memory` |
+   | Command | `/home/yourname/.local/bin/eden-memory{mcp_stdio_list}` |
    | Arguments | `--db /home/yourname/.eden-memory/default.db` |
 
    Replace `/home/yourname` with your actual home path. If `eden-memory` is on the PATH that Cursor sees, you can use the bare command name.
@@ -189,7 +193,7 @@ Start a fresh chat after adding the server so the tools are discovered.
    ```json
    {{
      "command": "/home/yourname/.local/bin/eden-memory",
-     "args": ["--db", "/home/yourname/.eden-memory/default.db"]
+     "args": ["--db", "/home/yourname/.eden-memory/default.db"{mcp_stdio_json}]
    }}
    ```
 
@@ -228,6 +232,7 @@ def generate():
     PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
     skills_dir = SKILLS_DIR
     skills_manifest_path = skills_dir / "skills.json"
+    public_skills_json_path = PUBLIC_DIR.parent / "skills.json"
     registry = []
 
     for skill_dir in sorted(SKILLS_DIR.iterdir()):
@@ -413,6 +418,11 @@ The installable artifact is the raw `SKILL.md` file:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
         f.write("\n")
     print(f"Generated {skills_manifest_path}")
+
+    # Copy the canonical skills.json to the public deploy directory so it is
+    # served at /eden-memory/skills.json on the live site.
+    shutil.copy2(skills_manifest_path, public_skills_json_path)
+    print(f"Copied {public_skills_json_path}")
 
 
 if __name__ == "__main__":

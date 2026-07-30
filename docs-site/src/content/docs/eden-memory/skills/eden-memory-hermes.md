@@ -1,98 +1,81 @@
 ---
-title: Hermes Agent
-description: Agent skill for working with eden-memory.
+title: Install Eden Memory Hermes skill
+description: Use eden-memory as a persistent skill inside Hermes Agent.
+template: doc
+skill_name: eden-memory-hermes
+skill_version: 2.2.0
+skill_tags: mcp, eden-memory, hermes, skill, prompt, subagent
+skill_discoverable: true
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_inherits: eden-memory-mcp-usage
+skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
+skill_related: eden-memory-mcp-usage
 ---
 
-# eden-memory + Hermes Agent
+# Install Eden Memory Hermes skill
 
-## Install the binary
+Use eden-memory as a persistent skill inside Hermes Agent.
 
-```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-```
+## Download this skill
 
-This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
+The installable artifact is the raw `SKILL.md` file:
 
-## Wire the MCP server
+- [Download `eden-memory-hermes/SKILL.md`](/eden-memory/skills/eden-memory-hermes/SKILL.md)
+- Or fetch it from the terminal:
 
-Add to your Hermes profile `config.yaml` under `mcp.servers`:
-
-```yaml
-mcp:
-  servers:
-    eden:
-      command: /home/yourname/.local/bin/eden-memory
-      args:
-        - --db
-        - /home/yourname/.eden-memory/default.db
-```
-
-Replace `yourname` with your actual username and restart Hermes or reload the profile.
-
-If `eden-memory` is on your PATH, you can use the bare command name:
-
-```yaml
-mcp:
-  servers:
-    eden:
-      command: eden-memory
-      args:
-        - --db
-        - /home/yourname/.eden-memory/default.db
-```
-
-## Tool names in Hermes
-
-Hermes exposes MCP tools as:
-
-- `mcp__eden__eden_remember`
-- `mcp__eden__eden_recall`
-- `mcp__eden__eden_search`
-- `mcp__eden__eden_search_semantic`
-- `mcp__eden__eden_edit`
-- `mcp__eden__eden_forget`
-- `mcp__eden__eden_forget_expired`
-- `mcp__eden__eden_health`
-- `mcp__eden__eden_vacuum`
-
-## Usage pattern
-
-Add this to your profile or system prompt:
-
-> At task start, call `eden_recall` with the task summary. After corrections or working solutions, call `eden_remember`. Do not remember secrets, raw output, or unvalidated guesses.
-
-## Calling tools from a skill
-
-From inside a Hermes skill, call eden-memory tools directly:
-
-```yaml
-# inside your skill's reasoning
-- tool: mcp__eden__eden_recall
-  arguments:
-    agent_id: "hermes"
-    user_id: "{{user.id}}"
-    kind: "convention"
-    query: "project testing preferences"
-```
-
-## Subagent delegation
-
-When spawning a subagent in Hermes, pass memory context in the prompt:
-
-```yaml
-delegate_task:
-  goal: Refactor the auth service
-  context: Alice prefers table-driven tests with testify/require. Use eden_recall if you need more conventions.
-```
-
-## Troubleshooting
-
-- **Tools not appearing:** Restart Hermes. MCP servers are loaded at profile startup.
-- **Server exits:** Ensure `--db` uses an absolute path and the parent directory exists.
-- **Command not found:** Use the absolute path to the binary, or add its directory to the Hermes environment PATH.
-- **Stale Python wrapper from an old install**: if `eden-memory` fails with `ModuleNotFoundError: No module named 'eden_memory'`, remove the broken wrapper and reinstall:
   ```bash
-  rm -f ~/.local/bin/eden-memory
-  curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+  curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-hermes/SKILL.md -o eden-memory-hermes/SKILL.md
   ```
-- **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Hermes MCP config or PATH.
+
+## Install for Hermes Agent
+
+1. Install the binary:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
+
+2. Add the MCP server to your active Hermes profile `config.yaml` under `mcp.servers`:
+
+   ```yaml
+   mcp:
+     servers:
+       eden:
+         command: ${HOME}/.local/bin/eden-memory --mcp-stdio
+         args:
+           - --db
+           - ${HOME}/.eden-memory/default.db --mcp-stdio
+   ```
+
+3. Download the skill file:
+
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-hermes/SKILL.md -o eden-memory-hermes/SKILL.md
+   ```
+
+4. Copy it into your active Hermes profile so it loads automatically:
+
+   ```bash
+   PROFILE=$(hermes profile active)
+   mkdir -p ~/.hermes/profiles/${PROFILE}/skills/eden-memory-hermes
+   cp eden-memory-hermes/SKILL.md ~/.hermes/profiles/${PROFILE}/skills/eden-memory-hermes/SKILL.md
+   ```
+
+Restart Hermes or reload the profile after changing `config.yaml`.
+
+If `eden-memory` is on your PATH, you can use the bare command name. If you see `ModuleNotFoundError: No module named 'eden_memory'`, you have a stale Python wrapper; remove it with `rm -f ~/.local/bin/eden-memory` and re-run the install.
+
+## What this skill enforces
+
+- **Health check first.** Call `eden_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
+- **Recall before acting.** Use `eden_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
+- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `eden_remember`.
+- **Memory checkpoint.** Before finishing a task, confirm at least one recall happened at the start and at least one remember happened at the end.
+- **Stop if tools are missing.** If the eden-memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
+- **Do not remember secrets.** Never store tokens, passwords, raw command output, ephemeral reasoning, or unvalidated guesses.
+
+## Next steps
+
+- Browse the [skills registry](/eden-memory/skills/)
+- Read the [MCP clients guide](/eden-memory/mcp-clients/)
+- See the [tools reference](/eden-memory/reference/tools/)

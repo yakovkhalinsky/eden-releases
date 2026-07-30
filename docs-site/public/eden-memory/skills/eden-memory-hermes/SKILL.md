@@ -2,7 +2,7 @@
 name: eden-memory-hermes
 title: Hermes Agent
 description: Use eden-memory as a persistent skill inside Hermes Agent.
-version: 2.1.0
+version: 2.2.0
 tags: [mcp, eden-memory, hermes, skill, prompt, subagent]
 tools:
   discoverable: true
@@ -27,6 +27,7 @@ mcp_config:
   args:
     - --db
     - "${HOME}/.eden-memory/default.db"
+    - --mcp-stdio
 related_skills:
   - eden-memory-mcp-usage
 ---
@@ -53,6 +54,7 @@ mcp:
       args:
         - --db
         - /home/yourname/.eden-memory/default.db
+        - --mcp-stdio
 ```
 
 Replace `yourname` with your actual username and restart Hermes or reload the profile.
@@ -67,6 +69,7 @@ mcp:
       args:
         - --db
         - /home/yourname/.eden-memory/default.db
+        - --mcp-stdio
 ```
 
 ## Tool names in Hermes

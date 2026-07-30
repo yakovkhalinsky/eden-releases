@@ -1,103 +1,69 @@
 ---
-title: eden-memory MCP usage
-description: Agent skill for working with eden-memory.
+title: Install Eden Memory MCP Usage skill
+description: Use eden-memory as a persistent memory skill inside any stdio MCP client.
+template: doc
+skill_name: eden-memory-mcp-usage
+skill_version: 3.0.0
+skill_tags: mcp, eden-memory, memory-first, stdio, skill
+skill_discoverable: true
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
+skill_related: eden-memory-claude, eden-memory-cursor, eden-memory-hermes
 ---
 
-# eden-memory MCP usage
+# Install Eden Memory MCP Usage skill
 
-## Overview
+Use eden-memory as a persistent memory skill inside any stdio MCP client.
 
-`eden-memory` is a self-contained Go binary that exposes the Model Context Protocol (MCP) over stdio. It stores memories in a local SQLite database with 256-dimensional embeddings.
+## Download this skill
 
-This skill describes the memory-first loop. Load a child skill for your specific harness to get wiring instructions.
+The installable artifact is the raw `SKILL.md` file:
 
-## When to use memory
+- [Download `eden-memory-mcp-usage/SKILL.md`](/eden-memory/skills/eden-memory-mcp-usage/SKILL.md)
+- Or fetch it from the terminal:
 
-- **At task start.** Call `eden_recall` once after the user states their goal.
-- **Before decisions that touch preferences, conventions, security, or tooling.** Recall first.
-- **After corrections or working solutions.** Update or store durable takeaways.
-- **At task end.** Store 3–5 concise, durable facts.
+  ```bash
+  curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-mcp-usage/SKILL.md -o eden-memory-mcp-usage/SKILL.md
+  ```
 
-## What to remember
+## Install for any stdio MCP client
 
-- Preferences and conventions
-- Corrections from the user
-- Working solutions to recurring problems
-- Identity facts (role, stack, constraints)
+1. Install the binary:
 
-Use `ttl_ms: null` for facts that should persist until the user changes them.
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
 
-## What not to remember
+2. Register the server with your MCP client. The exact command depends on the client; the server config is:
 
-- Secrets, tokens, passwords
-- Raw command output
-- Ephemeral reasoning
-- Generic knowledge already in docs
-- Unvalidated guesses
+   ```json
+   {
+     "command": "/home/yourname/.local/bin/eden-memory",
+     "args": ["--db", "/home/yourname/.eden-memory/default.db"]
+   }
+   ```
 
-## Basic loop
+   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the client's PATH, you can use the bare command name.
 
-1. `eden_recall` — pull relevant context.
-2. Do the work.
-3. `eden_remember` — store durable takeaways.
+3. Download the skill file:
 
-Efficiency notes:
-- Prefer `eden_search` for exact keyword lookups.
-- Keep recalled context concise; do not dump large raw outputs into memories.
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-mcp-usage/SKILL.md -o eden-memory-mcp-usage/SKILL.md
+   ```
 
-## Tool summary
+4. Paste the contents of the skill file into your agent's system prompt or project instructions, or load it as a custom skill if your client supports skill files.
 
-| Tool | Purpose |
-|------|---------|
-| `eden_remember` | Store a durable fact |
-| `eden_recall` | Semantic recall for this user |
-| `eden_search` | Keyword search |
-| `eden_search_semantic` | Semantic search with filters |
-| `eden_edit` | Update a memory by ID |
-| `eden_forget` | Delete a memory by ID |
-| `eden_forget_expired` | Delete expired memories (manual/admin) |
-| `eden_health` | Combined health snapshot |
-| `eden_vacuum` | Compact the SQLite store (manual/admin) |
+## What this skill enforces
 
-## Remember example
+- **Health check first.** Call `eden_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
+- **Recall before acting.** Use `eden_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
+- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `eden_remember`.
+- **Memory checkpoint.** Before finishing a task, confirm at least one recall happened at the start and at least one remember happened at the end.
+- **Stop if tools are missing.** If the eden-memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
+- **Do not remember secrets.** Never store tokens, passwords, raw command output, ephemeral reasoning, or unvalidated guesses.
 
-```json
-{
-  "agent_id": "my-agent",
-  "user_id": "alice",
-  "kind": "preference",
-  "content": "Use Python for examples and keep sentences short.",
-  "ttl_ms": null
-}
-```
+## Next steps
 
-Use a stable `agent_id` that matches the harness (e.g. `claude-code-cli`, `cursor-agent`, `hermes`, `my-agent`). Do not change it per conversation; consistency improves recall relevance.
-
-## Recall example
-
-```json
-{
-  "agent_id": "my-agent",
-  "user_id": "alice",
-  "kind": "preference",
-  "query": "How should I write examples?"
-}
-```
-
-## Subagent delegation
-
-When delegating to a subagent, include the memory context in the prompt:
-
-```text
-Context: Alice prefers Python examples and short sentences. Call eden_recall if you need more conventions.
-```
-
-The subagent can then call `eden_recall` to load additional context before acting.
-
-## Memory checkpoint
-
-Before finishing any task:
-1. Confirm at least one `eden_recall` happened at task start.
-2. For each takeaway, call `eden_search` or `eden_search_semantic` to avoid storing near-duplicates.
-3. Write missing memories with `ttl_ms: null` for durable facts.
-4. Confirm at least one `eden_remember` happened at task end.
+- Browse the [skills registry](/eden-memory/skills/)
+- Read the [MCP clients guide](/eden-memory/mcp-clients/)
+- See the [tools reference](/eden-memory/reference/tools/)

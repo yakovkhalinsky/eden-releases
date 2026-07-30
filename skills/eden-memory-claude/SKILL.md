@@ -2,7 +2,7 @@
 name: eden-memory-claude
 title: Claude Code CLI
 description: Use eden-memory as a persistent skill inside Claude Code CLI.
-version: 2.1.0
+version: 2.2.0
 tags: [mcp, eden-memory, claude-code, skill, prompt, subagent]
 tools:
   discoverable: true
@@ -27,6 +27,7 @@ mcp_config:
   args:
     - --db
     - "${HOME}/.eden-memory/default.db"
+    - --mcp-stdio
 related_skills:
   - eden-memory-mcp-usage
 ---
@@ -46,7 +47,7 @@ This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
 Run this in your terminal (it expands `$HOME` automatically):
 
 ```bash
-claude config set mcpServers "{\"eden-memory\":{\"command\":\"$HOME/.local/bin/eden-memory\",\"args\":[\"--db\",\"$HOME/.eden-memory/default.db\"]}}"
+claude config set mcpServers "{\"eden-memory\":{\"command\":\"$HOME/.local/bin/eden-memory\",\"args\":[\"--db\",\"$HOME/.eden-memory/default.db\",\"--mcp-stdio\"]}}"
 ```
 
 Then restart Claude Code completely (`/exit`, then reopen).
@@ -54,7 +55,7 @@ Then restart Claude Code completely (`/exit`, then reopen).
 If `eden-memory` is not on the PATH that Claude Code sees, use the absolute path:
 
 ```bash
-claude config set mcpServers "{\"eden-memory\":{\"command\":\"/home/yourname/.local/bin/eden-memory\",\"args\":[\"--db\",\"/home/yourname/.eden-memory/default.db\"]}}"
+claude config set mcpServers "{\"eden-memory\":{\"command\":\"/home/yourname/.local/bin/eden-memory\",\"args\":[\"--db\",\"/home/yourname/.eden-memory/default.db\",\"--mcp-stdio\"]}}"
 ```
 
 Replace `yourname` with your actual username.

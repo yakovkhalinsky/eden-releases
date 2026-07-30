@@ -54,6 +54,7 @@ mcp:
       args:
         - --db
         - ${DB}
+        - --mcp-stdio
 EOF
 
 echo "Appended MCP server 'eden' to ${CONFIG_FILE} with command: ${COMMAND}"

@@ -3,7 +3,8 @@
     "command": "/home/yourname/.local/bin/eden-memory",
     "args": [
       "--db",
-      "/home/yourname/.eden-memory/default.db"
+      "/home/yourname/.eden-memory/default.db",
+      "--mcp-stdio"
     ]
   }
 }
