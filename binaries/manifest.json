@@ -1,6 +1,6 @@
 {
-  "version": "0.3.22",
-  "released": "2026-07-29",
+  "version": "0.3.23",
+  "released": "2026-07-30",
   "platforms": {
     "linux-amd64": {
       "filename": "eden-memory-linux-amd64",
