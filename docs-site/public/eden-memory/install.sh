@@ -36,6 +36,17 @@ else
     PREFIX="/usr/local/bin"
 fi
 
+TARGET="${PREFIX}/eden-memory"
+
+# Remove any stale Python wrapper from an old pip/uv install so the new
+# static binary can replace it cleanly.
+if [ -f "${TARGET}" ]; then
+    if head -1 "${TARGET}" 2>/dev/null | grep -q "python"; then
+        echo "Removing stale Python wrapper at ${TARGET}..."
+        rm -f "${TARGET}"
+    fi
+fi
+
 # Create temp directory
 TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
@@ -52,19 +63,19 @@ else
     shasum -a 256 -c "${BIN}.sha256"
 fi
 
-echo "Installing to ${PREFIX}/eden-memory..."
+echo "Installing to ${TARGET}..."
 chmod +x "${TMPDIR}/${BIN}"
 mkdir -p "${PREFIX}"
 
 # Avoid "Text file busy" when overwriting a running binary by installing via a
 # temporary file and an atomic rename.
-TMP_BIN="${PREFIX}/eden-memory.tmp.$$"
+TMP_BIN="${TARGET}.tmp.$$"
 cp "${TMPDIR}/${BIN}" "${TMP_BIN}"
-mv -f "${TMP_BIN}" "${PREFIX}/eden-memory"
+mv -f "${TMP_BIN}" "${TARGET}"
 
 if ! command -v eden-memory >/dev/null 2>&1; then
     echo ""
-    echo "eden-memory was installed to ${PREFIX}/eden-memory, but it is not on your PATH."
+    echo "eden-memory was installed to ${TARGET}, but it is not on your PATH."
     echo "Add the following to your shell profile:"
     echo "  export PATH=\"${PREFIX}:\$PATH\""
 fi

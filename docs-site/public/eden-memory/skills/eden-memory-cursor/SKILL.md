@@ -2,13 +2,12 @@
 name: eden-memory-cursor
 title: Cursor
 description: Use eden-memory as a persistent skill inside Cursor.
-version: 2.0.0
-harness: cursor
+version: 2.1.0
 tags: [mcp, eden-memory, cursor, skill, prompt, composer]
 tools:
   discoverable: true
   inherits: eden-memory-mcp-usage
-  prefix: "mcp__eden-memory__"
+  prefix: mcp__eden-memory__
   list:
     - eden_remember
     - eden_recall
@@ -20,20 +19,27 @@ tools:
     - eden_health
     - eden_vacuum
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+harness: cursor
 mcp_config:
   server_name: eden-memory
   transport: stdio
-  command: eden-memory
+  command: "${HOME}/.local/bin/eden-memory"
   args:
     - --db
-    - /home/yourname/.eden-memory/default.db
+    - "${HOME}/.eden-memory/default.db"
 related_skills:
   - eden-memory-mcp-usage
-  - eden-memory-claude
-  - eden-memory-hermes
 ---
 
 # eden-memory + Cursor
+
+## Install the binary
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
+
+This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
 
 ## Wire the MCP server
 
@@ -47,43 +53,25 @@ In Cursor, open **Settings** → **MCP** and add a new stdio server:
 
 Use your real username and start a new chat.
 
+If `eden-memory` is not on the PATH that Cursor sees, use the absolute path:
+
+```text
+/home/yourname/.local/bin/eden-memory
+```
+
 ## Verify the server
 
-At the start of every session, call `mcp__eden-memory__eden_health`. If the call fails or returns `healthy: false`, stop and ask the user to check the install:
+At the start of a session, ask Cursor to call `eden_health`. If it fails, re-run the install:
 
 ```bash
 curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 ```
 
-Do not proceed with memory-dependent work until `eden_health` succeeds.
-
-## Tool names in Cursor
-
-Cursor exposes MCP tools as:
-
-- `mcp__eden-memory__eden_remember`
-- `mcp__eden-memory__eden_recall`
-- `mcp__eden-memory__eden_search`
-- `mcp__eden-memory__eden_search_semantic`
-- `mcp__eden-memory__eden_edit`
-- `mcp__eden-memory__eden_forget`
-- `mcp__eden-memory__eden_forget_expired`
-- `mcp__eden-memory__eden_health`
-- `mcp__eden-memory__eden_vacuum`
-
 ## Usage pattern
 
 Add this instruction to your project prompt or `.cursorrules`:
 
-```text
-MEMORY-FIRST RULES:
-1. Immediately after the user gives a task, call mcp__eden-memory__eden_recall with the task summary and kind "convention" or "preference".
-2. Before any decision that touches user preferences, coding style, security, or tooling, call mcp__eden-memory__eden_recall first.
-3. After corrections, working solutions, or settled conventions, call mcp__eden-memory__eden_remember.
-4. At the end of every task, batch 3–5 durable takeaways into mcp__eden-memory__eden_remember calls.
-5. Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-6. If eden_recall/eden_remember tools are unavailable, ask the user to wire the eden-memory MCP server and stop.
-```
+> At the start of each task, call `eden_recall` to load context about the user’s preferences and conventions. Before finishing, call `eden_remember` to store durable takeaways.
 
 ## Example `.cursorrules` snippet
 
@@ -121,19 +109,17 @@ Memory conventions:
 When delegating to Cursor’s composer, include the memory context in the prompt:
 
 ```text
-Build a settings page. Alice prefers small components and Tailwind. Recall if you need more details.
+Context: Alice prefers small components. Use eden_recall if you need more conventions.
 ```
-
-## If tools are missing
-
-If you cannot call the eden-memory tools:
-1. Stop task execution.
-2. Tell the user: "eden-memory MCP server is not configured. Run the install and add the server config, then restart."
-3. Provide the one-line wiring command or setup script from this skill.
-4. Do not silently continue without memory.
 
 ## Troubleshooting
 
-- Server exits: ensure `--db` uses an absolute path.
-- Command not found: add `~/.local/bin` to your PATH, or use the full binary path.
-- No tool calls: open a fresh chat after adding the server.
+- **Server exits**: ensure `--db` uses an absolute path and the parent directory exists.
+- **Command not found**: add `~/.local/bin` to your PATH, or use the absolute binary path in the MCP config.
+- **Config not picked up**: start a new Cursor chat after changing the MCP config.
+- **Stale Python wrapper from an old install**: if `eden-memory` fails with `ModuleNotFoundError: No module named 'eden_memory'`, remove the broken wrapper and reinstall:
+  ```bash
+  rm -f ~/.local/bin/eden-memory
+  curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+  ```
+- **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Cursor MCP config or PATH.

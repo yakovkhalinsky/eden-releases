@@ -7,7 +7,7 @@
       "slug": "eden-memory-claude",
       "title": "Claude Code CLI",
       "description": "Use eden-memory as a persistent skill inside Claude Code CLI.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "tags": [
         "mcp",
         "eden-memory",
@@ -38,16 +38,14 @@
       "mcp_config": {
         "server_name": "eden-memory",
         "transport": "stdio",
-        "command": "eden-memory",
+        "command": "${HOME}/.local/bin/eden-memory",
         "args": [
           "--db",
-          "/home/yourname/.eden-memory/default.db"
+          "${HOME}/.eden-memory/default.db"
         ]
       },
       "related_skills": [
-        "eden-memory-mcp-usage",
-        "eden-memory-cursor",
-        "eden-memory-hermes"
+        "eden-memory-mcp-usage"
       ]
     },
     {
@@ -55,7 +53,7 @@
       "slug": "eden-memory-cursor",
       "title": "Cursor",
       "description": "Use eden-memory as a persistent skill inside Cursor.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "tags": [
         "mcp",
         "eden-memory",
@@ -86,16 +84,14 @@
       "mcp_config": {
         "server_name": "eden-memory",
         "transport": "stdio",
-        "command": "eden-memory",
+        "command": "${HOME}/.local/bin/eden-memory",
         "args": [
           "--db",
-          "/home/yourname/.eden-memory/default.db"
+          "${HOME}/.eden-memory/default.db"
         ]
       },
       "related_skills": [
-        "eden-memory-mcp-usage",
-        "eden-memory-claude",
-        "eden-memory-hermes"
+        "eden-memory-mcp-usage"
       ]
     },
     {
@@ -103,7 +99,7 @@
       "slug": "eden-memory-hermes",
       "title": "Hermes Agent",
       "description": "Use eden-memory as a persistent skill inside Hermes Agent.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "tags": [
         "mcp",
         "eden-memory",
@@ -134,16 +130,14 @@
       "mcp_config": {
         "server_name": "eden",
         "transport": "stdio",
-        "command": "eden-memory",
+        "command": "${HOME}/.local/bin/eden-memory",
         "args": [
           "--db",
-          "/home/yourname/.eden-memory/default.db"
+          "${HOME}/.eden-memory/default.db"
         ]
       },
       "related_skills": [
-        "eden-memory-mcp-usage",
-        "eden-memory-claude",
-        "eden-memory-cursor"
+        "eden-memory-mcp-usage"
       ]
     },
     {

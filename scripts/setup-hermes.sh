@@ -19,6 +19,14 @@ fi
 CONFIG_DIR="${HOME}/.hermes/profiles/${PROFILE}"
 CONFIG_FILE="${CONFIG_DIR}/config.yaml"
 DB="${HOME}/.eden-memory/default.db"
+BIN="${HOME}/.local/bin/eden-memory"
+
+# Prefer absolute path if the binary is not on PATH.
+if command -v eden-memory >/dev/null 2>&1; then
+  COMMAND="eden-memory"
+else
+  COMMAND="${BIN}"
+fi
 
 mkdir -p "${CONFIG_DIR}"
 
@@ -42,11 +50,12 @@ cat >> "${CONFIG_FILE}" <<EOF
 mcp:
   servers:
     eden:
-      command: eden-memory
+      command: ${COMMAND}
       args:
         - --db
         - ${DB}
 EOF
 
-echo "Appended MCP server 'eden' to ${CONFIG_FILE} with DB: ${DB}"
+echo "Appended MCP server 'eden' to ${CONFIG_FILE} with command: ${COMMAND}"
+echo "Database: ${DB}"
 echo "Restart Hermes or reload the profile to apply changes."

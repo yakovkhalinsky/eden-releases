@@ -2,13 +2,12 @@
 name: eden-memory-claude
 title: Claude Code CLI
 description: Use eden-memory as a persistent skill inside Claude Code CLI.
-version: 2.0.0
-harness: claude-code
+version: 2.1.0
 tags: [mcp, eden-memory, claude-code, skill, prompt, subagent]
 tools:
   discoverable: true
   inherits: eden-memory-mcp-usage
-  prefix: "mcp__eden-memory__"
+  prefix: mcp__eden-memory__
   list:
     - eden_remember
     - eden_recall
@@ -20,32 +19,49 @@ tools:
     - eden_health
     - eden_vacuum
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+harness: claude-code
 mcp_config:
   server_name: eden-memory
   transport: stdio
-  command: eden-memory
+  command: "${HOME}/.local/bin/eden-memory"
   args:
     - --db
-    - /home/yourname/.eden-memory/default.db
+    - "${HOME}/.eden-memory/default.db"
 related_skills:
   - eden-memory-mcp-usage
-  - eden-memory-cursor
-  - eden-memory-hermes
 ---
 
 # eden-memory + Claude Code CLI
 
-## Wire the MCP server
+## Install the binary
 
 ```bash
-claude config set mcpServers '{"eden-memory":{"command":"eden-memory","args":["--db","/home/yourname/.eden-memory/default.db"]}}'
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 ```
 
-Use your real username and restart Claude Code.
+This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
+
+## Wire the MCP server
+
+Run this in your terminal (it expands `$HOME` automatically):
+
+```bash
+claude config set mcpServers "{\"eden-memory\":{\"command\":\"$HOME/.local/bin/eden-memory\",\"args\":[\"--db\",\"$HOME/.eden-memory/default.db\"]}}"
+```
+
+Then restart Claude Code completely (`/exit`, then reopen).
+
+If `eden-memory` is not on the PATH that Claude Code sees, use the absolute path:
+
+```bash
+claude config set mcpServers "{\"eden-memory\":{\"command\":\"/home/yourname/.local/bin/eden-memory\",\"args\":[\"--db\",\"/home/yourname/.eden-memory/default.db\"]}}"
+```
+
+Replace `yourname` with your actual username.
 
 ## Verify the server
 
-At the start of every session, call `mcp__eden-memory__eden_health`. If the call fails or returns `healthy: false`, stop and ask the user to check the install:
+At the start of every session, call `mcp__eden-memory__eden_health`. If the call fails or returns `healthy: false`, stop and re-run the install:
 
 ```bash
 curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
@@ -130,6 +146,12 @@ If you cannot call the eden-memory tools:
 
 ## Troubleshooting
 
-- Server exits: ensure `--db` uses an absolute path.
-- Command not found: add `~/.local/bin` to your PATH, or use the full binary path.
-- Config not picked up: restart Claude Code after changing the config.
+- **Server exits**: ensure `--db` uses an absolute path and the parent directory exists.
+- **Command not found**: add `~/.local/bin` to your PATH, or use the absolute binary path in the MCP config.
+- **Config not picked up**: restart Claude Code after changing the config. The `mcpServers` key lives in `~/.claude.json`.
+- **Stale Python wrapper from an old install**: if `eden-memory` fails with `ModuleNotFoundError: No module named 'eden_memory'`, remove the broken wrapper and reinstall:
+  ```bash
+  rm -f ~/.local/bin/eden-memory
+  curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+  ```
+- **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is Claude Code config or PATH.

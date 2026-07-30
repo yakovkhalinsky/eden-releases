@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 # Set up the eden-memory MCP server for Claude Code CLI.
-# Paste the resulting JSON into Claude Code's MCP settings, or run this script
-# and restart Claude Code.
+# Usage: curl -fsSL https://0d3sa.com/eden-memory/setup-claude.sh | sh
 
 set -eu
 
@@ -11,9 +10,19 @@ if [ -z "${HOME:-}" ]; then
 fi
 
 DB="${HOME}/.eden-memory/default.db"
-CONFIG='{"eden-memory":{"command":"eden-memory","args":["--db","'"${DB}"'"]}}'
+BIN="${HOME}/.local/bin/eden-memory"
+
+# If the binary is not on PATH, fall back to a direct absolute-path config.
+if command -v eden-memory >/dev/null 2>&1; then
+  COMMAND="eden-memory"
+else
+  COMMAND="${BIN}"
+fi
+
+CONFIG="{\"eden-memory\":{\"command\":\"${COMMAND}\",\"args\":[\"--db\",\"${DB}\"]}}"
 
 claude config set mcpServers "${CONFIG}"
 
-echo "Configured Claude Code MCP server 'eden-memory' with DB: ${DB}"
+echo "Configured Claude Code MCP server 'eden-memory' with command: ${COMMAND}"
+echo "Database: ${DB}"
 echo "Restart Claude Code to pick up the new MCP server."

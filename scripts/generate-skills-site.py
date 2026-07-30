@@ -86,10 +86,10 @@ def install_section(fm: dict, slug: str, name: str) -> str:
    mcp:
      servers:
        {server_name}:
-         command: eden-memory
+         command: ${{HOME}}/.local/bin/eden-memory
          args:
            - --db
-           - /home/yourname/.eden-memory/default.db
+           - ${{HOME}}/.eden-memory/default.db
    ```
 
 3. Download the skill file:
@@ -107,6 +107,8 @@ def install_section(fm: dict, slug: str, name: str) -> str:
    ```
 
 Restart Hermes or reload the profile after changing `config.yaml`.
+
+If `eden-memory` is on your PATH, you can use the bare command name. If you see `ModuleNotFoundError: No module named 'eden_memory'`, you have a stale Python wrapper; remove it with `rm -f ~/.local/bin/eden-memory` and re-run the install.
 """
 
     if harness == "claude-code":
@@ -119,10 +121,10 @@ Restart Hermes or reload the profile after changing `config.yaml`.
    curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
    ```
 
-2. Wire the MCP server:
+2. Wire the MCP server. This command expands `$HOME` automatically:
 
    ```bash
-   claude config set mcpServers '{{"{server_name}":{{"command":"eden-memory","args":["--db","/home/yourname/.eden-memory/default.db"]}}}}'
+   claude config set mcpServers "{{\\"{server_name}\\":{{\\"command\\":\\"$HOME/.local/bin/eden-memory\\",\\"args\\":[\\"--db\\",\\"$HOME/.eden-memory/default.db\\"]}}}}"
    ```
 
 3. Download the skill file:
@@ -135,7 +137,7 @@ Restart Hermes or reload the profile after changing `config.yaml`.
    - Run `/memory` (or open **Settings → Project Instructions**) and paste the contents of `{name}/SKILL.md`.
    - The file contains the memory-first rules and tool usage patterns for Claude Code CLI.
 
-Restart Claude Code after changing configuration.
+Restart Claude Code after changing configuration. The `mcpServers` key is written to `~/.claude.json`. If `eden-memory` is not on the PATH that Claude Code sees, replace `$HOME` with the absolute path (e.g., `/home/yourname/.local/bin/eden-memory`).
 """
 
     if harness == "cursor":
@@ -155,8 +157,10 @@ Restart Claude Code after changing configuration.
    | Field | Value |
    |-------|-------|
    | Name | `{server_name}` |
-   | Command | `eden-memory` |
+   | Command | `/home/yourname/.local/bin/eden-memory` |
    | Arguments | `--db /home/yourname/.eden-memory/default.db` |
+
+   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the PATH that Cursor sees, you can use the bare command name.
 
 3. Download the skill file:
 
@@ -184,10 +188,12 @@ Start a fresh chat after adding the server so the tools are discovered.
 
    ```json
    {{
-     "command": "eden-memory",
+     "command": "/home/yourname/.local/bin/eden-memory",
      "args": ["--db", "/home/yourname/.eden-memory/default.db"]
    }}
    ```
+
+   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the client's PATH, you can use the bare command name.
 
 3. Download the skill file:
 

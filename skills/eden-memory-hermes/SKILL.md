@@ -2,13 +2,12 @@
 name: eden-memory-hermes
 title: Hermes Agent
 description: Use eden-memory as a persistent skill inside Hermes Agent.
-version: 2.0.0
-harness: hermes
+version: 2.1.0
 tags: [mcp, eden-memory, hermes, skill, prompt, subagent]
 tools:
   discoverable: true
   inherits: eden-memory-mcp-usage
-  prefix: "mcp__eden__"
+  prefix: mcp__eden__
   list:
     - eden_remember
     - eden_recall
@@ -20,20 +19,27 @@ tools:
     - eden_health
     - eden_vacuum
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+harness: hermes
 mcp_config:
   server_name: eden
   transport: stdio
-  command: eden-memory
+  command: "${HOME}/.local/bin/eden-memory"
   args:
     - --db
-    - /home/yourname/.eden-memory/default.db
+    - "${HOME}/.eden-memory/default.db"
 related_skills:
   - eden-memory-mcp-usage
-  - eden-memory-claude
-  - eden-memory-cursor
 ---
 
 # eden-memory + Hermes Agent
+
+## Install the binary
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
+
+This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
 
 ## Wire the MCP server
 
@@ -43,32 +49,24 @@ Add to your Hermes profile `config.yaml` under `mcp.servers`:
 mcp:
   servers:
     eden:
-      command: eden-memory
+      command: /home/yourname/.local/bin/eden-memory
       args:
         - --db
         - /home/yourname/.eden-memory/default.db
 ```
 
-Use your real username and restart Hermes or reload the profile.
+Replace `yourname` with your actual username and restart Hermes or reload the profile.
 
-## Verify the server
+If `eden-memory` is on your PATH, you can use the bare command name:
 
-At the start of every session, call `mcp__eden__eden_health`. If the call fails or returns `healthy: false`, stop and ask the user to check the install:
-
-```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-```
-
-Do not proceed with memory-dependent work until `eden_health` succeeds.
-
-## Install this skill in Hermes
-
-Copy this skill into your active Hermes profile so it loads automatically:
-
-```bash
-PROFILE=$(hermes profile active)
-mkdir -p ~/.hermes/profiles/${PROFILE}/skills/eden-memory-hermes
-cp skills/eden-memory-hermes/SKILL.md ~/.hermes/profiles/${PROFILE}/skills/eden-memory-hermes/SKILL.md
+```yaml
+mcp:
+  servers:
+    eden:
+      command: eden-memory
+      args:
+        - --db
+        - /home/yourname/.eden-memory/default.db
 ```
 
 ## Tool names in Hermes
@@ -89,15 +87,7 @@ Hermes exposes MCP tools as:
 
 Add this to your profile or system prompt:
 
-```text
-MEMORY-FIRST RULES:
-1. Immediately after the user gives a task, call mcp__eden__eden_recall with the task summary and kind "convention" or "preference".
-2. Before any decision that touches user preferences, coding style, security, or tooling, call mcp__eden__eden_recall first.
-3. After corrections, working solutions, or settled conventions, call mcp__eden__eden_remember.
-4. At the end of every task, batch 3–5 durable takeaways into mcp__eden__eden_remember calls.
-5. Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-6. If eden_recall/eden_remember tools are unavailable, ask the user to wire the eden-memory MCP server and stop.
-```
+> At task start, call `eden_recall` with the task summary. After corrections or working solutions, call `eden_remember`. Do not remember secrets, raw output, or unvalidated guesses.
 
 ## Calling tools from a skill
 
@@ -119,43 +109,18 @@ When spawning a subagent in Hermes, pass memory context in the prompt:
 
 ```yaml
 delegate_task:
-  goal: Refactor the auth module
-  context: |
-    User alice prefers table-driven tests with testify/require.
-    Call eden_recall if you need more conventions.
+  goal: Refactor the auth service
+  context: Alice prefers table-driven tests with testify/require. Use eden_recall if you need more conventions.
 ```
-
-## Remember / recall template
-
-```json
-{
-  "agent_id": "hermes",
-  "user_id": "alice",
-  "kind": "convention",
-  "content": "Use table-driven tests with testify/require.",
-  "ttl_ms": null
-}
-```
-
-```json
-{
-  "agent_id": "hermes",
-  "user_id": "alice",
-  "kind": "convention",
-  "query": "testing preferences"
-}
-```
-
-## If tools are missing
-
-If you cannot call the eden-memory tools:
-1. Stop task execution.
-2. Tell the user: "eden-memory MCP server is not configured. Run the install and add the server config, then restart."
-3. Provide the one-line wiring command or setup script from this skill.
-4. Do not silently continue without memory.
 
 ## Troubleshooting
 
-- Server exits: ensure `--db` uses an absolute path.
-- Command not found: add `~/.local/bin` to your PATH, or use the full binary path.
-- Profile path: use an absolute path for `command` if Hermes runs from a different working directory.
+- **Tools not appearing:** Restart Hermes. MCP servers are loaded at profile startup.
+- **Server exits:** Ensure `--db` uses an absolute path and the parent directory exists.
+- **Command not found:** Use the absolute path to the binary, or add its directory to the Hermes environment PATH.
+- **Stale Python wrapper from an old install**: if `eden-memory` fails with `ModuleNotFoundError: No module named 'eden_memory'`, remove the broken wrapper and reinstall:
+  ```bash
+  rm -f ~/.local/bin/eden-memory
+  curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+  ```
+- **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Hermes MCP config or PATH.
