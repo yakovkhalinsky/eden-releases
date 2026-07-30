@@ -52,7 +52,14 @@ TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
 echo "Downloading eden-memory ${OS}/${ARCH}..."
-curl -fsSL -o "${TMPDIR}/${BIN}" "${URL}"
+
+# Use a progress bar if curl supports it; otherwise stay silent.
+CURL_PROGRESS="--progress-bar"
+if ! curl --progress-bar --help >/dev/null 2>&1; then
+  CURL_PROGRESS="--no-progress-meter"
+fi
+
+curl -fsSL ${CURL_PROGRESS} -o "${TMPDIR}/${BIN}" "${URL}"
 curl -fsSL -o "${TMPDIR}/${BIN}.sha256" "${CHECKSUM_URL}"
 
 echo "Verifying checksum..."
