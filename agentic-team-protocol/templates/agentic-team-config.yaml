@@ -1,0 +1,27 @@
+# Agentic Team Protocol configuration for <PROJECT_NAME>
+
+project: <PROJECT_PATH>
+charter_path: .claude/agentic-team-charter.md
+
+active_roles:
+  - dispatcher
+  - researcher
+  - builder
+  - verifier
+  - archivist
+
+# Runtime is available but gated; include it only when live-system work is expected.
+# - runtime
+
+default_package_type: build
+
+overrides:
+  # Project-local skill, agents, and commands override global ones.
+  use_local_skill: true
+  use_local_agents: true
+  use_local_commands: true
+
+escalation:
+  status_period: 1h
+  chair_same_day: true
+  founders_circle_48h: true
