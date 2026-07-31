@@ -2,26 +2,36 @@
 # Install the Agentic Team Protocol Claude Code primitives.
 # Usage:
 #   curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
-#   curl -fsSL ... | sh -s -- --local   # also install project-local templates in cwd/.claude/
-#   ./install.sh --local               # run from a local clone/package
+#   curl -fsSL ... | sh -s -- --local                 # project-local templates
+#   curl -fsSL ... | sh -s -- --local --dry-run        # show what would be installed
+#   curl -fsSL ... | sh -s -- --local --claude-md      # also write protocol rules into ./CLAUDE.md
+#   ./install.sh --local                               # run from a local clone/package
 
 set -eu
 
 LOCAL_INSTALL=false
+CLAUDE_MD_INSTALL=false
 DRY_RUN=false
 while [ $# -gt 0 ]; do
   case "$1" in
     --local) LOCAL_INSTALL=true; shift ;;
+    --claude-md) CLAUDE_MD_INSTALL=true; shift ;;
     --dry-run) DRY_RUN=true; shift ;;
     -h|--help)
-      echo "Usage: $0 [--local] [--dry-run]"
-      echo "  --local    Also copy project-local templates into ./.claude/"
-      echo "  --dry-run  Show what would be installed without copying"
+      echo "Usage: $0 [--local] [--claude-md] [--dry-run]"
+      echo "  --local       Also copy project-local templates into ./.claude/"
+      echo "  --claude-md   Also write protocol enforcement rules into ./CLAUDE.md"
+      echo "  --dry-run     Show what would be installed without copying"
       exit 0
       ;;
     *) echo "Unknown option: $1" >&2; exit 1 ;;
   esac
 done
+
+if [ "$CLAUDE_MD_INSTALL" = true ] && [ "$LOCAL_INSTALL" != true ]; then
+  echo "Warning: --claude-md requires --local; enabling --local automatically." >&2
+  LOCAL_INSTALL=true
+fi
 
 if [ -z "${HOME:-}" ]; then
   echo "Error: HOME is not set." >&2
@@ -62,7 +72,7 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
       for command in ratify-charter agentic-status agentic-escalate; do
         curl -fsSL "${BASE_URL}/commands/${command}.md" -o "${TMPDIR}/files/commands/${command}.md"
       done
-      for template in agentic-team-charter.md agentic-team-config.yaml; do
+      for template in agentic-team-charter.md agentic-team-config.yaml claude-md.md; do
         curl -fsSL "${BASE_URL}/templates/${template}" -o "${TMPDIR}/files/templates/${template}"
       done
       curl -fsSL "${BASE_URL}/CHARTER.md" -o "${TMPDIR}/files/CHARTER.md" || true
@@ -81,10 +91,13 @@ fi
 
 if [ "$DRY_RUN" = true ]; then
   echo "Would install to:"
-  echo "  skill:   ${CLAUDE_DIR}/skills/agentic-team-protocol/SKILL.md"
-  echo "  agents:  ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist}.md"
-  echo "  commands:${CLAUDE_DIR}/commands/{ratify-charter,agentic-status,agentic-escalate}.md"
-  [ "$LOCAL_INSTALL" = true ] && echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
+  echo "  skill:    ${CLAUDE_DIR}/skills/agentic-team-protocol/SKILL.md"
+  echo "  agents:   ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist}.md"
+  echo "  commands: ${CLAUDE_DIR}/commands/{ratify-charter,agentic-status,agentic-escalate}.md"
+  if [ "$LOCAL_INSTALL" = true ]; then
+    echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
+    [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
+  fi
   exit 0
 fi
 
@@ -126,6 +139,23 @@ if [ "$LOCAL_INSTALL" = true ]; then
       cp "${PACKAGE_DIR}/templates/agentic-team-config.yaml" "${PROJECT_CLAUDE_DIR}/agentic-team-config.yaml"
     else
       echo "  Skipping agentic-team-config.yaml (already exists)"
+    fi
+
+    if [ "$CLAUDE_MD_INSTALL" = true ]; then
+      CLAUDE_MD_PATH="${PWD}/CLAUDE.md"
+      if [ ! -f "$CLAUDE_MD_PATH" ]; then
+        echo "  Writing protocol rules to ${CLAUDE_MD_PATH}..."
+        cp "${PACKAGE_DIR}/templates/claude-md.md" "$CLAUDE_MD_PATH"
+      elif grep -q '<!-- AGENTIC TEAM PROTOCOL RULES -->' "$CLAUDE_MD_PATH"; then
+        echo "  Skipping CLAUDE.md (protocol rules already present)"
+      else
+        echo "  Appending protocol rules to ${CLAUDE_MD_PATH}..."
+        {
+          echo ""
+          echo ""
+          cat "${PACKAGE_DIR}/templates/claude-md.md"
+        } >> "$CLAUDE_MD_PATH"
+      fi
     fi
   fi
 fi
