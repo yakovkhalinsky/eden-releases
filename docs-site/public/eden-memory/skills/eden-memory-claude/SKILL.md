@@ -39,6 +39,32 @@ related_skills:
 > automatically. Use the `/eden-*` slash commands only if `/mcp` fails or the
 > tools do not appear.
 
+## Make Claude Code's local memory redundant
+
+**Do not rely on Claude Code's built-in memory for durable facts.** Every
+project convention, user preference, working solution, correction, or reusable
+decision must be written to eden-memory with `eden_remember`.
+
+Rules:
+
+1. **Read before deciding.** Before any decision that touches user preferences,
+   coding style, security, tooling, architecture, or project conventions, call
+   `mcp__eden-memory__eden_recall` first.
+2. **Write after settling.** After corrections, agreed solutions, or settled
+   conventions, call `mcp__eden-memory__eden_remember` immediately.
+3. **End-of-task batch write.** At the end of every task, batch 3–5 durable
+   takeaways into `mcp__eden-memory__eden_remember` calls.
+4. **No duplicates in Claude memory.** Do not ask Claude Code to "remember"
+   something in its own memory. Route all memory requests to eden-memory.
+5. **No secrets.** Do not remember secrets, tokens, raw command output,
+   ephemeral reasoning, or unvalidated guesses in eden-memory.
+6. **If tools are down, write later.** If eden-memory MCP tools are unavailable,
+   use the `/eden-remember` slash command. If that is also unavailable, note the
+   missing takeaways and write them as soon as the tools are back.
+
+This makes eden-memory the single source of truth and makes Claude Code's local
+memory redundant for project work.
+
 ## Install the binary
 
 ```bash
@@ -130,11 +156,12 @@ Add this to your project instructions:
 ```text
 MEMORY-FIRST RULES:
 1. Immediately after the user gives a task, call mcp__eden-memory__eden_recall with the task summary.
-2. Before any decision that touches user preferences, coding style, security, or tooling, call mcp__eden-memory__eden_recall first.
-3. After corrections, working solutions, or settled conventions, call mcp__eden-memory__eden_remember.
+2. Before any decision that touches user preferences, coding style, security, tooling, architecture, or project conventions, call mcp__eden-memory__eden_recall first.
+3. After corrections, agreed solutions, or settled conventions, call mcp__eden-memory__eden_remember.
 4. At the end of every task, batch 3–5 durable takeaways into mcp__eden-memory__eden_remember calls.
 5. Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-6. If eden_recall/eden_remember tools are unavailable, use the /eden-remember, /eden-recall, and /eden-search slash commands instead.
+6. Do not ask Claude Code to remember anything in its own local memory. Route all memory requests to eden-memory.
+7. If eden_recall/eden_remember tools are unavailable, use the /eden-recall and /eden-remember slash commands instead, then migrate them to MCP once it is back.
 ```
 
 ## Example task prompt
