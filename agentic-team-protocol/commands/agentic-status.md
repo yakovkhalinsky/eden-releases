@@ -12,17 +12,18 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
 ## Steps
 
 1. Parse `$ARGUMENTS` as an optional filter. If it looks like a UUID or contains a `-`, treat it as a `goal_id` filter; otherwise treat it as a role filter.
-2. Search Eden-memory for recent `goal_record` and stage records:
+2. Search Eden-memory for recent `goal_record`, stage, `run_log`, `hand_off_record`, `pending_authorisation`, and `blocked` records:
    ```bash
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
      --agent-id claude-code-cli \
      --user-id "${USER_ID}" \
-     --keywords "agentic-team-protocol goal_record stage" \
-     --limit 50
+     --keywords "agentic-team-protocol goal_record stage run_log hand_off_record pending_authorisation blocked" \
+     --limit 100
    ```
 3. Group results by `goal_id` and find the latest stage per goal.
 4. If a filter is provided, restrict the output to matching goals or roles.
-5. Present a table with columns: goal_id, current stage, owner role, latest record ID, deadline (if recorded), and confidence/escalation trigger.
-6. If no active goals are found, report that clearly.
+5. Present a table with columns: goal_id, current stage, owner role, latest record ID, deadline (if recorded), confidence/escalation trigger, and state (`active`, `blocked`, `pending_authorisation`, `continueable`, `closed`).
+6. Flag goals whose latest record is non-terminal and not `blocked` or `pending_authorisation` as `continueable` — these are candidates for `/agentic-continue`.
+7. If no active goals are found, report that clearly.

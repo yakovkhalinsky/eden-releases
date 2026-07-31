@@ -35,12 +35,15 @@ Operate live systems safely. Every runtime action must be reversible and observa
 1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`.
 2. Inspect current state before any change.
 3. Produce the execution plan and rollback plan; store them in Eden-memory.
-4. Execute the plan step by step, capturing observed state after each step.
-5. Collect health evidence and compare against expected state.
-6. Hand off to Verifier with execution evidence and rollback options.
+4. Write a `run_log` before and after each mutating step so interrupted work can resume.
+5. If a step requires explicit user authorisation beyond the charter, store a `pending_authorisation` record with the exact question and prepared action, then stop and ask.
+6. Execute the plan step by step, capturing observed state after each step.
+7. Collect health evidence and compare against expected state.
+8. Hand off to Verifier with execution evidence and rollback options. For cross-session hand-offs, use `/agentic-handoff`.
 
 ## Anti-patterns
 
 - Never run destructive commands without user confirmation and a rollback plan.
 - Never operate on production without explicit authority in the charter or dispatch instruction.
 - Do not mix Builder work with Runtime execution.
+- Do not leave an unfinished runtime goal without a durable `run_log` or `pending_authorisation` record.

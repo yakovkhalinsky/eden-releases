@@ -66,10 +66,10 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
       BASE_URL="https://0d3sa.com/agentic-team-protocol"
       mkdir -p "${TMPDIR}/files/agents" "${TMPDIR}/files/commands" "${TMPDIR}/files/templates"
       curl -fsSL "${BASE_URL}/skills/agentic-team-protocol/SKILL.md" -o "${TMPDIR}/files/SKILL.md"
-      for agent in dispatcher builder runtime verifier researcher archivist; do
+      for agent in dispatcher builder runtime verifier researcher archivist router; do
         curl -fsSL "${BASE_URL}/agents/${agent}.md" -o "${TMPDIR}/files/agents/${agent}.md"
       done
-      for command in ratify-charter agentic-status agentic-escalate; do
+      for command in ratify-charter agentic-status agentic-escalate agentic-continue agentic-handoff; do
         curl -fsSL "${BASE_URL}/commands/${command}.md" -o "${TMPDIR}/files/commands/${command}.md"
       done
       for template in agentic-team-charter.md agentic-team-config.yaml claude-md.md; do
@@ -92,8 +92,8 @@ fi
 if [ "$DRY_RUN" = true ]; then
   echo "Would install to:"
   echo "  skill:    ${CLAUDE_DIR}/skills/agentic-team-protocol/SKILL.md"
-  echo "  agents:   ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist}.md"
-  echo "  commands: ${CLAUDE_DIR}/commands/{ratify-charter,agentic-status,agentic-escalate}.md"
+  echo "  agents:   ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md"
+  echo "  commands: ${CLAUDE_DIR}/commands/{ratify-charter,agentic-status,agentic-escalate,agentic-continue,agentic-handoff}.md"
   if [ "$LOCAL_INSTALL" = true ]; then
     echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
     [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
@@ -115,11 +115,11 @@ if [ -f "${PACKAGE_DIR}/CHARTER.md" ]; then
   cp "${PACKAGE_DIR}/CHARTER.md" "${CLAUDE_DIR}/skills/agentic-team-protocol/CHARTER.md"
 fi
 
-for agent in dispatcher builder runtime verifier researcher archivist; do
+for agent in dispatcher builder runtime verifier researcher archivist router; do
   cp "${PACKAGE_DIR}/agents/${agent}.md" "${CLAUDE_DIR}/agents/${agent}.md"
 done
 
-for command in ratify-charter agentic-status agentic-escalate; do
+for command in ratify-charter agentic-status agentic-escalate agentic-continue agentic-handoff; do
   cp "${PACKAGE_DIR}/commands/${command}.md" "${CLAUDE_DIR}/commands/${command}.md"
 done
 

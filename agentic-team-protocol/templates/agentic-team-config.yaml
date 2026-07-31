@@ -13,6 +13,9 @@ active_roles:
 # Runtime is available but gated; include it only when live-system work is expected.
 # - runtime
 
+# Router is a harness-level controller used by /agentic-continue to resume goals.
+# It is always available and does not need to be listed in active_roles.
+
 default_package_type: build
 
 overrides:

@@ -24,7 +24,8 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 3. Updated skills/runbooks if a convention, runbook, or reusable decision emerged.
 4. A closure record in Eden-memory with metadata:
    - `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `input_record_ids`, `output_record_ids`.
-5. For hand-offs: an ownership transfer record.
+5. For hand-offs: a durable `hand_off_record` promoted in Eden-memory, not just chat context.
+6. On discovering a newer `action_record` after an existing `archival_record` for the same `goal_id`, treat the closure as superseded and return the goal to the appropriate role (usually Verifier or Dispatcher).
 
 ## Failure modes to avoid
 
@@ -35,12 +36,13 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 
 ## Procedure
 
-1. Recall the latest `goal_record`, `dispatch_instruction`, action records, and `verdict` for the `goal_id`.
+1. Recall the latest `goal_record`, `dispatch_instruction`, action records, `verdict`, `run_log`, `hand_off_record`, and any prior `archival_record` for the `goal_id`.
 2. Ensure all records are linked by `goal_id` and `input/output_record_ids`.
-3. Write a canonical outcome record summarising what happened, why, and what remains.
-4. If reusable conventions emerged, update the relevant skill or runbook file and store a durable memory.
-5. Confirm records are complete and ownership is transferred if handing off.
-6. Mark the goal stage as `hand_off_or_closure`.
+3. If a newer `action_record` exists after the latest `archival_record`, the closure is superseded. Return the goal to the Dispatcher or Verifier (per the lifecycle rules) instead of closing.
+4. Write a canonical outcome record summarising what happened, why, and what remains.
+5. If reusable conventions emerged, update the relevant skill or runbook file and store a durable memory.
+6. Confirm records are complete and ownership is transferred via a `hand_off_record` if handing off.
+7. Mark the goal stage as `hand_off_or_closure`.
 
 ## Anti-patterns
 

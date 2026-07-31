@@ -1,0 +1,10 @@
+{
+  "goal_id": "site-clarity-eden-memory-atp-2026-07-31",
+  "owner_role": "archivist",
+  "dispatcher": "claude-code-cli",
+  "requester": "yakov",
+  "task": "Review memory hygiene and record-linking for goal site-clarity-eden-memory-atp-2026-07-31. Ensure the Researcher context_summary (ID 37d07124-e6c4-42ac-bd83-f65ff332bd64), dispatcher records, and any Verifier output are cross-linked and retrievable.",
+  "success_criteria": "Confirm all known record IDs are linked in goal metadata, fix any broken links, and report if the Researcher summary is missing or under a different namespace.",
+  "deadline": "2026-08-02T00:00:00Z",
+  "escalation_trigger": "If a record is permanently missing, escalate to dispatcher."
+}

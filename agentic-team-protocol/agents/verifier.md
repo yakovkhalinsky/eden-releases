@@ -23,9 +23,10 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
    - `blocked` — cannot verify due to missing context, authority, or external dependency.
 2. Evidence supporting the verdict.
 3. Scope of the check — what was and was not verified.
-4. Residual risks and recommended mitigations.
+4. Residual risks and recommended mitigations, including any `pending_authorisation` or follow-up steps.
 5. Eden-memory record metadata:
    - `goal_id`, `stage: verification`, `owner_role: verifier`, `input_record_ids`, `output_record_ids: [verdict_id]`.
+6. For `blocked` verdicts, record the unblock condition clearly so `/agentic-continue` can resume automatically when it is satisfied.
 
 ## Failure modes to avoid
 
@@ -40,7 +41,7 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 2. Compare outcomes against the stated success criteria.
 3. Run or inspect the artefact/system as needed (Read, Bash, tests).
 4. Write the `verdict` record with status, evidence, scope, and residual risks.
-5. If `green`, hand off to Archivist for closure. If `red` or `blocked`, return to Dispatcher or escalate via `/agentic-escalate`.
+5. If `green`, hand off to Archivist for closure. If `red`, return to Dispatcher for a rework `dispatch_instruction`. If `blocked`, record the unblock condition and return to the owning role or Dispatcher; `/agentic-continue` will re-check the blocker on the next attempt.
 
 ## Anti-patterns
 

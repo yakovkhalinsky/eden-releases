@@ -49,10 +49,15 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 1. **Goal receipt** — Dispatcher records the request, requester, constraints, and package type.
 2. **Routing and assignment** — Dispatcher assigns target role/package, owner, deadline, success criteria, confidence/escalation trigger.
 3. **Context gathering** — Researcher (or assigned role) records what is known, options considered, chosen path.
-4. **Action** — Builder or Runtime executes the plan and records what was done, rollback options, and state changes.
-5. **Verification** — Verifier inspects outcome against success criteria and writes a verdict.
+4. **Action** — Builder or Runtime executes the plan and records what was done, rollback options, and state changes. A role may park the goal as `pending_authorisation` if it needs explicit user approval before proceeding.
+5. **Verification** — Verifier inspects outcome against success criteria and writes a verdict (`green`, `red`, or `blocked`).
 6. **Recording and archival** — Archivist ensures final outcome, decision trail, and skill/runbook updates are stored.
-7. **Hand-off or closure** — Archivist confirms records are complete and ownership is transferred if handing off.
+7. **Hand-off or closure** — Archivist confirms records are complete and ownership is transferred if handing off. A new action record after closure supersedes the closure and returns the goal to Action.
+
+### Resumable sub-states
+
+- `blocked` — waiting on an external dependency or authority. The owning role records the unblock condition. The router checks it on every `/agentic-continue`.
+- `pending_authorisation` — waiting on explicit user approval for a specific action (e.g., push to origin). The exact question and prepared action are recorded so a new session can resume and apply the answer.
 
 ## Routing rules and dispatcher defaults
 
@@ -65,6 +70,8 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
   - `archive` → Archivist
 - Low confidence, missing authority, or tight deadline → escalate via `/agentic-escalate`.
 - Builder and Runtime must not start without sufficient context; request Researcher support if needed.
+- When a session ends or a role is interrupted, the next session uses `/agentic-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role.
+- A `blocked` or `pending_authorisation` goal remains active until the recorded unblock/approval condition is satisfied; the router re-checks it on continuation.
 
 ## Hand-off format
 
@@ -85,12 +92,13 @@ Store records with metadata so they can be recalled, linked, and audited:
 ```json
 {
   "goal_id": "<uuid>",
-  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure",
-  "owner_role": "dispatcher | researcher | builder | runtime | verifier | archivist",
+  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure | blocked | pending_authorisation",
+  "owner_role": "dispatcher | researcher | builder | runtime | verifier | archivist | router",
   "owner_instance": "<optional instance id>",
   "input_record_ids": ["<id>"],
   "output_record_ids": ["<id>"],
-  "verdict_id": "<id when applicable>"
+  "verdict_id": "<id when applicable>",
+  "status": "<in_progress | completed | blocked | pending_authorisation>"
 }
 ```
 
@@ -103,6 +111,8 @@ Required record types:
 - `verdict` — green/red/blocked from Verifier with evidence.
 - `escalation_record` — escalation request and routing.
 - `archival_record` — final outcome and links.
+- `run_log` — coarse-grained event written by a role at the start/end of each turn; used by the router to detect stale or interrupted work.
+- `hand_off_record` — explicit ownership transfer between roles or instances, including input/output IDs, success criteria, and deadline.
 
 ## Anti-patterns to avoid
 
@@ -113,6 +123,9 @@ Required record types:
 - **Verifiability gap** — Verifier gate is mandatory before closure.
 - **Archivist as secretary** — Archivist owns linking and skill/runbook updates.
 - **Memory blindness** — Eden-memory is the single source of truth; do not rely on conversation context.
+- **Dropped interrupted work** — always leave a `run_log` or durable record at the end of a turn so `/agentic-continue` can resume.
+- **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record`, not chat history.
+- **Stale closures** — a new action record after closure supersedes it; do not assume an old `archival_record` is the final word.
 
 ## Scope resolution rules
 
@@ -124,12 +137,35 @@ Required record types:
 ## Slash commands
 
 - `/ratify-charter` — read the project's `agentic-team-charter.md`, store a ratification record, and report whether the team may proceed.
-- `/agentic-status` — list active goals, current stage, owner role, and latest record IDs.
+- `/agentic-status` — list active goals, current stage, owner role, latest record IDs, and continueable/blocked state.
 - `/agentic-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`.
+- `/agentic-continue` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role.
+- `/agentic-handoff` — transfer ownership of a goal to another role or instance in a durable `hand_off_record`.
 
 ## Using the subagents
 
 Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off.
+
+For continuation, use the `router` subagent (or `/agentic-continue`) instead of manually picking a role. The router reads the latest Eden records for a `goal_id`, determines the required next stage and role using the lifecycle rules below, and invokes that role with full context.
+
+### Router lifecycle rules
+
+Given the latest non-terminal record for a `goal_id`:
+
+| Latest record | Next stage | Next role |
+|---|---|---|
+| `goal_record` | routing_and_assignment | Dispatcher |
+| `dispatch_instruction` | context_gathering or action | Researcher (if package is research) or assigned role |
+| `context_summary` | action | Builder or Runtime per Dispatcher plan |
+| `action_record` | verification | Verifier |
+| `verdict` status `red` | routing_and_assignment (rework) | Dispatcher |
+| `verdict` status `blocked` | blocked | owning role re-checks unblock condition |
+| `verdict` status `green` | recording_and_archival | Archivist |
+| `hand_off_record` | action / verification per hand-off | receiving role |
+| `pending_authorisation` | action | Builder/Runtime after user approval |
+| `archival_record` | hand_off_or_closure | none — goal is closed; report only |
+
+If a new `action_record` is stored after an `archival_record` for the same `goal_id`, the archival record is superseded and the goal returns to Action.
 
 ## Fallback if MCP is unavailable
 

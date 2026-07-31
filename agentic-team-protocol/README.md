@@ -18,6 +18,7 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 | Runtime subagent | Global | `~/.claude/agents/runtime.md` |
 | Verifier subagent | Global | `~/.claude/agents/verifier.md` |
 | Archivist subagent | Global | `~/.claude/agents/archivist.md` |
+| Router subagent | Global | `~/.claude/agents/router.md` |
 | `/ratify-charter` command | Global | `~/.claude/commands/ratify-charter.md` |
 | `/agentic-status` command | Global | `~/.claude/commands/agentic-status.md` |
 | `/agentic-escalate` command | Global | `~/.claude/commands/agentic-escalate.md` |
@@ -102,8 +103,10 @@ Once those files exist, project-local definitions override the global ones.
 After restart:
 
 - `/ratify-charter` — read the project charter, store a ratification record in Eden-memory.
-- `/agentic-status` — list active goals, stage, owner role, latest record IDs.
+- `/agentic-status` — list active goals, stage, owner role, latest record IDs, and continueable/blocked state.
 - `/agentic-escalate` — write a structured escalation record and route by level.
+- `/agentic-continue` — resume an unfinished goal by rehydrating it from Eden-memory and dispatching the next role.
+- `/agentic-handoff` — transfer ownership of a goal to another role in a durable record.
 
 ## License
 
