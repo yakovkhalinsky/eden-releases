@@ -38,6 +38,12 @@ fi
 
 TARGET="${PREFIX}/eden-memory"
 
+# Capture previous version if the target already exists.
+PREVIOUS_VERSION="none"
+if [ -x "${TARGET}" ]; then
+    PREVIOUS_VERSION=$("${TARGET}" version 2>/dev/null || echo "unknown")
+fi
+
 # Remove any stale Python wrapper from an old pip/uv install so the new
 # static binary can replace it cleanly.
 if [ -f "${TARGET}" ]; then
@@ -87,6 +93,9 @@ if ! command -v eden-memory >/dev/null 2>&1; then
     echo "  export PATH=\"${PREFIX}:\$PATH\""
 fi
 
+# Show before/after versions.
+UPDATED_VERSION=$("${TARGET}" version 2>/dev/null || echo "unknown")
 echo ""
-echo "eden-memory is installed. Run:"
+echo "eden-memory updated: ${PREVIOUS_VERSION} → ${UPDATED_VERSION}"
+echo "Run:"
 echo "  eden-memory --db ~/.eden-memory/default.db"
