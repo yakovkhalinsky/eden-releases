@@ -63,12 +63,6 @@ export default defineConfig({
 						{ label: 'Agent prompts', slug: 'agentic-team-protocol/agents' },
 					],
 				},
-				{
-					label: 'Meta',
-					items: [
-						{ label: 'Site setup', slug: 'guides/site-setup' },
-					],
-				},
 			],
 		}),
 	],
