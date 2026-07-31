@@ -42,7 +42,7 @@ The installable artifact is the raw `SKILL.md` file:
    | Field | Value |
    |-------|-------|
    | Name | `eden-memory` |
-   | Command | `/home/yourname/.local/bin/eden-memory --mcp-stdio` |
+   | Command | `/home/yourname/.local/bin/eden-memory` |
    | Arguments | `--db /home/yourname/.eden-memory/default.db` |
 
    Replace `/home/yourname` with your actual home path. If `eden-memory` is on the PATH that Cursor sees, you can use the bare command name.

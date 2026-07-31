@@ -130,7 +130,7 @@ The install script at `public/eden-memory/install.sh` resolves `latest/download`
 
 ## Multi-product structure
 
-Right now the site has one product section, `eden-memory`.
+The site has two product sections, `eden-memory` and `agentic-team-protocol`.
 When you add another product, create a parallel directory under `docs-site/src/content/docs/<product>/`:
 
 ```text

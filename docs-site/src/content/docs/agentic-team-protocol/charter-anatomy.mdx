@@ -1,0 +1,114 @@
+---
+title: Charter anatomy
+description: What goes into an Agentic Team Protocol charter and how each section shapes the team.
+---
+
+# Charter anatomy
+
+A charter is the contract between you and the agentic team. It defines identity,
+boundaries, roles, decision rights, and escalation paths. The global charter is a
+safe default; a project-local charter overrides it.
+
+Every charter must be ratified with `/ratify-charter` before the team proceeds.
+Ratification stores a `charter_ratification` record in eden-memory with a SHA-256
+version hash of the charter content.
+
+## Sections
+
+### Identity
+
+Who the project is and why it uses the protocol. Include the project path and a
+short purpose statement. This makes it clear which charter applies when multiple
+projects share the same global agent definitions.
+
+### Mission
+
+A one-sentence mission statement. For example: "Ship observable, reversible
+changes safely while maintaining a durable decision trail in eden-memory."
+
+### Boundaries
+
+Hard guardrails. Common examples:
+
+- No destructive actions on external or live systems without explicit authorisation.
+- Runtime is limited to local development tools unless the charter says otherwise.
+- Secrets, tokens, and credentials must never be stored in eden-memory or conversation logs.
+
+### Roles and seats
+
+List the active roles. The default set is:
+
+| Role | Default seat |
+|------|--------------|
+| Dispatcher | Active |
+| Researcher | Active |
+| Builder | Active |
+| Verifier | Active |
+| Archivist | Active |
+| Runtime | Gated |
+
+Runtime is available but requires explicit charter authorisation before acting on
+anything beyond local development tools.
+
+### Decision rights
+
+Who can decide what:
+
+- **Dispatcher** — routing and assignment decisions.
+- **Builder** — implementation approach within the dispatched scope.
+- **Verifier** — accept, reject, or request rework.
+- **Runtime** — go/no-go on live operations.
+- **User** — overrides any role decision.
+
+### Escalation paths
+
+Define the chain when a goal is blocked or risky. The default path is:
+
+1. Owning role → Dispatcher / Overseer within one status period.
+2. Dispatcher → Anchor Operations Chair same day.
+3. Chair → Founders' Circle within 48 hours for guardrail or risk issues.
+4. Final call by Founders' Circle or project owner.
+
+### Interfaces and dependencies
+
+- **eden-memory** (`~/.eden-memory/default.db`) is the durable substrate.
+- The global protocol skill at `~/.claude/skills/agentic-team-protocol/SKILL.md`
+  provides fallback documentation.
+- A project-local charter overrides the global charter for that project path.
+
+### Runbooks and skills owned
+
+List the files the team maintains so the Archivist knows where reusable
+conventions live:
+
+- `.claude/skills/agentic-team-protocol/SKILL.md`
+- `.claude/agents/*.md`
+- `.claude/commands/*.md`
+- The charter itself
+
+### Status cadence
+
+How often the team checks active goals. A common rule: run `/agentic-status` at
+the start of every session working on this project.
+
+### Retirement condition
+
+How to stop using the protocol for the project. Typically: remove
+`.claude/agentic-team-config.yaml` and the project-local protocol files. Until
+then, the charter remains binding.
+
+## Version and amendments
+
+- The charter version is a short SHA-256 hash of the file content.
+- Changes follow: propose → review → re-ratify → archive the previous version.
+- The Archivist owns the amendment log.
+
+## Default vs. project-local
+
+| Scope | File | Overrides |
+|-------|------|-----------|
+| Global | `~/.claude/skills/agentic-team-protocol/CHARTER.md` | Nothing |
+| Project-local | `.claude/agentic-team-charter.md` | Global charter |
+
+If a project has no `agentic-team-config.yaml`, the global skill is used and the
+global charter is ignored unless explicitly referenced.

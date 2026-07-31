@@ -27,7 +27,6 @@ mcp_config:
   args:
     - --db
     - "${HOME}/.eden-memory/default.db"
-    - --mcp-stdio
 related_skills:
   - eden-memory-mcp-usage
 ---
@@ -54,7 +53,6 @@ mcp:
       args:
         - --db
         - /home/yourname/.eden-memory/default.db
-        - --mcp-stdio
 ```
 
 Replace `yourname` with your actual username and restart Hermes or reload the profile.
@@ -69,7 +67,6 @@ mcp:
       args:
         - --db
         - /home/yourname/.eden-memory/default.db
-        - --mcp-stdio
 ```
 
 ## Tool names in Hermes

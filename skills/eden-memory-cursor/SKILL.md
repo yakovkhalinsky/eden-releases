@@ -27,7 +27,6 @@ mcp_config:
   args:
     - --db
     - "${HOME}/.eden-memory/default.db"
-    - --mcp-stdio
 related_skills:
   - eden-memory-mcp-usage
 ---
@@ -49,7 +48,7 @@ In Cursor, open **Settings** → **MCP** and add a new stdio server:
 | Field | Value |
 |-------|-------|
 | Name | `eden-memory` |
-| Command | `/home/yourname/.local/bin/eden-memory --mcp-stdio` |
+| Command | `/home/yourname/.local/bin/eden-memory` |
 | Arguments | `--db /home/yourname/.eden-memory/default.db` |
 
 Use your real username and start a new chat.

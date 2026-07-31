@@ -62,8 +62,34 @@ Edit `.claude/agentic-team-charter.md` to match your project, then run:
 /ratify-charter
 ```
 
-This stores a `charter_ratification` record in eden-memory. The command reports
-whether the team may proceed.
+This reads the charter, computes a SHA-256 version hash, and stores a
+`charter_ratification` record in eden-memory with metadata like:
+
+```json
+{
+  "kind": "charter_ratification",
+  "stage": "charter_ratification",
+  "goal_id": "charter-ratification",
+  "owner_role": "archivist"
+}
+```
+
+The command reports whether the team may proceed.
+
+## How agents use eden-memory
+
+Every role uses the eden-memory MCP server:
+
+- **Dispatcher** writes `goal_record` and `dispatch_instruction` records.
+- **Researcher** recalls prior context, then writes a `context_summary`.
+- **Builder / Runtime** recall the latest goal and dispatch records, do the work,
+  and write an `action_record` with `input_record_ids` and `output_record_ids`.
+- **Verifier** reads the action record and writes a `verdict`.
+- **Archivist** links everything into a final `archival_record` or hand-off.
+
+Each record should carry at least `goal_id`, `stage`, `owner_role`,
+`input_record_ids`, and `output_record_ids` so the lifecycle can be traced and
+recalled in later sessions.
 
 ## Common commands
 
@@ -76,4 +102,7 @@ whether the team may proceed.
 ## Next steps
 
 - Read the [overview](/agentic-team-protocol/) for the lifecycle and roles.
-- Learn the agent prompts by inspecting `~/.claude/agents/`.
+- Read the [charter anatomy](/agentic-team-protocol/charter-anatomy/) to write a project-local charter.
+- Read the [lifecycle](/agentic-team-protocol/lifecycle/) for the seven-stage flow.
+- Read the [agent prompts](/agentic-team-protocol/agents/) to learn when to spawn each role.
+- Inspect the raw prompt files in `~/.claude/agents/`.

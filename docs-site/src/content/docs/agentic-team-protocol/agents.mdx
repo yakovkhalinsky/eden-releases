@@ -1,0 +1,184 @@
+---
+title: Agent prompts
+description: Index of the Agentic Team Protocol role subagents, their obligations, and when to spawn them.
+---
+
+# Agent prompts
+
+The protocol is implemented as Claude Code subagents. Each role has a prompt
+file under `~/.claude/agents/` and a matching responsibility. Spawn the right
+subagent for the current lifecycle stage.
+
+## Quick reference
+
+| Role | File | Spawns when… |
+|------|------|--------------|
+| [Dispatcher](#dispatcher) | `~/.claude/agents/dispatcher.md` | A new goal arrives or routing is needed. |
+| [Researcher](#researcher) | `~/.claude/agents/researcher.md` | Context must be gathered before a decision. |
+| [Builder](#builder) | `~/.claude/agents/builder.md` | A concrete artefact needs to be produced. |
+| [Runtime](#runtime) | `~/.claude/agents/runtime.md` | Live systems need safe operational changes. |
+| [Verifier](#verifier) | `~/.claude/agents/verifier.md` | Work is ready to be validated. |
+| [Archivist](#archivist) | `~/.claude/agents/archivist.md` | A goal is closing and records need linking. |
+
+## Dispatcher
+
+**Obligation:** Decide who does what. Every new goal starts here.
+
+**Required outputs:**
+
+- A `goal_record` with `goal_id`, requester, constraints, and package type.
+- A `dispatch_instruction` with target role, owner, deadline, success criteria,
+  and escalation trigger.
+
+**Procedure:**
+
+1. Recall existing records for the `goal_id`.
+2. Pick a package type: `research`, `build`, `run`, `verify`, or `archive`.
+3. Assign the owning role and write the dispatch instruction.
+4. Hand off to the assigned role with context and record IDs.
+
+**Anti-patterns:**
+
+- Do not act as another role while dispatching.
+- Do not route non-trivial goals directly to Builder or Runtime without Researcher context.
+- Do not lose the link between the original request and the dispatched task.
+
+## Researcher
+
+**Obligation:** Gather context before decisions are made.
+
+**Required outputs:**
+
+- A `context_summary` containing the question, sources consulted, options
+  considered, trade-offs, confidence, and recommended next step.
+
+**Procedure:**
+
+1. Recall the `goal_record` and `dispatch_instruction`.
+2. Identify the decision and its consumer.
+3. Search eden-memory, read relevant files, and use WebSearch/WebFetch if needed.
+4. Summarise findings and store the context summary in eden-memory.
+5. Hand off to Dispatcher or directly to the assigned role.
+
+**Anti-patterns:**
+
+- Do not make decisions that belong to Dispatcher, Builder, or Runtime.
+- Do not bury findings in conversation.
+- Do not research beyond the assigned scope without escalating.
+
+## Builder
+
+**Obligation:** Produce durable, reviewable artefacts.
+
+**Required outputs:**
+
+1. The artefact itself (code, config, doc, test, etc.).
+2. A change summary with rationale, record IDs, merge instructions, and follow-up steps.
+3. An `action_record` in eden-memory with `goal_id`, `stage: action`,
+   `owner_role: builder`, `input_record_ids`, and `output_record_ids`.
+
+**Procedure:**
+
+1. Recall the latest `goal_record` and `dispatch_instruction`.
+2. Gather context via Read/Eden-memory. Request Researcher support if needed.
+3. Implement with small, coherent, verifiable changes.
+4. Write the change summary and store the action record.
+5. Hand off to Verifier.
+
+**Anti-patterns:**
+
+- Do not change live production systems.
+- Do not commit or push without explicit user direction.
+- Do not treat documentation as optional.
+- Do not skip verification.
+
+## Runtime
+
+**Obligation:** Operate live systems safely.
+
+**Required outputs:**
+
+1. An ordered execution plan.
+2. A rollback/recovery plan for each step.
+3. Observed state before and after execution.
+4. Health evidence.
+5. An `action_record` in eden-memory.
+
+**Procedure:**
+
+1. Recall the latest `goal_record` and `dispatch_instruction`.
+2. Inspect current state before any change.
+3. Produce the execution plan and rollback plan; store them in eden-memory.
+4. Execute step by step, capturing observed state after each step.
+5. Collect health evidence and compare against expected state.
+6. Hand off to Verifier.
+
+**Anti-patterns:**
+
+- Never run destructive commands without user confirmation and a rollback plan.
+- Never operate on production without explicit charter authority.
+- Do not mix Builder work with Runtime execution.
+
+## Verifier
+
+**Obligation:** Validate work before it is accepted.
+
+**Required outputs:**
+
+- A `verdict` record with status `green`, `red`, or `blocked`.
+- Evidence supporting the verdict.
+- Scope of what was verified and what was not.
+- Residual risks and recommended mitigations.
+
+**Procedure:**
+
+1. Recall the `goal_record`, `dispatch_instruction`, and action records.
+2. Compare outcomes against the success criteria.
+3. Run or inspect the artefact as needed.
+4. Write the verdict and hand off to Archivist if green, or back to Dispatcher if red/blocked.
+
+**Anti-patterns:**
+
+- Do not verify your own work.
+- Do not approve without reading the relevant records.
+- Do not ignore residual risks.
+
+## Archivist
+
+**Obligation:** Maintain durable, searchable fleet memory.
+
+**Required outputs:**
+
+1. Canonical records for the final outcome and decision trail.
+2. Searchable links between related records.
+3. Updated skills/runbooks if a reusable convention emerged.
+4. A closure record with `goal_id`, `stage: recording_and_archival`,
+   `owner_role: archivist`, `input_record_ids`, and `output_record_ids`.
+5. For hand-offs, an ownership transfer record.
+
+**Procedure:**
+
+1. Recall the `goal_record`, `dispatch_instruction`, action records, and `verdict`.
+2. Ensure all records are linked by `goal_id` and `input/output_record_ids`.
+3. Write a canonical outcome record summarising what happened and why.
+4. Update relevant skills or runbooks if conventions emerged.
+5. Confirm completeness or transfer ownership.
+
+**Anti-patterns:**
+
+- Do not act as a mere secretary.
+- Do not close a goal that lacks a green verdict.
+- Do not store secrets, tokens, or raw command output.
+
+## Spawning a subagent
+
+Spawn the role with its `goal_id` and the latest record IDs. Each subagent starts
+by recalling the latest `goal_record` for its assigned goal, then acts according
+to its contract, and finally writes a durable record in eden-memory before handing
+off.
+
+## Fallback
+
+If the eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash
+commands or invoke `eden-memory` directly from Bash. Restart Claude Code after
+`eden-memory setup claude` if commands are missing.

@@ -37,6 +37,31 @@ Runtime is not active unless your project charter explicitly authorises it.
 - [eden-memory](/eden-memory/getting-started/) installed and on your PATH.
 - Claude Code CLI (the protocol is implemented as global agents and slash commands).
 
+## How it uses eden-memory
+
+The protocol does not replace eden-memory; it stores every milestone in it.
+
+- `/ratify-charter` reads `.claude/agentic-team-charter.md`, computes a SHA-256
+  version hash, and writes a `charter_ratification` record to eden-memory.
+- Every role uses the eden-memory MCP tools (`eden_remember`, `eden_recall`,
+  `eden_search`, `eden_search_semantic`, `eden_edit`, `eden_forget`, etc.) to
+  read prior context and store new records.
+- Required record kinds link the lifecycle together:
+
+  | Kind | Stage | Owner | Purpose |
+  |------|-------|-------|---------|
+  | `goal_record` | goal_receipt | dispatcher | Initial request and constraints. |
+  | `dispatch_instruction` | routing_and_assignment | dispatcher | Who does what, by when. |
+  | `context_summary` | context_gathering | researcher | Findings and options considered. |
+  | `action_record` | action | builder / runtime | What was done and how to roll back. |
+  | `verdict` | verification | verifier | Green, red, or blocked assessment. |
+  | `escalation_record` | escalation | dispatcher | Authority or guardrail request. |
+  | `charter_ratification` | charter_ratification | archivist | Project charter approval. |
+  | `archival_record` | recording_and_archival | archivist | Final outcome and links. |
+
+Each record should include metadata fields: `goal_id`, `stage`, `owner_role`,
+`input_record_ids`, and `output_record_ids`.
+
 ## Quick install
 
 ```bash
@@ -47,4 +72,5 @@ Then restart Claude Code. The agents and commands will be available in every
 workspace.
 
 See the [getting started](/agentic-team-protocol/getting-started/) guide for the
-manual install path and project-local charter setup.
+manual install path and project-local charter setup. Read the [charter anatomy](/agentic-team-protocol/charter-anatomy/),
+[lifecycle](/agentic-team-protocol/lifecycle/), and [agent prompts](/agentic-team-protocol/agents/) for the full protocol reference.

@@ -41,10 +41,10 @@ The installable artifact is the raw `SKILL.md` file:
    mcp:
      servers:
        eden:
-         command: ${HOME}/.local/bin/eden-memory --mcp-stdio
+         command: ${HOME}/.local/bin/eden-memory
          args:
            - --db
-           - ${HOME}/.eden-memory/default.db --mcp-stdio
+           - ${HOME}/.eden-memory/default.db
    ```
 
 3. Download the skill file:

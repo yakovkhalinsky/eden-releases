@@ -49,6 +49,10 @@ Once connected, your agent can call:
 
 See the [tools reference](/eden-memory/reference/tools/) for full schemas.
 
+## Built for teams?
+
+If you use Claude Code, the [agentic-team-protocol](/agentic-team-protocol/) runs on top of eden-memory and adds role-based subagents (Dispatcher, Researcher, Builder, Verifier, Archivist) with a seven-stage goal lifecycle.
+
 ## Troubleshooting
 
 - **Server exits** — make sure `--db` is an absolute path.

@@ -34,3 +34,7 @@ hero:
 ## Data stays local
 
 There is no cloud account, no external API, and no network call for recall. First run extracts the embedded runtime and model weights to your platform cache; the SQLite database stays under `~/.eden-memory/`.
+
+## Built for teams?
+
+If you use Claude Code, you can run the [agentic-team-protocol](/agentic-team-protocol/) on top of eden-memory. It adds role-based subagents (Dispatcher, Researcher, Builder, Verifier, Archivist) and a seven-stage lifecycle, all backed by the same local SQLite store.

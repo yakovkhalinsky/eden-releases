@@ -3,7 +3,23 @@ title: Tools reference
 description: What each eden-memory tool does and when to use it.
 ---
 
-All inputs are JSON objects. `agent_id` and `user_id` are required for tools that read or write memories.
+All inputs are JSON objects.
+
+## Required and optional inputs
+
+For tools that read or write memories, `agent_id` and `user_id` are required.
+
+Optional inputs accepted by most tools:
+
+- `workspace_id` — scope to a project.
+- `org_id` — scope to a fleet context.
+- `metadata` — structured tags attached to a memory.
+- `ttl_ms` — expiry in milliseconds. `null` means the memory never expires.
+
+Tools that target an existing memory by ID require `id`:
+
+- `eden_edit`
+- `eden_forget`
 
 ## `eden_remember`
 

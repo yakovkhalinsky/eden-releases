@@ -1,0 +1,96 @@
+---
+title: Lifecycle
+description: The seven-stage Agentic Team Protocol lifecycle and the records produced at each stage.
+---
+
+# Lifecycle
+
+Every goal passes through seven stages. Each stage has an owner role, exit
+criteria, and a durable record in eden-memory. The Verifier gate is mandatory
+before closure.
+
+## Seven-stage flow
+
+```text
+          ┌─────────────────┐
+          │  Goal receipt   │ Dispatcher records the request.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Routing and    │ Dispatcher assigns role, owner,
+          │   assignment    │ deadline, success criteria.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Context        │ Researcher records what is known,
+          │  gathering      │ options, chosen path.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Action         │ Builder or Runtime executes and
+          │                 │ records what was done.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Verification   │ Verifier inspects and writes a
+          │                 │ green / red / blocked verdict.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Recording and  │ Archivist links records and
+          │  archival       │ updates skills / runbooks.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Hand-off or    │ Archivist confirms completion
+          │  closure        │ or transfers ownership.
+          └─────────────────┘
+```
+
+## Stage details
+
+| # | Stage | Owner | Record kind | What happens |
+|---|-------|-------|-------------|--------------|
+| 1 | **Goal receipt** | Dispatcher | `goal_record` | Capture the request, requester, constraints, and package type. |
+| 2 | **Routing and assignment** | Dispatcher | `dispatch_instruction` | Pick the role, owner, deadline, success criteria, and escalation trigger. |
+| 3 | **Context gathering** | Researcher | `context_summary` | Gather facts, consider options, recommend a path. |
+| 4 | **Action** | Builder / Runtime | `action_record` | Do the work, test it, document rollback options. |
+| 5 | **Verification** | Verifier | `verdict` | Compare outcome against success criteria; produce evidence. |
+| 6 | **Recording and archival** | Archivist | `archival_record` | Link records, update skills or runbooks, capture rationale. |
+| 7 | **Hand-off or closure** | Archivist | `hand_off_or_closure` | Confirm completeness or transfer ownership. |
+
+## Routing rules
+
+- Every new goal starts with Dispatcher.
+- Package types map to roles:
+  - `research` → Researcher
+  - `build` → Builder
+  - `run` → Runtime
+  - `verify` → Verifier
+  - `archive` → Archivist
+- Low confidence, missing authority, or a tight deadline → escalate with `/agentic-escalate`.
+
+## Record schema
+
+Each stage record should include this metadata so it can be traced and recalled:
+
+```json
+{
+  "goal_id": "<uuid>",
+  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure",
+  "owner_role": "dispatcher | researcher | builder | runtime | verifier | archivist",
+  "owner_instance": "<optional instance id>",
+  "input_record_ids": ["<id>"],
+  "output_record_ids": ["<id>"],
+  "verdict_id": "<id when applicable>"
+}
+```
+
+## Anti-patterns
+
+- **Role collapse** — use the right subagent for each stage.
+- **Missing Dispatcher** — every new goal starts with Dispatcher.
+- **Skipped Researcher** — non-trivial goals need explicit context gathering.
+- **Runtime without rollback** — Runtime must produce a rollback plan.
+- **Verifiability gap** — Verifier gate is mandatory before closure.
+- **Memory blindness** — eden-memory is the single source of truth; do not rely on conversation context.

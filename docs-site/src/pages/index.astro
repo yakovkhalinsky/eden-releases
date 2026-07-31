@@ -1,6 +1,16 @@
 ---
 // Minimal landing page for 0d3sa.com.
 // This page replaces the default Starlight splash homepage for the root path only.
+
+const mcpJsonConfig = `{
+  "mcpServers": {
+    "eden-memory": {
+      "command": "eden-memory",
+      "args": ["--db", "/home/yourname/.eden-memory/default.db"]
+    }
+  }
+}`;
+const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJsonConfig.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code></pre>`;
 ---
 
 <!DOCTYPE html>
@@ -46,19 +56,19 @@
             <span class="dot dot-red"></span>
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
-          </div>          <div class="terminal-body mono">
+          </div>          <div class="terminal-body mono" id="terminal-commands">
             <div class="line">
-              <span class="prompt">$</span>
+              <span class="prompt">$ </span>
               <span class="cmd">curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh</span>
             </div>
             <div class="line">
-              <span class="prompt">$</span>
+              <span class="prompt">$ </span>
               <span class="cmd">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</span>
             </div>
           </div>
           <div class="copy-row">
             <span class="mono hint">Install eden-memory, the agentic team protocol, or both.</span>
-            <button class="copy-btn" data-cmd="curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh">Copy</button>
+            <button class="copy-btn" data-target="terminal-commands">Copy both</button>
           </div>
         </div>
       </div>
@@ -105,7 +115,10 @@
               <p class="client-hint" style="margin-top:14px">For any other MCP client, use this server command:</p>
               <code class="mono">eden-memory --db /home/yourname/.eden-memory/default.db</code>
               <p class="client-hint" style="margin-top:10px">Or this JSON shape:</p>
-              <code class="mono">{'{'}{'"'}mcpServers{'"'}: {'{'}{'"'}eden-memory{'"'}: {'{'}{'"'}command{'"'}: {'"'}eden-memory{'"'}, {'"'}args{'"'}: [{'"'}--db{'"'}, {'"'}/home/yourname/.eden-memory/default.db{'"'}] {'}'} {'}'} {'}'}</code>
+              <div class="code-block">
+                <Fragment set:html={mcpJsonConfigHtml} />
+                <button class="copy-btn" data-target="mcp-json-config">Copy</button>
+              </div>
             </div>
           </div>
 
@@ -148,7 +161,7 @@
         <div class="product-grid">
           <a href="/eden-memory/" class="product-card">
             <div class="product-meta">
-              <span class="product-tag">Available now</span>
+              <span class="product-tag">MCP memory server</span>
             </div>
             <h3>eden-memory</h3>
             <p>Local-first memory layer for AI agents. Install one binary and wire it to any MCP client.</p>
@@ -156,7 +169,7 @@
           </a>
           <a href="/agentic-team-protocol/" class="product-card">
             <div class="product-meta">
-              <span class="product-tag">Claude Code</span>
+              <span class="product-tag">Claude Code team workflow</span>
             </div>
             <h3>agentic-team-protocol</h3>
             <p>Role-based agent teams with a seven-stage lifecycle and eden-memory as the durable substrate.</p>
@@ -165,7 +178,30 @@
         </div>
       </div>
     </section>
-    </main>
+
+    <section class="section section-alt" id="which-one">
+      <div class="wrap">
+        <div class="section-title-with-link">
+          <h2 class="section-title">Which one do I need?</h2>
+          <a href="#which-one" class="anchor-link" aria-label="Link to Which one do I need?">#</a>
+        </div>
+        <div class="decision-grid">
+          <div class="decision-card">
+            <h3>Just want memory?</h3>
+            <p>Use <a href="/eden-memory/">eden-memory</a>. One binary, any MCP client, and every memory stays on your machine.</p>
+          </div>
+          <div class="decision-card">
+            <h3>Want a team workflow?</h3>
+            <p>Use <a href="/agentic-team-protocol/">agentic-team-protocol</a>. It runs on top of eden-memory and adds Dispatcher, Researcher, Builder, Verifier, and Archivist roles inside Claude Code.</p>
+          </div>
+          <div class="decision-card decision-answer">
+            <h3>Short answer</h3>
+            <p>Install eden-memory first. If you work in Claude Code and want structured role-based collaboration, add the protocol.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer class="site-footer">
     <div class="wrap footer-row">
@@ -182,13 +218,31 @@
 
   <script is:inline>
     (function () {
+      function getCopyText(btn) {
+        var cmd = btn.getAttribute('data-cmd');
+        if (cmd) return cmd;
+        var targetId = btn.getAttribute('data-target');
+        if (!targetId) return '';
+        var target = document.getElementById(targetId);
+        if (!target) return '';
+        var lines = target.querySelectorAll('.line');
+        if (lines.length > 0) {
+          return Array.from(lines).map(function (line) {
+            return line.textContent.trim();
+          }).join('\n');
+        }
+        return target.textContent
+          .replace(/^\n+|\n+$/g, '')
+          .replace(/\n{2,}/g, '\n')
+          .trim();
+      }
       var btns = document.querySelectorAll('.copy-btn');
       btns.forEach(function (btn) {
         btn.addEventListener('click', function () {
-          var cmd = btn.getAttribute('data-cmd');
-          if (!cmd) return;
+          var text = getCopyText(btn);
+          if (!text) return;
           if (navigator.clipboard) {
-            navigator.clipboard.writeText(cmd).then(function () {
+            navigator.clipboard.writeText(text).then(function () {
               var old = btn.textContent;
               btn.textContent = 'Copied';
               setTimeout(function () { btn.textContent = old; }, 1200);
@@ -579,6 +633,85 @@
     font-weight: 600;
   }
 
+  .decision-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .decision-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+
+  .decision-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .decision-card p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin: 0;
+  }
+
+  .decision-answer {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent) inset;
+  }
+
+  .section-title-with-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .section-title-with-link .section-title {
+    margin: 0;
+  }
+
+  .anchor-link {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    opacity: 0.6;
+  }
+
+  .anchor-link:hover {
+    color: var(--accent);
+    opacity: 1;
+  }
+
+  .code-block {
+    position: relative;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow: hidden;
+  }
+
+  .code-block pre {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+
+  .code-block .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
   .checklist { list-style: none; padding: 0; margin: 0; }
   .checklist li {
     display: flex;
@@ -621,6 +754,7 @@
 
   @media (max-width: 760px) {
     .client-grid { grid-template-columns: 1fr; }
+    .decision-grid { grid-template-columns: 1fr; }
     .feature-split { grid-template-columns: 1fr; }
     .step { grid-template-columns: 1fr; }
     .step-num { width: 32px; height: 32px; font-size: 0.9rem; }

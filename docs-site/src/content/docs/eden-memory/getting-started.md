@@ -101,8 +101,13 @@ mv eden-memory-linux-arm64 ~/.local/bin/eden-memory
 
 Replace `linux-arm64` with your platform.
 
+## Built for teams?
+
+If you use Claude Code, the [agentic-team-protocol](/agentic-team-protocol/) runs on top of eden-memory and adds role-based subagents (Dispatcher, Researcher, Builder, Verifier, Archivist) with a seven-stage goal lifecycle.
+
 ## Next steps
 
 - [Connect your client](/eden-memory/mcp-clients/)
 - [Tools reference](/eden-memory/reference/tools/)
 - [Skills registry](/eden-memory/skills/)
+- [Agentic team protocol](/agentic-team-protocol/)

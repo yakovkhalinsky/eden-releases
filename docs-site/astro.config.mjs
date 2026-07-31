@@ -58,6 +58,9 @@ export default defineConfig({
 					items: [
 						{ label: 'Overview', slug: 'agentic-team-protocol' },
 						{ label: 'Install & get started', slug: 'agentic-team-protocol/getting-started' },
+						{ label: 'Charter anatomy', slug: 'agentic-team-protocol/charter-anatomy' },
+						{ label: 'Lifecycle', slug: 'agentic-team-protocol/lifecycle' },
+						{ label: 'Agent prompts', slug: 'agentic-team-protocol/agents' },
 					],
 				},
 				{
