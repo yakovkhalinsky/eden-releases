@@ -97,5 +97,23 @@ fi
 UPDATED_VERSION=$("${TARGET}" version 2>/dev/null || echo "unknown")
 echo ""
 echo "eden-memory updated: ${PREVIOUS_VERSION} → ${UPDATED_VERSION}"
+echo ""
 echo "Run:"
 echo "  eden-memory --db ~/.eden-memory/default.db"
+
+cat <<'EOF'
+
+Your memory garden is ready:
+
+    eden-memory
+    +-- ~/.local/bin/eden-memory
+    +-- ~/.eden-memory/default.db
+    +-- ~/.cache/eden-memory/
+    +-- ~/.claude.json   (after setup claude)
+
+Quick start:
+  eden-memory --db ~/.eden-memory/default.db
+  eden-memory health
+  eden-memory remember --agent-id eve --user-id yakov --content "hello world"
+  eden-memory tree --db ~/.eden-memory/default.db
+EOF
