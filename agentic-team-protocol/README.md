@@ -23,6 +23,7 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 | `/agentic-escalate` command | Global | `~/.claude/commands/agentic-escalate.md` |
 | Charter template | Project-local | `.claude/agentic-team-charter.md` |
 | Config template | Project-local | `.claude/agentic-team-config.yaml` |
+| CLAUDE.md template | Project-local | `templates/claude-md.md` (used by `--claude-md`) |
 
 ## Quick install
 
@@ -31,6 +32,23 @@ curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
 Restart Claude Code after installing (`/exit`, then reopen).
+
+## Project opt-in with enforced rules
+
+To install the global primitives *and* opt a project in with a `CLAUDE.md` file that instructs Claude Code to follow the protocol on every task:
+
+```bash
+cd ~/my-project
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local --claude-md
+```
+
+This creates:
+
+- `.claude/agentic-team-charter.md`
+- `.claude/agentic-team-config.yaml`
+- `CLAUDE.md` with memory-first and Agentic Team Protocol enforcement rules
+
+If `CLAUDE.md` already exists, the installer appends the rules only if they are not already present.
 
 ## Manual install
 
@@ -44,9 +62,12 @@ cp -r commands/* ~/.claude/commands/
 # 3. In a project that wants to opt in:
 cp templates/agentic-team-charter.md .claude/agentic-team-charter.md
 cp templates/agentic-team-config.yaml .claude/agentic-team-config.yaml
+
+# 4. Optional: create a CLAUDE.md with protocol enforcement rules
+cp templates/claude-md.md CLAUDE.md
 ```
 
-Edit the charter and config to match the project.
+Edit the charter, config, and `CLAUDE.md` to match the project.
 
 ## Project opt-in
 
@@ -54,6 +75,8 @@ A project opts into the Agentic Team Protocol by creating:
 
 - `.claude/agentic-team-charter.md` — identity, mission, boundaries, roles, decision rights, escalation paths.
 - `.claude/agentic-team-config.yaml` — active roles, default package type, override flags.
+
+Optionally, add a project-level `CLAUDE.md` (or use `--claude-md`) to instruct Claude Code to follow the protocol on every task.
 
 Once those files exist, project-local definitions override the global ones.
 
