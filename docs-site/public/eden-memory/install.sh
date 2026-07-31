@@ -101,12 +101,22 @@ echo ""
 echo "Run:"
 echo "  eden-memory --db ~/.eden-memory/default.db"
 
-# ANSI color helpers via printf so they work in plain POSIX sh.
-GREEN="$(printf '\033[32m')"
-CYAN="$(printf '\033[36m')"
-YELLOW="$(printf '\033[33m')"
-DIM="$(printf '\033[90m')"
-RESET="$(printf '\033[0m')"
+# ANSI color helpers via printf, gated by TTY and NO_COLOR for portability.
+NO_COLOR="${NO_COLOR:-}"
+if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then
+    ESC="$(printf '\033')"
+    GREEN="${ESC}[32m"
+    CYAN="${ESC}[36m"
+    YELLOW="${ESC}[33m"
+    DIM="${ESC}[90m"
+    RESET="${ESC}[0m"
+else
+    GREEN=""
+    CYAN=""
+    YELLOW=""
+    DIM=""
+    RESET=""
+fi
 
 cat <<EOF
 
