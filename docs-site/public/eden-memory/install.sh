@@ -101,19 +101,26 @@ echo ""
 echo "Run:"
 echo "  eden-memory --db ~/.eden-memory/default.db"
 
-cat <<'EOF'
+# ANSI color helpers
+GREEN='\033[32m'
+CYAN='\033[36m'
+YELLOW='\033[33m'
+DIM='\033[90m'
+RESET='\033[0m'
 
-Your memory garden is ready:
+cat <<EOF
 
-    eden-memory
-    +-- ~/.local/bin/eden-memory
-    +-- ~/.eden-memory/default.db
-    +-- ~/.cache/eden-memory/
-    +-- ~/.claude.json   (after setup claude)
+${GREEN}Your memory garden is ready:${RESET}
 
-Quick start:
-  eden-memory --db ~/.eden-memory/default.db
-  eden-memory health
-  eden-memory remember --agent-id eve --user-id yakov --content "hello world"
-  eden-memory tree
+    ${CYAN}eden-memory${RESET}
+    +-- ${YELLOW}~/.local/bin/eden-memory${RESET}
+    +-- ${YELLOW}~/.eden-memory/default.db${RESET}
+    +-- ${YELLOW}~/.cache/eden-memory/${RESET}
+    +-- ${DIM}~/.claude.json   (after setup claude)${RESET}
+
+${GREEN}Quick start:${RESET}
+  ${CYAN}eden-memory --db ~/.eden-memory/default.db${RESET}
+  ${CYAN}eden-memory health${RESET}
+  ${CYAN}eden-memory remember --agent-id eve --user-id yakov --content "hello world"${RESET}
+  ${CYAN}eden-memory tree${RESET}
 EOF
