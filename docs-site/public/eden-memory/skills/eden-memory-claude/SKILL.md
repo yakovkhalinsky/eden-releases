@@ -2,7 +2,7 @@
 name: eden-memory-claude
 title: Claude Code CLI
 description: Use eden-memory as a persistent memory layer inside Claude Code CLI.
-version: 3.0.0
+version: 3.0.1
 tags: [mcp, eden-memory, claude-code, skill, prompt, subagent]
 tools:
   discoverable: true
@@ -35,6 +35,10 @@ related_skills:
 
 # eden-memory + Claude Code CLI
 
+> **MCP first.** Use the eden-memory MCP server so Claude Code can invoke tools
+> automatically. Use the `/eden-*` slash commands only if `/mcp` fails or the
+> tools do not appear.
+
 ## Install the binary
 
 ```bash
@@ -45,8 +49,7 @@ This installs the `eden-memory` Go binary to `~/.local/bin/eden-memory`.
 
 ## Wire the MCP server
 
-The easiest way is to run the setup helper from each project directory you launch
-Claude Code in:
+Run the setup helper from each project directory you launch Claude Code in:
 
 ```bash
 cd ~/project-a
@@ -105,7 +108,7 @@ Do not proceed with memory-dependent work until `eden_health` succeeds.
 - `mcp__eden-memory__eden_health`
 - `mcp__eden-memory__eden_vacuum`
 
-## Tool-first usage
+## Using MCP tools (default)
 
 Prompt naturally and let Claude invoke the right tool:
 
@@ -211,3 +214,9 @@ If you cannot call the eden-memory tools:
   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
   ```
 - **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db health`. If it prints a JSON health report, the binary is healthy and the issue is Claude Code config or PATH.
+- **Tools missing after `/mcp` connects:** fully exit Claude Code (`/exit`) and reopen it; agents often only load tools at startup.
+- **Claude Code times out even though the binary works from your shell:**
+  - On v0.3.28 and earlier the server expected `Content-Length` framing while
+    Claude Code sends NDJSON. Upgrade to v0.3.29+.
+  - If it still fails, you probably have a stale config using `--mcp-sse`, a
+    stale Python process, or a missing restart.
