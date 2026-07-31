@@ -115,5 +115,5 @@ Quick start:
   eden-memory --db ~/.eden-memory/default.db
   eden-memory health
   eden-memory remember --agent-id eve --user-id yakov --content "hello world"
-  eden-memory tree --db ~/.eden-memory/default.db
+  eden-memory tree
 EOF
