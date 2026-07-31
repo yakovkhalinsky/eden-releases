@@ -15,11 +15,13 @@ Collect goal, options, consulted roles, recommended default, specific question/a
 2. Search Eden-memory for the latest records about the goal to include context.
 3. Write an `escalation_record`:
    ```bash
-   /home/yakov/.local/bin/eden-memory remember \
+   USER_ID="${USER:-$(id -un)}"
+   EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
+   "${EDEN_MEMORY_BIN}" remember \
      --agent-id claude-code-cli \
-     --user-id yakov \
-     --content "Escalation for goal $GOAL_ID. Reason: $REASON. Consulted roles: dispatcher. Recommended default: $RECOMMENDED. Question/authority requested: $QUESTION. Risk of waiting: $RISK." \
-     --metadata '{"kind":"escalation_record","stage":"escalation","goal_id":"'$GOAL_ID'","owner_role":"dispatcher"}'
+     --user-id "${USER_ID}" \
+     --content "Escalation for goal ${GOAL_ID}. Reason: ${REASON}. Consulted roles: dispatcher. Recommended default: ${RECOMMENDED}. Question/authority requested: ${QUESTION}. Risk of waiting: ${RISK}." \
+     --metadata '{"kind":"escalation_record","stage":"escalation","goal_id":"'${GOAL_ID}'","owner_role":"dispatcher"}'
    ```
 4. Route according to escalation levels and report the path to the user:
    1. Owning role to Dispatcher/Overseer within one status period.

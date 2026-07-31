@@ -1,0 +1,50 @@
+---
+title: agentic-team-protocol
+description: Role-based agent teams with a seven-stage lifecycle and eden-memory as the durable substrate.
+---
+
+# agentic-team-protocol
+
+A lightweight operating model for running small agentic teams inside Claude Code.
+It defines clear roles, a seven-stage goal lifecycle, and durable memory records
+in [eden-memory](/eden-memory/).
+
+## Seven-stage lifecycle
+
+1. **Intake and triage** — capture the request, decide whether to accept it.
+2. **Scoping and charter check** — verify boundaries and authority.
+3. **Research and options** — evaluate approaches.
+4. **Dispatch and planning** — assign to the right role.
+5. **Execution and verification** — build and review.
+6. **Escalation (if needed)** — route blocked or risky goals upward.
+7. **Recording and archival** — close the loop in memory.
+
+## Default roles
+
+| Role | Responsibility |
+|------|----------------|
+| Dispatcher | Decides what gets built and who does it. |
+| Researcher | Investigates options and writes decision-ready reports. |
+| Builder | Implements the chosen approach. |
+| Runtime | Executes operational actions — gated by default. |
+| Verifier | Reviews correctness, safety, and charter compliance. |
+| Archivist | Records the goal lifecycle and manages memory hygiene. |
+
+Runtime is not active unless your project charter explicitly authorises it.
+
+## What you need
+
+- [eden-memory](/eden-memory/getting-started/) installed and on your PATH.
+- Claude Code CLI (the protocol is implemented as global agents and slash commands).
+
+## Quick install
+
+```bash
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
+```
+
+Then restart Claude Code. The agents and commands will be available in every
+workspace.
+
+See the [getting started](/agentic-team-protocol/getting-started/) guide for the
+manual install path and project-local charter setup.

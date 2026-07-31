@@ -54,6 +54,13 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'agentic-team-protocol',
+					items: [
+						{ label: 'Overview', slug: 'agentic-team-protocol' },
+						{ label: 'Install & get started', slug: 'agentic-team-protocol/getting-started' },
+					],
+				},
+				{
 					label: 'Meta',
 					items: [
 						{ label: 'Site setup', slug: 'guides/site-setup' },

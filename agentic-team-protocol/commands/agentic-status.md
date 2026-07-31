@@ -14,9 +14,11 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
 1. Parse `$ARGUMENTS` as an optional filter. If it looks like a UUID or contains a `-`, treat it as a `goal_id` filter; otherwise treat it as a role filter.
 2. Search Eden-memory for recent `goal_record` and stage records:
    ```bash
-   /home/yakov/.local/bin/eden-memory search \
+   USER_ID="${USER:-$(id -un)}"
+   EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
+   "${EDEN_MEMORY_BIN}" search \
      --agent-id claude-code-cli \
-     --user-id yakov \
+     --user-id "${USER_ID}" \
      --keywords "agentic-team-protocol goal_record stage" \
      --limit 50
    ```
