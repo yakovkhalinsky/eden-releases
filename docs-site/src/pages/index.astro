@@ -44,7 +44,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
       <div class="wrap">
         <div class="pill">
           <span class="dot"></span>
-          <span>v0.1 alpha · Apache-2.0 · macOS + Linux</span>
+          <span>Open source · Apache-2.0 · macOS + Linux</span>
         </div>
         <h1>0d3sa</h1>
         <p class="lead">
@@ -56,19 +56,32 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
             <span class="dot dot-red"></span>
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
-          </div>          <div class="terminal-body mono" id="terminal-commands">
-            <div class="line">
-              <span class="prompt">$ </span>
-              <span class="cmd">curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh</span>
+          </div>
+          <div class="terminal-body mono" id="terminal-commands">
+            <div class="terminal-step">
+              <span class="step-label">Step 1 — required base</span>
+              <div class="line">
+                <span class="prompt">$ </span>
+                <span class="cmd">curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh</span>
+              </div>
+              <span class="comment">Install eden-memory, the local-first memory server.</span>
             </div>
-            <div class="line">
-              <span class="prompt">$ </span>
-              <span class="cmd">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</span>
+            <div class="terminal-step">
+              <span class="step-label">Step 2 — optional add-on</span>
+              <div class="line">
+                <span class="prompt">$ </span>
+                <span class="cmd">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</span>
+              </div>
+              <span class="comment">Add the Agentic Team Protocol inside Claude Code.</span>
             </div>
           </div>
           <div class="copy-row">
-            <span class="mono hint">Install eden-memory, the agentic team protocol, or both.</span>
-            <button class="copy-btn" data-target="terminal-commands">Copy both</button>
+            <span class="mono hint">ATP requires eden-memory on your PATH.</span>
+            <div class="copy-row-btns">
+              <button class="copy-btn" data-cmd="curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh">Copy step 1</button>
+              <button class="copy-btn" data-cmd="curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh">Copy step 2</button>
+              <button class="copy-btn" data-target="terminal-commands">Copy both</button>
+            </div>
           </div>
         </div>
       </div>
@@ -131,6 +144,36 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
               <code class="mono">What do you know about my communication preferences?</code>
             </div>
           </div>
+
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h3>Add the Agentic Team Protocol</h3>
+              <p>This step is only for Claude Code. It installs the global slash commands and agent prompts.</p>
+              <code class="mono">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</code>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>Restart Claude Code</h3>
+              <p>Exit the current session and reopen it so the protocol commands register in every workspace.</p>
+              <code class="mono">/exit</code>
+              <p class="client-hint" style="margin-top:10px">Then reopen Claude Code in your project directory.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">7</div>
+            <div class="step-body">
+              <h3>Ratify your team charter</h3>
+              <p>Run the charter command to create a durable ratification record in eden-memory. Then optionally check team status.</p>
+              <code class="mono">/team-charter</code>
+              <code class="mono">/team-status</code>
+              <p class="client-hint" style="margin-top:10px">Read the <a href="/agentic-team-protocol/getting-started/">getting started</a> guide and <a href="/agentic-team-protocol/charter-anatomy/">charter anatomy</a> for the full setup.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -155,6 +198,21 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
       </div>
     </section>
 
+    <section class="section section-alt">
+      <div class="wrap feature-single">
+        <div class="feature-copy">
+          <h2>What the protocol does</h2>
+          <p>agentic-team-protocol runs structured agent teams inside Claude Code. It assigns a role to each stage of a goal, stores every milestone in eden-memory, and keeps a mandatory Verifier gate before anything is closed.</p>
+          <ul class="checklist">
+            <li>Durable goal, dispatch, context, action, verdict, and archival records</li>
+            <li>Six default roles: Dispatcher, Researcher, Builder, Verifier, Archivist, Runtime</li>
+            <li>Seven-stage lifecycle from goal receipt to hand-off or closure</li>
+            <li>Built on eden-memory — everything stays on your machine</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section class="section products-section">
       <div class="wrap">
         <h2 class="section-title">Products on <strong>0d3sa</strong></h2>
@@ -173,6 +231,10 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
             </div>
             <h3>agentic-team-protocol</h3>
             <p>Role-based agent teams with a seven-stage lifecycle and eden-memory as the durable substrate.</p>
+            <ul class="role-list">
+              <li><strong>Roles:</strong> Dispatcher, Researcher, Builder, Verifier, Archivist, Runtime</li>
+              <li><strong>Lifecycle:</strong> goal receipt → routing → context → action → verification → archival → closure</li>
+            </ul>
             <span class="product-link">Read docs →</span>
           </a>
         </div>
@@ -192,7 +254,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
           </div>
           <div class="decision-card">
             <h3>Want a team workflow?</h3>
-            <p>Use <a href="/agentic-team-protocol/">agentic-team-protocol</a>. It runs on top of eden-memory and adds Dispatcher, Researcher, Builder, Verifier, and Archivist roles inside Claude Code.</p>
+            <p>Use <a href="/agentic-team-protocol/">agentic-team-protocol</a>. It runs on top of eden-memory and adds Dispatcher, Researcher, Builder, Verifier, Archivist, and Runtime roles inside Claude Code.</p>
           </div>
           <div class="decision-card decision-answer">
             <h3>Short answer</h3>
@@ -592,7 +654,8 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
   }
 
   .product-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -631,6 +694,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
     color: var(--accent);
     font-size: 0.9rem;
     font-weight: 600;
+    margin-top: auto;
   }
 
   .decision-grid {
@@ -751,6 +815,47 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
   }
 
   .footer-links .sep { margin: 0 6px; color: var(--text-muted); }
+
+  .terminal-step { margin-bottom: 16px; }
+  .terminal-step:last-child { margin-bottom: 0; }
+  .terminal-step .step-label {
+    display: block;
+    color: var(--amber);
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .terminal-step .comment {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-top: 4px;
+  }
+
+  .copy-row { flex-wrap: wrap; gap: 10px; }
+  .copy-row-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .role-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+  }
+  .role-list li {
+    color: var(--text-muted);
+    font-size: 0.84rem;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .role-list strong { color: var(--text); font-weight: 600; }
+
+  .feature-single { max-width: 760px; margin: 0 auto; }
 
   @media (max-width: 760px) {
     .client-grid { grid-template-columns: 1fr; }
