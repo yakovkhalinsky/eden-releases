@@ -40,3 +40,6 @@ download-metadata.json
 # Built binaries are published as GitHub Release assets only
 binaries/eden-memory-*
 !binaries/manifest.json
+
+# Generated copy of the canonical agentic-team-protocol/ tree for the docs site.
+docs-site/public/agentic-team-protocol/

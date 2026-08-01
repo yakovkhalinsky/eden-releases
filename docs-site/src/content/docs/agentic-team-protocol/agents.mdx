@@ -19,6 +19,7 @@ subagent for the current lifecycle stage.
 | [Runtime](#runtime) | `~/.claude/agents/runtime.md` | Live systems need safe operational changes. |
 | [Verifier](#verifier) | `~/.claude/agents/verifier.md` | Work is ready to be validated. |
 | [Archivist](#archivist) | `~/.claude/agents/archivist.md` | A goal is closing and records need linking. |
+| [Router](#router) | `~/.claude/agents/router.md` | A previously interrupted goal needs resuming. |
 
 ## Dispatcher
 
@@ -169,6 +170,31 @@ subagent for the current lifecycle stage.
 - Do not act as a mere secretary.
 - Do not close a goal that lacks a green verdict.
 - Do not store secrets, tokens, or raw command output.
+
+## Router
+
+**Obligation:** Resume interrupted or unfinished goals by reading Eden-memory and dispatching the correct next role.
+
+**Required outputs:**
+
+1. A `run_log` record marking the continuation attempt.
+2. A clear decision: which role should act next and why.
+3. A hand-off payload containing `goal_id`, inferred stage, next role, latest record IDs, success criteria, and any escalation trigger.
+
+**Procedure:**
+
+1. Accept a `goal_id` from `/agentic-continue` or an external controller.
+2. Search Eden-memory for the latest records of that `goal_id`.
+3. Apply the lifecycle rules in `SKILL.md` to determine the required next stage and role.
+4. If the goal is `blocked` or `pending_authorisation`, report the blocker and stop.
+5. If the latest record is an `archival_record` with no newer action record, report the goal is closed.
+6. Write a `run_log` and spawn the selected role subagent with full context.
+
+**Anti-patterns:**
+
+- Do not perform role work yourself — only route.
+- Do not rely on the conversation transcript for goal state.
+- Do not silently drop blocked goals; report them.
 
 ## Spawning a subagent
 

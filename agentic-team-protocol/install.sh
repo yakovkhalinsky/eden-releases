@@ -65,17 +65,27 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
       echo "Note: tarball not yet published; installing individual files from public URLs."
       BASE_URL="https://0d3sa.com/agentic-team-protocol"
       mkdir -p "${TMPDIR}/files/agents" "${TMPDIR}/files/commands" "${TMPDIR}/files/templates"
-      curl -fsSL "${BASE_URL}/skills/agentic-team-protocol/SKILL.md" -o "${TMPDIR}/files/SKILL.md"
+      # Download with explicit failure messages so a 404 is obvious.
+      _download() {
+        url="$1"
+        dest="$2"
+        if ! curl -fsSL "${url}" -o "${dest}"; then
+          echo "Error: failed to download ${url}" >&2
+          rm -rf "${TMPDIR}"
+          exit 1
+        fi
+      }
+      _download "${BASE_URL}/SKILL.md" "${TMPDIR}/files/SKILL.md"
       for agent in dispatcher builder runtime verifier researcher archivist router; do
-        curl -fsSL "${BASE_URL}/agents/${agent}.md" -o "${TMPDIR}/files/agents/${agent}.md"
+        _download "${BASE_URL}/agents/${agent}.md" "${TMPDIR}/files/agents/${agent}.md"
       done
       for command in ratify-charter agentic-status agentic-escalate agentic-continue agentic-handoff; do
-        curl -fsSL "${BASE_URL}/commands/${command}.md" -o "${TMPDIR}/files/commands/${command}.md"
+        _download "${BASE_URL}/commands/${command}.md" "${TMPDIR}/files/commands/${command}.md"
       done
       for template in agentic-team-charter.md agentic-team-config.yaml claude-md.md; do
-        curl -fsSL "${BASE_URL}/templates/${template}" -o "${TMPDIR}/files/templates/${template}"
+        _download "${BASE_URL}/templates/${template}" "${TMPDIR}/files/templates/${template}"
       done
-      curl -fsSL "${BASE_URL}/CHARTER.md" -o "${TMPDIR}/files/CHARTER.md" || true
+      _download "${BASE_URL}/CHARTER.md" "${TMPDIR}/files/CHARTER.md"
       PACKAGE_DIR="${TMPDIR}/files"
     fi
   else

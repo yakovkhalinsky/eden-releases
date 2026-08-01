@@ -19,8 +19,8 @@ curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 This copies the skill, agents, and slash commands into `~/.claude/`:
 
 - `~/.claude/skills/agentic-team-protocol/SKILL.md`
-- `~/.claude/agents/{dispatcher,builder,runtime,verifier,researcher,archivist}.md`
-- `~/.claude/commands/{ratify-charter,agentic-status,agentic-escalate}.md`
+- `~/.claude/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md`
+- `~/.claude/commands/{ratify-charter,agentic-status,agentic-escalate,agentic-continue,agentic-handoff}.md`
 
 Restart Claude Code to load them.
 
@@ -98,6 +98,8 @@ recalled in later sessions.
 | `/ratify-charter` | Ratify the project charter. |
 | `/agentic-status` | Show active goals and current stages. |
 | `/agentic-escalate` | Escalate a blocked or risky goal. |
+| `/agentic-continue` | Continue a previously handed-off goal. |
+| `/agentic-handoff` | Hand off a goal to another session or agent. |
 
 ## Next steps
 
