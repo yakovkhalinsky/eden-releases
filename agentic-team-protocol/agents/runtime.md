@@ -39,7 +39,10 @@ Operate live systems safely. Every runtime action must be reversible and observa
 5. If a step requires explicit user authorisation beyond the charter, store a `pending_authorisation` record with the exact question and prepared action, then stop and ask.
 6. Execute the plan step by step, capturing observed state after each step.
 7. Collect health evidence and compare against expected state.
-8. Hand off to Verifier with execution evidence and rollback options. For cross-session hand-offs, use `/team-handoff`.
+8. **Write a durable `hand_off_record` before handing off to Verifier.**
+   - Include the action record ID(s) and any `pending_authorisation` record ID in `input_record_ids`.
+   - Record `next_role: verifier` and the reason for the transfer.
+9. Hand off to Verifier with execution evidence, rollback options, and the hand-off record ID. For cross-session hand-offs, use `/team-handoff`.
 
 ## Anti-patterns
 

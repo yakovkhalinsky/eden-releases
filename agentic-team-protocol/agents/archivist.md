@@ -41,8 +41,11 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 3. If a newer `action_record` exists after the latest `archival_record`, the closure is superseded. Return the goal to the Dispatcher or Verifier (per the lifecycle rules) instead of closing.
 4. Write a canonical outcome record summarising what happened, why, and what remains.
 5. If reusable conventions emerged, update the relevant skill or runbook file and store a durable memory.
-6. Confirm records are complete and ownership is transferred via a `hand_off_record` if handing off.
-7. Mark the goal stage as `hand_off_or_closure`.
+6. **Write a durable `hand_off_record` before transferring ownership.**
+   - Include the `verdict`, `archival_record`, and any updated skill/runbook record IDs in `input_record_ids`.
+   - Record the receiving role or instance and the reason for the transfer.
+7. Confirm records are complete and ownership is transferred via the `hand_off_record`.
+8. Mark the goal stage as `hand_off_or_closure`.
 
 ## Anti-patterns
 

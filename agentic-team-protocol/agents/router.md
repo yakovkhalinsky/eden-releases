@@ -19,12 +19,16 @@ Resume interrupted or unfinished goals by reading Eden-memory and dispatching th
 
 1. A `run_log` record marking the continuation attempt:
    - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `input_record_ids`, `output_record_ids`.
-2. A clear decision: which role should act next and why.
-3. A hand-off payload containing:
+2. A durable `hand_off_record` (or continuation `run_log` that satisfies the hand-off format) **written before spawning the next role**.
+   - This record is the activation signal for the receiving role; it must contain the full hand-off payload.
+   - `input_record_ids` must reference the latest durable stage record(s), not the `goal_id` itself.
+   - `output_record_ids` must reference the new hand-off/run_log record and the next role.
+3. A clear decision: which role should act next and why.
+4. A hand-off payload containing:
    - `goal_id`
    - current inferred stage
    - next role
-   - latest record IDs (goal_record, dispatch_instruction, latest stage record, latest verdict if any)
+   - latest record IDs (`goal_record`, `dispatch_instruction`, latest stage record, latest verdict if any)
    - success criteria and deadline from the latest dispatch instruction
    - escalation trigger, if any
 
@@ -47,7 +51,14 @@ Resume interrupted or unfinished goals by reading Eden-memory and dispatching th
 4. If the goal is `blocked` or `pending_authorisation`, report the blocker/approval question to the user and stop.
 5. If the latest record is an `archival_record` and no newer action record exists, report the goal is closed.
 6. Write a `run_log` recording the continuation decision.
-7. Spawn the selected role subagent with the full goal context and record IDs using the `Agent` tool.
+7. **Write a durable `hand_off_record` (or continuation `run_log` with full hand-off payload) before spawning the next role.**
+   - Capture the latest input record IDs from the search in step 2.
+   - Set `owner_role: router` and `stage: routing_and_assignment` or the inferred next stage.
+   - Record `next_role` and the reason for the routing decision in the content or metadata.
+8. Spawn the selected role subagent with the full goal context, record IDs, and the hand-off record ID using the `Agent` tool.
+9. **Recovery if the spawned role produces no durable record:**
+   - If, after spawning, the next role fails to store its expected record (no new action/context/verdict/etc. for the `goal_id` within the turn), write a second `hand_off_record` or `run_log` noting the missing downstream record.
+   - Report the missing record to the user and suggest re-invoking the router (`/team-continue ${GOAL_ID}`) or escalating via `/team-escalate`.
 
 ## Lifecycle decision table
 
@@ -69,3 +80,5 @@ Resume interrupted or unfinished goals by reading Eden-memory and dispatching th
 - Do not perform role work yourself — only route.
 - Do not rely on the conversation transcript for goal state.
 - Do not silently drop blocked goals; report them.
+- Do not spawn a role without first writing a durable hand-off record; the receiving role needs an activation signal in Eden-memory.
+- Do not use the `goal_id` as the sole `input_record_id` or `output_record_id`; reference actual stage records.

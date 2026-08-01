@@ -41,7 +41,11 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 2. Compare outcomes against the stated success criteria.
 3. Run or inspect the artefact/system as needed (Read, Bash, tests).
 4. Write the `verdict` record with status, evidence, scope, and residual risks.
-5. If `green`, hand off to Archivist for closure. If `red`, return to Dispatcher for a rework `dispatch_instruction`. If `blocked`, record the unblock condition and return to the owning role or Dispatcher; `/team-continue` will re-check the blocker on the next attempt.
+5. **Write a durable `hand_off_record` before handing off based on the verdict:**
+   - If `green`, write a hand-off to `archivist` with the verdict ID in `input_record_ids`.
+   - If `red`, write a hand-off to `dispatcher` for rework with the verdict ID in `input_record_ids`.
+   - If `blocked`, write a hand-off to the owning role or `dispatcher` with the unblock condition recorded.
+6. Hand off to the appropriate role with the verdict, evidence, and the hand-off record ID.
 
 ## Anti-patterns
 

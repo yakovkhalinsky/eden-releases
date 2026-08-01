@@ -43,7 +43,10 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 4. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
 5. If a step requires explicit user authorisation (e.g., pushing to origin, touching production-adjacent config), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user.
 6. Write a change summary and store it in Eden-memory.
-7. Hand off to Verifier with the artefact, summary, and success criteria. For cross-session hand-offs, use `/team-handoff`.
+7. **Write a durable `hand_off_record` before handing off to Verifier.**
+   - Include the action record ID and change summary record ID in `input_record_ids`.
+   - Record `next_role: verifier` and the reason for the transfer.
+8. Hand off to Verifier with the artefact, summary, success criteria, and the hand-off record ID. For cross-session hand-offs, use `/team-handoff`.
 
 ## Anti-patterns
 

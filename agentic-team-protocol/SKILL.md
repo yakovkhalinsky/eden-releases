@@ -75,15 +75,23 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 
 ## Hand-off format
 
+Every lifecycle transition must leave a durable `hand_off_record` (or an equivalent action/verdict/archival record that embeds the hand-off format) in Eden-memory before ownership changes. Chat history is not a hand-off.
+
 Every hand-off must include:
 
 - `goal_id`
 - Current stage
 - Owner role and instance
-- Input record IDs
-- Output record IDs
+- Input record IDs (the latest durable stage records, not the `goal_id` itself)
+- Output record IDs (the new hand-off/run_log/action record, or the receiving role's expected record)
+- Next role
+- Reason for the transfer
 - Success criteria and deadline
 - Escalation trigger (if any)
+
+### Router obligation
+
+When the Router spawns a role, it must first write a durable hand-off record (a `hand_off_record` or a continuation `run_log` with the full hand-off payload). This record is the activation signal that lets the receiving role recall the goal without depending on conversation context. If the spawned role fails to produce its expected downstream record, the Router writes a recovery record and reports the missing hand-off to the user.
 
 ## Eden-memory record schema
 
@@ -124,7 +132,7 @@ Required record types:
 - **Archivist as secretary** — Archivist owns linking and skill/runbook updates.
 - **Memory blindness** — Eden-memory is the single source of truth; do not rely on conversation context.
 - **Dropped interrupted work** — always leave a `run_log` or durable record at the end of a turn so `/team-continue` can resume.
-- **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record`, not chat history.
+- **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record` (or role record that includes the hand-off format), not chat history. The Router must write this record before spawning the next role.
 - **Stale closures** — a new action record after closure supersedes it; do not assume an old `archival_record` is the final word.
 
 ## Scope resolution rules
@@ -144,7 +152,7 @@ Required record types:
 
 ## Using the subagents
 
-Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off.
+Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off. For cross-session or cross-role transfers, the transferring role (or the Router when continuing) must also write a `hand_off_record`.
 
 For continuation, use the `router` subagent (or `/team-continue`) instead of manually picking a role. The router reads the latest Eden records for a `goal_id`, determines the required next stage and role using the lifecycle rules below, and invokes that role with full context.
 

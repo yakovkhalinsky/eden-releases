@@ -19,12 +19,16 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 | Verifier subagent | Global | `~/.claude/agents/verifier.md` |
 | Archivist subagent | Global | `~/.claude/agents/archivist.md` |
 | Router subagent | Global | `~/.claude/agents/router.md` |
+| `/team` command | Global | `~/.claude/commands/team.md` |
 | `/team-charter` command | Global | `~/.claude/commands/team-charter.md` |
 | `/team-status` command | Global | `~/.claude/commands/team-status.md` |
 | `/team-escalate` command | Global | `~/.claude/commands/team-escalate.md` |
+| `/team-continue` command | Global | `~/.claude/commands/team-continue.md` |
+| `/team-handoff` command | Global | `~/.claude/commands/team-handoff.md` |
 | Charter template | Project-local | `.claude/agentic-team-charter.md` |
 | Config template | Project-local | `.claude/agentic-team-config.yaml` |
 | CLAUDE.md template | Project-local | `templates/claude-md.md` (used by `--claude-md`) |
+| Continuation runbook | Package docs | `runbooks/continuation.md` |
 
 ## Quick install
 

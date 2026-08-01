@@ -42,7 +42,10 @@ Gather context before decisions are made. Research must have a consumer and a st
 3. Search Eden-memory, read relevant files, and use WebSearch/WebFetch if needed.
 4. Summarise findings, options, trade-offs, and confidence.
 5. Store the context summary in Eden-memory.
-6. Hand off to Dispatcher or directly to the assigned role with the research record.
+6. **Write a durable `hand_off_record` before handing off to the Dispatcher or the assigned role.**
+   - Include the context summary record ID in `input_record_ids`.
+   - Record `next_role` and the reason for the transfer.
+7. Hand off to the next role with the research record and the hand-off record ID.
 
 ## Anti-patterns
 
