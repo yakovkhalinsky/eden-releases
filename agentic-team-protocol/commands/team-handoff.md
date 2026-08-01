@@ -6,7 +6,7 @@ allowed-tools:
   - Agent
 ---
 
-# /agentic-handoff
+# /team-handoff
 
 Transfer ownership of an Agentic Team Protocol goal to another role or instance. The transfer is stored as a `hand_off_record` in Eden-memory so the receiving role can resume without relying on chat history.
 

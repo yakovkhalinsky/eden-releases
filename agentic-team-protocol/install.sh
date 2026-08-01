@@ -79,7 +79,7 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
       for agent in dispatcher builder runtime verifier researcher archivist router; do
         _download "${BASE_URL}/agents/${agent}.md" "${TMPDIR}/files/agents/${agent}.md"
       done
-      for command in ratify-charter agentic-status agentic-escalate agentic-continue agentic-handoff; do
+      for command in team-charter team-status team-escalate team-continue team-handoff; do
         _download "${BASE_URL}/commands/${command}.md" "${TMPDIR}/files/commands/${command}.md"
       done
       for template in agentic-team-charter.md agentic-team-config.yaml claude-md.md; do
@@ -103,7 +103,7 @@ if [ "$DRY_RUN" = true ]; then
   echo "Would install to:"
   echo "  skill:    ${CLAUDE_DIR}/skills/agentic-team-protocol/SKILL.md"
   echo "  agents:   ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md"
-  echo "  commands: ${CLAUDE_DIR}/commands/{ratify-charter,agentic-status,agentic-escalate,agentic-continue,agentic-handoff}.md"
+  echo "  commands: ${CLAUDE_DIR}/commands/{team-charter,team-status,team-escalate,team-continue,team-handoff}.md"
   if [ "$LOCAL_INSTALL" = true ]; then
     echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
     [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
@@ -129,7 +129,7 @@ for agent in dispatcher builder runtime verifier researcher archivist router; do
   cp "${PACKAGE_DIR}/agents/${agent}.md" "${CLAUDE_DIR}/agents/${agent}.md"
 done
 
-for command in ratify-charter agentic-status agentic-escalate agentic-continue agentic-handoff; do
+for command in team-charter team-status team-escalate team-continue team-handoff; do
   cp "${PACKAGE_DIR}/commands/${command}.md" "${CLAUDE_DIR}/commands/${command}.md"
 done
 

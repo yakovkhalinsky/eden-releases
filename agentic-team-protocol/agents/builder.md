@@ -40,10 +40,10 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`.
 2. Gather context via Read/Eden-memory. If context is insufficient, request Researcher support.
 3. Implement the artefact using Write/Edit/Bash as appropriate.
-4. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/agentic-continue` resume if the session is interrupted.
+4. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
 5. If a step requires explicit user authorisation (e.g., pushing to origin, touching production-adjacent config), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user.
 6. Write a change summary and store it in Eden-memory.
-7. Hand off to Verifier with the artefact, summary, and success criteria. For cross-session hand-offs, use `/agentic-handoff`.
+7. Hand off to Verifier with the artefact, summary, and success criteria. For cross-session hand-offs, use `/team-handoff`.
 
 ## Anti-patterns
 

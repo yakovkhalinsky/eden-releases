@@ -57,7 +57,7 @@ Runtime is available but requires explicit charter authorisation before acting o
 
 ## Status cadence
 
-Check active goals with `/agentic-status` at the start of each session working on this project.
+Check active goals with `/team-status` at the start of each session working on this project.
 
 ## Retirement condition
 

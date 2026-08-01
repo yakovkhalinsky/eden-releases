@@ -56,7 +56,7 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 
 ### Resumable sub-states
 
-- `blocked` — waiting on an external dependency or authority. The owning role records the unblock condition. The router checks it on every `/agentic-continue`.
+- `blocked` — waiting on an external dependency or authority. The owning role records the unblock condition. The router checks it on every `/team-continue`.
 - `pending_authorisation` — waiting on explicit user approval for a specific action (e.g., push to origin). The exact question and prepared action are recorded so a new session can resume and apply the answer.
 
 ## Routing rules and dispatcher defaults
@@ -68,9 +68,9 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
   - `run` → Runtime
   - `verify` → Verifier
   - `archive` → Archivist
-- Low confidence, missing authority, or tight deadline → escalate via `/agentic-escalate`.
+- Low confidence, missing authority, or tight deadline → escalate via `/team-escalate`.
 - Builder and Runtime must not start without sufficient context; request Researcher support if needed.
-- When a session ends or a role is interrupted, the next session uses `/agentic-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role.
+- When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role.
 - A `blocked` or `pending_authorisation` goal remains active until the recorded unblock/approval condition is satisfied; the router re-checks it on continuation.
 
 ## Hand-off format
@@ -123,7 +123,7 @@ Required record types:
 - **Verifiability gap** — Verifier gate is mandatory before closure.
 - **Archivist as secretary** — Archivist owns linking and skill/runbook updates.
 - **Memory blindness** — Eden-memory is the single source of truth; do not rely on conversation context.
-- **Dropped interrupted work** — always leave a `run_log` or durable record at the end of a turn so `/agentic-continue` can resume.
+- **Dropped interrupted work** — always leave a `run_log` or durable record at the end of a turn so `/team-continue` can resume.
 - **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record`, not chat history.
 - **Stale closures** — a new action record after closure supersedes it; do not assume an old `archival_record` is the final word.
 
@@ -136,17 +136,17 @@ Required record types:
 
 ## Slash commands
 
-- `/ratify-charter` — read the project's `agentic-team-charter.md`, store a ratification record, and report whether the team may proceed.
-- `/agentic-status` — list active goals, current stage, owner role, latest record IDs, and continueable/blocked state.
-- `/agentic-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`.
-- `/agentic-continue` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role.
-- `/agentic-handoff` — transfer ownership of a goal to another role or instance in a durable `hand_off_record`.
+- `/team-charter` — read the project's `agentic-team-charter.md`, store a ratification record, and report whether the team may proceed.
+- `/team-status` — list active goals, current stage, owner role, latest record IDs, and continueable/blocked state.
+- `/team-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`.
+- `/team-continue` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role.
+- `/team-handoff` — transfer ownership of a goal to another role or instance in a durable `hand_off_record`.
 
 ## Using the subagents
 
 Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off.
 
-For continuation, use the `router` subagent (or `/agentic-continue`) instead of manually picking a role. The router reads the latest Eden records for a `goal_id`, determines the required next stage and role using the lifecycle rules below, and invokes that role with full context.
+For continuation, use the `router` subagent (or `/team-continue`) instead of manually picking a role. The router reads the latest Eden records for a `goal_id`, determines the required next stage and role using the lifecycle rules below, and invokes that role with full context.
 
 ### Router lifecycle rules
 

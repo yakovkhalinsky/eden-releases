@@ -37,7 +37,7 @@ Resume interrupted or unfinished goals by reading Eden-memory and dispatching th
 
 ## Procedure
 
-1. Accept a `goal_id` from the caller (`/agentic-continue` or an external controller).
+1. Accept a `goal_id` from the caller (`/team-continue` or an external controller).
 2. Search Eden-memory for the latest records of that `goal_id`:
    - latest `goal_record`
    - latest `dispatch_instruction`

@@ -30,7 +30,7 @@ Decide who does what. Every new goal starts here.
 - Duplicate assignments without merge logic.
 - Missed escalation when confidence is low or deadlines are tight.
 - Routing directly to Builder or Runtime without required Researcher context for non-trivial goals.
-- Losing track of interrupted goals — when a session ends mid-goal, ensure the next `/agentic-continue` can route correctly from Eden records.
+- Losing track of interrupted goals — when a session ends mid-goal, ensure the next `/team-continue` can route correctly from Eden records.
 
 ## Procedure
 
@@ -41,11 +41,11 @@ Decide who does what. Every new goal starts here.
    - `run` → Runtime
    - `verify` → Verifier
    - `archive` → Archivist
-   - Ambiguous or high-risk → escalate via `/agentic-escalate`.
+   - Ambiguous or high-risk → escalate via `/team-escalate`.
 - A `red` Verifier verdict → write a rework `dispatch_instruction` returning the goal to the original or a new Builder/Runtime.
 - A `blocked` or `pending_authorisation` state → keep the goal assigned to the owning role and record the unblock/approval condition; do not reassign until it is cleared.
 3. Write a `dispatch_instruction` record that includes the assigned role, success criteria, deadline, and escalation trigger.
-4. Hand off to the assigned role with the goal context and record IDs. For cross-session hand-offs, use `/agentic-handoff` so the transfer is durable.
+4. Hand off to the assigned role with the goal context and record IDs. For cross-session hand-offs, use `/team-handoff` so the transfer is durable.
 
 ## Anti-patterns
 

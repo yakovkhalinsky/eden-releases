@@ -51,7 +51,7 @@ Circle.
 
 ## Ratification
 
-This charter is ratified when `/ratify-charter` records a
+This charter is ratified when `/team-charter` records a
 `charter_ratification` entry in eden-memory. The first ratification may be done
 by the project owner. Fleet-wide charters require Founders' Circle sign-off.
 

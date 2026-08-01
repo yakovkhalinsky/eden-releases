@@ -20,7 +20,7 @@ This copies the skill, agents, and slash commands into `~/.claude/`:
 
 - `~/.claude/skills/agentic-team-protocol/SKILL.md`
 - `~/.claude/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md`
-- `~/.claude/commands/{ratify-charter,agentic-status,agentic-escalate,agentic-continue,agentic-handoff}.md`
+- `~/.claude/commands/{team-charter,team-status,team-escalate,team-continue,team-handoff}.md`
 
 Restart Claude Code to load them.
 
@@ -59,7 +59,7 @@ Or run `./install.sh --local` from the package directory.
 Edit `.claude/agentic-team-charter.md` to match your project, then run:
 
 ```text
-/ratify-charter
+/team-charter
 ```
 
 This reads the charter, computes a SHA-256 version hash, and stores a
@@ -95,11 +95,11 @@ recalled in later sessions.
 
 | Command | Purpose |
 |---------|---------|
-| `/ratify-charter` | Ratify the project charter. |
-| `/agentic-status` | Show active goals and current stages. |
-| `/agentic-escalate` | Escalate a blocked or risky goal. |
-| `/agentic-continue` | Continue a previously handed-off goal. |
-| `/agentic-handoff` | Hand off a goal to another session or agent. |
+| `/team-charter` | Ratify the project charter. |
+| `/team-status` | Show active goals and current stages. |
+| `/team-escalate` | Escalate a blocked or risky goal. |
+| `/team-continue` | Continue a previously handed-off goal. |
+| `/team-handoff` | Hand off a goal to another session or agent. |
 
 ## Next steps
 

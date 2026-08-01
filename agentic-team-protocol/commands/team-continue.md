@@ -6,13 +6,13 @@ allowed-tools:
   - Agent
 ---
 
-# /agentic-continue
+# /team-continue
 
 Resume an unfinished Agentic Team Protocol goal by rehydrating its state from Eden-memory and dispatching the correct next role. If no `goal_id` is given, list active continueable goals first.
 
 ## Steps
 
-1. Parse `$ARGUMENTS`. If it looks like a UUID or contains a `-`, treat it as a `goal_id`. Otherwise list active goals via `/agentic-status` and ask the user to pick one.
+1. Parse `$ARGUMENTS`. If it looks like a UUID or contains a `-`, treat it as a `goal_id`. Otherwise list active goals via `/team-status` and ask the user to pick one.
 2. Search Eden-memory for the latest records of that `goal_id`:
    ```bash
    USER_ID="${USER:-$(id -un)}"
@@ -31,7 +31,7 @@ Resume an unfinished Agentic Team Protocol goal by rehydrating its state from Ed
    "${EDEN_MEMORY_BIN}" remember \
      --agent-id claude-code-cli \
      --user-id "${USER_ID}" \
-     --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${GOAL_ID}\"],\"output_record_ids\":[],\"note\":\"Continued via /agentic-continue\"}" \
+     --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${GOAL_ID}\"],\"output_record_ids\":[],\"note\":\"Continued via /team-continue\"}" \
      --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router"}'
    ```
 7. Spawn the `router` subagent with the goal context. The router reads Eden-memory, determines the next required role, and spawns that role directly.

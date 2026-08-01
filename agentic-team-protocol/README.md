@@ -19,9 +19,9 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 | Verifier subagent | Global | `~/.claude/agents/verifier.md` |
 | Archivist subagent | Global | `~/.claude/agents/archivist.md` |
 | Router subagent | Global | `~/.claude/agents/router.md` |
-| `/ratify-charter` command | Global | `~/.claude/commands/ratify-charter.md` |
-| `/agentic-status` command | Global | `~/.claude/commands/agentic-status.md` |
-| `/agentic-escalate` command | Global | `~/.claude/commands/agentic-escalate.md` |
+| `/team-charter` command | Global | `~/.claude/commands/team-charter.md` |
+| `/team-status` command | Global | `~/.claude/commands/team-status.md` |
+| `/team-escalate` command | Global | `~/.claude/commands/team-escalate.md` |
 | Charter template | Project-local | `.claude/agentic-team-charter.md` |
 | Config template | Project-local | `.claude/agentic-team-config.yaml` |
 | CLAUDE.md template | Project-local | `templates/claude-md.md` (used by `--claude-md`) |
@@ -102,11 +102,11 @@ Once those files exist, project-local definitions override the global ones.
 
 After restart:
 
-- `/ratify-charter` — read the project charter, store a ratification record in Eden-memory.
-- `/agentic-status` — list active goals, stage, owner role, latest record IDs, and continueable/blocked state.
-- `/agentic-escalate` — write a structured escalation record and route by level.
-- `/agentic-continue` — resume an unfinished goal by rehydrating it from Eden-memory and dispatching the next role.
-- `/agentic-handoff` — transfer ownership of a goal to another role in a durable record.
+- `/team-charter` — read the project charter, store a ratification record in Eden-memory.
+- `/team-status` — list active goals, stage, owner role, latest record IDs, and continueable/blocked state.
+- `/team-escalate` — write a structured escalation record and route by level.
+- `/team-continue` — resume an unfinished goal by rehydrating it from Eden-memory and dispatching the next role.
+- `/team-handoff` — transfer ownership of a goal to another role in a durable record.
 
 ## License
 

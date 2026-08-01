@@ -5,7 +5,7 @@ allowed-tools:
   - Bash
 ---
 
-# /agentic-escalate
+# /team-escalate
 
 Collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting. Write a structured `escalation_record` to Eden-memory and route according to escalation levels.
 
