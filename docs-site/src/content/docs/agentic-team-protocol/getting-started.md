@@ -95,6 +95,7 @@ recalled in later sessions.
 
 | Command | Purpose |
 |---------|---------|
+| `/team` | Invoke the Agentic Team Protocol skill to kick off a goal. |
 | `/team-charter` | Ratify the project charter. |
 | `/team-status` | Show active goals and current stages. |
 | `/team-escalate` | Escalate a blocked or risky goal. |

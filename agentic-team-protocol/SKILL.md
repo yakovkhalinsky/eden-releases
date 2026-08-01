@@ -1,5 +1,5 @@
 ---
-name: agentic-team-protocol
+name: team
 title: Agentic Team Protocol
 description: Use role-based agent teams with a seven-stage task lifecycle and Eden-memory as the durable substrate.
 version: 1.0.0
