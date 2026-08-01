@@ -26,4 +26,4 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
 4. If a filter is provided, restrict the output to matching goals or roles.
 5. Present a table with columns: goal_id, current stage, owner role, latest record ID, deadline (if recorded), confidence/escalation trigger, and state (`active`, `blocked`, `pending_authorisation`, `continueable`, `closed`).
 6. Flag goals whose latest record is non-terminal and not `blocked` or `pending_authorisation` as `continueable` — these are candidates for `/agentic-continue`.
-7. If no active goals are found, report that clearly.
+7. If no active goals are found, report that clearly and suggest starting a new task by spawning the Dispatcher subagent. Do not invent or reference a `/agentic-start` command, because no such command exists.
