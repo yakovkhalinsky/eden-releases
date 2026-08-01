@@ -1,0 +1,27 @@
+{
+  "_archival_note": {
+    "archived_at": "2026-08-01",
+    "reason": "Stale hand-off from interrupted prior attempt (site-clarity-eden-memory-atp-2026-07-31). The researcher_context_summary_id referenced below (37d07124-e6c4-42ac-bd83-f65ff332bd64) does not resolve in Eden-memory and is mismatched with the ID stored by the researcher hand-off from the same attempt (3fce37c8-9d6e-45fc-a3fb-7eeae04f6d44).",
+    "superseded_by_goal": "site-clarity-improvements-2026-08-01",
+    "canonical_context_summary_id": "3e9073ef-60f6-4580-bdf8-8a5bd2432615",
+    "disposition": "Preserved for audit trail; do not use for future continuations.",
+    "archivist_record_id": "b8d9d899-e588-47c2-a02a-347c0a351dd7"
+  },
+  "goal_id": "site-clarity-eden-memory-atp-2026-07-31",
+  "owner_role": "verifier",
+  "dispatcher": "claude-code-cli",
+  "requester": "yakov",
+  "target_site": "https://0d3sa.com",
+  "task": "Validate and adversarially review the Researcher's audit report and proposed clarity/differentiation plan for eden-memory and agentic-team-protocol on https://0d3sa.com.",
+  "researcher_context_summary_id": "37d07124-e6c4-42ac-bd83-f65ff332bd64",
+  "success_criteria": "Produce a verdict or review record confirming, rejecting, or modifying the Researcher's prioritized plan (P0/P1/P2/P3). Call out any factual errors, missing risks, or unstated assumptions.",
+  "deadline": "2026-08-02T00:00:00Z",
+  "escalation_trigger": "If the Researcher context_summary cannot be located or findings are too vague to validate, escalate back to dispatcher.",
+  "input_record_ids": [
+    "goal_id:site-clarity-eden-memory-atp-2026-07-31",
+    "context_summary_id:ctx-site-clarity-2026-07-31",
+    "dispatch_instruction_id:b529085e-8253-422d-896a-4f0b5642d414",
+    "consensus_coordination_id:cc-site-clarity-2026-07-31"
+  ],
+  "output_record_ids": []
+}
