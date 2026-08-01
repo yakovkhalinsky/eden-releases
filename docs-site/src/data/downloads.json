@@ -1,6 +1,6 @@
 {
-  "version": "0.3.38",
-  "released": "2026-07-31",
+  "version": "0.3.39",
+  "released": "2026-08-01",
   "platforms": {
     "linux-amd64": {
       "os": "linux",
@@ -8,7 +8,7 @@
       "filename": "eden-memory-linux-amd64",
       "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64",
       "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64.sha256",
-      "sha256": "c3d9e9371a2714c3967cb36b15ba85489999f968bbed6b2fdd8e55ab0a08eddf",
+      "sha256": "81e7c376c18ce5b0019d704b75666926d7340f3e9edbafd88d7163a71deff117",
       "sizeBytes": 112881848
     },
     "linux-arm64": {
@@ -17,7 +17,7 @@
       "filename": "eden-memory-linux-arm64",
       "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64",
       "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64.sha256",
-      "sha256": "ea7488d1dd0889054655d2e2d4d004d38ea23c512590a524637885d0127fbcea",
+      "sha256": "7b60464da703d4489593299d201a315159e4b844255a8b66938fa26865088d1c",
       "sizeBytes": 68026552
     },
     "darwin-amd64": {
@@ -26,7 +26,7 @@
       "filename": "eden-memory-darwin-amd64",
       "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64",
       "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64.sha256",
-      "sha256": "d7c922473b67242a0709884b8ae1e6d63a08494b40f34d1d18adf2420e5ae4b1",
+      "sha256": "d52a0dba1b2dca1179a7d0bdd9e2f2c5ec7453c65c41ae33f26392e004a48404",
       "sizeBytes": 64559008
     },
     "darwin-arm64": {
@@ -35,7 +35,7 @@
       "filename": "eden-memory-darwin-arm64",
       "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64",
       "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64.sha256",
-      "sha256": "20670ac0d28cff2ea1c0febd4a27d2aebd5b631ac8c75716a28b06b2e845521e",
+      "sha256": "e7657f50dbf44177df2b4ab29313b23967d33fc590d78da02c0e28fe30f8b360",
       "sizeBytes": 64633458
     }
   }
