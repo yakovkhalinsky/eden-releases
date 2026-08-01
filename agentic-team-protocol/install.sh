@@ -129,6 +129,11 @@ for agent in dispatcher builder runtime verifier researcher archivist router; do
   cp "${PACKAGE_DIR}/agents/${agent}.md" "${CLAUDE_DIR}/agents/${agent}.md"
 done
 
+# Remove legacy command names from previous installs before copying current ones.
+for legacy in agentic-status agentic-escalate agentic-continue agentic-handoff ratify-charter; do
+  rm -f "${CLAUDE_DIR}/commands/${legacy}.md"
+done
+
 for command in team-charter team-status team-escalate team-continue team-handoff; do
   cp "${PACKAGE_DIR}/commands/${command}.md" "${CLAUDE_DIR}/commands/${command}.md"
 done
