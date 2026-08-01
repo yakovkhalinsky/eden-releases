@@ -11,7 +11,7 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 
 | Artifact | Scope | Path after install |
 |----------|-------|--------------------|
-| Protocol skill | Global | `~/.claude/skills/agentic-team-protocol/SKILL.md` |
+| Protocol skill | Global | `~/.claude/skills/team/SKILL.md` |
 | Dispatcher subagent | Global | `~/.claude/agents/dispatcher.md` |
 | Researcher subagent | Global | `~/.claude/agents/researcher.md` |
 | Builder subagent | Global | `~/.claude/agents/builder.md` |
@@ -56,7 +56,7 @@ If `CLAUDE.md` already exists, the installer appends the rules only if they are 
 ```bash
 # 1. Clone or download this package.
 # 2. Copy the global skill/agents/commands into ~/.claude/
-cp -r skills/agentic-team-protocol ~/.claude/skills/
+cp -r skills/team ~/.claude/skills/
 cp -r agents/* ~/.claude/agents/
 cp -r commands/* ~/.claude/commands/
 

@@ -101,7 +101,7 @@ fi
 
 if [ "$DRY_RUN" = true ]; then
   echo "Would install to:"
-  echo "  skill:    ${CLAUDE_DIR}/skills/agentic-team-protocol/SKILL.md"
+  echo "  skill:    ${CLAUDE_DIR}/skills/team/SKILL.md"
   echo "  agents:   ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md"
   echo "  commands: ${CLAUDE_DIR}/commands/{team-charter,team-status,team-escalate,team-continue,team-handoff}.md"
   if [ "$LOCAL_INSTALL" = true ]; then
@@ -118,11 +118,12 @@ mkdir -p "${CLAUDE_DIR}/commands"
 echo "Installing Agentic Team Protocol global primitives..."
 
 rm -rf "${CLAUDE_DIR}/skills/agentic-team-protocol"
-mkdir -p "${CLAUDE_DIR}/skills/agentic-team-protocol"
-cp "${PACKAGE_DIR}/SKILL.md" "${CLAUDE_DIR}/skills/agentic-team-protocol/SKILL.md"
+rm -rf "${CLAUDE_DIR}/skills/team"
+mkdir -p "${CLAUDE_DIR}/skills/team"
+cp "${PACKAGE_DIR}/SKILL.md" "${CLAUDE_DIR}/skills/team/SKILL.md"
 # Global charter fallback, if present.
 if [ -f "${PACKAGE_DIR}/CHARTER.md" ]; then
-  cp "${PACKAGE_DIR}/CHARTER.md" "${CLAUDE_DIR}/skills/agentic-team-protocol/CHARTER.md"
+  cp "${PACKAGE_DIR}/CHARTER.md" "${CLAUDE_DIR}/skills/team/CHARTER.md"
 fi
 
 for agent in dispatcher builder runtime verifier researcher archivist router; do

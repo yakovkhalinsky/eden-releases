@@ -45,12 +45,12 @@ Runtime is available but requires explicit charter authorisation before acting o
 ## Interfaces and dependencies
 
 - Eden-memory (`~/.eden-memory/default.db`) is the durable substrate.
-- The global Agentic Team Protocol skill at `~/.claude/skills/agentic-team-protocol/SKILL.md` provides fallback documentation.
+- The global Agentic Team Protocol skill at `~/.claude/skills/team/SKILL.md` provides fallback documentation.
 - This local charter overrides the global charter for `<PROJECT_PATH>`.
 
 ## Runbooks and skills owned
 
-- `.claude/skills/agentic-team-protocol/SKILL.md`
+- `.claude/skills/team/SKILL.md`
 - `.claude/agents/*.md`
 - `.claude/commands/*.md`
 - This charter

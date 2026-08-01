@@ -13,7 +13,7 @@ Read the project's `agentic-team-charter.md` (project-local first, then global f
 
 1. Determine the charter path:
    - Look for a project-local charter at `.claude/agentic-team-charter.md` relative to the current working directory (or `${PROJECT_CLAUDE_DIR}/agentic-team-charter.md` if set).
-   - Otherwise fall back to `~/.claude/skills/agentic-team-protocol/CHARTER.md` if it exists.
+   - Otherwise fall back to `~/.claude/skills/team/CHARTER.md` if it exists.
 2. Read the charter with `Read` or `cat`.
 3. Compute a simple version hash from the file content:
    ```bash
