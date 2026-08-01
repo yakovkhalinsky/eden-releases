@@ -88,8 +88,18 @@ jobs:
           else
             VERSION="${{ github.event.inputs.source_tag }}"
             git commit -m "Publish eden-memory ${VERSION}"
-            git push "https://x-access-token:${TOKEN}@github.com/${{ github.repository_owner }}/eden-releases.git" main
-            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt: rebasing onto origin/main and pushing..."
+              git fetch origin main
+              git rebase origin/main || { echo "Rebase failed"; exit 1; }
+              if git push "https://x-access-token:${TOKEN}@github.com/${{ github.repository_owner }}/eden-releases.git" main; then
+                echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              sleep 5
+            done
+            echo "Push to eden-releases rejected after 3 attempts." >&2
+            exit 1
           fi
         env:
           TOKEN: ${{ steps.token.outputs.token }}
