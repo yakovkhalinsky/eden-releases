@@ -14,11 +14,14 @@
  */
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..');
 const sourceDir = path.join(repoRoot, 'agentic-team-protocol');
 const targetDir = path.join(repoRoot, 'docs-site', 'public', 'agentic-team-protocol');
+const tarballName = 'agentic-team-protocol.tar.gz';
 
 function copyRecursive(src, dest) {
   const stat = fs.statSync(src);
@@ -45,10 +48,39 @@ if (fs.existsSync(targetDir)) {
 
 copyRecursive(sourceDir, targetDir);
 
-// Quick sanity check that the install script is present.
+// Package the synced tree into a tarball so the curl installer can download
+// a single archive instead of individual files. Build the archive outside the
+// target directory to avoid including the tarball inside itself.
+const tarballPath = path.join(targetDir, tarballName);
+const tmpTarball = path.join(os.tmpdir(), tarballName);
+try {
+  execFileSync(
+    'tar',
+    ['-czf', tmpTarball, '-C', path.dirname(targetDir), path.basename(targetDir)],
+    { stdio: ['ignore', 'pipe', 'pipe'] }
+  );
+  fs.mkdirSync(path.dirname(tarballPath), { recursive: true });
+  fs.copyFileSync(tmpTarball, tarballPath);
+} catch (err) {
+  console.error(`Failed to create tarball: ${err.message}`);
+  process.exit(1);
+} finally {
+  try {
+    fs.unlinkSync(tmpTarball);
+  } catch {
+    // ignore cleanup failure
+  }
+}
+
+// Quick sanity checks that the install script and tarball are present.
 if (!fs.existsSync(path.join(targetDir, 'install.sh'))) {
   console.error('Sync completed but install.sh is missing.');
   process.exit(1);
 }
+if (!fs.existsSync(tarballPath)) {
+  console.error('Sync completed but tarball is missing.');
+  process.exit(1);
+}
 
 console.log(`Synced ${sourceDir} -> ${targetDir}`);
+console.log(`Packaged ${tarballPath}`);

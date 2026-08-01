@@ -50,7 +50,7 @@ PACKAGE_DIR="${SCRIPT_DIR}"
 CLAUDE_DIR="${HOME}/.claude"
 
 # If we are running from a curl pipe, the package directory is unknown.
-# Try to download the canonical tarball; if it is not available yet, fall back
+# Try to download the canonical tarball; if it is unavailable, fall back
 # to installing from the raw public URLs so the curl path still works.
 if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
   if command -v curl >/dev/null 2>&1; then
@@ -62,7 +62,7 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
       tar -xzf "${TMPDIR}/agentic-team-protocol.tar.gz" -C "$TMPDIR"
       PACKAGE_DIR="${TMPDIR}/agentic-team-protocol"
     else
-      echo "Note: tarball not yet published; installing individual files from public URLs."
+      echo "Note: tarball unavailable; installing individual files from public URLs."
       BASE_URL="https://0d3sa.com/agentic-team-protocol"
       mkdir -p "${TMPDIR}/files/agents" "${TMPDIR}/files/commands" "${TMPDIR}/files/templates"
       # Download with explicit failure messages so a 404 is obvious.
