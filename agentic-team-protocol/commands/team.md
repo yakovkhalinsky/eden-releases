@@ -42,3 +42,4 @@ This command is intentionally thin: it interprets the user's input and delegates
 - Do not perform role work directly in `/team`; always hand off to the Dispatcher, Router, or a lifecycle command.
 - Do not invent new goals without recording a `goal_record` in Eden-memory.
 - Do not rely on conversation context when continuing; use `/team-continue` or the `router` subagent.
+- Multi-step or non-trivial goals must not be planned outside Eden-memory; if plan mode is used, the resulting plan file path must be recorded in a `context_summary` or `action_record`.

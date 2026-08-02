@@ -36,8 +36,8 @@ Look for these record types, ordered by `stored_at`:
 |---|---|
 | `goal_record` | Original request and constraints. |
 | `dispatch_instruction` | Who was assigned, success criteria, deadline, escalation trigger. |
-| `context_summary` | Research findings and chosen path. |
-| `action_record` | What Builder or Runtime did. |
+| `context_summary` | Research findings and chosen path. Check `metadata.plan_file_path` for any written plan. |
+| `action_record` | What Builder or Runtime did. Check `metadata.plan_file_path` for the implementation plan. |
 | `verdict` | Verifier's green/red/blocked decision. |
 | `hand_off_record` | Explicit ownership transfer between roles. |
 | `run_log` | Coarse-grained event, often written by the router at continuation. |
@@ -82,9 +82,10 @@ The Router must always write a durable hand-off record before spawning the next 
 4. **Check for a `blocked` or `pending_authorisation` record**. If found, stop and surface it to the user.
 5. **Check that a durable hand-off record exists** linking the latest record to the expected next role.
    - If missing, run `/team-continue ${GOAL_ID}` so the router writes one before spawning the next role.
-6. **If the next role was already spawned but produced no record**, the router (or you) should write a recovery `hand_off_record` or `run_log` noting the missing downstream record, then re-invoke `/team-continue` or `/team-escalate`.
-7. **If ownership must change**, use `/team-handoff` with a clear reason and the full goal context.
-8. **After recovery, verify the next record appears in Eden-memory** before ending the session.
+6. **Check for `plan_file_path` in `context_summary` or `action_record` metadata** to locate the latest plan file, and verify the file still exists before continuing.
+7. **If the next role was already spawned but produced no record**, the router (or you) should write a recovery `hand_off_record` or `run_log` noting the missing downstream record, then re-invoke `/team-continue` or `/team-escalate`.
+8. **If ownership must change**, use `/team-handoff` with a clear reason and the full goal context.
+9. **After recovery, verify the next record appears in Eden-memory** before ending the session.
 
 ## Escalation path
 
