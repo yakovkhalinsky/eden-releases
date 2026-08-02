@@ -1,6 +1,7 @@
 ---
 title: Install Eden Memory MCP Usage skill
 description: Use eden-memory as a persistent memory skill inside any stdio MCP client.
+content_type: reference
 template: doc
 skill_name: eden-memory-mcp-usage
 skill_version: 3.0.1
@@ -26,32 +27,25 @@ The installable artifact is the raw `SKILL.md` file:
   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-mcp-usage/SKILL.md -o eden-memory-mcp-usage/SKILL.md
   ```
 
-## Install for any stdio MCP client
+## Install the binary
 
-1. Install the binary:
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
 
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
+## Verify
 
-2. Register the server with your MCP client. The exact command depends on the client; the server config is:
+Call `eden_health` through your MCP client. If the call fails, re-run the install or check your MCP server configuration.
 
-   ```json
-   {
-     "command": "/home/yourname/.local/bin/eden-memory",
-     "args": ["--db", "/home/yourname/.eden-memory/default.db"]
-   }
-   ```
+## Setup walkthrough
 
-   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the client's PATH, you can use the bare command name.
+For step-by-step client wiring, see [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/).
 
-3. Download the skill file:
+Other client tutorials:
 
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-mcp-usage/SKILL.md -o eden-memory-mcp-usage/SKILL.md
-   ```
-
-4. Paste the contents of the skill file into your agent's system prompt or project instructions, or load it as a custom skill if your client supports skill files.
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
 
 ## What this skill enforces
 

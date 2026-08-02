@@ -1,6 +1,7 @@
 ---
 title: Install Eden Memory Claude skill
 description: Use eden-memory as a persistent memory layer inside Claude Code CLI.
+content_type: reference
 template: doc
 skill_name: eden-memory-claude
 skill_version: 3.0.2
@@ -27,31 +28,25 @@ The installable artifact is the raw `SKILL.md` file:
   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-claude/SKILL.md -o eden-memory-claude/SKILL.md
   ```
 
-## Install for Claude Code CLI
+## Install the binary
 
-1. Install the binary:
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
 
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
+## Verify
 
-2. Wire the MCP server. This command expands `$HOME` automatically:
+Call `eden_health` through your MCP client. If the call fails, re-run the install or check your MCP server configuration.
 
-   ```bash
-   claude config set mcpServers "{\"eden-memory\":{\"command\":\"$HOME/.local/bin/eden-memory\",\"args\":[\"--db\",\"$HOME/.eden-memory/default.db\"]}}"
-   ```
+## Setup walkthrough
 
-3. Download the skill file:
+For step-by-step client wiring, see [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/).
 
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-claude/SKILL.md -o eden-memory-claude/SKILL.md
-   ```
+Other client tutorials:
 
-4. Add it as a **project instruction** in Claude Code:
-   - Run `/memory` (or open **Settings → Project Instructions**) and paste the contents of `eden-memory-claude/SKILL.md`.
-   - The file contains the memory-first rules and tool usage patterns for Claude Code CLI.
-
-Restart Claude Code after changing configuration. The `mcpServers` key is written to `~/.claude.json`. If `eden-memory` is not on the PATH that Claude Code sees, replace `$HOME` with the absolute path (e.g., `/home/yourname/.local/bin/eden-memory`).
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
 
 ## What this skill enforces
 

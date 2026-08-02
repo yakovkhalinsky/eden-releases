@@ -1,6 +1,7 @@
 ---
 title: Tools reference
 description: What each eden-memory MCP tool does, the inputs it accepts, and when to use it.
+content_type: reference
 ---
 
 All inputs are JSON objects. Tools that read or write memories require `agent_id` and `user_id`. Most tools also accept `org_id` and `workspace_id`, which default to the server environment variables `EDEN_ORG_ID` and `EDEN_WORKSPACE_ID`.
@@ -92,6 +93,8 @@ Response:
 ```
 
 Legacy aliases: `topic` / `top_k` → `query` / `limit`.
+
+See [Scopes and identity](/eden-memory/concepts/scopes-identity/) for how `agent_id`, `user_id`, `org_id`, and `workspace_id` filter results.
 
 ### `eden_search`
 
@@ -188,11 +191,11 @@ Scoped bulk soft-delete (default) or hard-delete of memories. Runs as dry-run un
 }
 ```
 
-Use `hard: true` with `yes_i_really_want_to_delete: true` for permanent deletion. Use `org_empty`, `workspace_empty`, `agent_empty`, or `user_empty` to match rows with empty/NULL scope values.
+Use `hard: true` with `yes_i_really_want_to_delete: true` for permanent deletion. Use `org_empty`, `workspace_empty`, `agent_empty`, or `user_empty` to match rows with empty/NULL scope values. See [Prune old memories](/eden-memory/how-to/prune-memories/) for a step-by-step guide.
 
 ### `eden_migrate`
 
-In-place remapping of `org_id`/`workspace_id` for a scope. Dry-run by default; requires `confirm: true` and `dry_run: false` to mutate. Set `backup: true` to copy the database first.
+In-place remapping of `org_id`/`workspace_id` for a scope. Dry-run by default; requires `confirm: true` and `dry_run: false` to mutate. Set `backup: true` to copy the database first. See [Migrate a workspace](/eden-memory/how-to/migrate-workspace/).
 
 ```json
 {
@@ -225,7 +228,7 @@ Build a deterministic, scope-bound knowledge packet. Never emits raw vectors.
 
 ### `eden_export_snapshot`
 
-Export an encrypted AES-256-GCM + scrypt snapshot of the database.
+Export an encrypted AES-256-GCM + scrypt snapshot of the database. See [Back up and restore a database](/eden-memory/how-to/backup-restore/).
 
 ```json
 {
@@ -236,7 +239,7 @@ Export an encrypted AES-256-GCM + scrypt snapshot of the database.
 
 ### `eden_import_snapshot`
 
-Import an encrypted snapshot, replacing the current database. Requires both confirmations.
+Import an encrypted snapshot, replacing the current database. Requires both confirmations. See [Back up and restore a database](/eden-memory/how-to/backup-restore/).
 
 ```json
 {
@@ -249,7 +252,7 @@ Import an encrypted snapshot, replacing the current database. Requires both conf
 
 ## Sync, pairing, and relay tools
 
-These tools were added to support multi-device sync. See the [multi-device sync guide](/eden-memory/multi-device-sync/) for a walkthrough.
+These tools were added to support multi-device sync. See the [multi-device sync guide](/eden-memory/multi-device-sync/) for a map, the [Sync two devices with a relay](/eden-memory/tutorials/sync-two-devices-relay/) tutorial, and [How sync works](/eden-memory/concepts/how-sync-works/) for protocol details.
 
 ### `eden_sync`
 

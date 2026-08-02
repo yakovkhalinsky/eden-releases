@@ -1,9 +1,20 @@
 ---
-title: Install & get started
-description: Download eden-memory, verify it, connect a client, and test memory.
+title: Quick start
+description: Install eden-memory, verify it, and test your first remember/recall.
+content_type: tutorial
 ---
 
-## Install
+# Quick start
+
+Get eden-memory running locally and confirm that your agent can remember and recall a fact across sessions.
+
+## Prerequisites
+
+- A Linux or macOS machine.
+- Shell access and `curl`.
+- An MCP-compatible agent or editor.
+
+## 1. Install
 
 Run the installer:
 
@@ -11,54 +22,41 @@ Run the installer:
 curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin`.
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/eden-memory`. If you prefer a manual install, see [Downloads and checksums](/eden-memory/reference/downloads/).
 
-If you prefer to install by hand, use the download table below.
+## 2. Verify
 
-## Verify
+Check the binary:
 
 ```bash
 eden-memory version
 ```
 
-You should see a version string. If you do not, make sure `~/.local/bin` is on your PATH.
-
-Then check that the binary can open its database:
+Then confirm it can open its database:
 
 ```bash
 eden-memory health
 ```
 
-## Connect a client
+You should see a version string and a health report with `status: ok`. If either command fails, make sure `~/.local/bin` is on your PATH, or use the full binary path.
 
-eden-memory speaks MCP over stdio. The exact setup depends on your client:
+## 3. Connect your agent
 
-- [Claude Code CLI](/eden-memory/skills/eden-memory-claude/)
-- [Cursor](/eden-memory/skills/eden-memory-cursor/)
-- [Hermes Agent](/eden-memory/skills/eden-memory-hermes/)
+eden-memory speaks MCP over stdio. Pick the tutorial for your client:
 
-For any other client, add a server with this command:
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
+
+If you already know your client's `mcpServers` JSON, the server command is:
 
 ```bash
-eden-memory --db /home/yourname/.eden-memory/default.db
+/home/yourname/.local/bin/eden-memory --db /home/yourname/.eden-memory/default.db
 ```
 
-Use your real username. The JSON shape is:
+Replace `/home/yourname` with your actual home path and use absolute paths. Then restart your client.
 
-```json
-{
-  "mcpServers": {
-    "eden-memory": {
-      "command": "eden-memory",
-      "args": ["--db", "/home/yourname/.eden-memory/default.db"]
-    }
-  }
-}
-```
-
-Restart your client after adding the server.
-
-## Test it
+## 4. Remember and recall
 
 Ask your agent to remember something:
 
@@ -74,42 +72,22 @@ What do you know about my communication preferences?
 
 The agent should recall the preference from the local store.
 
-## What it does
+## Expected output
+
+- `eden-memory version` prints a version string.
+- `eden-memory health` returns `status: ok`.
+- A remembered fact is returned when asked in a new session.
+
+## What eden-memory does
 
 eden-memory stores memories in a SQLite database at `~/.eden-memory/default.db`. Each memory gets a 256-dimensional embedding. When the agent runs `eden_recall`, eden-memory compares the query embedding to stored vectors and returns the closest matches.
 
-## Manual download
-
-Pick your OS and architecture. Each download includes a SHA-256 checksum file.
-
-| OS | Architecture | Download | Checksum |
-|---|---|---|---|
-| Linux | amd64 | [eden-memory-linux-amd64](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64) | [sha256](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64.sha256) |
-| Linux | arm64 | [eden-memory-linux-arm64](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64) | [sha256](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64.sha256) |
-| macOS | amd64 | [eden-memory-darwin-amd64](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64) | [sha256](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64.sha256) |
-| macOS | arm64 | [eden-memory-darwin-arm64](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64) | [sha256](https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64.sha256) |
-
-### Manual install
-
-```bash
-curl -LO https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64
-curl -LO https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64.sha256
-sha256sum -c eden-memory-linux-arm64.sha256
-chmod +x eden-memory-linux-arm64
-mv eden-memory-linux-arm64 ~/.local/bin/eden-memory
-```
-
-Replace `linux-arm64` with your platform.
-
-## Built for teams?
-
-If you use Claude Code, the [agentic-team-protocol](/agentic-team-protocol/) runs on top of eden-memory and adds role-based subagents (Dispatcher, Researcher, Builder, Verifier, Archivist) with a seven-stage goal lifecycle.
-
 ## Next steps
 
-- [Connect your client](/eden-memory/mcp-clients/)
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
+- [Sync two devices with a relay](/eden-memory/tutorials/sync-two-devices-relay/)
 - [Tools reference](/eden-memory/reference/tools/)
-- [Multi-device sync](/eden-memory/multi-device-sync/)
 - [CLI reference](/eden-memory/reference/cli/)
 - [Skills registry](/eden-memory/skills/)
-- [Agentic team protocol](/agentic-team-protocol/)

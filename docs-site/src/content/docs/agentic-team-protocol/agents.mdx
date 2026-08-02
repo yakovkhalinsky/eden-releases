@@ -1,6 +1,7 @@
 ---
-title: Agent prompts
+title: Roles and agents
 description: Index of the Agentic Team Protocol role subagents, their obligations, and when to spawn them.
+content_type: concept
 ---
 
 # Agent prompts
@@ -183,7 +184,7 @@ subagent for the current lifecycle stage.
 
 **Procedure:**
 
-1. Accept a `goal_id` from `/agentic-continue` or an external controller.
+1. Accept a `goal_id` from `/team-continue` or an external controller.
 2. Search Eden-memory for the latest records of that `goal_id`.
 3. Apply the lifecycle rules in `SKILL.md` to determine the required next stage and role.
 4. If the goal is `blocked` or `pending_authorisation`, report the blocker and stop.
@@ -208,3 +209,10 @@ off.
 If the eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash
 commands or invoke `eden-memory` directly from Bash. Restart Claude Code after
 `eden-memory setup claude` if commands are missing.
+
+## See also
+
+- [Run your first team goal](/agentic-team-protocol/tutorials/first-team-goal/) — spawn Dispatcher and Builder in a complete lifecycle.
+- [Set up a headless supervisor](/agentic-team-protocol/tutorials/headless-supervisor/) — automate subagent dispatch without chat history.
+- [Record kinds and schema](/agentic-team-protocol/concepts/record-kinds/) — the durable records each role produces.
+- [Slash commands](/agentic-team-protocol/reference/slash-commands/) — user-facing commands that trigger these roles.

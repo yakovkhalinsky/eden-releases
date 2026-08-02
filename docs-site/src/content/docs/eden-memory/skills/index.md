@@ -1,6 +1,7 @@
 ---
 title: Skills registry
 description: Install eden-memory skills for your agent or editor.
+content_type: reference
 template: doc
 ---
 

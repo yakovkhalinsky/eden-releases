@@ -1,6 +1,7 @@
 ---
 title: agentic-team-protocol
 description: Role-based agent teams with a seven-stage lifecycle and eden-memory as the durable substrate.
+content_type: concept
 ---
 
 # agentic-team-protocol
@@ -41,7 +42,7 @@ Runtime is not active unless your project charter explicitly authorises it.
 
 The protocol does not replace eden-memory; it stores every milestone in it.
 
-- `/ratify-charter` reads `.claude/agentic-team-charter.md`, computes a SHA-256
+- `/team-charter` reads `.claude/agentic-team-charter.md`, computes a SHA-256
   version hash, and writes a `charter_ratification` record to eden-memory.
 - Every role uses the eden-memory MCP tools (`eden_remember`, `eden_recall`,
   `eden_search`, `eden_search_semantic`, `eden_edit`, `eden_forget`, etc.) to

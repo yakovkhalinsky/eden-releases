@@ -1,6 +1,7 @@
 ---
 title: Charter anatomy
 description: What goes into an Agentic Team Protocol charter and how each section shapes the team.
+content_type: concept
 ---
 
 # Charter anatomy
@@ -9,7 +10,7 @@ A charter is the contract between you and the agentic team. It defines identity,
 boundaries, roles, decision rights, and escalation paths. The global charter is a
 safe default; a project-local charter overrides it.
 
-Every charter must be ratified with `/ratify-charter` before the team proceeds.
+Every charter must be ratified with `/team-charter` before the team proceeds.
 Ratification stores a `charter_ratification` record in eden-memory with a SHA-256
 version hash of the charter content.
 
@@ -88,7 +89,7 @@ conventions live:
 
 ### Status cadence
 
-How often the team checks active goals. A common rule: run `/agentic-status` at
+How often the team checks active goals. A common rule: run `/team-status` at
 the start of every session working on this project.
 
 ### Retirement condition
@@ -112,3 +113,10 @@ then, the charter remains binding.
 
 If a project has no `agentic-team-config.yaml`, the global skill is used and the
 global charter is ignored unless explicitly referenced.
+
+## See also
+
+- [Ratify a project charter](/agentic-team-protocol/tutorials/ratify-charter/) — step-by-step charter ratification.
+- [Default charter](/agentic-team-protocol/reference/default-charter/) — annotated global charter and ratification checklist.
+- [Run your first team goal](/agentic-team-protocol/tutorials/first-team-goal/) — what to do after the charter is ratified.
+- [Slash commands](/agentic-team-protocol/reference/slash-commands/) — `/team-charter` reference.
