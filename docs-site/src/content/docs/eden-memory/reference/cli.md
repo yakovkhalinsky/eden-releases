@@ -1,6 +1,7 @@
 ---
 title: CLI reference
 description: eden-memory command-line reference for sync, pairing, relay, and related flags.
+content_type: reference
 ---
 
 eden-memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the fallback slash commands installed by `eden-memory setup claude`.

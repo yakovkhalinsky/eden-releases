@@ -1,6 +1,7 @@
 ---
 title: Install and get started
 description: Install the agentic-team-protocol primitives in Claude Code and ratify your first project charter.
+content_type: tutorial
 ---
 
 # Install and get started

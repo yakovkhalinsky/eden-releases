@@ -1,6 +1,7 @@
 ---
 title: Install Eden Memory Claude skill
 description: Use eden-memory as a persistent memory layer inside Claude Code CLI.
+content_type: reference
 template: doc
 skill_name: eden-memory-claude
 skill_version: 3.0.2

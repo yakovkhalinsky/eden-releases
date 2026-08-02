@@ -274,6 +274,7 @@ def generate():
             front.append(f"description: {description}")
         front.extend(
             [
+                "content_type: reference",
                 "template: doc",
                 f"skill_name: {name}",
                 f"skill_version: {version}",
@@ -349,6 +350,7 @@ The installable artifact is the raw `SKILL.md` file:
         "---",
         "title: Skills registry",
         "description: Install eden-memory skills for your agent or editor.",
+        "content_type: reference",
         "template: doc",
         "---",
         "",

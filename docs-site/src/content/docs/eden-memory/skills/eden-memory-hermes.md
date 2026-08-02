@@ -1,6 +1,7 @@
 ---
 title: Install Eden Memory Hermes skill
 description: Use eden-memory as a persistent skill inside Hermes Agent.
+content_type: reference
 template: doc
 skill_name: eden-memory-hermes
 skill_version: 2.2.1

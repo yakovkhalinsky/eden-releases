@@ -1,6 +1,7 @@
 ---
 title: Install Eden Memory MCP Usage skill
 description: Use eden-memory as a persistent memory skill inside any stdio MCP client.
+content_type: reference
 template: doc
 skill_name: eden-memory-mcp-usage
 skill_version: 3.0.1

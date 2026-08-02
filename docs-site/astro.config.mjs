@@ -6,6 +6,7 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	site: 'https://0d3sa.com',
 	base: '/',
+	redirects: {},
 	integrations: [
 		starlight({
 			title: '0d3sa',
@@ -38,17 +39,17 @@ export default defineConfig({
 					label: 'eden-memory',
 					items: [
 						{ label: 'Overview', slug: 'eden-memory' },
-						{ label: 'Install & get started', slug: 'eden-memory/getting-started' },
-						{ label: 'Connect your client', slug: 'eden-memory/mcp-clients' },
-						{ label: 'Multi-device sync', slug: 'eden-memory/multi-device-sync' },
+						{ label: 'Quick start', slug: 'eden-memory/getting-started' },
 						{
-							label: 'Skills',
+							label: 'Tutorials',
 							items: [
-								{ label: 'Skills registry', slug: 'eden-memory/skills' },
-								{ label: 'Install: MCP usage', slug: 'eden-memory/skills/eden-memory-mcp-usage' },
-								{ label: 'Install: Claude Code CLI', slug: 'eden-memory/skills/eden-memory-claude' },
-								{ label: 'Install: Cursor', slug: 'eden-memory/skills/eden-memory-cursor' },
-								{ label: 'Install: Hermes Agent', slug: 'eden-memory/skills/eden-memory-hermes' },
+								{ label: 'Connect your MCP client', slug: 'eden-memory/mcp-clients' },
+							],
+						},
+						{
+							label: 'Concepts',
+							items: [
+								{ label: 'Multi-device sync overview', slug: 'eden-memory/multi-device-sync' },
 							],
 						},
 						{
@@ -56,6 +57,16 @@ export default defineConfig({
 							items: [
 								{ label: 'Tools reference', slug: 'eden-memory/reference/tools' },
 								{ label: 'CLI reference', slug: 'eden-memory/reference/cli' },
+								{
+									label: 'Skills registry',
+									items: [
+										{ label: 'Overview', slug: 'eden-memory/skills' },
+										{ label: 'MCP usage', slug: 'eden-memory/skills/eden-memory-mcp-usage' },
+										{ label: 'Claude Code CLI', slug: 'eden-memory/skills/eden-memory-claude' },
+										{ label: 'Cursor', slug: 'eden-memory/skills/eden-memory-cursor' },
+										{ label: 'Hermes Agent', slug: 'eden-memory/skills/eden-memory-hermes' },
+									],
+								},
 							],
 						},
 					],
@@ -64,10 +75,20 @@ export default defineConfig({
 					label: 'agentic-team-protocol',
 					items: [
 						{ label: 'Overview', slug: 'agentic-team-protocol' },
-						{ label: 'Install & get started', slug: 'agentic-team-protocol/getting-started' },
-						{ label: 'Charter anatomy', slug: 'agentic-team-protocol/charter-anatomy' },
-						{ label: 'Lifecycle', slug: 'agentic-team-protocol/lifecycle' },
-						{ label: 'Agent prompts', slug: 'agentic-team-protocol/agents' },
+						{ label: 'Quick start', slug: 'agentic-team-protocol/getting-started' },
+						{
+							label: 'Concepts',
+							items: [
+								{ label: 'Lifecycle', slug: 'agentic-team-protocol/lifecycle' },
+								{ label: 'Charter anatomy', slug: 'agentic-team-protocol/charter-anatomy' },
+							],
+						},
+						{
+							label: 'Reference',
+							items: [
+								{ label: 'Agent prompts', slug: 'agentic-team-protocol/agents' },
+							],
+						},
 					],
 				},
 			],

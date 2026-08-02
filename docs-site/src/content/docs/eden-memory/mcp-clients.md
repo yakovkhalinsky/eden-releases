@@ -1,6 +1,7 @@
 ---
 title: Connect your MCP client
 description: Add eden-memory to Claude Code, Cursor, Hermes, or any other MCP client.
+content_type: tutorial
 ---
 
 eden-memory speaks MCP over stdio. The server command is:

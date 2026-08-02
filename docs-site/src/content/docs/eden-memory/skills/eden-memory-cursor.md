@@ -1,6 +1,7 @@
 ---
 title: Install Eden Memory Cursor skill
 description: Use eden-memory as a persistent skill inside Cursor.
+content_type: reference
 template: doc
 skill_name: eden-memory-cursor
 skill_version: 2.2.1

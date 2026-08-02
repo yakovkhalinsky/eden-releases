@@ -1,6 +1,7 @@
 ---
 title: Tools reference
 description: What each eden-memory MCP tool does, the inputs it accepts, and when to use it.
+content_type: reference
 ---
 
 All inputs are JSON objects. Tools that read or write memories require `agent_id` and `user_id`. Most tools also accept `org_id` and `workspace_id`, which default to the server environment variables `EDEN_ORG_ID` and `EDEN_WORKSPACE_ID`.

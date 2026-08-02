@@ -1,6 +1,7 @@
 ---
 title: Install & get started
 description: Download eden-memory, verify it, connect a client, and test memory.
+content_type: tutorial
 ---
 
 ## Install
