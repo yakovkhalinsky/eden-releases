@@ -43,7 +43,7 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 3. Produce or load a plan. If the plan is written or updated to a file, record its absolute path as `plan_file_path` in the action record metadata. Do not begin implementation without a durable, visible plan.
 4. Implement the artefact using Write/Edit/Bash as appropriate.
 5. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
-6. If a step requires explicit user authorisation (e.g., pushing to origin, touching production-adjacent config), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user.
+6. If a step requires explicit user authorisation beyond the project charter (e.g., deleting a public release, modifying fleet-wide CI secrets, or touching production-adjacent config outside the charter), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user. Routine repository commit/push is not a pending_authorisation step; it is executed by Runtime after a green Verifier verdict.
 7. Write a change summary and store it in Eden-memory.
 8. **Write a durable `hand_off_record` before handing off to Verifier.**
    - Include the action record ID and change summary record ID in `input_record_ids`.
@@ -53,6 +53,6 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 ## Anti-patterns
 
 - Do not change live production systems — that is Runtime's role.
-- Do not commit or push without explicit user direction.
+- Do not commit or push unless explicitly dispatched as Runtime and the charter authorises it.
 - Do not treat documentation as optional.
 - Do not leave an unfinished goal without a durable `run_log` or `pending_authorisation` record.

@@ -23,6 +23,9 @@ The default active roles are:
 
 Runtime is **not active by default** and requires explicit project-local charter
 authorisation before it may operate on anything beyond local development tools.
+When a project charter authorises Runtime, routine commit/push of verified changes
+to that project's repository is within its normal scope and does not require
+per-action user approval.
 
 ## Decision rights
 

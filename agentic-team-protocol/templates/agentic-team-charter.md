@@ -13,6 +13,7 @@ Purpose: <Short description of what the project does and why it uses the Agentic
 
 - <Boundary 1, e.g. "Do not perform destructive actions on external/live systems without explicit authorisation.">
 - <Boundary 2, e.g. "Runtime operations are limited to local development commands unless explicitly authorised.">
+- <Boundary 3 (optional), e.g. "Routine commit and push of verified changes to this project's repository is authorised for Runtime after a green Verifier verdict.">
 - Secrets, tokens, and credentials must never be stored in Eden-memory or conversation logs.
 
 ## Roles/seats
@@ -25,7 +26,7 @@ Active roles are defined in `.claude/agentic-team-config.yaml`. The default set 
 - Verifier
 - Archivist
 
-Runtime is available but requires explicit charter authorisation before acting on anything beyond local development tools.
+Runtime is available but requires explicit charter authorisation before acting on anything beyond local development tools. If the charter authorises it, Runtime may commit and push verified repository changes without per-action user approval.
 
 ## Decision rights
 

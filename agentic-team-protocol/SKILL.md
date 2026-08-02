@@ -57,7 +57,7 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 ### Resumable sub-states
 
 - `blocked` — waiting on an external dependency or authority. The owning role records the unblock condition. The router checks it on every `/team-continue`.
-- `pending_authorisation` — waiting on explicit user approval for a specific action (e.g., push to origin). The exact question and prepared action are recorded so a new session can resume and apply the answer.
+- `pending_authorisation` — waiting on explicit user approval for a specific high-risk action outside routine charter authority (e.g., deleting a public release or modifying fleet-wide CI secrets). The exact question and prepared action are recorded so a new session can resume and apply the answer. Routine repository commit/push after a green Verifier verdict is not a pending_authorisation step.
 
 ## Routing rules and dispatcher defaults
 
