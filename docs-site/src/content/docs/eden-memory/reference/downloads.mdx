@@ -1,0 +1,83 @@
+---
+title: Downloads and checksums
+description: eden-memory binary downloads, release version, platform matrix, SHA-256 checksums, and manual install snippet.
+content_type: reference
+---
+
+import downloads from '../../../../data/downloads.json';
+
+# Downloads and checksums
+
+The latest eden-memory release is **{downloads.version}**, released on **{downloads.released}**. Binaries are published as GitHub Release assets at `yakovkhalinsky/eden-releases`.
+
+## Quick install
+
+The recommended install uses the curl installer, which downloads the right binary for your platform and verifies its checksum:
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
+
+The installer places the binary at `~/.local/bin/eden-memory`.
+
+## Platform matrix
+
+<table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>Architecture</th>
+      <th>Filename</th>
+      <th>Size</th>
+      <th>SHA-256</th>
+      <th>Download</th>
+    </tr>
+  </thead>
+  <tbody>
+    {Object.entries(downloads.platforms).map(([key, p]) => (
+      <tr key={key}>
+        <td>{p.os}</td>
+        <td>{p.arch}</td>
+        <td><code>{p.filename}</code></td>
+        <td>{(p.sizeBytes / 1024 / 1024).toFixed(1)} MB</td>
+        <td><code>{p.sha256}</code></td>
+        <td><a href={p.downloadUrl}>download</a></td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+## Manual install
+
+If you prefer to download and verify manually:
+
+```bash
+VERSION={downloads.version}
+PLATFORM=linux-amd64
+FILENAME=eden-memory-${PLATFORM}
+
+wget https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/${FILENAME}
+wget https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/${FILENAME}.sha256
+sha256sum -c ${FILENAME}.sha256
+
+mkdir -p ~/.local/bin
+mv ${FILENAME} ~/.local/bin/eden-memory
+chmod +x ~/.local/bin/eden-memory
+```
+
+Replace `linux-amd64` with your platform key from the table above.
+
+## Verify the binary
+
+After installing:
+
+```bash
+eden-memory version
+eden-memory health
+```
+
+## See also
+
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Getting started](/eden-memory/getting-started/)
+- [GitHub Releases](https://github.com/yakovkhalinsky/eden-releases/releases/latest)

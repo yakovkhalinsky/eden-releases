@@ -484,7 +484,9 @@ The `/eden-memory/multi-device-sync/` page becomes a **concept map** that:
 
 **Deliverable:** All eden-memory first-experience paths are tutorial-shaped.
 
-### Phase 3 — eden-memory concepts and reference (1–2 Builder cycles)
+### Phase 3 — eden-memory concepts and reference (1–2 Builder cycles) — COMPLETED
+
+**Status:** Completed on 2026-08-02.
 
 1. Create concept pages:
    - `/eden-memory/concepts/memory-model.md`

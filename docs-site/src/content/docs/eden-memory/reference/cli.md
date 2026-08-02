@@ -4,7 +4,7 @@ description: eden-memory command-line reference for sync, pairing, relay, and re
 content_type: reference
 ---
 
-eden-memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the fallback slash commands installed by `eden-memory setup claude`.
+eden-memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the [fallback slash commands](/eden-memory/reference/fallback-slash-commands/) installed by `eden-memory setup claude`.
 
 ## Global flags
 
@@ -238,4 +238,15 @@ eden-memory --db local.db relay-register \
 
 ## Disabling sync
 
-Pass `--sync-disabled` (or set `EDEN_SYNC_DISABLED=1`) to skip the v3 sync schema migration and run the database in local-only mode.
+Pass `--sync-disabled` (or set `EDEN_SYNC_DISABLED=1`) to skip the v3 sync schema migration and run the database in local-only mode. See [Environment variables](/eden-memory/reference/environment-variables/) for the full table and precedence rules.
+
+## See also
+
+- [Tools reference](/eden-memory/reference/tools/)
+- [Environment variables](/eden-memory/reference/environment-variables/)
+- [Fallback slash commands](/eden-memory/reference/fallback-slash-commands/)
+- [Troubleshooting](/eden-memory/reference/troubleshooting/)
+- [How sync works](/eden-memory/concepts/how-sync-works/)
+- [Run your own relay server](/eden-memory/how-to/run-relay-server/)
+- [Approve a peer key rotation](/eden-memory/how-to/approve-peer-key-change/)
+

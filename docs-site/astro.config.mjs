@@ -51,8 +51,23 @@ export default defineConfig({
 							],
 						},
 						{
+							label: 'How-to guides',
+							items: [
+								{ label: 'Back up and restore', slug: 'eden-memory/how-to/backup-restore' },
+								{ label: 'Migrate a workspace', slug: 'eden-memory/how-to/migrate-workspace' },
+								{ label: 'Prune old memories', slug: 'eden-memory/how-to/prune-memories' },
+								{ label: 'Run your own relay server', slug: 'eden-memory/how-to/run-relay-server' },
+								{ label: 'Approve a peer key rotation', slug: 'eden-memory/how-to/approve-peer-key-change' },
+							],
+						},
+						{
 							label: 'Concepts',
 							items: [
+								{ label: 'Memory model and embeddings', slug: 'eden-memory/concepts/memory-model' },
+								{ label: 'Scopes and identity', slug: 'eden-memory/concepts/scopes-identity' },
+								{ label: 'How sync works', slug: 'eden-memory/concepts/how-sync-works' },
+								{ label: 'Sidecar files', slug: 'eden-memory/concepts/sidecar-files' },
+								{ label: 'Security model', slug: 'eden-memory/concepts/security-model' },
 								{ label: 'Multi-device sync overview', slug: 'eden-memory/multi-device-sync' },
 							],
 						},
@@ -61,6 +76,9 @@ export default defineConfig({
 							items: [
 								{ label: 'Tools reference', slug: 'eden-memory/reference/tools' },
 								{ label: 'CLI reference', slug: 'eden-memory/reference/cli' },
+								{ label: 'Environment variables', slug: 'eden-memory/reference/environment-variables' },
+								{ label: 'Fallback slash commands', slug: 'eden-memory/reference/fallback-slash-commands' },
+								{ label: 'Troubleshooting', slug: 'eden-memory/reference/troubleshooting' },
 								{
 									label: 'Skills registry',
 									items: [
@@ -71,6 +89,7 @@ export default defineConfig({
 										{ label: 'Hermes Agent', slug: 'eden-memory/skills/eden-memory-hermes' },
 									],
 								},
+								{ label: 'Downloads and checksums', slug: 'eden-memory/reference/downloads' },
 							],
 						},
 					],
