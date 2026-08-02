@@ -9,6 +9,25 @@
 
 set -eu
 
+# Extract the `version:` value from a YAML-frontmatter SKILL.md file.
+# Returns the empty string if the file is missing or has no version key.
+_extract_version() {
+  _file="$1"
+  if [ -f "$_file" ]; then
+    awk '
+      /^---$/ { in_frontmatter = !in_frontmatter; next }
+      in_frontmatter && /^[ \t]*version:/ {
+        sub(/^[ \t]*version:[ \t]*/, "")
+        sub(/[ \t]*$/, "")
+        gsub(/^"+|"$/, "")
+        gsub(/^'"'"'+|'"'"'$/, "")
+        print
+        exit
+      }
+    ' "$_file"
+  fi
+}
+
 LOCAL_INSTALL=false
 CLAUDE_MD_INSTALL=false
 DRY_RUN=false
@@ -48,6 +67,15 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PACKAGE_DIR="${SCRIPT_DIR}"
 CLAUDE_DIR="${HOME}/.claude"
+
+# Determine the previously installed version, if any.
+OLD_VERSION=""
+if [ "$LOCAL_INSTALL" = true ] && [ -n "${PWD:-}" ]; then
+  OLD_VERSION="$(_extract_version "${PWD}/.claude/skills/agentic-team-protocol/SKILL.md")"
+else
+  OLD_VERSION="$(_extract_version "${CLAUDE_DIR}/skills/team/SKILL.md")"
+fi
+[ -z "$OLD_VERSION" ] && OLD_VERSION="none"
 
 # If we are running from a curl pipe, the package directory is unknown.
 # Try to download the canonical tarball; if it is unavailable, fall back
@@ -101,6 +129,9 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
   exit 1
 fi
 
+NEW_VERSION="$(_extract_version "${PACKAGE_DIR}/SKILL.md")"
+[ -z "$NEW_VERSION" ] && NEW_VERSION="unknown"
+
 if [ "$DRY_RUN" = true ]; then
   echo "Would install to:"
   echo "  skill:    ${CLAUDE_DIR}/skills/team/SKILL.md"
@@ -110,6 +141,11 @@ if [ "$DRY_RUN" = true ]; then
     echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
     echo "  skill:   ${PWD:-.}/.claude/skills/agentic-team-protocol/SKILL.md"
     [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
+  fi
+  if [ "$OLD_VERSION" = "none" ]; then
+    echo "[dry-run] Agentic Team Protocol installed at ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
+  else
+    echo "[dry-run] Agentic Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
   fi
   exit 0
 fi
@@ -182,5 +218,9 @@ if [ "$LOCAL_INSTALL" = true ]; then
   fi
 fi
 
-echo "Agentic Team Protocol installed."
+if [ "$OLD_VERSION" = "none" ]; then
+  echo "Agentic Team Protocol installed at ${NEW_VERSION}."
+else
+  echo "Agentic Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}."
+fi
 echo "Restart Claude Code to load the new agents and commands."
