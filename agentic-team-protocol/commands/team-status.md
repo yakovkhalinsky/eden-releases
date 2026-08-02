@@ -17,7 +17,6 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
-     --agent-id claude-code-cli \
      --user-id "${USER_ID}" \
      --keywords "agentic-team-protocol goal_record stage run_log hand_off_record pending_authorisation blocked" \
      --limit 100

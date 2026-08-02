@@ -24,7 +24,7 @@ Transfer ownership of an Agentic Team Protocol goal to another role or instance.
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    HAND_OFF_ID=$("${EDEN_MEMORY_BIN}" remember \
-     --agent-id claude-code-cli \
+     --agent-id "${FROM_ROLE}" \
      --user-id "${USER_ID}" \
      --content "{\"kind\":\"hand_off_record\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"${CURRENT_STAGE}\",\"from_role\":\"${FROM_ROLE}\",\"to_role\":\"${TO_ROLE}\",\"reason\":\"${REASON}\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"success_criteria\":\"${SUCCESS_CRITERIA}\",\"deadline\":\"${DEADLINE}\",\"escalation_trigger\":\"${ESCALATION_TRIGGER}\"}" \
      --metadata '{"kind":"hand_off_record","stage":"hand_off_or_closure","goal_id":"'"${GOAL_ID}"'","owner_role":"'"${FROM_ROLE}"'"}')

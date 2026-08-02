@@ -18,7 +18,7 @@ Resume interrupted or unfinished goals by reading Eden-memory and dispatching th
 ## Required outputs
 
 1. A `run_log` record marking the continuation attempt:
-   - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `agent_id: "router"`, `input_record_ids`, `output_record_ids`.
 2. A durable `hand_off_record` (or continuation `run_log` that satisfies the hand-off format) **written before spawning the next role**.
    - This record is the activation signal for the receiving role; it must contain the full hand-off payload.
    - `input_record_ids` must reference the latest durable stage record(s), not the `goal_id` itself.

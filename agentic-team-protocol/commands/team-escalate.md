@@ -18,7 +18,7 @@ Collect goal, options, consulted roles, recommended default, specific question/a
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" remember \
-     --agent-id claude-code-cli \
+     --agent-id dispatcher \
      --user-id "${USER_ID}" \
      --content "Escalation for goal ${GOAL_ID}. Reason: ${REASON}. Consulted roles: dispatcher. Recommended default: ${RECOMMENDED}. Question/authority requested: ${QUESTION}. Risk of waiting: ${RISK}." \
      --metadata '{"kind":"escalation_record","stage":"escalation","goal_id":"'${GOAL_ID}'","owner_role":"dispatcher"}'

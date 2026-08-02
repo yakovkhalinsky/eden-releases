@@ -125,6 +125,8 @@ Store records with metadata so they can be recalled, linked, and audited:
 }
 ```
 
+Use the clean role name as `agent_id` for all ATP role records (e.g., `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`, `router`).
+
 Required record types:
 
 - `goal_record` — initial request and constraints.

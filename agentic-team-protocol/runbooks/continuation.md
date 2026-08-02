@@ -24,7 +24,6 @@ Search for the `goal_id` first to see the full timeline:
 USER_ID="${USER:-$(id -un)}"
 EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
 "${EDEN_MEMORY_BIN}" search \
-  --agent-id claude-code-cli \
   --user-id "${USER_ID}" \
   --keywords "${GOAL_ID}" \
   --limit 50

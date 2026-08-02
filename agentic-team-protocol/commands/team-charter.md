@@ -29,7 +29,7 @@ Read the project's `agentic-team-charter.md` (project-local first, then global f
    RATER="${RATER:-${USER_ID}}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" remember \
-     --agent-id claude-code-cli \
+     --agent-id archivist \
      --user-id "${USER_ID}" \
      --content "Charter ratified for project. Version: ${VERSION}. Rater: ${RATER}. Date: $(date -u +%Y-%m-%dT%H:%M:%SZ). Mechanism: /team-charter. Deferrals: none." \
      --metadata '{"kind":"charter_ratification","stage":"charter_ratification","goal_id":"charter-ratification","owner_role":"archivist"}'

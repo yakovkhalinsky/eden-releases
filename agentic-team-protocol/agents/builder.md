@@ -26,7 +26,7 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
    - Merge/integration instructions.
    - Any manual follow-up steps.
 3. A record in Eden-memory with metadata:
-   - `goal_id`, `stage: action`, `owner_role: builder`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: action`, `owner_role: builder`, `agent_id: "builder"`, `input_record_ids`, `output_record_ids`.
    - `plan_file_path` (optional) — if a written plan is produced or updated, include its absolute path so the plan remains discoverable.
 
 ## Failure modes to avoid
