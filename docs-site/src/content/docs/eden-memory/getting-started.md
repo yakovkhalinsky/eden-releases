@@ -82,6 +82,10 @@ The agent should recall the preference from the local store.
 
 eden-memory stores memories in a SQLite database at `~/.eden-memory/default.db`. Each memory gets a 256-dimensional embedding. When the agent runs `eden_recall`, eden-memory compares the query embedding to stored vectors and returns the closest matches.
 
+> [!TIP]
+> **Short answer**
+> eden-memory is the required base for every user. If you work in Claude Code and want structured role-based collaboration, add the [Agentic Team Protocol](/agentic-team-protocol/getting-started/) on top.
+
 ## Next steps
 
 - [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)

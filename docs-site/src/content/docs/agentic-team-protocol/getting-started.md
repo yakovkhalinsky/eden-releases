@@ -8,6 +8,9 @@ content_type: tutorial
 
 This tutorial gets the Agentic Team Protocol installed, a project charter ratified, and a trivial first goal dispatched in under ten minutes.
 
+> [!TIP]
+> ATP installs per-project inside your Claude Code workspace. Each repository you use it in gets its own `.claude/agentic-team-charter.md`, `.claude/agentic-team-config.yaml`, and `.claude/skills/agentic-team-protocol/SKILL.md`. Read the [charter anatomy](/agentic-team-protocol/charter-anatomy/) and the [first team goal tutorial](/agentic-team-protocol/tutorials/first-team-goal/) for the full workflow.
+
 ## Prerequisites
 
 - [eden-memory](/eden-memory/getting-started/) installed and available on your `PATH`.
