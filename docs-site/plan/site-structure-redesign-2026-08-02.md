@@ -3,9 +3,11 @@
 **Goal ID:** `site-structure-redesign-2026-08-02`  
 **Owner role:** Builder  
 **Stage:** action (planning)  
-**Status:** pending review  
+**Status:** completed / archived  
 **Date:** 2026-08-02  
-**Deadline:** 2026-08-03T00:00:00Z
+**Deadline:** 2026-08-03T00:00:00Z  
+**Final merge commit:** `8fa0a36a2eebb9fc6b4940cc346834477f3f2141`  
+**Push result:** success — `main` advanced to `8fa0a36a2eebb9fc6b4940cc346834477f3f2141` on origin
 
 ---
 
@@ -525,13 +527,19 @@ The `/eden-memory/multi-device-sync/` page becomes a **concept map** that:
 
 **Deliverable:** ATP has tutorial + concept + reference structure.
 
-### Phase 5 — Verification and redirects (Verifier cycle)
+### Phase 5 — Final verification, merge, and push (Runtime cycle) — COMPLETED
 
-1. Run `npm run build`.
-2. Validate all routes from the old URL list return the expected content.
-3. Validate all new routes are present in the generated `dist/`.
-4. Run `astro preview` and spot-check the sidebar on desktop and mobile.
-5. Add any missing redirects to `astro.config.mjs`.
+**Status:** Completed on 2026-08-02.
+
+1. Run `npm run build` — passed (45 pages, exit 0).
+2. Validate all routes from the old URL list return the expected content — passed.
+3. Validate all new routes are present in the generated `dist/` — passed.
+4. Run `astro preview` and spot-check the sidebar on desktop and mobile — passed.
+5. Add any missing redirects to `astro.config.mjs` — no redirects required; all existing slugs preserved.
+6. Merge `feat/site-structure-phase1` into `main` using non-fast-forward merge commit `8fa0a36a2eebb9fc6b4940cc346834477f3f2141` — completed.
+7. Push `main` to `github.com:yakovkhalinsky/eden-releases.git` — completed; no force-push used.
+
+**Deliverable:** Redesign is live on `main` and origin.
 
 ---
 
@@ -586,4 +594,4 @@ This runs:
 
 `/home/yakov/git/eden-releases/docs-site/plan/site-structure-redesign-2026-08-02.md`
 
-This plan is ready for Verifier review and user approval before any content or code changes are made.
+This plan has been implemented, verified, merged to `main`, and pushed. The feature branch `feat/site-structure-phase1` has been retained.
