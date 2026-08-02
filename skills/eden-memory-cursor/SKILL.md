@@ -2,7 +2,7 @@
 name: eden-memory-cursor
 title: Cursor
 description: Use eden-memory as a persistent skill inside Cursor.
-version: 2.2.0
+version: 2.2.1
 tags: [mcp, eden-memory, cursor, skill, prompt, composer]
 tools:
   discoverable: true
@@ -18,6 +18,18 @@ tools:
     - eden_forget_expired
     - eden_health
     - eden_vacuum
+    - eden_prune
+    - eden_migrate
+    - eden_packet
+    - eden_export_snapshot
+    - eden_import_snapshot
+    - eden_sync
+    - eden_pair_device
+    - eden_sync_loop
+    - eden_relay_server
+    - eden_relay_register
+    - eden_pair_create_invitation
+    - eden_pair_accept_invitation
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 harness: cursor
 mcp_config:

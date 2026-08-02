@@ -2,7 +2,7 @@
 name: eden-memory-claude
 title: Claude Code CLI
 description: Use eden-memory as a persistent memory layer inside Claude Code CLI.
-version: 3.0.1
+version: 3.0.2
 tags: [mcp, eden-memory, claude-code, skill, prompt, subagent]
 tools:
   discoverable: true
@@ -18,6 +18,18 @@ tools:
     - eden_forget_expired
     - eden_health
     - eden_vacuum
+    - eden_prune
+    - eden_migrate
+    - eden_packet
+    - eden_export_snapshot
+    - eden_import_snapshot
+    - eden_sync
+    - eden_pair_device
+    - eden_sync_loop
+    - eden_relay_server
+    - eden_relay_register
+    - eden_pair_create_invitation
+    - eden_pair_accept_invitation
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 harness: claude-code
 mcp_config:
@@ -133,6 +145,18 @@ Do not proceed with memory-dependent work until `eden_health` succeeds.
 - `mcp__eden-memory__eden_forget_expired`
 - `mcp__eden-memory__eden_health`
 - `mcp__eden-memory__eden_vacuum`
+- `mcp__eden-memory__eden_prune`
+- `mcp__eden-memory__eden_migrate`
+- `mcp__eden-memory__eden_packet`
+- `mcp__eden-memory__eden_export_snapshot`
+- `mcp__eden-memory__eden_import_snapshot`
+- `mcp__eden-memory__eden_sync`
+- `mcp__eden-memory__eden_pair_device`
+- `mcp__eden-memory__eden_sync_loop`
+- `mcp__eden-memory__eden_relay_server`
+- `mcp__eden-memory__eden_relay_register`
+- `mcp__eden-memory__eden_pair_create_invitation`
+- `mcp__eden-memory__eden_pair_accept_invitation`
 
 ## Using MCP tools (default)
 
