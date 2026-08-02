@@ -1,0 +1,2 @@
+# Built supervisor binary. Build with: go build -o atp-run ./cmd/atp-run
+atp-run
