@@ -48,7 +48,7 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 
 1. **Goal receipt** — Dispatcher records the request, requester, constraints, and package type.
 2. **Routing and assignment** — Dispatcher assigns target role/package, owner, deadline, success criteria, confidence/escalation trigger.
-3. **Context gathering** — Researcher (or assigned role) records what is known, options considered, chosen path.
+3. **Context gathering** — Researcher (or assigned role) records what is known, evaluates options, chooses a path, and captures any written plan. Planning is not a private activity; it belongs in this durable record.
 4. **Action** — Builder or Runtime executes the plan and records what was done, rollback options, and state changes. A role may park the goal as `pending_authorisation` if it needs explicit user approval before proceeding.
 5. **Verification** — Verifier inspects outcome against success criteria and writes a verdict (`green`, `red`, or `blocked`).
 6. **Recording and archival** — Archivist ensures final outcome, decision trail, and skill/runbook updates are stored.
@@ -69,7 +69,7 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
   - `verify` → Verifier
   - `archive` → Archivist
 - Low confidence, missing authority, or tight deadline → escalate via `/team-escalate`.
-- Builder and Runtime must not start without sufficient context; request Researcher support if needed.
+- Builder and Runtime must not start without sufficient context and a visible plan (either in `context_summary` or `action_record`); request Researcher support if needed.
 - When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role.
 - A `blocked` or `pending_authorisation` goal remains active until the recorded unblock/approval condition is satisfied; the router re-checks it on continuation.
 
@@ -106,7 +106,8 @@ Store records with metadata so they can be recalled, linked, and audited:
   "input_record_ids": ["<id>"],
   "output_record_ids": ["<id>"],
   "verdict_id": "<id when applicable>",
-  "status": "<in_progress | completed | blocked | pending_authorisation>"
+  "status": "<in_progress | completed | blocked | pending_authorisation>",
+  "plan_file_path": "<absolute path when a plan file exists; optional but strongly recommended>"
 }
 ```
 
@@ -134,6 +135,7 @@ Required record types:
 - **Dropped interrupted work** — always leave a `run_log` or durable record at the end of a turn so `/team-continue` can resume.
 - **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record` (or role record that includes the hand-off format), not chat history. The Router must write this record before spawning the next role.
 - **Stale closures** — a new action record after closure supersedes it; do not assume an old `archival_record` is the final word.
+- **Ghost planning** — capturing a plan only in a local file or chat history without referencing it from an Eden-memory record. Any plan file or detailed implementation plan must be referenced from `context_summary` or `action_record`.
 
 ## Scope resolution rules
 

@@ -25,6 +25,7 @@ Gather context before decisions are made. Research must have a consumer and a st
    - Options/alternatives considered.
    - Trade-offs and confidence for each option.
    - Recommended next step.
+   - If a written plan file is produced during context gathering, its absolute path (`plan_file_path`) so the plan is discoverable from Eden-memory.
 2. A record in Eden-memory with metadata:
    - `goal_id`, `stage: context_gathering`, `owner_role: researcher`, `input_record_ids`, `output_record_ids`.
 
@@ -41,11 +42,12 @@ Gather context before decisions are made. Research must have a consumer and a st
 2. Identify the decision that requires research and the consumer of the answer.
 3. Search Eden-memory, read relevant files, and use WebSearch/WebFetch if needed.
 4. Summarise findings, options, trade-offs, and confidence.
-5. Store the context summary in Eden-memory.
-6. **Write a durable `hand_off_record` before handing off to the Dispatcher or the assigned role.**
+5. If the chosen path is written into a plan file, record its absolute path in the context summary metadata (`plan_file_path`).
+6. Store the context summary in Eden-memory.
+7. **Write a durable `hand_off_record` before handing off to the Dispatcher or the assigned role.**
    - Include the context summary record ID in `input_record_ids`.
    - Record `next_role` and the reason for the transfer.
-7. Hand off to the next role with the research record and the hand-off record ID.
+8. Hand off to the next role with the research record and the hand-off record ID.
 
 ## Anti-patterns
 
