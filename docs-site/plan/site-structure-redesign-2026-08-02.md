@@ -457,9 +457,9 @@ The `/eden-memory/multi-device-sync/` page becomes a **concept map** that:
 
 ## 7. Phased rollout plan
 
-### Phase 1 — Navigation and landing (1 Builder cycle) — IN PROGRESS
+### Phase 1 — Navigation and landing (1 Builder cycle) — COMPLETED
 
-**Status:** In progress (approved by user/Verifier consensus on 2026-08-02).
+**Status:** Completed (approved by user/Verifier consensus on 2026-08-02).
 
 1. Create `/docs/` landing page (`src/pages/docs.astro`).
 2. Update homepage `Docs` links in `src/pages/index.astro`.
@@ -470,7 +470,9 @@ The `/eden-memory/multi-device-sync/` page becomes a **concept map** that:
 
 **Deliverable:** Navigable new structure with old URLs preserved.
 
-### Phase 2 — eden-memory tutorials (1 Builder cycle)
+### Phase 2 — eden-memory tutorials (1 Builder cycle) — COMPLETED
+
+**Status:** Completed on 2026-08-02.
 
 1. Create `/eden-memory/tutorials/connect-claude-code.md` (move content from skill page + getting-started).
 2. Create `/eden-memory/tutorials/connect-cursor.md`.

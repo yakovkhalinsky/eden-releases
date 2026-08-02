@@ -43,7 +43,11 @@ export default defineConfig({
 						{
 							label: 'Tutorials',
 							items: [
-								{ label: 'Connect your MCP client', slug: 'eden-memory/mcp-clients' },
+								{ label: 'Connect Claude Code', slug: 'eden-memory/tutorials/connect-claude-code' },
+								{ label: 'Connect Cursor', slug: 'eden-memory/tutorials/connect-cursor' },
+								{ label: 'Connect another MCP client', slug: 'eden-memory/tutorials/connect-mcp-client' },
+								{ label: 'Sync two devices with a relay', slug: 'eden-memory/tutorials/sync-two-devices-relay' },
+								{ label: 'Sync two databases locally', slug: 'eden-memory/tutorials/sync-local-databases' },
 							],
 						},
 						{

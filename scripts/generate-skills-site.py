@@ -68,146 +68,33 @@ def download_url(slug: str) -> str:
 
 def install_section(fm: dict, slug: str, name: str) -> str:
     harness = fm.get("harness", "")
-    prefix = fm.get("tools", {}).get("prefix", "")
-    mcp_config = fm.get("mcp_config", {})
-    mcp_stdio_arg = " --mcp-stdio" if "--mcp-stdio" in (mcp_config.get("args") or []) else ""
-    mcp_stdio_json = ',"--mcp-stdio"' if mcp_stdio_arg else ""
-    mcp_stdio_list = ' --mcp-stdio' if mcp_stdio_arg else ""
-
-    if harness == "hermes":
-        server_name = mcp_config.get("server_name", "eden")
-        return f"""## Install for Hermes Agent
-
-1. Install the binary:
-
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
-
-2. Add the MCP server to your active Hermes profile `config.yaml` under `mcp.servers`:
-
-   ```yaml
-   mcp:
-     servers:
-       {server_name}:
-         command: ${{HOME}}/.local/bin/eden-memory{mcp_stdio_arg}
-         args:
-           - --db
-           - ${{HOME}}/.eden-memory/default.db{mcp_stdio_list}
-   ```
-
-3. Download the skill file:
-
-   ```bash
-   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
-   ```
-
-4. Copy it into your active Hermes profile so it loads automatically:
-
-   ```bash
-   PROFILE=$(hermes profile active)
-   mkdir -p ~/.hermes/profiles/${{PROFILE}}/skills/{name}
-   cp {name}/SKILL.md ~/.hermes/profiles/${{PROFILE}}/skills/{name}/SKILL.md
-   ```
-
-Restart Hermes or reload the profile after changing `config.yaml`.
-
-If `eden-memory` is on your PATH, you can use the bare command name. If you see `ModuleNotFoundError: No module named 'eden_memory'`, you have a stale Python wrapper; remove it with `rm -f ~/.local/bin/eden-memory` and re-run the install.
-"""
-
     if harness == "claude-code":
-        server_name = mcp_config.get("server_name", "eden-memory")
-        return f"""## Install for Claude Code CLI
+        primary_tutorial = "[Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)"
+    elif harness == "cursor":
+        primary_tutorial = "[Connect Cursor](/eden-memory/tutorials/connect-cursor/)"
+    else:
+        primary_tutorial = "[Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)"
 
-1. Install the binary:
+    return f"""## Install the binary
 
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
 
-2. Wire the MCP server. This command expands `$HOME` automatically:
+## Verify
 
-   ```bash
-   claude config set mcpServers "{{\\"{server_name}\\":{{\\"command\\":\\"$HOME/.local/bin/eden-memory\\",\\"args\\":[\\"--db\\",\\"$HOME/.eden-memory/default.db\\"{mcp_stdio_json}]}}}}"
-   ```
+Call `eden_health` through your MCP client. If the call fails, re-run the install or check your MCP server configuration.
 
-3. Download the skill file:
+## Setup walkthrough
 
-   ```bash
-   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
-   ```
+For step-by-step client wiring, see {primary_tutorial}.
 
-4. Add it as a **project instruction** in Claude Code:
-   - Run `/memory` (or open **Settings → Project Instructions**) and paste the contents of `{name}/SKILL.md`.
-   - The file contains the memory-first rules and tool usage patterns for Claude Code CLI.
+Other client tutorials:
 
-Restart Claude Code after changing configuration. The `mcpServers` key is written to `~/.claude.json`. If `eden-memory` is not on the PATH that Claude Code sees, replace `$HOME` with the absolute path (e.g., `/home/yourname/.local/bin/eden-memory`).
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
 """
-
-    if harness == "cursor":
-        server_name = mcp_config.get("server_name", "eden-memory")
-        return f"""## Install for Cursor
-
-1. Install the binary:
-
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
-
-2. Wire the MCP server:
-
-   In Cursor, open **Settings** → **MCP** and add a new stdio server:
-
-   | Field | Value |
-   |-------|-------|
-   | Name | `{server_name}` |
-   | Command | `/home/yourname/.local/bin/eden-memory{mcp_stdio_list}` |
-   | Arguments | `--db /home/yourname/.eden-memory/default.db` |
-
-   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the PATH that Cursor sees, you can use the bare command name.
-
-3. Download the skill file:
-
-   ```bash
-   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
-   ```
-
-4. Add the rules to Cursor:
-   - Paste the contents into a project `.cursorrules` file, **or**
-   - paste it into the **Composer / project prompt** in Cursor settings.
-
-Start a fresh chat after adding the server so the tools are discovered.
-"""
-
-    # Generic / core MCP usage skill
-    return f"""## Install for any stdio MCP client
-
-1. Install the binary:
-
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
-
-2. Register the server with your MCP client. The exact command depends on the client; the server config is:
-
-   ```json
-   {{
-     "command": "/home/yourname/.local/bin/eden-memory",
-     "args": ["--db", "/home/yourname/.eden-memory/default.db"{mcp_stdio_json}]
-   }}
-   ```
-
-   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the client's PATH, you can use the bare command name.
-
-3. Download the skill file:
-
-   ```bash
-   curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
-   ```
-
-4. Paste the contents of the skill file into your agent's system prompt or project instructions, or load it as a custom skill if your client supports skill files.
-"""
-
 
 def enforce_section(fm: dict) -> str:
     return """## What this skill enforces

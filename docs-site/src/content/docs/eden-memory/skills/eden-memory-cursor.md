@@ -28,37 +28,25 @@ The installable artifact is the raw `SKILL.md` file:
   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-cursor/SKILL.md -o eden-memory-cursor/SKILL.md
   ```
 
-## Install for Cursor
+## Install the binary
 
-1. Install the binary:
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
 
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-   ```
+## Verify
 
-2. Wire the MCP server:
+Call `eden_health` through your MCP client. If the call fails, re-run the install or check your MCP server configuration.
 
-   In Cursor, open **Settings** → **MCP** and add a new stdio server:
+## Setup walkthrough
 
-   | Field | Value |
-   |-------|-------|
-   | Name | `eden-memory` |
-   | Command | `/home/yourname/.local/bin/eden-memory` |
-   | Arguments | `--db /home/yourname/.eden-memory/default.db` |
+For step-by-step client wiring, see [Connect Cursor](/eden-memory/tutorials/connect-cursor/).
 
-   Replace `/home/yourname` with your actual home path. If `eden-memory` is on the PATH that Cursor sees, you can use the bare command name.
+Other client tutorials:
 
-3. Download the skill file:
-
-   ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/skills/eden-memory-cursor/SKILL.md -o eden-memory-cursor/SKILL.md
-   ```
-
-4. Add the rules to Cursor:
-   - Paste the contents into a project `.cursorrules` file, **or**
-   - paste it into the **Composer / project prompt** in Cursor settings.
-
-Start a fresh chat after adding the server so the tools are discovered.
+- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
 
 ## What this skill enforces
 
