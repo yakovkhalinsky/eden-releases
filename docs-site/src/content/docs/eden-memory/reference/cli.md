@@ -14,11 +14,15 @@ These flags can appear before or after the subcommand:
 | `--db` | `EDEN_DB_PATH` | SQLite database path. Default: `~/.eden-memory/default.db`. |
 | `--log-format` | `EDEN_LOG_FORMAT` | `text` or `json`. |
 | `--log-level` | `EDEN_LOG_LEVEL` | `DEBUG`, `INFO`, `WARN`, or `ERROR`. |
-| `--sync-disabled` | `EDEN_SYNC_DISABLED` | Skip the v2 sync schema and run local-only. |
+| `--sync-disabled` | `EDEN_SYNC_DISABLED` | Skip the v3 sync schema and run local-only. |
 | `--sync-interval` | `EDEN_SYNC_INTERVAL` | Background sync loop interval (default `30s`). |
 | `--relay-url` | `EDEN_RELAY_URL` | Default relay URL for sync/pairing. |
 | `--account-id` | `EDEN_ACCOUNT_ID` | Default fleet account ID for sync/pairing. |
 | `--root-key-passphrase` | `EDEN_ROOT_KEY_PASSPHRASE` | Passphrase for the encrypted root-key sidecar. |
+| `--device-name` | — | Human-readable name for this device, saved in the identity sidecar (used by `pair-device`, `pair create-invitation`, `pair accept-invitation`). |
+| `--local-name` | — | Local display-name override for a peer (used by `sync set-peer-name`). |
+| `--code` | — | Invitation code for `pair accept-invitation` (alternative to the positional argument). |
+| `--start-sync-loop` | — | After `pair accept-invitation`, run the foreground sync loop in this process until SIGINT/SIGTERM. |
 
 ## `sync`
 
@@ -71,6 +75,42 @@ eden-memory --db local.db sync loop stop
 | `--batch-size` | No | Maximum deltas per batch (default 1000). |
 | `--confirm` | For `start` | Confirm starting the background goroutine. |
 
+### `sync list-pending-key-changes`
+
+List staged pending Ed25519/X25519 key changes from peers.
+
+```bash
+eden-memory --db local.db sync list-pending-key-changes
+```
+
+### `sync approve-key-change`
+
+Apply a staged pending key change after previewing fingerprints and public-key hex.
+
+```bash
+eden-memory --db local.db \
+  sync approve-key-change --peer-id <device-id> --confirm
+```
+
+### `sync reject-key-change`
+
+Discard a staged pending key change.
+
+```bash
+eden-memory --db local.db \
+  sync reject-key-change --peer-id <device-id> --confirm
+```
+
+### `sync set-peer-name`
+
+Set (or clear) a local-only display-name override for a peer. The signed name
+from pairing is preserved.
+
+```bash
+eden-memory --db local.db \
+  sync set-peer-name --peer-id <device-id> --local-name "Work Laptop"
+```
+
 ## `pair-device`
 
 Pair the local database with a peer database in the same process using SPAKE2.
@@ -88,6 +128,7 @@ eden-memory --db local.db pair-device \
 | `--peer-db` | Yes | Path to the peer SQLite database. |
 | `--account-id` | Yes | Fleet account ID. |
 | `--password` | Yes* | Pairing password; prompted if omitted. |
+| `--device-name` | No | Human-readable name saved in the identity sidecar. |
 | `--confirm` | Yes* | Confirm pairing. |
 | `--dry-run` | No | Preview without writing peer records. |
 
@@ -103,18 +144,23 @@ Relay-mediated PAKE pairing for devices on different hosts.
 eden-memory --db local.db pair create-invitation \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
-  --password "shared-secret" \
+  --password "correct-horse-battery-staple" \
+  --device-name "Studio Desktop" \
   --root-key-passphrase "$(cat passphrase.txt)" \
   --confirm
 ```
 
-Response includes an invitation code to share with the joining device.
+Response includes an invitation code to share with the joining device, plus a
+short rendezvous code used to look up the PAKE enrolment on the relay. The
+pairing password must be shared separately and must be at least 10 characters
+long with at least 40 bits estimated entropy.
 
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--relay-url` | Yes | Relay base URL. |
 | `--account-id` | Yes | Fleet account ID. |
 | `--password` | Yes* | Pairing password; prompted if omitted. |
+| `--device-name` | No | Human-readable name saved in the identity sidecar. |
 | `--root-key-passphrase` | Yes* | Root-key sidecar passphrase; prompted if omitted. |
 | `--confirm` | Yes* | Confirm creating the enrolment. |
 | `--dry-run` | No | Preview without publishing an enrolment. |
@@ -127,11 +173,27 @@ eden-memory --db local.db pair accept-invitation <code> \
   --confirm
 ```
 
-The joining device receives the account root key, records the initiator as a peer, and registers with the relay.
+Or pass the code with `--code` and auto-start the foreground sync loop after
+pairing completes:
+
+```bash
+eden-memory --db local.db pair accept-invitation \
+  --code <code> \
+  --start-sync-loop \
+  --root-key-passphrase "$(cat passphrase.txt)" \
+  --confirm
+```
+
+The joining device receives the account root key, records the initiator as a
+peer, and registers itself with the relay automatically. With `--start-sync-loop`
+it also starts the foreground relay sync loop in the same process.
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `code` | Yes | Compact invitation code from the initiator. |
+| `code` (positional) | Yes* | Compact invitation code from the initiator. |
+| `--code` | Yes* | Alternative way to pass the invitation code. |
+| `--device-name` | No | Human-readable name saved in the identity sidecar. |
+| `--start-sync-loop` | No | Start the foreground sync loop after pairing completes. |
 | `--root-key-passphrase` | Yes* | Passphrase to encrypt the new root-key sidecar; prompted if omitted. |
 | `--confirm` | Yes* | Confirm accepting the invitation. |
 | `--dry-run` | No | Preview without mutating the store. |
@@ -175,4 +237,4 @@ eden-memory --db local.db relay-register \
 
 ## Disabling sync
 
-Pass `--sync-disabled` (or set `EDEN_SYNC_DISABLED=1`) to skip the v2 sync schema migration and run the database in local-only mode.
+Pass `--sync-disabled` (or set `EDEN_SYNC_DISABLED=1`) to skip the v3 sync schema migration and run the database in local-only mode.

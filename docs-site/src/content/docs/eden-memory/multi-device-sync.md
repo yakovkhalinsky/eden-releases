@@ -43,7 +43,8 @@ eden-memory --db ~/.eden-memory/local.db \
   pair-device \
   --peer-db /mnt/shared/peer.db \
   --account-id your-account \
-  --password "shared-secret" \
+  --password "correct-horse-battery-staple" \
+  --device-name "Studio Desktop" \
   --confirm
 ```
 
@@ -81,12 +82,18 @@ eden-memory --db ~/.eden-memory/device-a.db \
   pair create-invitation \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
-  --password "shared-secret" \
+  --password "correct-horse-battery-staple" \
+  --device-name "Studio Desktop" \
   --root-key-passphrase "$(cat passphrase.txt)" \
   --confirm
 ```
 
-This prints an invitation code to share with device B.
+This prints an invitation code to share with device B, along with a short
+rendezvous code used to find the PAKE enrolment on the relay. The invitation
+code and the pairing password should be shared through separate channels.
+
+Pairing passwords must be at least 10 characters long and have an estimated
+entropy of at least 40 bits.
 
 **Device B (joining the fleet):**
 
@@ -97,7 +104,21 @@ eden-memory --db ~/.eden-memory/device-b.db \
   --confirm
 ```
 
-Device B receives the account root key, records device A as a peer, and registers itself with the relay.
+Or pass the code with `--code` and start the foreground sync loop immediately
+after pairing completes:
+
+```bash
+eden-memory --db ~/.eden-memory/device-b.db \
+  pair accept-invitation \
+  --code <code> \
+  --start-sync-loop \
+  --root-key-passphrase "$(cat passphrase.txt)" \
+  --confirm
+```
+
+Device B receives the account root key, records device A as a peer, and registers
+itself with the relay automatically. With `--start-sync-loop` it also starts the
+foreground relay sync loop in the same process.
 
 ### 4. Register with the relay
 
@@ -127,7 +148,9 @@ eden-memory --db ~/.eden-memory/device.db \
   --confirm
 ```
 
-Use `sync loop once` for a single round, `sync loop status` to inspect state, and `sync loop stop` (or `SIGINT`/`SIGTERM`) to stop the foreground loop.
+Use `sync loop once` for a single round and `sync loop status` to inspect state.
+`sync loop stop` is a no-op because the loop runs in the foreground; send
+`SIGINT`/`SIGTERM` to stop it.
 
 The loop:
 
@@ -137,6 +160,43 @@ The loop:
 4. Discovers peers from the relay every five minutes.
 5. Runs anti-entropy rounds against every non-revoked peer on `--sync-interval` (default 30s).
 6. Backs off individual peers on error, up to a maximum of 5 minutes.
+
+## Device names
+
+Set a human-readable device name when pairing:
+
+```bash
+eden-memory --db ~/.eden-memory/device.db \
+  pair create-invitation \
+  --device-name "Studio Desktop" \
+  ...
+```
+
+The signed name is stored in `sync_peers.name` on peer devices. You can set a
+local-only override that is stored only on this device:
+
+```bash
+eden-memory --db ~/.eden-memory/device.db \
+  sync set-peer-name --peer-id <device-id> --local-name "Work Laptop"
+```
+
+Pass `--local-name ""` to clear the override.
+
+## Pending peer key changes
+
+When a peer rotates its identity keys, the new keys are staged as a pending key
+change and must be approved before the sync loop will use them. Pending changes
+expire after 7 days.
+
+```bash
+eden-memory --db ~/.eden-memory/device.db sync list-pending-key-changes
+
+eden-memory --db ~/.eden-memory/device.db \
+  sync approve-key-change --peer-id <device-id> --confirm
+
+eden-memory --db ~/.eden-memory/device.db \
+  sync reject-key-change --peer-id <device-id> --confirm
+```
 
 ## Sidecar files
 
@@ -156,4 +216,4 @@ Keep these files as safe as the database itself. If you lose the root-key passph
 
 ## Disabling sync
 
-To run a database in local-only mode and skip the v2 sync schema, start the binary with `--sync-disabled` or set `EDEN_SYNC_DISABLED=1`.
+To run a database in local-only mode and skip the v3 sync schema, start the binary with `--sync-disabled` or set `EDEN_SYNC_DISABLED=1`.
