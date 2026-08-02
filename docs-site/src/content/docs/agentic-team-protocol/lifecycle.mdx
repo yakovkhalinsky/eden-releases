@@ -6,6 +6,8 @@ content_type: concept
 
 # Lifecycle
 
+Every goal passes through seven stages. Each stage has an owner role, exit criteria, and a durable record in eden-memory. The Verifier gate is mandatory before closure.
+
 Every goal passes through seven stages. Each stage has an owner role, exit
 criteria, and a durable record in eden-memory. The Verifier gate is mandatory
 before closure.
@@ -95,3 +97,9 @@ Each stage record should include this metadata so it can be traced and recalled:
 - **Runtime without rollback** — Runtime must produce a rollback plan.
 - **Verifiability gap** — Verifier gate is mandatory before closure.
 - **Memory blindness** — eden-memory is the single source of truth; do not rely on conversation context.
+
+## See also
+
+- [Record kinds and schema](/agentic-team-protocol/concepts/record-kinds/) — the exact record kinds produced at each stage.
+- [Agent prompts](/agentic-team-protocol/reference/agent-prompts/) — which subagent owns each stage.
+- [Slash commands](/agentic-team-protocol/reference/slash-commands/) — how to start, continue, and escalate goals through the lifecycle.

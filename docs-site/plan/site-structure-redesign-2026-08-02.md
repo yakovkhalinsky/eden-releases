@@ -509,7 +509,9 @@ The `/eden-memory/multi-device-sync/` page becomes a **concept map** that:
 
 **Deliverable:** Complete eden-memory Diátaxis coverage.
 
-### Phase 4 — ATP tutorials and reference polish (1 Builder cycle)
+### Phase 4 — ATP tutorials and reference polish (1 Builder cycle) — COMPLETED
+
+**Status:** Completed on 2026-08-02.
 
 1. Create `/agentic-team-protocol/tutorials/first-team-goal.md`.
 2. Create `/agentic-team-protocol/tutorials/ratify-charter.md`.
@@ -517,6 +519,9 @@ The `/eden-memory/multi-device-sync/` page becomes a **concept map** that:
 4. Create `/agentic-team-protocol/concepts/record-kinds.md`.
 5. Create `/agentic-team-protocol/reference/slash-commands.md`, `/agentic-team-protocol/reference/agent-prompts.md`, `/agentic-team-protocol/reference/default-charter.md`.
 6. Trim `/agentic-team-protocol/getting-started.md` to Quick start tutorial.
+7. Add `content_type: concept` frontmatter and "See also" links to existing ATP concept pages.
+8. Update `astro.config.mjs` sidebar to include all new ATP tutorial, concept, and reference slugs.
+9. Build and verify `dist/agentic-team-protocol/tutorials/`, `dist/agentic-team-protocol/concepts/`, and `dist/agentic-team-protocol/reference/`.
 
 **Deliverable:** ATP has tutorial + concept + reference structure.
 

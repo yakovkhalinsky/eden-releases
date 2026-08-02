@@ -100,16 +100,28 @@ export default defineConfig({
 						{ label: 'Overview', slug: 'agentic-team-protocol' },
 						{ label: 'Quick start', slug: 'agentic-team-protocol/getting-started' },
 						{
+							label: 'Tutorials',
+							items: [
+								{ label: 'Run your first team goal', slug: 'agentic-team-protocol/tutorials/first-team-goal' },
+								{ label: 'Ratify a project charter', slug: 'agentic-team-protocol/tutorials/ratify-charter' },
+								{ label: 'Set up a headless supervisor', slug: 'agentic-team-protocol/tutorials/headless-supervisor' },
+							],
+						},
+						{
 							label: 'Concepts',
 							items: [
 								{ label: 'Lifecycle', slug: 'agentic-team-protocol/lifecycle' },
+								{ label: 'Roles and agents', slug: 'agentic-team-protocol/agents' },
 								{ label: 'Charter anatomy', slug: 'agentic-team-protocol/charter-anatomy' },
+								{ label: 'Record kinds and schema', slug: 'agentic-team-protocol/concepts/record-kinds' },
 							],
 						},
 						{
 							label: 'Reference',
 							items: [
-								{ label: 'Agent prompts', slug: 'agentic-team-protocol/agents' },
+								{ label: 'Slash commands', slug: 'agentic-team-protocol/reference/slash-commands' },
+								{ label: 'Agent prompts', slug: 'agentic-team-protocol/reference/agent-prompts' },
+								{ label: 'Default charter', slug: 'agentic-team-protocol/reference/default-charter' },
 							],
 						},
 					],
