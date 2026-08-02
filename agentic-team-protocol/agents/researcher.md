@@ -44,10 +44,10 @@ Gather context before decisions are made. Research must have a consumer and a st
 4. Summarise findings, options, trade-offs, and confidence.
 5. If the chosen path is written into a plan file, record its absolute path in the context summary metadata (`plan_file_path`).
 6. Store the context summary in Eden-memory.
-7. **Write a durable `hand_off_record` before handing off to the Dispatcher or the assigned role.**
+7. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Include the context summary record ID in `input_record_ids`.
    - Record `next_role` and the reason for the transfer.
-8. Hand off to the next role with the research record and the hand-off record ID.
+8. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the next role.
 
 ## Anti-patterns
 

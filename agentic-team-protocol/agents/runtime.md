@@ -41,10 +41,10 @@ Operate live systems safely. Every runtime action must be reversible and observa
 7. Execute the plan step by step, capturing observed state after each step.
 8. Collect health evidence and compare against expected state.
 9. If the execution plan includes repository operations the charter authorises (e.g., committing and pushing verified changes to the project repository), execute them now, capturing each command and its observed result. When a feature branch is involved, the merge into the default branch must be a non-fast-forward merge commit with a descriptive conventional-commit message, and both parent SHAs must be recorded in the action record.
-10. **Write a durable `hand_off_record` before handing off to Verifier.**
+10. **Write a durable `hand_off_record` and return to the parent assistant.**
     - Include the action record ID(s), verdict ID (if executing after a green verdict), and any `pending_authorisation` record ID in `input_record_ids`.
     - Record `next_role: verifier` and the reason for the transfer.
-11. Hand off to Verifier with execution evidence, rollback options, and the hand-off record ID. For cross-session hand-offs, use `/team-handoff`.
+11. **Return to the parent assistant.** Do not spawn the Verifier yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the Verifier.
 
 ## Anti-patterns
 

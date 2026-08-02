@@ -8,7 +8,7 @@ allowed-tools:
 
 # /team-continue
 
-Resume an unfinished Agentic Team Protocol goal by rehydrating its state from Eden-memory and dispatching the correct next role. If no `goal_id` is given, list active continueable goals first.
+Continue an Agentic Team Protocol goal by rehydrating its state from Eden-memory and dispatching the correct next role. This is the canonical automatic continuation path: after any role subagent writes its durable record and returns to the parent assistant, the parent invokes `/team-continue ${GOAL_ID}` (or spawns the `router` subagent directly) to route to the next role without asking the user. It also works for resuming goals across sessions. If no `goal_id` is given, list active continueable goals first.
 
 ## Steps
 
@@ -37,7 +37,7 @@ Resume an unfinished Agentic Team Protocol goal by rehydrating its state from Ed
      --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"note\":\"Continued via /team-continue; router will write hand_off_record before spawning next role\"}" \
      --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router"}')
    ```
-8. Spawn the `router` subagent with the goal context, `LATEST_RECORD_ID`, and `ROUTER_LOG_ID`. The router reads Eden-memory, writes a durable `hand_off_record` (or equivalent continuation `run_log`) with the full hand-off payload **before** spawning the next role, then spawns that role directly.
+8. Spawn the `router` subagent with the goal context, `LATEST_RECORD_ID`, and `ROUTER_LOG_ID`. The router reads Eden-memory, writes a durable `hand_off_record` (or equivalent continuation `run_log`) with the full hand-off payload **before** spawning the next role, then spawns that role directly. When `/team-continue` is invoked by the parent assistant immediately after a role subagent returns, the user must not be asked "Shall I proceed?" unless the goal is `blocked`, `pending_authorisation`, or requires escalation.
 
 ## Behaviour by goal state
 

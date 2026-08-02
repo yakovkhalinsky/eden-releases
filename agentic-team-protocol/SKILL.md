@@ -73,6 +73,20 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 - When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role.
 - A `blocked` or `pending_authorisation` goal remains active until the recorded unblock/approval condition is satisfied; the router re-checks it on continuation.
 
+## Automatic continuation within a session
+
+After any role subagent writes its durable stage record and `hand_off_record` and returns to the parent assistant, the parent assistant must immediately continue the goal without asking the user. The parent must spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) so the router can read the latest Eden-memory records, determine the next required stage and role, and dispatch it.
+
+The parent assistant must not ask "Shall I proceed?" or otherwise wait for user confirmation between normal lifecycle transitions.
+
+Exceptions — pause and surface the situation to the user instead of auto-continuing only when the latest durable record indicates:
+
+- `blocked` — waiting on an external dependency or authority.
+- `pending_authorisation` — waiting on explicit user approval for a specific action.
+- An explicit escalation is required (e.g., low confidence, missed deadline, or charter conflict).
+
+For cross-session or cross-role transfers, the transferring role (or the Router when continuing) must also write a `hand_off_record`.
+
 ## Hand-off format
 
 Every lifecycle transition must leave a durable `hand_off_record` (or an equivalent action/verdict/archival record that embeds the hand-off format) in Eden-memory before ownership changes. Chat history is not a hand-off.
@@ -168,7 +182,11 @@ Required record types:
 
 ## Using the subagents
 
-Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off. For cross-session or cross-role transfers, the transferring role (or the Router when continuing) must also write a `hand_off_record`.
+Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off.
+
+When a role subagent returns after writing its durable record and `hand_off_record`, the parent assistant must immediately continue the goal by spawning the `router` subagent (or invoking `/team-continue ${GOAL_ID}`). The parent must not ask the user "Shall I proceed?" between normal lifecycle transitions.
+
+For cross-session or cross-role transfers, the transferring role (or the Router when continuing) must also write a `hand_off_record`.
 
 For continuation, use the `router` subagent (or `/team-continue`) instead of manually picking a role. The router reads the latest Eden records for a `goal_id`, determines the required next stage and role using the lifecycle rules below, and invokes that role with full context.
 
