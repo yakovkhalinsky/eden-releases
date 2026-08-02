@@ -113,6 +113,16 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
           <div class="step">
             <div class="step-num">3</div>
             <div class="step-body">
+              <h3>Set up the Agentic Team Protocol inside your Claude Code project/repository</h3>
+              <p>Run the ATP installer inside your project directory to install the project-local charter and slash commands.</p>
+              <code class="mono">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</code>
+              <p class="client-hint" style="margin-top:10px">This step is optional and only for Claude Code users.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
               <h3>Wire your client</h3>
               <p>Pick the client you use. Restart it after adding the server.</p>
               <div class="client-grid">
@@ -136,7 +146,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
           </div>
 
           <div class="step">
-            <div class="step-num">4</div>
+            <div class="step-num">5</div>
             <div class="step-body">
               <h3>Verify it works</h3>
               <p>Tell the agent to remember something, then start a new session and ask it back.</p>
@@ -146,7 +156,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
           </div>
 
           <div class="step">
-            <div class="step-num">5</div>
+            <div class="step-num">6</div>
             <div class="step-body">
               <h3>Add the Agentic Team Protocol</h3>
               <p>This step is only for Claude Code. It installs the global slash commands and agent prompts.</p>
@@ -155,7 +165,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
           </div>
 
           <div class="step">
-            <div class="step-num">6</div>
+            <div class="step-num">7</div>
             <div class="step-body">
               <h3>Restart Claude Code</h3>
               <p>Exit the current session and reopen it so the protocol commands register in every workspace.</p>
@@ -165,7 +175,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
           </div>
 
           <div class="step">
-            <div class="step-num">7</div>
+            <div class="step-num">8</div>
             <div class="step-body">
               <h3>Ratify your team charter</h3>
               <p>Run the charter command to create a durable ratification record in eden-memory. Then optionally check team status.</p>
