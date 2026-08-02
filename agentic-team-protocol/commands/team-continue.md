@@ -18,7 +18,6 @@ Continue an Agentic Team Protocol goal by rehydrating its state from Eden-memory
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
-     --agent-id router \
      --user-id "${USER_ID}" \
      --keywords "${GOAL_ID}" \
      --limit 50
