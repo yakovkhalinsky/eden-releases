@@ -3,7 +3,7 @@ name: eden-memory-mcp-usage
 title: eden-memory MCP usage
 description: |
   Use eden-memory as a persistent memory skill inside any stdio MCP client.
-version: 3.0.0
+version: 3.0.1
 tags: [mcp, eden-memory, memory-first, stdio, skill]
 tools:
   discoverable: true
@@ -17,6 +17,18 @@ tools:
     - eden_forget_expired
     - eden_health
     - eden_vacuum
+    - eden_prune
+    - eden_migrate
+    - eden_packet
+    - eden_export_snapshot
+    - eden_import_snapshot
+    - eden_sync
+    - eden_pair_device
+    - eden_sync_loop
+    - eden_relay_server
+    - eden_relay_register
+    - eden_pair_create_invitation
+    - eden_pair_accept_invitation
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 related_skills:
   - eden-memory-claude
@@ -79,6 +91,18 @@ Efficiency notes:
 | `eden_forget_expired` | Delete expired memories (manual/admin) |
 | `eden_health` | Combined health snapshot |
 | `eden_vacuum` | Compact the SQLite store (manual/admin) |
+| `eden_prune` | Bulk soft-delete or hard-delete memories |
+| `eden_migrate` | Remap `org_id`/`workspace_id` for a scope |
+| `eden_packet` | Build a deterministic knowledge packet |
+| `eden_export_snapshot` | Export an encrypted database snapshot |
+| `eden_import_snapshot` | Import an encrypted snapshot (replaces DB) |
+| `eden_sync` | One-shot sync with a peer database |
+| `eden_pair_device` | Pair with a local peer database |
+| `eden_sync_loop` | Background relay sync loop |
+| `eden_relay_server` | Start/stop a local relay server |
+| `eden_relay_register` | Register with a relay directory |
+| `eden_pair_create_invitation` | Create a relay-mediated pairing invitation |
+| `eden_pair_accept_invitation` | Accept a relay-mediated pairing invitation |
 
 ## Remember example
 

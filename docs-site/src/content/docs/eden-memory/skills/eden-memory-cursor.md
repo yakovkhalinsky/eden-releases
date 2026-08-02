@@ -3,10 +3,10 @@ title: Install Eden Memory Cursor skill
 description: Use eden-memory as a persistent skill inside Cursor.
 template: doc
 skill_name: eden-memory-cursor
-skill_version: 2.2.0
+skill_version: 2.2.1
 skill_tags: mcp, eden-memory, cursor, skill, prompt, composer
 skill_discoverable: true
-skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum, eden_prune, eden_migrate, eden_packet, eden_export_snapshot, eden_import_snapshot, eden_sync, eden_pair_device, eden_sync_loop, eden_relay_server, eden_relay_register, eden_pair_create_invitation, eden_pair_accept_invitation
 skill_inherits: eden-memory-mcp-usage
 skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
 skill_related: eden-memory-mcp-usage

@@ -40,6 +40,7 @@ export default defineConfig({
 						{ label: 'Overview', slug: 'eden-memory' },
 						{ label: 'Install & get started', slug: 'eden-memory/getting-started' },
 						{ label: 'Connect your client', slug: 'eden-memory/mcp-clients' },
+						{ label: 'Multi-device sync', slug: 'eden-memory/multi-device-sync' },
 						{
 							label: 'Skills',
 							items: [
@@ -50,7 +51,13 @@ export default defineConfig({
 								{ label: 'Install: Hermes Agent', slug: 'eden-memory/skills/eden-memory-hermes' },
 							],
 						},
-						{ label: 'Tools reference', slug: 'eden-memory/reference/tools' },
+						{
+							label: 'Reference',
+							items: [
+								{ label: 'Tools reference', slug: 'eden-memory/reference/tools' },
+								{ label: 'CLI reference', slug: 'eden-memory/reference/cli' },
+							],
+						},
 					],
 				},
 				{

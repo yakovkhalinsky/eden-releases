@@ -2,7 +2,7 @@
 name: eden-memory-hermes
 title: Hermes Agent
 description: Use eden-memory as a persistent skill inside Hermes Agent.
-version: 2.2.0
+version: 2.2.1
 tags: [mcp, eden-memory, hermes, skill, prompt, subagent]
 tools:
   discoverable: true
@@ -18,6 +18,18 @@ tools:
     - eden_forget_expired
     - eden_health
     - eden_vacuum
+    - eden_prune
+    - eden_migrate
+    - eden_packet
+    - eden_export_snapshot
+    - eden_import_snapshot
+    - eden_sync
+    - eden_pair_device
+    - eden_sync_loop
+    - eden_relay_server
+    - eden_relay_register
+    - eden_pair_create_invitation
+    - eden_pair_accept_invitation
 install_hint: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 harness: hermes
 mcp_config:
@@ -82,6 +94,18 @@ Hermes exposes MCP tools as:
 - `mcp__eden__eden_forget_expired`
 - `mcp__eden__eden_health`
 - `mcp__eden__eden_vacuum`
+- `mcp__eden__eden_prune`
+- `mcp__eden__eden_migrate`
+- `mcp__eden__eden_packet`
+- `mcp__eden__eden_export_snapshot`
+- `mcp__eden__eden_import_snapshot`
+- `mcp__eden__eden_sync`
+- `mcp__eden__eden_pair_device`
+- `mcp__eden__eden_sync_loop`
+- `mcp__eden__eden_relay_server`
+- `mcp__eden__eden_relay_register`
+- `mcp__eden__eden_pair_create_invitation`
+- `mcp__eden__eden_pair_accept_invitation`
 
 ## Usage pattern
 

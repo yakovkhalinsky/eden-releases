@@ -109,5 +109,7 @@ If you use Claude Code, the [agentic-team-protocol](/agentic-team-protocol/) run
 
 - [Connect your client](/eden-memory/mcp-clients/)
 - [Tools reference](/eden-memory/reference/tools/)
+- [Multi-device sync](/eden-memory/multi-device-sync/)
+- [CLI reference](/eden-memory/reference/cli/)
 - [Skills registry](/eden-memory/skills/)
 - [Agentic team protocol](/agentic-team-protocol/)

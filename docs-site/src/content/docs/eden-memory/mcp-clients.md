@@ -46,8 +46,18 @@ Once connected, your agent can call:
 - `eden_forget_expired` — remove expired memories
 - `eden_health` — health and usage snapshot
 - `eden_vacuum` — run a SQLite WAL checkpoint
+- `eden_prune` — bulk soft-delete or hard-delete memories
+- `eden_migrate` — remap `org_id`/`workspace_id` for a scope
+- `eden_packet` — build a deterministic knowledge packet
+- `eden_export_snapshot` / `eden_import_snapshot` — encrypted database snapshots
+- `eden_sync` — one-shot sync with a peer database
+- `eden_pair_device` — pair with a local peer database
+- `eden_sync_loop` — background relay sync loop
+- `eden_relay_server` — start/stop a local relay server
+- `eden_relay_register` — register with a relay directory
+- `eden_pair_create_invitation` / `eden_pair_accept_invitation` — relay-mediated pairing
 
-See the [tools reference](/eden-memory/reference/tools/) for full schemas.
+See the [tools reference](/eden-memory/reference/tools/) for full schemas and the [multi-device sync guide](/eden-memory/multi-device-sync/) for how to use the sync and pairing tools.
 
 ## Built for teams?
 
