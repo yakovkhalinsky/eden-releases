@@ -64,6 +64,10 @@ Fallback commands use the default database path and the scopes configured in the
 
 Prefer the MCP tools (`eden_remember`, `eden_recall`, `eden_search`, etc.) when they are available. The slash commands are a fallback for troubleshooting or when the MCP server is temporarily unreachable.
 
+## Knowledge packets
+
+Knowledge packets are available through the CLI (`eden-memory packet`) and the `eden_packet` MCP tool. There is no fallback slash command for packets; use the CLI or MCP when you want to build or export a workspace snapshot.
+
 ## See also
 
 - [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)

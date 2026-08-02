@@ -25,6 +25,74 @@ These flags can appear before or after the subcommand:
 | `--code` | — | Invitation code for `pair accept-invitation` (alternative to the positional argument). |
 | `--start-sync-loop` | — | After `pair accept-invitation`, run the foreground sync loop in this process until SIGINT/SIGTERM. |
 
+## `packet`
+
+Build a deterministic, scope-bound knowledge packet for the current workspace and print it to stdout. A packet is a self-contained snapshot of memories, stats, and optional semantic clusters. It is useful for exporting context, hand-offs between agents, or offline review.
+
+```bash
+eden-memory packet --format json --template default --limit 50
+```
+
+The packet is scope-bound to a single `org_id`/`workspace_id` pair. Pass identity explicitly, set `EDEN_ORG_ID` and `EDEN_WORKSPACE_ID`, or let `setup claude` persist them in the project config. See [Scopes and identity](/eden-memory/concepts/scopes-identity/) for precedence rules.
+
+### Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--format` | `json` | Output format: `json` (canonical), `md`, or `html`. |
+| `--template` | `default` | Consumer template: `default`, `compact`, `analytical`, or `full`. |
+| `--include-content` | `false` | Emit full memory contents instead of 120-rune excerpts. Adds a privacy warning. |
+| `--since` | — | RFC3339 timestamp; only include memories created or updated at or after this time. |
+| `--limit` | `50` | Maximum number of memories to include. The `compact` template defaults to `10`. |
+| `--enrich` | — | Optional enrichment pass: `cluster`. The `analytical` template defaults to `cluster`. |
+
+### Templates and defaults
+
+Templates are additive: they set defaults, and explicit flags win where they are non-zero (booleans such as `--include-content` are opt-in).
+
+| Template | Default excerpt length | Default limit | Notable settings |
+|----------|------------------------|---------------|------------------|
+| `default` | 120 | 50 | Balanced stats + excerpts + clusters. |
+| `compact` | 80 | 10 | Omits per-memory metadata; title becomes "Knowledge Brief". |
+| `analytical` | 120 | 50 | Enables `enrich=cluster`; omits per-memory metadata. |
+| `full` | full content | 50 | Sets `--include-content`; emits all memory text. |
+
+### Examples
+
+Default JSON packet:
+
+```bash
+eden-memory packet --org-id your-org --workspace-id eden-releases
+```
+
+Compact Markdown brief:
+
+```bash
+eden-memory packet --template compact --format md --limit 10
+```
+
+Analytical packet with semantic clusters:
+
+```bash
+eden-memory packet --template analytical --format html --enrich cluster
+```
+
+Full-content packet (includes a privacy warning in the output):
+
+```bash
+eden-memory packet --template full --format md --include-content
+```
+
+Only memories updated in the last 24 hours:
+
+```bash
+eden-memory packet --since "$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)" --format md
+```
+
+### Privacy note
+
+By default, packets contain excerpts truncated to 120 runes and never include raw embedding vectors. Use `--include-content` or the `full` template only when the consumer is trusted; the rendered output will carry a warning that full memory contents are included.
+
 ## `sync`
 
 One-shot bidirectional sync with a local peer database.
@@ -246,6 +314,8 @@ Pass `--sync-disabled` (or set `EDEN_SYNC_DISABLED=1`) to skip the v3 sync schem
 - [Environment variables](/eden-memory/reference/environment-variables/)
 - [Fallback slash commands](/eden-memory/reference/fallback-slash-commands/)
 - [Troubleshooting](/eden-memory/reference/troubleshooting/)
+- [Knowledge packets](/eden-memory/concepts/knowledge-packets/)
+- [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/)
 - [How sync works](/eden-memory/concepts/how-sync-works/)
 - [Run your own relay server](/eden-memory/how-to/run-relay-server/)
 - [Approve a peer key rotation](/eden-memory/how-to/approve-peer-key-change/)

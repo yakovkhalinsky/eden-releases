@@ -88,6 +88,7 @@ eden-memory stores memories in a SQLite database at `~/.eden-memory/default.db`.
 - [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
 - [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
 - [Sync two devices with a relay](/eden-memory/tutorials/sync-two-devices-relay/)
+- [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/)
 - [Tools reference](/eden-memory/reference/tools/)
 - [CLI reference](/eden-memory/reference/cli/)
 - [Skills registry](/eden-memory/skills/)
