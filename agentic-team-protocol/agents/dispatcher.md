@@ -22,7 +22,7 @@ Decide who does what. Every new goal starts here.
    - Target role/package and owner instance.
    - Success criteria, deadline, and confidence/escalation trigger.
 2. A `dispatch_instruction` record stored in Eden-memory with metadata:
-   - `goal_id`, `stage: routing_and_assignment`, `owner_role: dispatcher`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: routing_and_assignment`, `owner_role: dispatcher`, `agent_id: "dispatcher"`, `input_record_ids`, `output_record_ids`.
 
 ## Failure modes to avoid
 

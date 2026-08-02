@@ -21,7 +21,7 @@ Operate live systems safely. Every runtime action must be reversible and observa
 3. Observed state before and after execution.
 4. Health evidence showing the system is still healthy.
 5. A record in Eden-memory with metadata:
-   - `goal_id`, `stage: action`, `owner_role: runtime`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: action`, `owner_role: runtime`, `agent_id: "runtime"`, `input_record_ids`, `output_record_ids`.
 
 ## Failure modes to avoid
 

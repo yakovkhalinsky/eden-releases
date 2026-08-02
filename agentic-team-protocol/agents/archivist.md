@@ -23,7 +23,7 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 2. Searchable indices/namespaces and links between related records.
 3. Updated skills/runbooks if a convention, runbook, or reusable decision emerged.
 4. A closure record in Eden-memory with metadata:
-   - `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `agent_id: "archivist"`, `input_record_ids`, `output_record_ids`.
 5. For hand-offs: a durable `hand_off_record` promoted in Eden-memory, not just chat context.
 6. On discovering a newer `action_record` after an existing `archival_record` for the same `goal_id`, treat the closure as superseded and return the goal to the appropriate role (usually Verifier or Dispatcher).
 

@@ -18,7 +18,6 @@ Continue an Agentic Team Protocol goal by rehydrating its state from Eden-memory
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
-     --agent-id claude-code-cli \
      --user-id "${USER_ID}" \
      --keywords "${GOAL_ID}" \
      --limit 50
@@ -32,7 +31,7 @@ Continue an Agentic Team Protocol goal by rehydrating its state from Eden-memory
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    ROUTER_LOG_ID=$("${EDEN_MEMORY_BIN}" remember \
-     --agent-id claude-code-cli \
+     --agent-id router \
      --user-id "${USER_ID}" \
      --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"note\":\"Continued via /team-continue; router will write hand_off_record before spawning next role\"}" \
      --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router"}')

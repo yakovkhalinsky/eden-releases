@@ -27,7 +27,7 @@ Gather context before decisions are made. Research must have a consumer and a st
    - Recommended next step.
    - If a written plan file is produced during context gathering, its absolute path (`plan_file_path`) so the plan is discoverable from Eden-memory.
 2. A record in Eden-memory with metadata:
-   - `goal_id`, `stage: context_gathering`, `owner_role: researcher`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: context_gathering`, `owner_role: researcher`, `agent_id: "researcher"`, `input_record_ids`, `output_record_ids`.
 
 ## Failure modes to avoid
 

@@ -25,7 +25,7 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 3. Scope of the check — what was and was not verified.
 4. Residual risks and recommended mitigations, including any `pending_authorisation` or follow-up steps.
 5. Eden-memory record metadata:
-   - `goal_id`, `stage: verification`, `owner_role: verifier`, `input_record_ids`, `output_record_ids: [verdict_id]`.
+   - `goal_id`, `stage: verification`, `owner_role: verifier`, `agent_id: "verifier"`, `input_record_ids`, `output_record_ids: [verdict_id]`.
 6. For `blocked` verdicts, record the unblock condition clearly so `/team-continue` can resume automatically when it is satisfied.
 
 ## Failure modes to avoid
