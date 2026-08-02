@@ -19,6 +19,10 @@
   --sl-color-text: var(--sl-color-white);
   --sl-color-text-accent: #2d6a4f;
   --sl-color-text-invert: #05060a;
+
+  --sl-color-accent: #2d6a4f;
+  --sl-color-accent-high: #40916c;
+
   --sl-color-border: var(--sl-color-gray-5);
 
   --sl-font: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -156,22 +160,64 @@ td {
   border-color: var(--sl-color-text-accent);
 }
 
+/* Starlight link buttons */
+.sl-link-button.primary {
+  color: var(--sl-color-white);
+  background: var(--sl-color-text-accent);
+}
+
+.sl-link-button.primary:hover {
+  background: #40916c;
+}
+
+.sl-link-button.secondary {
+  color: var(--sl-color-white);
+  background: transparent;
+  border: 1px solid var(--sl-color-text-accent);
+}
+
+.sl-link-button.secondary:hover {
+  background: #40916c;
+  border-color: #40916c;
+}
+
 /* Search input */
-#starlight__search button {
+button[aria-label="Search"],
+site-search button[data-open-modal],
+#starlight__search > button {
   background: var(--sl-color-gray-6);
   border: 1px solid var(--sl-color-border);
   color: var(--sl-color-white);
   border-radius: 8px;
 }
 
-#starlight__search button:hover {
-  background: var(--sl-color-text-accent);
-  border-color: var(--sl-color-text-accent);
+button[aria-label="Search"]:hover,
+site-search button[data-open-modal]:hover,
+#starlight__search > button:hover {
+  background: #40916c;
+  border-color: #40916c;
 }
 
 /* Mobile menu button */
 button[aria-label="Menu"] {
+  background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-border);
   color: var(--sl-color-white);
+  border-radius: 8px;
+}
+
+button[aria-label="Menu"]:hover {
+  background: #40916c;
+  border-color: #40916c;
+}
+
+/* Pagination links */
+.pagination-links a {
+  color: var(--sl-color-white);
+}
+
+.pagination-links a:hover {
+  color: #40916c;
 }
 
 /* Footer */
