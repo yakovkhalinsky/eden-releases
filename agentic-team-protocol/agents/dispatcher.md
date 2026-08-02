@@ -45,11 +45,12 @@ Decide who does what. Every new goal starts here.
 - A `red` Verifier verdict → write a rework `dispatch_instruction` returning the goal to the original or a new Builder/Runtime.
 - A `blocked` or `pending_authorisation` state → keep the goal assigned to the owning role and record the unblock/approval condition; do not reassign until it is cleared.
 3. Write a `dispatch_instruction` record that includes the assigned role, success criteria, deadline, and escalation trigger.
-4. **Write a durable `hand_off_record` before handing off to the assigned role.**
+4. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Use `/team-handoff` or an equivalent `hand_off_record`/`run_log` with the full hand-off payload.
    - `input_record_ids` must reference the `dispatch_instruction` and any latest stage records.
    - `output_record_ids` should include the new hand-off record.
-5. Hand off to the assigned role with the goal context, record IDs, and the hand-off record ID.
+   - Record `next_role` and the reason for the transfer.
+5. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the assigned role.
 
 ## Anti-patterns
 

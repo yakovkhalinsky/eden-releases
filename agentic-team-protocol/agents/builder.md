@@ -46,10 +46,10 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 6. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
 7. If a step requires explicit user authorisation beyond the project charter (e.g., deleting a public release, modifying fleet-wide CI secrets, or touching production-adjacent config outside the charter), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user. Routine repository commit/push is not a pending_authorisation step; it is executed by Runtime after a green Verifier verdict.
 8. Write a change summary and store it in Eden-memory.
-9. **Write a durable `hand_off_record` before handing off to Verifier.**
+9. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Include the action record ID and change summary record ID in `input_record_ids`.
    - Record `next_role: verifier` and the reason for the transfer.
-9. Hand off to Verifier with the artefact, summary, success criteria, and the hand-off record ID. For cross-session hand-offs, use `/team-handoff`.
+10. **Return to the parent assistant.** Do not spawn the Verifier yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the Verifier.
 
 ## Anti-patterns
 
