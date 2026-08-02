@@ -85,6 +85,8 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
       for template in agentic-team-charter.md agentic-team-config.yaml claude-md.md; do
         _download "${BASE_URL}/templates/${template}" "${TMPDIR}/files/templates/${template}"
       done
+      mkdir -p "${TMPDIR}/files/templates/skills/agentic-team-protocol"
+      _download "${BASE_URL}/templates/skills/agentic-team-protocol/SKILL.md" "${TMPDIR}/files/templates/skills/agentic-team-protocol/SKILL.md"
       _download "${BASE_URL}/CHARTER.md" "${TMPDIR}/files/CHARTER.md"
       PACKAGE_DIR="${TMPDIR}/files"
     fi
@@ -106,6 +108,7 @@ if [ "$DRY_RUN" = true ]; then
   echo "  commands: ${CLAUDE_DIR}/commands/{team-charter,team-status,team-escalate,team-continue,team-handoff}.md"
   if [ "$LOCAL_INSTALL" = true ]; then
     echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
+    echo "  skill:   ${PWD:-.}/.claude/skills/agentic-team-protocol/SKILL.md"
     [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
   fi
   exit 0
@@ -150,6 +153,14 @@ if [ "$LOCAL_INSTALL" = true ]; then
       cp "${PACKAGE_DIR}/templates/agentic-team-config.yaml" "${PROJECT_CLAUDE_DIR}/agentic-team-config.yaml"
     else
       echo "  Skipping agentic-team-config.yaml (already exists)"
+    fi
+
+    LOCAL_SKILL_DIR="${PROJECT_CLAUDE_DIR}/skills/agentic-team-protocol"
+    mkdir -p "$LOCAL_SKILL_DIR"
+    if [ ! -f "${LOCAL_SKILL_DIR}/SKILL.md" ]; then
+      cp "${PACKAGE_DIR}/templates/skills/agentic-team-protocol/SKILL.md" "${LOCAL_SKILL_DIR}/SKILL.md"
+    else
+      echo "  Skipping .claude/skills/agentic-team-protocol/SKILL.md (already exists)"
     fi
 
     if [ "$CLAUDE_MD_INSTALL" = true ]; then

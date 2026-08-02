@@ -18,6 +18,13 @@ active_roles:
 
 default_package_type: build
 
+branch_policy:
+  default_branch: <DEFAULT_BRANCH>
+  feature_branch_required_for: [build, run]
+  allowed_direct_on_default: trivial_one_line_fixes
+  merge_strategy: non_fast_forward_merge
+  record_parent_shas: true
+
 overrides:
   # Project-local skill, agents, and commands override global ones.
   use_local_skill: true

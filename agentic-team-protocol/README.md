@@ -27,6 +27,7 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 | `/team-handoff` command | Global | `~/.claude/commands/team-handoff.md` |
 | Charter template | Project-local | `.claude/agentic-team-charter.md` |
 | Config template | Project-local | `.claude/agentic-team-config.yaml` |
+| Project-local skill template | Project-local | `.claude/skills/agentic-team-protocol/SKILL.md` |
 | CLAUDE.md template | Project-local | `templates/claude-md.md` (used by `--claude-md`) |
 | Continuation runbook | Package docs | `runbooks/continuation.md` |
 
@@ -60,13 +61,17 @@ If `CLAUDE.md` already exists, the installer appends the rules only if they are 
 ```bash
 # 1. Clone or download this package.
 # 2. Copy the global skill/agents/commands into ~/.claude/
-cp -r skills/team ~/.claude/skills/
-cp -r agents/* ~/.claude/agents/
-cp -r commands/* ~/.claude/commands/
+mkdir -p ~/.claude/skills/team
+cp SKILL.md ~/.claude/skills/team/SKILL.md
+[ -f CHARTER.md ] && cp CHARTER.md ~/.claude/skills/team/CHARTER.md
+cp agents/*.md ~/.claude/agents/
+cp commands/*.md ~/.claude/commands/
 
 # 3. In a project that wants to opt in:
+mkdir -p .claude/skills/agentic-team-protocol
 cp templates/agentic-team-charter.md .claude/agentic-team-charter.md
 cp templates/agentic-team-config.yaml .claude/agentic-team-config.yaml
+cp templates/skills/agentic-team-protocol/SKILL.md .claude/skills/agentic-team-protocol/SKILL.md
 
 # 4. Optional: create a CLAUDE.md with protocol enforcement rules
 cp templates/claude-md.md CLAUDE.md
@@ -79,7 +84,8 @@ Edit the charter, config, and `CLAUDE.md` to match the project.
 A project opts into the Agentic Team Protocol by creating:
 
 - `.claude/agentic-team-charter.md` — identity, mission, boundaries, roles, decision rights, escalation paths.
-- `.claude/agentic-team-config.yaml` — active roles, default package type, override flags.
+- `.claude/agentic-team-config.yaml` — active roles, default package type, branch policy, override flags.
+- `.claude/skills/agentic-team-protocol/SKILL.md` — project-local skill override (e.g., repository-specific branch discipline).
 
 Optionally, add a project-level `CLAUDE.md` (or use `--claude-md`) to instruct Claude Code to follow the protocol on every task.
 

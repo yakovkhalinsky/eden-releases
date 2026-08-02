@@ -136,6 +136,9 @@ Required record types:
 - **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record` (or role record that includes the hand-off format), not chat history. The Router must write this record before spawning the next role.
 - **Stale closures** — a new action record after closure supersedes it; do not assume an old `archival_record` is the final word.
 - **Ghost planning** — capturing a plan only in a local file or chat history without referencing it from an Eden-memory record. Any plan file or detailed implementation plan must be referenced from `context_summary` or `action_record`.
+- **Default-branch drift** — committing non-trivial work directly to `master`/`main` instead of using a feature branch.
+- **Fast-forward erasure** — merging feature branches with fast-forward so the branch topology and parent SHAs are lost.
+- **Force-push to default branch** — rewriting public default-branch history, which breaks the durable record chain.
 
 ## Scope resolution rules
 
@@ -143,6 +146,17 @@ Required record types:
 2. Project-local agent definitions override global agents.
 3. Project-local skill overrides global skill.
 4. If a project has no `agentic-team-config.yaml`, the global skill is used and the global charter is ignored unless explicitly referenced.
+
+## Branch discipline
+
+- Non-trivial work must happen on a feature branch checked out from the project
+  default branch. Trivial one-line fixes may be committed directly to the default
+  branch.
+- Merges into the default branch must be non-fast-forward merge commits that
+  preserve both parent SHAs.
+- Runtime is the only role that may create merge commits and push to the default
+  branch, and only after a green Verifier verdict.
+- Never force-push the default branch.
 
 ## Slash commands
 
