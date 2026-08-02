@@ -51,6 +51,29 @@ Circle.
 - Runtime may not touch production systems without explicit charter authorisation.
 - Every goal must end in either a hand-off/closure record or an escalation record.
 - Charter changes require re-ratification.
+- Non-trivial changes require a feature branch; direct commits to the default branch are allowed only for trivial one-line fixes.
+- Merges into the default branch must be non-fast-forward merge commits that preserve both parent SHAs.
+- Force-pushing the default branch is prohibited.
+
+## Branch discipline
+
+Projects that ratify this charter must keep the default branch (commonly `main`
+or `master`) protected by the following rules, unless a project-local charter
+explicitly overrides them:
+
+1. **Feature branches for non-trivial work.** Any change that touches more than
+   one file, alters behaviour, or is dispatched as a `build` or `run` package
+   must be developed on a feature branch.
+2. **Trivial fixes only on the default branch.** Single-line corrections (for
+   example, typo fixes or single flag default changes) may be committed directly to
+   the default branch.
+3. **Non-fast-forward merge commits.** Merges into the default branch must
+   create a merge commit with a descriptive conventional-commit message.
+4. **Record both parent SHAs.** Runtime records the feature-branch SHA and the
+   previous default-branch SHA in the merge action record.
+5. **No force-push.** Force-pushing the default branch is never permitted.
+6. **Runtime authority.** Runtime is the only role that may create merge commits
+   and push to the default branch, and only after a green Verifier verdict.
 
 ## Ratification
 

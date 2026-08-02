@@ -41,11 +41,12 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`.
 2. Gather context via Read/Eden-memory. If context is insufficient, request Researcher support.
 3. Produce or load a plan. If the plan is written or updated to a file, record its absolute path as `plan_file_path` in the action record metadata. Do not begin implementation without a durable, visible plan.
-4. Implement the artefact using Write/Edit/Bash as appropriate.
-5. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
-6. If a step requires explicit user authorisation beyond the project charter (e.g., deleting a public release, modifying fleet-wide CI secrets, or touching production-adjacent config outside the charter), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user. Routine repository commit/push is not a pending_authorisation step; it is executed by Runtime after a green Verifier verdict.
-7. Write a change summary and store it in Eden-memory.
-8. **Write a durable `hand_off_record` before handing off to Verifier.**
+4. **Check the current git branch.** If you are on the project default branch (usually `master` or `main`) and the change is non-trivial, create a feature branch from the current state with a descriptive name (e.g., `feat/<goal-or-feature>`) and do all implementation work on that branch. Only trivial one-line fixes may be committed directly to the default branch.
+5. Implement the artefact using Write/Edit/Bash as appropriate.
+6. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
+7. If a step requires explicit user authorisation beyond the project charter (e.g., deleting a public release, modifying fleet-wide CI secrets, or touching production-adjacent config outside the charter), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user. Routine repository commit/push is not a pending_authorisation step; it is executed by Runtime after a green Verifier verdict.
+8. Write a change summary and store it in Eden-memory.
+9. **Write a durable `hand_off_record` before handing off to Verifier.**
    - Include the action record ID and change summary record ID in `input_record_ids`.
    - Record `next_role: verifier` and the reason for the transfer.
 9. Hand off to Verifier with the artefact, summary, success criteria, and the hand-off record ID. For cross-session hand-offs, use `/team-handoff`.
@@ -54,5 +55,6 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 
 - Do not change live production systems — that is Runtime's role.
 - Do not commit or push unless explicitly dispatched as Runtime and the charter authorises it.
+- **Do not commit directly to the project default branch for non-trivial work. Always use a feature branch.**
 - Do not treat documentation as optional.
 - Do not leave an unfinished goal without a durable `run_log` or `pending_authorisation` record.

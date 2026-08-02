@@ -43,10 +43,26 @@ Runtime is available but requires explicit charter authorisation before acting o
 3. Chair → Founders' Circle within 48 hours for guardrail/risk issues.
 4. Final call by Founders' Circle or project owner.
 
+## Branch discipline
+
+- Non-trivial changes must be developed on a feature branch checked out from
+  `<DEFAULT_BRANCH>`. A branch name should include the goal or feature, e.g.,
+  `feat/<goal-or-feature>`.
+- Direct commits to `<DEFAULT_BRANCH>` are permitted only for trivial one-line
+  fixes (e.g., typo correction, single-line flag default change). Anything
+  touching more than one file or altering behaviour must use a feature branch.
+- Merges into `<DEFAULT_BRANCH>` must use a non-fast-forward merge commit with a
+  descriptive conventional-commit message, and both parent SHAs must be recorded
+  in the Runtime action record.
+- Runtime is the only role that may create merge commits and push to
+  `origin/<DEFAULT_BRANCH>`, and only after a green Verifier verdict.
+- Never force-push to `origin/<DEFAULT_BRANCH>`.
+
 ## Interfaces and dependencies
 
 - Eden-memory (`~/.eden-memory/default.db`) is the durable substrate.
 - The global Agentic Team Protocol skill at `~/.claude/skills/team/SKILL.md` provides fallback documentation.
+- The project-local skill at `.claude/skills/agentic-team-protocol/SKILL.md` overrides the global skill for `<PROJECT_PATH>`.
 - This local charter overrides the global charter for `<PROJECT_PATH>`.
 
 ## Runbooks and skills owned
