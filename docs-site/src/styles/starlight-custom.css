@@ -15,9 +15,9 @@
   --sl-color-bg-nav: var(--sl-color-gray-7);
   --sl-color-bg-sidebar: var(--sl-color-gray-7);
   --sl-color-bg-inline-code: var(--sl-color-gray-6);
-  --sl-color-bg-accent: rgba(124, 140, 255, 0.12);
+  --sl-color-bg-accent: rgba(45, 106, 79, 0.12);
   --sl-color-text: var(--sl-color-white);
-  --sl-color-text-accent: #7c8cff;
+  --sl-color-text-accent: #2d6a4f;
   --sl-color-text-invert: #05060a;
   --sl-color-border: var(--sl-color-gray-5);
 
@@ -107,7 +107,7 @@ a {
 }
 
 a:hover {
-  color: #9ca7ff;
+  color: #40916c;
 }
 
 /* Cards / asides */
@@ -140,7 +140,7 @@ td {
 /* Buttons in splash */
 .hero .sl-flex a[role="button"] {
   background: var(--sl-color-text-accent);
-  color: var(--sl-color-text-invert);
+  color: var(--sl-color-white);
   border-radius: 10px;
   font-weight: 600;
 }
@@ -151,12 +151,22 @@ td {
   border: 1px solid var(--sl-color-border);
 }
 
+.hero .sl-flex a[role="button"].secondary:hover {
+  background: var(--sl-color-text-accent);
+  border-color: var(--sl-color-text-accent);
+}
+
 /* Search input */
 #starlight__search button {
   background: var(--sl-color-gray-6);
   border: 1px solid var(--sl-color-border);
-  color: var(--sl-color-gray-2);
+  color: var(--sl-color-white);
   border-radius: 8px;
+}
+
+#starlight__search button:hover {
+  background: var(--sl-color-text-accent);
+  border-color: var(--sl-color-text-accent);
 }
 
 /* Mobile menu button */

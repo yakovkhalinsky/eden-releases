@@ -326,9 +326,9 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
     --text: #f0f2f6;
     --text-muted: #8b94a7;
     --border: #232834;
-    --accent: #7c8cff;
-    --accent-600: #5f6fff;
-    --accent-glow: rgba(124, 140, 255, 0.18);
+    --accent: #2d6a4f;
+    --accent-600: #40916c;
+    --accent-glow: rgba(45, 106, 79, 0.18);
     --amber: #f2b65a;
     --amber-soft: rgba(242, 182, 90, 0.12);
     --green: #5df0a8;
@@ -415,7 +415,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
     text-decoration: none;
   }
 
-  .btn-primary { background: var(--accent); color: #05060a; }
+  .btn-primary { background: var(--accent); color: var(--text); }
   .btn-primary:hover { background: var(--accent-600); text-decoration: none; }
 
   .hero { padding: 64px 0 48px; text-align: center; }
@@ -526,7 +526,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
     font-family: Inter, sans-serif;
   }
 
-  .copy-btn:hover { color: var(--text); border-color: var(--amber); }
+  .copy-btn:hover { background: var(--accent-600); color: var(--text); border-color: var(--accent); }
 
   .section { padding: 64px 0; }
   .section-alt { background: var(--bg-warm); }
@@ -557,7 +557,7 @@ const mcpJsonConfigHtml = `<pre class="mono"><code id="mcp-json-config">${mcpJso
     border: 1px solid var(--border);
     display: grid;
     place-items: center;
-    color: var(--amber);
+    color: var(--accent);
     font-weight: 700;
     font-size: 1rem;
   }
