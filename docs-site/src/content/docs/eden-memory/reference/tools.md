@@ -210,7 +210,7 @@ In-place remapping of `org_id`/`workspace_id` for a scope. Dry-run by default; r
 
 ### `eden_packet`
 
-Build a deterministic, scope-bound knowledge packet. Never emits raw vectors.
+Build a deterministic, scope-bound knowledge packet for a single workspace. Never emits raw vectors.
 
 ```json
 {
@@ -221,10 +221,47 @@ Build a deterministic, scope-bound knowledge packet. Never emits raw vectors.
 }
 ```
 
-- `format`: `json`, `md`, or `html`.
-- `template`: `default`, `compact`, `analytical`, or `full`.
-- `include_content: true` emits full memory text with a privacy warning.
-- `enrich: "cluster"` adds semantic clusters without raw vectors.
+Input fields:
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `format` | string | `json` | Output format: `json`, `md`, or `html`. |
+| `template` | string | `default` | Consumer template: `default`, `compact`, `analytical`, or `full`. |
+| `include_content` | boolean | `false` | Emit full memory contents instead of excerpts. Adds a privacy warning. |
+| `since` | string | — | RFC3339 timestamp; only include memories created or updated at or after this time. |
+| `limit` | integer | `50` | Maximum memories to include. The `compact` template defaults to `10`. |
+| `enrich` | string | — | Optional enrichment pass: `cluster`. The `analytical` template defaults to `cluster`. |
+| `org_id` | string | `EDEN_ORG_ID` env | Organization scope. Required if not configured. |
+| `workspace_id` | string | `EDEN_WORKSPACE_ID` env | Workspace scope. Required if not configured. |
+
+Response shape:
+
+```json
+{
+  "format": "md",
+  "packet": "# Knowledge Brief\n\n...",
+  "warnings": [
+    "Full memory contents are included in this packet. Share it only with trusted consumers."
+  ]
+}
+```
+
+- `format` echoes the requested format.
+- `packet` is the rendered output as a single string.
+- `warnings` is empty unless full contents are emitted, in which case it contains the privacy warning.
+
+Templates and defaults:
+
+| Template | Excerpt length | Default limit | Enrichment | Notes |
+|----------|----------------|---------------|------------|-------|
+| `default` | 120 runes | 50 | — | Balanced stats + excerpts + optional clusters. |
+| `compact` | 80 runes | 10 | — | Omits per-memory metadata; title is "Knowledge Brief". |
+| `analytical` | 120 runes | 50 | `cluster` | Omits per-memory metadata; emphasizes semantic clusters. |
+| `full` | full content | 50 | — | Sets `include_content=true` automatically. |
+
+The canonical JSON packet uses schema version `1.1.0`. Excerpts are deterministic: most recently updated memories appear first, then ties are broken by memory ID. Clusters, when enabled, are derived from scoped vector similarity using a 0.75 cosine threshold and a cap of eight clusters. No raw embeddings are ever included.
+
+See [Knowledge packets](/eden-memory/concepts/knowledge-packets/) and [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/) for more detail.
 
 ### `eden_export_snapshot`
 

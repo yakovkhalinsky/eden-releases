@@ -54,6 +54,7 @@ export default defineConfig({
 							label: 'How-to guides',
 							items: [
 								{ label: 'Back up and restore', slug: 'eden-memory/how-to/backup-restore' },
+								{ label: 'Build a knowledge packet', slug: 'eden-memory/how-to/build-knowledge-packet' },
 								{ label: 'Migrate a workspace', slug: 'eden-memory/how-to/migrate-workspace' },
 								{ label: 'Prune old memories', slug: 'eden-memory/how-to/prune-memories' },
 								{ label: 'Run your own relay server', slug: 'eden-memory/how-to/run-relay-server' },
@@ -63,6 +64,7 @@ export default defineConfig({
 						{
 							label: 'Concepts',
 							items: [
+								{ label: 'Knowledge packets', slug: 'eden-memory/concepts/knowledge-packets' },
 								{ label: 'Memory model and embeddings', slug: 'eden-memory/concepts/memory-model' },
 								{ label: 'Scopes and identity', slug: 'eden-memory/concepts/scopes-identity' },
 								{ label: 'How sync works', slug: 'eden-memory/concepts/how-sync-works' },
