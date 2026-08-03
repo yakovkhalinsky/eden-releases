@@ -8,6 +8,8 @@ content_type: how-to
 
 A self-hosted relay lets you sync eden-memory devices across separate networks without relying on a third-party service. This guide sets up the relay as a long-running process, verifies it, and registers a device.
 
+For a full public-internet VPS deployment with Let's Encrypt, systemd, firewall rules, and hardening, see [Deploy on a public VPS](/eden-memory/how-to/deploy-public-vps/). For a private mesh deployment (for example, Tailscale) without exposing ports to the internet, bind the relay to the mesh interface and use plain HTTP inside the mesh.
+
 ## Prerequisites
 
 - eden-memory installed on the relay host.

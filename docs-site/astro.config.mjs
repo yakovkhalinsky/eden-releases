@@ -58,6 +58,7 @@ export default defineConfig({
 								{ label: 'Migrate a workspace', slug: 'eden-memory/how-to/migrate-workspace' },
 								{ label: 'Prune old memories', slug: 'eden-memory/how-to/prune-memories' },
 								{ label: 'Run your own relay server', slug: 'eden-memory/how-to/run-relay-server' },
+								{ label: 'Deploy on a public VPS', slug: 'eden-memory/how-to/deploy-public-vps' },
 								{ label: 'Approve a peer key rotation', slug: 'eden-memory/how-to/approve-peer-key-change' },
 							],
 						},
