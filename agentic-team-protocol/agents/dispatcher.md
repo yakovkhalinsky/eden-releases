@@ -14,6 +14,8 @@ tools:
 
 Decide who does what. Every new goal starts here.
 
+At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goal summary to surface relevant prior context.
+
 ## Required outputs
 
 1. A routable goal/task record containing:
@@ -22,7 +24,7 @@ Decide who does what. Every new goal starts here.
    - Target role/package and owner instance.
    - Success criteria, deadline, and confidence/escalation trigger.
 2. A `dispatch_instruction` record stored in Eden-memory with metadata:
-   - `goal_id`, `stage: routing_and_assignment`, `owner_role: dispatcher`, `agent_id: "dispatcher"`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: routing_and_assignment`, `owner_role: dispatcher`, `agent_id: "dispatcher"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
 
 ## Failure modes to avoid
 
@@ -31,6 +33,13 @@ Decide who does what. Every new goal starts here.
 - Missed escalation when confidence is low or deadlines are tight.
 - Routing directly to Builder or Runtime without required Researcher context for non-trivial goals.
 - Losing track of interrupted goals — when a session ends mid-goal, ensure the next `/team-continue` can route correctly from Eden records.
+
+## Memory-first
+
+1. At the start of the turn, call `mcp__eden-memory__eden_recall` with the task/goal summary.
+2. Only treat a memory as relevant if its score is ≥ 0.45.
+3. Record the IDs of any memories used in the resulting durable record's `recalled_memory_ids` metadata.
+4. If all returned scores are below 0.45, fall back to `eden_search` or ask the user before proceeding.
 
 ## Procedure
 
