@@ -85,9 +85,18 @@ Each stage record should include this metadata so it can be traced and recalled:
   "owner_instance": "<optional instance id>",
   "input_record_ids": ["<id>"],
   "output_record_ids": ["<id>"],
+  "recalled_memory_ids": ["<id>"],
   "verdict_id": "<id when applicable>"
 }
 ```
+
+Include `recalled_memory_ids` whenever the record relies on recalled Eden-memory context.
+
+## Memory-first rules
+
+- Treat an `eden_recall` or `eden_search_semantic` result as relevant only when its score is **≥ 0.45**.
+- Record the IDs of every relevant memory that shaped the stage record in `recalled_memory_ids`.
+- If all returned scores are below 0.45, fall back to `eden_search` or ask the user before proceeding.
 
 ## Anti-patterns
 

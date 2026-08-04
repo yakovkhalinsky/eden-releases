@@ -20,11 +20,14 @@ Every record should include these fields so it can be traced:
   "owner_instance": "<optional-instance-id>",
   "input_record_ids": ["<id>"],
   "output_record_ids": ["<id>"],
+  "recalled_memory_ids": ["<id>"],
   "verdict_id": "<id-when-applicable>"
 }
 ```
 
 `input_record_ids` and `output_record_ids` are the links that turn a pile of notes into a replayable chain. Store them on every record, even on small context summaries.
+
+When a record is shaped by recalled Eden-memory context, include `recalled_memory_ids` with the IDs of the memories that informed it.
 
 ## Record kinds
 
@@ -170,6 +173,14 @@ archival_record  or  hand_off_record
 ```
 
 Escalations and charter ratifications sit outside this main chain but are linked by `goal_id` or project path so status checks can find them.
+
+## Memory-first rules
+
+When you recall Eden-memory context to write or update a record:
+
+1. Only treat a memory as relevant if its `score` is **≥ 0.45**. If all returned scores are below the threshold, fall back to `eden_search` or ask the user before proceeding.
+2. Record the IDs of every memory that shaped the record in `recalled_memory_ids`.
+3. Do not mix `input_record_ids` with memories from other goals. Memories recalled for background context belong in `recalled_memory_ids`; only records that are direct inputs to the current stage belong in `input_record_ids`.
 
 ## What not to store
 

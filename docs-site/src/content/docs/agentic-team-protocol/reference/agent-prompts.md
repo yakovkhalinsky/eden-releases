@@ -28,6 +28,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 
 - A `goal_record` with `goal_id`, requester, constraints, and package type.
 - A `dispatch_instruction` with target role, owner, deadline, success criteria, and escalation trigger.
+- Memory-first: recall the latest relevant records, use only results with score **≥ 0.45**, and record any memory IDs that shaped dispatch decisions in `recalled_memory_ids`.
 
 **When to spawn:**
 
@@ -42,6 +43,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 **Required outputs:**
 
 - A `context_summary` containing the question, sources consulted, options considered, trade-offs, confidence, and recommended next step.
+- `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform the summary; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
@@ -58,6 +60,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 1. The artefact itself (code, config, doc, test, etc.).
 2. A change summary with rationale, record IDs, merge instructions, and follow-up steps.
 3. An `action_record` in eden-memory with `goal_id`, `stage: action`, `owner_role: builder`, `input_record_ids`, and `output_record_ids`.
+4. `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform the action; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
@@ -75,6 +78,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 3. Observed state before and after execution.
 4. Health evidence.
 5. An `action_record` in eden-memory.
+6. `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform the plan or action; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
@@ -94,6 +98,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 - Evidence supporting the verdict.
 - Scope of what was verified and what was not.
 - Residual risks and recommended mitigations.
+- `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform the verdict; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
@@ -113,6 +118,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 3. Updated skills/runbooks if a reusable convention emerged.
 4. A closure record with `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `input_record_ids`, and `output_record_ids`.
 5. For hand-offs, an ownership transfer record.
+6. `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform closure or the hand-off; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
@@ -129,6 +135,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 1. A `run_log` record marking the continuation attempt.
 2. A clear decision: which role should act next and why.
 3. A hand-off payload containing `goal_id`, inferred stage, next role, latest record IDs, success criteria, and any escalation trigger.
+4. `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to resume the goal; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
