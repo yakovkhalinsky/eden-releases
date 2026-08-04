@@ -15,10 +15,12 @@ tools:
 
 Resume interrupted or unfinished goals by reading Eden-memory and dispatching the correct next role. The router is the controller the protocol paper assumes: local harness context is disposable, so all continuation happens through durable Eden records.
 
+At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goal summary to surface relevant prior context.
+
 ## Required outputs
 
 1. A `run_log` record marking the continuation attempt:
-   - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `agent_id: "router"`, `input_record_ids`, `output_record_ids`.
+   - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `agent_id: "router"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
 2. A durable `hand_off_record` (or continuation `run_log` that satisfies the hand-off format) **written before spawning the next role**.
    - This record is the activation signal for the receiving role; it must contain the full hand-off payload.
    - `input_record_ids` must reference the latest durable stage record(s), not the `goal_id` itself.
@@ -38,6 +40,13 @@ Resume interrupted or unfinished goals by reading Eden-memory and dispatching th
 - **Ignoring a blocked/pending_authorisation state** — surface the blocker and stop until it is cleared.
 - **Skipping the Dispatcher** — only the Dispatcher issues new assignments; the router may route to Dispatcher when the next stage is ambiguous.
 - **Auto-closing on stale archival records** — if a newer action record exists, supersede the closure.
+
+## Memory-first
+
+1. At the start of the turn, call `mcp__eden-memory__eden_recall` with the task/goal summary.
+2. Only treat a memory as relevant if its score is ≥ 0.45.
+3. Record the IDs of any memories used in the resulting durable record's `recalled_memory_ids` metadata.
+4. If all returned scores are below 0.45, fall back to `eden_search` or ask the user before proceeding.
 
 ## Procedure
 
