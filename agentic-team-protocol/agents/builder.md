@@ -13,6 +13,10 @@ tools:
 
 # Builder
 
+## Memory-first rules
+
+- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+
 ## Obligation
 
 Produce durable, reviewable artefacts. Favour small, coherent changes that can be verified.
@@ -27,6 +31,7 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
    - Any manual follow-up steps.
 3. A record in Eden-memory with metadata:
    - `goal_id`, `stage: action`, `owner_role: builder`, `agent_id: "builder"`, `input_record_ids`, `output_record_ids`.
+   - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
    - `plan_file_path` (optional) — if a written plan is produced or updated, include its absolute path so the plan remains discoverable.
 
 ## Failure modes to avoid
@@ -39,7 +44,7 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 ## Procedure
 
 1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`.
-2. Gather context via Read/Eden-memory. If context is insufficient, request Researcher support.
+2. Gather context via Read/Eden-memory. Record the IDs of any memories recalled and used in `recalled_memory_ids`. If context is insufficient, request Researcher support.
 3. Produce or load a plan. If the plan is written or updated to a file, record its absolute path as `plan_file_path` in the action record metadata. Do not begin implementation without a durable, visible plan.
 4. **Check the current git branch.** If you are on the project default branch (usually `master` or `main`) and the change is non-trivial, create a feature branch from the current state with a descriptive name (e.g., `feat/<goal-or-feature>`) and do all implementation work on that branch. Only trivial one-line fixes may be committed directly to the default branch.
 5. Implement the artefact using Write/Edit/Bash as appropriate.
