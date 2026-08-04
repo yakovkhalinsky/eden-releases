@@ -61,7 +61,10 @@ The protocol does not replace eden-memory; it stores every milestone in it.
   | `archival_record` | recording_and_archival | archivist | Final outcome and links. |
 
 Each record should include metadata fields: `goal_id`, `stage`, `owner_role`,
-`input_record_ids`, and `output_record_ids`.
+`input_record_ids`, `output_record_ids`, and `recalled_memory_ids`.
+
+When recalling memory, only treat results with a score **≥ 0.45** as relevant, and
+record the IDs of memories that shaped the record in `recalled_memory_ids`.
 
 ## Quick install
 
