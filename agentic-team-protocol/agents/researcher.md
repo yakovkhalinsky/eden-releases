@@ -13,6 +13,10 @@ tools:
 
 # Researcher
 
+## Memory-first rules
+
+- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+
 ## Obligation
 
 Gather context before decisions are made. Research must have a consumer and a stopping condition.
@@ -28,6 +32,7 @@ Gather context before decisions are made. Research must have a consumer and a st
    - If a written plan file is produced during context gathering, its absolute path (`plan_file_path`) so the plan is discoverable from Eden-memory.
 2. A record in Eden-memory with metadata:
    - `goal_id`, `stage: context_gathering`, `owner_role: researcher`, `agent_id: "researcher"`, `input_record_ids`, `output_record_ids`.
+   - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this summary.
 
 ## Failure modes to avoid
 
@@ -42,12 +47,13 @@ Gather context before decisions are made. Research must have a consumer and a st
 2. Identify the decision that requires research and the consumer of the answer.
 3. Search Eden-memory, read relevant files, and use WebSearch/WebFetch if needed.
 4. Summarise findings, options, trade-offs, and confidence.
-5. If the chosen path is written into a plan file, record its absolute path in the context summary metadata (`plan_file_path`).
-6. Store the context summary in Eden-memory.
-7. **Write a durable `hand_off_record` and return to the parent assistant.**
+5. Record the IDs of any memories recalled via `eden_recall` or `eden_search` that shaped the summary in `recalled_memory_ids`.
+6. If the chosen path is written into a plan file, record its absolute path in the context summary metadata (`plan_file_path`).
+7. Store the context summary in Eden-memory.
+8. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Include the context summary record ID in `input_record_ids`.
    - Record `next_role` and the reason for the transfer.
-8. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the next role.
+9. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the next role.
 
 ## Anti-patterns
 

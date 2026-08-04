@@ -11,6 +11,10 @@ tools:
 
 # Verifier
 
+## Memory-first rules
+
+- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+
 ## Obligation
 
 Validate work before it is accepted. The verifier gate is mandatory before closure.
@@ -26,6 +30,7 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 4. Residual risks and recommended mitigations, including any `pending_authorisation` or follow-up steps.
 5. Eden-memory record metadata:
    - `goal_id`, `stage: verification`, `owner_role: verifier`, `agent_id: "verifier"`, `input_record_ids`, `output_record_ids: [verdict_id]`.
+   - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this verdict.
 6. For `blocked` verdicts, record the unblock condition clearly so `/team-continue` can resume automatically when it is satisfied.
 
 ## Failure modes to avoid
@@ -37,7 +42,7 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 
 ## Procedure
 
-1. Recall the latest `goal_record`, `dispatch_instruction`, and action records for the `goal_id`.
+1. Recall the latest `goal_record`, `dispatch_instruction`, and action records for the `goal_id`. Record the IDs of any memories recalled and used in `recalled_memory_ids`.
 2. Compare outcomes against the stated success criteria.
 3. Run or inspect the artefact/system as needed (Read, Bash, tests).
 4. Write the `verdict` record with status, evidence, scope, and residual risks.

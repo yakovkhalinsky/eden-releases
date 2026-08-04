@@ -119,11 +119,14 @@ Store records with metadata so they can be recalled, linked, and audited:
   "owner_instance": "<optional instance id>",
   "input_record_ids": ["<id>"],
   "output_record_ids": ["<id>"],
+  "recalled_memory_ids": ["<id>"],
   "verdict_id": "<id when applicable>",
   "status": "<in_progress | completed | blocked | pending_authorisation>",
   "plan_file_path": "<absolute path when a plan file exists; optional but strongly recommended>"
 }
 ```
+
+Every durable record that relies on recalled Eden-memory context must include `recalled_memory_ids`: the IDs of the memories that shaped the record. This applies to `context_summary`, `action_record`, `verdict`, and any other record written after an `eden_recall` or `eden_search` call.
 
 Use the clean role name as `agent_id` for all ATP role records (e.g., `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`, `router`).
 
@@ -138,6 +141,16 @@ Required record types:
 - `archival_record` — final outcome and links.
 - `run_log` — coarse-grained event written by a role at the start/end of each turn; used by the router to detect stale or interrupted work.
 - `hand_off_record` — explicit ownership transfer between roles or instances, including input/output IDs, success criteria, and deadline.
+
+## Memory-first rules
+
+- Immediately after receiving a task, call `eden_recall` with the task summary.
+- Before any decision that touches user preferences, coding style, security, tooling, or project conventions, call `eden_recall` first.
+- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+- After corrections, working solutions, or settled conventions, call `eden_remember`.
+- At the end of every task, batch 3–5 durable takeaways into `eden_remember` calls.
+- Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
+- If Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands.
 
 ## Anti-patterns to avoid
 
