@@ -10,6 +10,10 @@ tools:
 
 # Runtime
 
+## Memory-first rules
+
+- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+
 ## Obligation
 
 Operate live systems safely. Every runtime action must be reversible and observable.
@@ -22,6 +26,7 @@ Operate live systems safely. Every runtime action must be reversible and observa
 4. Health evidence showing the system is still healthy.
 5. A record in Eden-memory with metadata:
    - `goal_id`, `stage: action`, `owner_role: runtime`, `agent_id: "runtime"`, `input_record_ids`, `output_record_ids`.
+   - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
 
 ## Failure modes to avoid
 
@@ -32,7 +37,7 @@ Operate live systems safely. Every runtime action must be reversible and observa
 
 ## Procedure
 
-1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`.
+1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`. Record the IDs of any memories recalled and used in `recalled_memory_ids`.
 2. Inspect current state before any change.
 3. **Check the current git branch.** If you are on the project default branch (usually `master` or `main`) and the planned work is non-trivial, create a feature branch from the current state with a descriptive name (e.g., `feat/<goal-or-feature>`) and do all mutating work on that branch. Only trivial one-line fixes may be committed directly to the default branch.
 4. Produce the execution plan and rollback plan; store them in Eden-memory.
