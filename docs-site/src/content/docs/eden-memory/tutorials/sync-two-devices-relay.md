@@ -44,6 +44,14 @@ eden-memory relay-server \
   --confirm
 ```
 
+Or deploy the dedicated `eden-relay` binary on an always-on host or VPS. It has no MCP or memory subcommands and starts without `--confirm`:
+
+```bash
+eden-relay \
+  --db /var/lib/eden-relay/relay.db \
+  --addr :8787
+```
+
 The relay needs a persistent SQLite database path and a listen address. Default port is `8787`. For a production relay, see [Run your own relay server](/eden-memory/how-to/run-relay-server/).
 
 If someone else is hosting the relay, write down the base URL (for example, `http://relay.example.com:8787`).

@@ -284,6 +284,38 @@ eden-memory relay-server \
 | `--addr` | No | Listen address (default `:8787`). |
 | `--confirm` | Yes | Confirm starting the server. |
 
+The same relay is also available as the dedicated `eden-relay` binary. It uses `--db` instead of `--relay-db`, has no `--confirm` guard, and exposes the same HTTP endpoints. See the [`eden-relay` section](#eden-relay) below.
+
+## `eden-relay`
+
+The dedicated `eden-relay` binary is a lightweight relay-only build from the `eden-memory` monorepo. It is useful on VPS or always-on hosts where you only need the relay and do not want the full `eden-memory` CLI or MCP server.
+
+```bash
+eden-relay \
+  --db /var/lib/eden-relay/relay.db \
+  --addr :8787
+```
+
+With TLS:
+
+```bash
+eden-relay \
+  --db /var/lib/eden-relay/relay.db \
+  --addr :443 \
+  --tls-cert /path/to/cert.pem \
+  --tls-key /path/to/key.pem
+```
+
+| Flag | Env var | Description |
+|------|---------|-------------|
+| `--db` | `EDEN_RELAY_DB` | Relay SQLite database path. |
+| `--addr` | `EDEN_RELAY_ADDR` | Listen address (default `:8787`). |
+| `--tls-cert` | `EDEN_TLS_CERT` | TLS certificate path. Must be supplied with `--tls-key`. |
+| `--tls-key` | `EDEN_TLS_KEY` | TLS private-key path. Must be supplied with `--tls-cert`. |
+| `--require-per-device-auth` | `EDEN_RELAY_REQUIRE_PER_DEVICE_AUTH` | Reject legacy account-derived auth tokens once every device has re-registered. |
+
+The `eden-memory relay-server` subcommand remains available and exposes the same relay functionality inside the full binary.
+
 ## `relay-register`
 
 Register the current device with a relay directory.

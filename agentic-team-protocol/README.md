@@ -119,6 +119,21 @@ After restart:
 - `/team-continue` — resume an unfinished goal by rehydrating it from Eden-memory and dispatching the next role.
 - `/team-handoff` — transfer ownership of a goal to another role in a durable record.
 
+## Headless supervisor
+
+For non-interactive goals (CI, scheduled tasks, or controllers), use the `eden-team` binary from the [`eden-memory`](https://github.com/yakovkhalinsky/eden-memory) monorepo. It is the headless ATP supervisor: it records the goal in Eden-memory, spawns the dispatcher, runs the lifecycle, and writes a verdict without requiring an interactive Claude Code session.
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-team
+
+eden-team start \
+  --goal "Create /tmp/atp-hello.txt containing exactly 'hello from ATP'" \
+  --mcp-config ./mcp.json \
+  --dangerously-skip-permissions
+```
+
+See the [headless supervisor tutorial](https://0d3sa.com/agentic-team-protocol/tutorials/headless-supervisor/) for the full setup.
+
 ## License
 
 MIT — see the repository [LICENSE](../LICENSE).

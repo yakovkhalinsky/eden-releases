@@ -224,6 +224,24 @@ Given the latest non-terminal record for a `goal_id`:
 
 If a new `action_record` is stored after an `archival_record` for the same `goal_id`, the archival record is superseded and the goal returns to Action.
 
+## Headless supervisor
+
+For automated or scheduled goals, use the `eden-team` binary from the `eden-memory` monorepo instead of an interactive Claude Code session. `eden-team` writes the ATP lifecycle records (`goal_record`, `dispatch_instruction`, `action_record`, `hand_off_record`, `verdict`) to Eden-memory and spawns Claude Code CLI subagent processes for each role.
+
+Example:
+
+```bash
+cd /home/yakov/git/eden-memory
+make build-team
+./eden-team start \
+  --goal "Refactor the login handler to use table-driven tests" \
+  --mcp-config ./mcp.json \
+  --dangerously-skip-permissions \
+  --verbose
+```
+
+Resume an interrupted goal with `eden-team continue --goal-id <goal-id> --mcp-config ./mcp.json`.
+
 ## Fallback if MCP is unavailable
 
 If the Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands or invoke `eden-memory` directly from Bash. Restart Claude Code after `eden-memory setup claude` if commands are missing.

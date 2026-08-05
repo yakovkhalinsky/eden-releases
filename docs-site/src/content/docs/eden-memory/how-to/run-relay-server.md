@@ -12,7 +12,7 @@ For a full public-internet VPS deployment with Let's Encrypt, systemd, firewall 
 
 ## Prerequisites
 
-- eden-memory installed on the relay host.
+- `eden-memory` or the dedicated `eden-relay` binary installed on the relay host.
 - A reachable host and port (default `8787`).
 - A persistent directory for the relay SQLite database.
 - A firewall rule allowing inbound TCP traffic on the relay port.
@@ -33,6 +33,15 @@ eden-memory relay-server \
   --relay-db /var/lib/eden-relay/relay.db \
   --addr :8787 \
   --confirm
+```
+
+Or use the dedicated `eden-relay` binary. It has no MCP or memory subcommands,
+starts without `--confirm`, and uses `--db` for the relay database path:
+
+```bash
+eden-relay \
+  --db /var/lib/eden-relay/relay.db \
+  --addr :8787
 ```
 
 The relay listens on `0.0.0.0:8787` by default. To bind to a specific interface, pass `--addr 192.168.1.10:8787`.
@@ -73,6 +82,23 @@ After=network.target
 
 [Service]
 ExecStart=/home/yourname/.local/bin/eden-memory relay-server --relay-db /var/lib/eden-relay/relay.db --addr :8787 --confirm
+Restart=always
+User=eden-relay
+Group=eden-relay
+
+[Install]
+WantedBy=multi-user.target
+```
+
+If you installed the dedicated `eden-relay` binary instead, use this unit file:
+
+```ini
+[Unit]
+Description=eden-relay
+After=network.target
+
+[Service]
+ExecStart=/home/yourname/.local/bin/eden-relay --db /var/lib/eden-relay/relay.db --addr :8787
 Restart=always
 User=eden-relay
 Group=eden-relay
