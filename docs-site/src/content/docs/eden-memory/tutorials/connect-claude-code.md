@@ -30,7 +30,7 @@ The easiest way is to run the setup helper from the project directory you launch
 
 ```bash
 cd ~/project-a
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 ```
 
 This does three things:

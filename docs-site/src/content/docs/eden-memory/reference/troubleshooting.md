@@ -13,7 +13,7 @@ This page lists common eden-memory problems, the most likely cause, and the fix.
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | `eden-memory` exits immediately with a database error | The database directory does not exist, or `--db` is a relative path. | Create `~/.eden-memory/` or use an absolute `--db` path. |
-| MCP server exits in Claude Code | The MCP config uses a relative path or a missing binary. | Use absolute paths for `command` and `--db`. Re-run `eden-memory --db ~/.eden-memory/default.db setup claude`. |
+| MCP server exits in Claude Code | The MCP config uses a relative path or a missing binary. | Use absolute paths for `command` and `--db`. Re-run `eden-memory setup claude`. |
 | `ModuleNotFoundError: No module named 'eden_memory'` | A stale Python wrapper is installed at `~/.local/bin/eden-memory`. | Remove the wrapper and reinstall: `rm -f ~/.local/bin/eden-memory; curl -fsSL https://0d3sa.com/eden-memory/install.sh \| sh`. |
 
 ## Slow first recall

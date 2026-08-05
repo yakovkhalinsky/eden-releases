@@ -91,7 +91,7 @@ Run the setup helper from each project directory you launch Claude Code in:
 
 ```bash
 cd ~/project-a
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 ```
 
 This does three things:
@@ -264,7 +264,7 @@ If you cannot call the eden-memory tools:
   rm -f ~/.local/bin/eden-memory
   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
   ```
-- **Still not connecting**: run `eden-memory --db ~/.eden-memory/default.db health`. If it prints a JSON health report, the binary is healthy and the issue is Claude Code config or PATH.
+- **Still not connecting**: run `eden-memory health`. If it prints a JSON health report, the binary is healthy and the issue is Claude Code config or PATH.
 - **Tools missing after `/mcp` connects:** fully exit Claude Code (`/exit`) and reopen it; agents often only load tools at startup.
 - **Claude Code times out even though the binary works from your shell:**
   - On v0.3.28 and earlier the server expected `Content-Length` framing while

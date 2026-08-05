@@ -14,7 +14,7 @@ The setup helper installs the fallback commands automatically:
 
 ```bash
 cd ~/project-a
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 ```
 
 Restart Claude Code after running the helper so the commands appear.
