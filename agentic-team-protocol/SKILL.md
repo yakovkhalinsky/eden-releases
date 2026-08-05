@@ -25,6 +25,24 @@ related_skills:
 
 A role-based agent team protocol implemented as Claude Code primitives (skills, agents, slash commands) with Eden-memory as the single source of truth for state, ownership, and auditability.
 
+## Setup
+
+1. Install `eden-memory` and make sure it is on your `PATH`.
+2. Install the global ATP primitives:
+   ```bash
+   curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
+   ```
+3. In every project where you will use ATP, wire the Eden-memory MCP server:
+   ```bash
+   cd ~/your-project
+   eden-memory --db ~/.eden-memory/default.db setup claude
+   ```
+4. Install the project-local ATP templates:
+   ```bash
+   curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local
+   ```
+5. Restart Claude Code completely so the MCP server, agents, and slash commands load.
+
 ## Core idea
 
 Every goal passes through a seven-stage lifecycle. Each stage has an owner role, exit criteria, and a durable record in Eden-memory. Roles are specialised subagents; the Dispatcher decides who does what; the Verifier gate is mandatory before closure.

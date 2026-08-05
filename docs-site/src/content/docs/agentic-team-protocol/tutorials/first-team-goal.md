@@ -32,9 +32,20 @@ Restart Claude Code completely (`/exit`, then reopen) so the new commands and ag
 
 **Expected result:** After restart, the command palette accepts `/team-charter` and `/team-status`.
 
-## Step 2 — Opt your sandbox project in
+## Step 2 — Wire eden-memory for the project
 
-Change into your sandbox repo and install the project-local templates:
+The ATP agents need the eden-memory MCP server to write and read lifecycle records. In your sandbox repo, run:
+
+```bash
+cd ~/your-sandbox-repo
+eden-memory --db ~/.eden-memory/default.db setup claude
+```
+
+This configures the current directory in `~/.claude.json` as an MCP project and installs the `/eden-*` fallback slash commands. If `eden-memory` is not on your `PATH`, use the full path to the binary.
+
+## Step 3 — Opt your sandbox project in
+
+Install the project-local ATP templates:
 
 ```bash
 cd ~/your-sandbox-repo
@@ -47,7 +58,7 @@ This creates:
 - `.claude/agentic-team-config.yaml`
 - `.claude/skills/agentic-team-protocol/SKILL.md`
 
-## Step 3 — Edit and ratify the charter
+## Step 4 — Edit and ratify the charter
 
 Open `.claude/agentic-team-charter.md` and replace the placeholders:
 
@@ -75,7 +86,7 @@ Status: proceed
 
 If the command reports placeholders or missing guardrails, edit the charter and run it again.
 
-## Step 4 — Dispatch a trivial goal
+## Step 5 — Dispatch a trivial goal
 
 Run the top-level protocol command with a tiny request:
 
@@ -93,7 +104,7 @@ Dispatch: builder
 Deadline: <timestamp>
 ```
 
-## Step 5 — Observe the hand-off
+## Step 6 — Observe the hand-off
 
 The Builder reads the dispatch instruction, creates the README, and writes an `action_record` in eden-memory. It then hands off to the Verifier.
 
@@ -105,7 +116,7 @@ You should see:
 
 If the Verifier returns green, the Archivist links the records and closes the goal.
 
-## Step 6 — Inspect the durable record
+## Step 7 — Inspect the durable record
 
 Run:
 

@@ -37,6 +37,13 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
+In each project where you will use ATP, wire the Eden-memory MCP server first:
+
+```bash
+cd ~/my-project
+eden-memory --db ~/.eden-memory/default.db setup claude
+```
+
 Restart Claude Code after installing (`/exit`, then reopen).
 
 ## Project opt-in with enforced rules
@@ -45,6 +52,7 @@ To install the global primitives *and* opt a project in with a `CLAUDE.md` file 
 
 ```bash
 cd ~/my-project
+eden-memory --db ~/.eden-memory/default.db setup claude
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local --claude-md
 ```
 
@@ -67,13 +75,16 @@ cp SKILL.md ~/.claude/skills/team/SKILL.md
 cp agents/*.md ~/.claude/agents/
 cp commands/*.md ~/.claude/commands/
 
-# 3. In a project that wants to opt in:
+# 3. In a project that wants to opt in, wire the Eden-memory MCP server:
+eden-memory --db ~/.eden-memory/default.db setup claude
+
+# 4. Copy the project-local templates:
 mkdir -p .claude/skills/agentic-team-protocol
 cp templates/agentic-team-charter.md .claude/agentic-team-charter.md
 cp templates/agentic-team-config.yaml .claude/agentic-team-config.yaml
 cp templates/skills/agentic-team-protocol/SKILL.md .claude/skills/agentic-team-protocol/SKILL.md
 
-# 4. Optional: create a CLAUDE.md with protocol enforcement rules
+# 5. Optional: create a CLAUDE.md with protocol enforcement rules
 cp templates/claude-md.md CLAUDE.md
 ```
 

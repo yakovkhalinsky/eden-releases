@@ -223,4 +223,10 @@ if [ "$OLD_VERSION" = "none" ]; then
 else
   echo "Agentic Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}."
 fi
+echo ""
+echo "In each project where you will use ATP, run:"
+echo "  cd ~/your-project"
+echo "  eden-memory --db ~/.eden-memory/default.db setup claude"
+echo "  curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local"
+echo ""
 echo "Restart Claude Code to load the new agents and commands."

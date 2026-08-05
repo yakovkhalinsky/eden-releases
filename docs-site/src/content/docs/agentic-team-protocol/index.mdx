@@ -73,6 +73,13 @@ record the IDs of memories that shaped the record in `recalled_memory_ids`.
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
+In each project where you will use ATP, wire the Eden-memory MCP server:
+
+```bash
+cd ~/my-project
+eden-memory --db ~/.eden-memory/default.db setup claude
+```
+
 Then restart Claude Code. The agents and commands will be available in every
 workspace.
 

@@ -33,9 +33,20 @@ This copies the skill, agents, and slash commands into `~/.claude/`:
 
 Restart Claude Code completely (`/exit`, then reopen).
 
-## Step 2 — Opt your project in
+## Step 2 — Wire eden-memory for the project
 
-In your sandbox repo, install the project-local templates:
+The ATP agents need the eden-memory MCP server to write and read lifecycle records. In your sandbox repo, run:
+
+```bash
+cd ~/your-sandbox-repo
+eden-memory --db ~/.eden-memory/default.db setup claude
+```
+
+This configures the current directory in `~/.claude.json` as an MCP project and installs the `/eden-*` fallback slash commands.
+
+## Step 3 — Opt your project in
+
+Install the project-local ATP templates:
 
 ```bash
 cd ~/your-sandbox-repo
@@ -44,7 +55,7 @@ curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local
 
 This creates `.claude/agentic-team-charter.md`, `.claude/agentic-team-config.yaml`, and `.claude/skills/agentic-team-protocol/SKILL.md`.
 
-## Step 3 — Ratify the charter
+## Step 4 — Ratify the charter
 
 Edit `.claude/agentic-team-charter.md` and replace the placeholders with your project identity, mission, boundaries, and active roles. Then run:
 
@@ -63,7 +74,7 @@ Record ID: <uuid>
 Status: proceed
 ```
 
-## Step 4 — Run your first goal
+## Step 5 — Run your first goal
 
 Run the top-level command with a small request:
 
@@ -73,7 +84,7 @@ Run the top-level command with a small request:
 
 The Dispatcher records a `goal_record` and `dispatch_instruction`, then hands off to the Builder. The Builder creates the README and writes an `action_record`. The Verifier reviews it and writes a `verdict`. If the verdict is green, the Archivist closes the goal.
 
-## Step 5 — Check status
+## Step 6 — Check status
 
 Run:
 
