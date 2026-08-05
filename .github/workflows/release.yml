@@ -1,4 +1,4 @@
-name: eden-memory Public Release (manual fallback)
+name: eden-memory monorepo Public Release (manual fallback)
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   release:
-    name: Promote existing eden-memory release
+    name: Promote existing eden-memory monorepo release
     runs-on: ubuntu-latest
     steps:
       - name: Generate cross-repo token
@@ -43,7 +43,9 @@ jobs:
           gh release download "${{ github.event.inputs.source_tag }}" \
             --repo ${{ github.repository_owner }}/eden-memory \
             --dir public-binaries \
-            --pattern 'eden-memory-*'
+            --pattern 'eden-memory-*' \
+            --pattern 'eden-relay-*' \
+            --pattern 'eden-team-*'
         env:
           GH_TOKEN: ${{ steps.token.outputs.token }}
 
@@ -58,24 +60,16 @@ jobs:
       - name: Generate SHA-256 checksums
         working-directory: public-binaries
         run: |
-          for f in eden-memory-*; do
+          for f in eden-memory-* eden-relay-* eden-team-*; do
             [ -f "$f" ] || continue
             sha256sum "$f" > "$f.sha256"
           done
 
-      - name: Update manifest
+      - name: Regenerate manifest and download metadata
         run: |
-          VERSION="${{ github.event.inputs.source_tag }}"
-          DATE=$(date -u +%Y-%m-%d)
-          jq --arg version "${VERSION#v}" --arg date "$DATE" '
-            .version = $version |
-            .released = $date
-          ' binaries/manifest.json > binaries/manifest.json.tmp
-          mv binaries/manifest.json.tmp binaries/manifest.json
-
-      - name: Regenerate download metadata
-        run: |
-          python3 scripts/generate-download-metadata.py --assets-dir public-binaries
+          python3 scripts/generate-download-metadata.py \
+            --tag "${{ github.event.inputs.source_tag }}" \
+            --assets-dir public-binaries
 
       - name: Commit and push metadata
         id: publish
@@ -87,7 +81,7 @@ jobs:
             echo "No metadata changes to commit."
           else
             VERSION="${{ github.event.inputs.source_tag }}"
-            git commit -m "Publish eden-memory ${VERSION}"
+            git commit -m "Publish eden-memory monorepo ${VERSION}"
             for attempt in 1 2 3; do
               echo "Attempt $attempt: rebasing onto origin/main and pushing..."
               git fetch origin main
@@ -113,9 +107,14 @@ jobs:
           token: ${{ steps.token.outputs.token }}
           tag: ${{ github.event.inputs.source_tag }}
           commit: ${{ steps.publish.outputs.sha }}
-          name: eden-memory ${{ github.event.inputs.source_tag }}
+          name: eden-memory monorepo ${{ github.event.inputs.source_tag }}
+          body: |
+            This release ships three binaries from the eden-memory monorepo:
+            - `eden-memory` — the full CLI with MCP server, memory tools, sync, and pairing.
+            - `eden-relay` — a dedicated, lightweight relay server.
+            - `eden-team` — a headless ATP supervisor.
           generateReleaseNotes: true
-          artifacts: "public-binaries/eden-memory-*,eden-memory-skills.tar.gz"
+          artifacts: "public-binaries/eden-memory-*,public-binaries/eden-relay-*,public-binaries/eden-team-*,eden-memory-skills.tar.gz"
           artifactErrorsFailBuild: true
           makeLatest: true
           allowUpdates: true
