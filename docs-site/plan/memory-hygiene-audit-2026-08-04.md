@@ -34,13 +34,19 @@ The `eden-releases` workspace contains **502 non-deleted eden-memory records** w
 | --- | --- | --- |
 | `claude-code-cli` | 412 | 82.1 % |
 | `claude-code-cli-main` | 40 | 8.0 % |
-| `atp-run` | 15 | 3.0 % |
+| `atp-run` (legacy, see note) | 15 | 3.0 % |
 | `claude-code-cli-researcher` | 8 | 1.6 % |
 | `claude-code-cli-dispatcher` | 6 | 1.2 % |
 | `dispatcher` | 6 | 1.2 % |
 | `claude-code-cli-builder` | 7 | 1.4 % |
 | `claude-code-cli-verifier` | 5 | 1.0 % |
 | `claude-code-cli-archivist` | 3 | 0.6 % |
+
+
+> **Note:** The `atp-run` agent ID is legacy. The headless ATP supervisor
+> previously lived in `eden-releases/agentic-team-protocol/deployable/` and was
+> removed on 2026-08-05. The same functionality is now provided by `eden-team`
+> in `/home/yakov/git/eden-memory`. New records should use agent ID `eden-team`.
 
 ### By `record_type`
 
