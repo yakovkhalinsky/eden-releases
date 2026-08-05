@@ -107,9 +107,9 @@ jobs:
           token: ${{ steps.token.outputs.token }}
           tag: ${{ github.event.inputs.source_tag }}
           commit: ${{ steps.publish.outputs.sha }}
-          name: eden-memory monorepo ${{ github.event.inputs.source_tag }}
+          name: Eden ${{ github.event.inputs.source_tag }}
           body: |
-            This release ships three binaries from the eden-memory monorepo:
+            This release ships three binaries from the Eden project:
             - `eden-memory` — the full CLI with MCP server, memory tools, sync, and pairing.
             - `eden-relay` — a dedicated, lightweight relay server.
             - `eden-team` — a headless ATP supervisor.
