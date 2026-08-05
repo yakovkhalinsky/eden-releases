@@ -43,14 +43,14 @@ For example, passing `--db local.db` on the command line overrides `EDEN_DB_PATH
 
 If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls back to these environment variables. This is useful for project-scoped Claude Code processes that always tag memories with the current workspace.
 
-## Variables used by the agentic-team-protocol deployable
+## Variables used by the eden-team ATP supervisor
 
 The headless ATP supervisor reads these additional variables when running eden-memory under the hood:
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
 | `EDEN_MEMORY_DB` | Path to the eden-memory SQLite database. | `~/.eden-memory/default.db` |
-| `EDEN_AGENT_ID` | Agent identity for records. | `atp-run` |
+| `EDEN_AGENT_ID` | Agent identity for records. | `eden-team` |
 | `EDEN_USER_ID` | User identity for records. | `$USER` |
 | `EDEN_ORG_ID` | Organization scope for records. | none |
 | `EDEN_WORKSPACE_ID` | Workspace scope for records. | none |
