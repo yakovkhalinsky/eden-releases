@@ -4,7 +4,7 @@ description: Local-first memory for AI agents. Install one binary, connect any M
 content_type: concept
 template: splash
 hero:
-  tagline: Local-first memory for AI agents. One binary. One SQLite store. Any MCP client.
+  tagline: Local-first memory for AI agents. Three binaries. One SQLite store. Any MCP client.
   actions:
     - text: Get started
       link: /eden-memory/getting-started/
@@ -16,7 +16,13 @@ hero:
 
 ## What it is
 
-`eden-memory` is a single Go binary that gives your AI agent persistent memory. It bundles its own Python embedding runtime and stores memories with 256-dimensional embeddings in a local SQLite database. Your agent connects to it over MCP stdio.
+`eden-memory` is the flagship binary of the **eden-memory monorepo**, a family of Go binaries that give your AI agents persistent memory, relay infrastructure, and headless team orchestration:
+
+- **`eden-memory`** — the full CLI with an MCP server, memory tools, sync/pairing, and a legacy `relay-server` subcommand.
+- **`eden-relay`** — a dedicated, lightweight relay server for multi-device sync.
+- **`eden-team`** — a headless ATP supervisor that drives the Agentic Team Protocol by spawning role subagents and writing durable lifecycle records.
+
+`eden-memory` bundles its own Python embedding runtime and stores memories with 256-dimensional embeddings in a local SQLite database. Your agent connects to it over MCP stdio.
 
 ## How it works
 

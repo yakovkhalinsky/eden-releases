@@ -43,6 +43,20 @@ For example, passing `--db local.db` on the command line overrides `EDEN_DB_PATH
 
 If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls back to these environment variables. This is useful for project-scoped Claude Code processes that always tag memories with the current workspace.
 
+## Relay variables (eden-relay and `eden-memory relay-server`)
+
+The dedicated `eden-relay` binary and the `eden-memory relay-server` subcommand read these variables:
+
+| Variable | Maps to | Default | Description |
+|----------|---------|---------|-------------|
+| `EDEN_RELAY_DB` | `--db` (`eden-relay`) / `--relay-db` (`eden-memory relay-server`) | none | Relay SQLite database path. Required to start the relay. |
+| `EDEN_RELAY_ADDR` | `--addr` | `:8787` | Listen address for the relay HTTP server. |
+| `EDEN_RELAY_REQUIRE_PER_DEVICE_AUTH` | `--require-per-device-auth` | `0` / unset | When set to `1`, reject legacy account-derived auth tokens and require per-device auth secrets. |
+| `EDEN_TLS_CERT` | `--tls-cert` | none | TLS certificate path. Must be supplied with `EDEN_TLS_KEY`. |
+| `EDEN_TLS_KEY` | `--tls-key` | none | TLS private-key path. Must be supplied with `EDEN_TLS_CERT`. |
+
+`EDEN_LOG_LEVEL` and `EDEN_LOG_FORMAT` also apply to the relay output.
+
 ## Variables used by the eden-team ATP supervisor
 
 The headless ATP supervisor reads these additional variables when running eden-memory under the hood:
