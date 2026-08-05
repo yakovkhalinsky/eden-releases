@@ -226,7 +226,7 @@ fi
 echo ""
 echo "In each project where you will use ATP, run:"
 echo "  cd ~/your-project"
-echo "  eden-memory --db ~/.eden-memory/default.db setup claude"
+echo "  eden-memory setup claude"
 echo "  curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local"
 echo ""
 echo "Restart Claude Code to load the new agents and commands."

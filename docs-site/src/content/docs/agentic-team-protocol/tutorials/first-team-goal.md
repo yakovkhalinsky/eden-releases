@@ -38,7 +38,7 @@ The ATP agents need the eden-memory MCP server to write and read lifecycle recor
 
 ```bash
 cd ~/your-sandbox-repo
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 ```
 
 This configures the current directory in `~/.claude.json` as an MCP project and installs the `/eden-*` fallback slash commands. If `eden-memory` is not on your `PATH`, use the full path to the binary.

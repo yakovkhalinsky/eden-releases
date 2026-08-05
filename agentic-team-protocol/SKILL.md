@@ -35,7 +35,7 @@ A role-based agent team protocol implemented as Claude Code primitives (skills, 
 3. In every project where you will use ATP, wire the Eden-memory MCP server:
    ```bash
    cd ~/your-project
-   eden-memory --db ~/.eden-memory/default.db setup claude
+   eden-memory setup claude
    ```
 4. Install the project-local ATP templates:
    ```bash

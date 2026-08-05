@@ -41,7 +41,7 @@ In each project where you will use ATP, wire the Eden-memory MCP server first:
 
 ```bash
 cd ~/my-project
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 ```
 
 Restart Claude Code after installing (`/exit`, then reopen).
@@ -52,7 +52,7 @@ To install the global primitives *and* opt a project in with a `CLAUDE.md` file 
 
 ```bash
 cd ~/my-project
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local --claude-md
 ```
 
@@ -76,7 +76,7 @@ cp agents/*.md ~/.claude/agents/
 cp commands/*.md ~/.claude/commands/
 
 # 3. In a project that wants to opt in, wire the Eden-memory MCP server:
-eden-memory --db ~/.eden-memory/default.db setup claude
+eden-memory setup claude
 
 # 4. Copy the project-local templates:
 mkdir -p .claude/skills/agentic-team-protocol
