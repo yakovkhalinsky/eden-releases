@@ -4,8 +4,6 @@ description: Hub page for connecting eden-memory to Claude Code, Cursor, Hermes,
 content_type: concept
 ---
 
-# Connect your MCP client
-
 eden-memory speaks the Model Context Protocol (MCP) over stdio. Once you add it as a server, your agent can call `eden_remember`, `eden_recall`, `eden_search`, and the rest of the eden-memory tool set.
 
 ## Per-client setup

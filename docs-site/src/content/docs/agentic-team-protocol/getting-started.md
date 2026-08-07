@@ -4,8 +4,6 @@ description: Install the Agentic Team Protocol, ratify a project charter, and ru
 content_type: tutorial
 ---
 
-# Quick start
-
 This tutorial gets the Agentic Team Protocol installed, a project charter ratified, and a trivial first goal dispatched in under ten minutes.
 
 > [!TIP]

@@ -46,3 +46,13 @@ docs-site/public/agentic-team-protocol/
 
 # Stale local ATP hand-off artifacts; the canonical hand-off records live in Eden-memory.
 .agentic-handoff/
+
+# Impeccable skill local artifacts that are regenerated during design work.
+.impeccable/config.local.json
+.impeccable/direction-payload.json
+.impeccable/hook.cache.json
+.impeccable/screenshots/
+.impeccable/sketches/
+
+# Claude Code skill hook installed locally per session.
+.github/hooks/impeccable.json

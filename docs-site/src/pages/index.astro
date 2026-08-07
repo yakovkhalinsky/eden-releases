@@ -1,198 +1,296 @@
 ---
 // Landing page for 0d3sa.com.
-// ATP-first product entry point. Detailed install steps live in Starlight docs.
+// Visual world: Production Call Sheet — the docs are a working call sheet:
+// roles, stages, and handoffs laid out for the day's shoot.
+// Mode: Read (docs/reference entry point).
 
 const edenMemoryInstall = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
 const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh';
+const setupCmd = 'eden-memory setup claude';
+const localCmd = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local';
+const charterCmd = '/team-charter';
+const teamCmd = '/team <your first goal>';
+const statusCmd = '/team-status';
+
+const roles = [
+  { name: 'Dispatcher', duty: 'Assigns goals and routes work', status: 'active' },
+  { name: 'Researcher', duty: 'Investigates options and reports', status: 'active' },
+  { name: 'Builder', duty: 'Implements the chosen approach', status: 'active' },
+  { name: 'Verifier', duty: 'Reviews for correctness and charter compliance', status: 'active' },
+  { name: 'Archivist', duty: 'Records lifecycle and manages memory hygiene', status: 'active' },
+  { name: 'Runtime', duty: 'Executes operational actions', status: 'restricted' },
+];
+
+const stages = [
+  { id: '01', name: 'Goal receipt', owner: 'Dispatcher', desc: 'Capture the request and constraints.' },
+  { id: '02', name: 'Routing and assignment', owner: 'Dispatcher', desc: 'Assign target role, owner, deadline, success criteria.' },
+  { id: '03', name: 'Context gathering', owner: 'Researcher', desc: 'Record known facts and options considered.' },
+  { id: '04', name: 'Action', owner: 'Builder / Runtime', desc: 'Execute and record what was done.' },
+  { id: '05', name: 'Verification', owner: 'Verifier', desc: 'Write green, red, or blocked verdict.' },
+  { id: '06', name: 'Recording and archival', owner: 'Archivist', desc: 'Ensure final outcome and skill updates are stored.' },
+  { id: '07', name: 'Hand-off or closure', owner: 'Archivist', desc: 'Confirm records are complete and transfer ownership if needed.' },
+];
+
+const components = [
+  {
+    tag: 'Memory & sync',
+    name: 'eden-memory',
+    desc: 'Local-first SQLite memory with vector embeddings, MCP server, and encrypted multi-device sync.',
+    links: [
+      { label: 'Quick start', href: '/eden-memory/getting-started/' },
+      { label: 'Tools', href: '/eden-memory/reference/tools/' },
+      { label: 'Sync', href: '/eden-memory/multi-device-sync/' },
+    ],
+    href: '/eden-memory/',
+  },
+  {
+    tag: 'Relay server',
+    name: 'eden-relay',
+    desc: 'Self-hosted relay for multi-device sync. TLS, systemd, and VPS hardening guides.',
+    links: [
+      { label: 'Run a relay', href: '/eden-relay/how-to/run-relay-server/' },
+      { label: 'Deploy on VPS', href: '/eden-relay/how-to/deploy-public-vps/' },
+    ],
+    href: '/eden-relay/',
+  },
+  {
+    tag: 'Headless supervisor',
+    name: 'eden-team',
+    desc: 'Headless ATP supervisor for CI, cron, or automated agent-team workflows.',
+    links: [
+      { label: 'Set up headless', href: '/eden-team/tutorials/headless-supervisor/' },
+    ],
+    href: '/eden-team/',
+  },
+];
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>0d3sa — installable agent teams for Claude Code</title>
-  <meta name="description" content="Agentic Team Protocol: installable, role-based agent teams for Claude Code. Durable memory, sync, and headless orchestration included." />
+  <title>0d3sa — Agentic Team Protocol</title>
+  <meta name="description" content="Installable, role-based agent teams for Claude Code. Seven-stage lifecycle, durable memory records, and verifiable hand-offs." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Saira:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <!--
+    THESIS: The site foregrounds the ATP install/setup path: copyable commands, roles, and lifecycle, all on a dark production-board surface.
+    OWN-WORLD: Dark board ground (#0d1117), panel fills (#21262d), hairline borders (#30363d), paper text (#c9d1d9), alert coral for primary actions (#f78166), action blue for links (#58a6ff), status chips with dots. Chakra Petch for display, Saira for body, JetBrains Mono for commands.
+    STORY: A developer lands, copies the install commands, sees who does what, and understands the lifecycle before scrolling.
+    FIRST VIEWPORT: Left-aligned production title, lead, and two actions at top; below, the install steps panel is the dominant block; role badges sit beneath as a scan line.
+    FORM: Production Call Sheet (#7 of 7 grounded directions; seed key 05d59870).
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
+  -->
+
   <header class="site-header">
     <div class="wrap nav">
-      <a href="/" class="brand">
-        <span class="brand-mark">0</span>
-        <span>0d3sa</span>
+      <a href="/" class="brand" aria-label="0d3sa home">
+        <span class="brand-mark" aria-hidden="true">0</span>
+        <span class="brand-name">0d3sa</span>
       </a>
-      <nav class="nav-links">
+      <nav class="nav-links" aria-label="Primary">
         <a href="/docs/">Docs</a>
         <a href="https://github.com/yakovkhalinsky/eden-releases" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="/eden-memory/reference/downloads/" class="btn btn-primary">Download</a>
+        <a href="/eden-memory/reference/downloads/" class="btn btn-sm">Downloads</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="wrap">
-        <div class="pill">
-          <span class="dot"></span>
-          <span>Open source · Apache-2.0 · macOS + Linux</span>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-wrap">
+        <div class="production-meta">
+          <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Production ready</span>
+          <span class="production-id">ATP-001</span>
         </div>
-        <h1>Installable agent teams for Claude Code</h1>
+        <h1 id="hero-title">AGENTIC TEAM PROTOCOL</h1>
         <p class="lead">
-          The Agentic Team Protocol gives Claude Code a structured, role-based team workflow with a seven-stage lifecycle and durable memory. eden-memory, eden-relay, and eden-team are the components that make it work.
+          Installable, role-based agent teams for Claude Code. Dispatch goals, gather context, build, verify, and hand off — with every decision recorded in local durable memory.
         </p>
         <div class="hero-actions">
-          <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary btn-lg">Install ATP</a>
-          <a href="/docs/" class="btn btn-secondary btn-lg">Explore components</a>
+          <a href="#install-steps" class="btn btn-primary">Install and set up</a>
+          <a href="/agentic-team-protocol/getting-started/" class="btn btn-secondary">Full quick start</a>
         </div>
       </div>
     </section>
 
-    <section class="section install-section">
+    <section class="call-sheet" id="install-steps" aria-labelledby="install-steps-title">
       <div class="wrap">
-        <div class="install-card">
-          <div class="install-head">
-            <div>
-              <span class="install-label">Install in two commands</span>
-              <p class="install-hint">No package manager required. Each binary is a single static file.</p>
-            </div>
+        <div class="sheet-head">
+          <div class="sheet-title-group">
+            <h2 id="install-steps-title">Install and run</h2>
+            <p class="sheet-subtitle">Install ATP in a project, ratify the charter, and dispatch the first goal.</p>
           </div>
-          <div class="install-steps">
-            <div class="install-step">
-              <span class="step-badge">1</span>
-              <code class="mono install-cmd">{edenMemoryInstall}</code>
-              <span class="step-caption">Install the memory & sync layer</span>
-            </div>
-            <div class="install-step">
-              <span class="step-badge">2</span>
-              <code class="mono install-cmd">{atpInstall}</code>
-              <span class="step-caption">Install the Agentic Team Protocol</span>
-            </div>
+          <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Ready</span>
+        </div>
+
+        <div class="sheet-body sheet-body-two-col">
+          <div class="sheet-block sheet-block-wide">
+            <div class="block-label">Install and configure</div>
+            <ol class="step-list">
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">1</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd">{edenMemoryInstall}</code>
+                    <button class="copy-btn" type="button" data-cmd={edenMemoryInstall} aria-label="Copy install command">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </div>
+                  <span class="step-caption">Install eden-memory (memory, sync, MCP server).</span>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">2</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd">{atpInstall}</code>
+                    <button class="copy-btn" type="button" data-cmd={atpInstall} aria-label="Copy ATP install command">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </div>
+                  <span class="step-caption">Install ATP global primitives into ~/.claude/.</span>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">3</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd">cd ~/my-project && {setupCmd}</code>
+                    <button class="copy-btn" type="button" data-cmd={`cd ~/my-project
+${setupCmd}`} aria-label="Copy setup command">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </div>
+                  <span class="step-caption">Wire the eden-memory MCP server for this project.</span>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">4</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd">{localCmd}</code>
+                    <button class="copy-btn" type="button" data-cmd={localCmd} aria-label="Copy local install command">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </div>
+                  <span class="step-caption">Install project-local charter and config templates.</span>
+                </div>
+              </li>
+            </ol>
           </div>
-          <p class="install-more">
-            Then run <code>eden-memory setup claude</code> in your project and restart Claude Code. Also available: <a href="/eden-memory/reference/downloads/">downloads and checksums</a>.
-          </p>
+
+          <div class="sheet-block sheet-block-right">
+            <div class="block-label">Run</div>
+            <ol class="step-list" start="5">
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">5</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd cmd-inline">{charterCmd}</code>
+                    <span class="step-note">after editing .claude/agentic-team-charter.md</span>
+                  </div>
+                  <span class="step-caption">Ratify the project charter in durable memory.</span>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">6</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd cmd-inline">{teamCmd}</code>
+                    <span class="step-note">replace with your first goal</span>
+                  </div>
+                  <span class="step-caption">Dispatch the first goal to the team.</span>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-mark" aria-hidden="true">7</div>
+                <div class="step-content">
+                  <div class="step-row">
+                    <code class="cmd cmd-inline">{statusCmd}</code>
+                  </div>
+                  <span class="step-caption">Check where each goal stands.</span>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="sheet-foot">
+          <p>Restart Claude Code completely after step 2 (<code>/exit</code>, then reopen). Full walkthrough: <a href="/agentic-team-protocol/getting-started/">Quick start</a>.</p>
         </div>
       </div>
     </section>
 
-    <section class="section products-section">
+    <section class="section roles-section" aria-labelledby="roles-title">
       <div class="wrap">
-        <h2 class="section-title">What you get</h2>
-        <div class="product-grid">
-          <a href="/agentic-team-protocol/" class="product-card product-card-primary">
-            <div class="product-meta">
-              <span class="product-tag">Installable product</span>
-            </div>
-            <h3>Agentic Team Protocol</h3>
-            <p>Role-based agent teams inside Claude Code. Dispatcher, Researcher, Builder, Verifier, Archivist, and Runtime with a seven-stage lifecycle and durable memory records.</p>
-            <ul class="feature-list">
-              <li>Structured role-based collaboration</li>
-              <li>Mandatory Verifier gate before closure</li>
-              <li>Resumable goals across sessions</li>
-            </ul>
-            <span class="product-link">Get started →</span>
-          </a>
-
-          <a href="/eden-memory/" class="product-card">
-            <div class="product-meta">
-              <span class="product-tag">Memory & sync component</span>
-            </div>
-            <h3>eden-memory</h3>
-            <p>The durable memory layer for ATP. Local SQLite + 256-dim vector embeddings, semantic/keyword recall, optional encrypted multi-device sync.</p>
-            <ul class="feature-list">
-              <li>Local-first SQLite store</li>
-              <li>Semantic and keyword search</li>
-              <li>MCP server for any stdio client</li>
-            </ul>
-            <span class="product-link">Read docs →</span>
-          </a>
-
-          <a href="/eden-relay/" class="product-card">
-            <div class="product-meta">
-              <span class="product-tag">Infrastructure component</span>
-            </div>
-            <h3>eden-relay</h3>
-            <p>Self-hosted relay server for encrypted multi-device sync. Lightweight, no MCP or memory subcommands.</p>
-            <ul class="feature-list">
-              <li>Self-hosted fleet relay</li>
-              <li>TLS, systemd, VPS hardening guides</li>
-              <li>Devices stay opaque to the relay</li>
-            </ul>
-            <span class="product-link">Read docs →</span>
-          </a>
-
-          <a href="/eden-team/" class="product-card">
-            <div class="product-meta">
-              <span class="product-tag">Infrastructure component</span>
-            </div>
-            <h3>eden-team</h3>
-            <p>Headless ATP supervisor for CI, cron, or automated agent-team workflows. Spawns role subagents and writes durable lifecycle records.</p>
-            <ul class="feature-list">
-              <li>Headless goal execution</li>
-              <li>JSON output for automation</li>
-              <li>Resume interrupted goals</li>
-            </ul>
-            <span class="product-link">Read docs →</span>
-          </a>
+        <div class="section-head">
+          <h2 id="roles-title">Team roles</h2>
+          <p class="section-lead">Six roles, each with a scope and a decision right. Runtime is gated until a charter authorises it.</p>
         </div>
+        <ul class="role-grid" role="list">
+          {roles.map(role => (
+            <li class="role-card">
+              <div class="role-head">
+                <span class="role-name">{role.name}</span>
+                <span class={`status-chip ${role.status === 'restricted' ? 'restricted' : 'ready'}`}>
+                  <span class="status-dot" aria-hidden="true"></span>{role.status}
+                </span>
+              </div>
+              <p class="role-duty">{role.duty}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
 
-    <section class="section section-alt">
+    <section class="section stages-section" aria-labelledby="stages-title">
       <div class="wrap">
-        <h2 class="section-title">Three binaries, one release</h2>
-        <p class="section-lead">Each release ships three single-file Go binaries. You usually install all three through the ATP installer; pick the component docs for deep configuration.</p>
-        <div class="binary-grid">
-          <div class="binary-card">
-            <div class="binary-icon">M</div>
-            <div class="binary-body">
-              <h3>eden-memory</h3>
-              <p>Memory, MCP server, sync, pairing, and the legacy relay-server subcommand.</p>
-            </div>
-          </div>
-          <div class="binary-card">
-            <div class="binary-icon">R</div>
-            <div class="binary-body">
-              <h3>eden-relay</h3>
-              <p>Dedicated, lightweight relay server for multi-device sync.</p>
-            </div>
-          </div>
-          <div class="binary-card">
-            <div class="binary-icon">T</div>
-            <div class="binary-body">
-              <h3>eden-team</h3>
-              <p>Headless ATP supervisor for automated agent-team workflows.</p>
-            </div>
-          </div>
+        <div class="section-head">
+          <h2 id="stages-title">Seven-stage lifecycle</h2>
+          <p class="section-lead">Every goal moves through the same stages. Each stage produces a record in eden-memory.</p>
         </div>
-        <div class="downloads-cta">
-          <a href="/eden-memory/reference/downloads/" class="btn btn-secondary">See downloads and checksums →</a>
-        </div>
+        <ol class="stage-lanes" role="list">
+          {stages.map((stage, i) => (
+            <li class="stage-card">
+              <div class="stage-id" aria-hidden="true">{stage.id}</div>
+              <div class="stage-body">
+                <div class="stage-meta">
+                  <span class="stage-owner">{stage.owner}</span>
+                  {i === stages.length - 1 && <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Closure</span>}
+                </div>
+                <h3 class="stage-name">{stage.name}</h3>
+                <p class="stage-desc">{stage.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
 
-    <section class="section" id="which-one">
+    <section class="section components-section" aria-labelledby="components-title">
       <div class="wrap">
-        <div class="section-title-with-link">
-          <h2 class="section-title">Which one do I need?</h2>
-          <a href="#which-one" class="anchor-link" aria-label="Link to Which one do I need?">#</a>
+        <div class="section-head">
+          <h2 id="components-title">Components</h2>
+          <p class="section-lead">Three single-file binaries power the protocol. Install ATP and you get all three; dive deeper when you need a specific part.</p>
         </div>
-        <div class="decision-grid">
-          <div class="decision-card">
-            <h3>Want a team workflow in Claude Code?</h3>
-            <p>Install <a href="/agentic-team-protocol/">Agentic Team Protocol</a>. It wires eden-memory as the durable substrate and gives you structured role-based collaboration.</p>
-          </div>
-          <div class="decision-card">
-            <h3>Just want memory or sync?</h3>
-            <p>Go straight to the <a href="/eden-memory/">eden-memory</a> component docs. You can add ATP later without reinstalling.</p>
-          </div>
-          <div class="decision-card decision-answer">
-            <h3>Short answer</h3>
-            <p>Install ATP. It brings eden-memory with it. Add eden-relay only if you need multi-device sync, and eden-team only for headless automation.</p>
-          </div>
+        <div class="component-grid">
+          {components.map(c => (
+            <a href={c.href} class="component-card">
+              <div class="component-meta">
+                <span class="component-tag">{c.tag}</span>
+              </div>
+              <h3 class="component-name">{c.name}</h3>
+              <p class="component-desc">{c.desc}</p>
+              <div class="component-links">
+                {c.links.map(link => <span class="component-link">{link.label}</span>)}
+              </div>
+            </a>
+          ))}
         </div>
       </div>
     </section>
@@ -200,16 +298,16 @@ const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.s
 
   <footer class="site-footer">
     <div class="wrap footer-row">
-      <span>© 2026 0d3sa. Open source under Apache-2.0.</span>
-      <span class="footer-links">
+      <span class="footer-copy">© 2026 0d3sa. Open source under Apache-2.0.</span>
+      <nav class="footer-links" aria-label="Footer">
         <a href="https://github.com/yakovkhalinsky/eden-releases">GitHub</a>
-        <span class="sep">·</span>
+        <span class="sep" aria-hidden="true">·</span>
         <a href="/docs/">Docs</a>
-        <span class="sep">·</span>
+        <span class="sep" aria-hidden="true">·</span>
         <a href="/eden-memory/reference/downloads/">Downloads</a>
-        <span class="sep">·</span>
+        <span class="sep" aria-hidden="true">·</span>
         <a href="https://github.com/yakovkhalinsky/eden-releases/releases">Releases</a>
-      </span>
+      </nav>
     </div>
   </footer>
 
@@ -222,9 +320,13 @@ const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.s
           if (!text) return;
           if (navigator.clipboard) {
             navigator.clipboard.writeText(text).then(function () {
-              var old = btn.textContent;
-              btn.textContent = 'Copied';
-              setTimeout(function () { btn.textContent = old; }, 1200);
+              var old = btn.innerHTML;
+              btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+              btn.setAttribute('aria-label', 'Copied');
+              setTimeout(function () {
+                btn.innerHTML = old;
+                btn.setAttribute('aria-label', 'Copy command');
+              }, 1400);
             });
           }
         });
@@ -236,37 +338,56 @@ const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.s
 
 <style>
   :root {
-    --bg: #0b0d10;
-    --bg-elevated: #11141a;
-    --bg-card: #151922;
-    --bg-warm: #18141a;
-    --text: #f0f2f6;
-    --text-muted: #8b94a7;
-    --border: #232834;
-    --accent: #2d6a4f;
-    --accent-600: #40916c;
-    --accent-glow: rgba(45, 106, 79, 0.18);
-    --amber: #f2b65a;
-    --amber-soft: rgba(242, 182, 90, 0.12);
-    --green: #5df0a8;
-    --radius: 14px;
-    --max: 980px;
+    --board: #0d1117;
+    --panel: #161b22;
+    --panel-raised: #21262d;
+    --border: #30363d;
+    --border-subtle: #21262d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --alert: #f78166;
+    --alert-soft: rgba(247, 129, 102, 0.12);
+    --action: #58a6ff;
+    --action-soft: rgba(88, 166, 255, 0.12);
+    --ready: #3fb950;
+    --restricted: #d29922;
+    --blocked: #f85149;
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 16px;
+    --max: 1100px;
+    --display: Chakra Petch, Saira, -apple-system, BlinkMacSystemFont, sans-serif;
+    --body: Saira, -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: JetBrains Mono, ui-monospace, monospace;
   }
+
+  *, *::before, *::after { box-sizing: border-box; }
 
   html, body {
     margin: 0;
     padding: 0;
-    font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--body);
     color: var(--text);
-    background: var(--bg);
+    background: var(--board);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
-  .mono { font-family: JetBrains Mono, ui-monospace, monospace; }
-
-  a { color: var(--accent); text-decoration: none; }
+  a {
+    color: var(--action);
+    text-decoration: none;
+  }
   a:hover { text-decoration: underline; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--panel-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+  }
 
   .wrap {
     max-width: var(--max);
@@ -274,36 +395,41 @@ const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.s
     padding: 0 24px;
   }
 
+  /* Header */
   .site-header {
     border-bottom: 1px solid var(--border);
-    background: var(--bg);
+    background: var(--board);
+    position: sticky;
+    top: 0;
+    z-index: 50;
   }
 
   .nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 64px;
+    height: 60px;
   }
 
   .brand {
-    font-weight: 800;
-    font-size: 1.15rem;
     display: flex;
     align-items: center;
     gap: 10px;
     color: var(--text);
+    font-weight: 700;
+    font-size: 1.05rem;
   }
+  .brand:hover { text-decoration: none; }
 
   .brand-mark {
     width: 28px;
     height: 28px;
-    border-radius: 8px;
-    background: var(--accent);
-    color: var(--bg);
+    border-radius: var(--radius-sm);
+    background: var(--alert);
+    color: var(--board);
     display: grid;
     place-items: center;
-    font-family: JetBrains Mono, monospace;
+    font-family: var(--mono);
     font-size: 0.85rem;
     font-weight: 700;
   }
@@ -315,379 +441,512 @@ const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.s
     font-size: 0.88rem;
   }
 
-  .nav-links a { color: var(--text-muted); font-weight: 500; }
+  .nav-links a {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
   .nav-links a:hover { color: var(--text); text-decoration: none; }
 
   .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 10px 18px;
-    border-radius: 10px;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all .12s ease;
+    transition: background-color .12s ease, border-color .12s ease, color .12s ease;
     text-decoration: none;
+    line-height: 1;
   }
+  .btn:hover { text-decoration: none; }
 
-  .btn-primary { background: var(--accent); color: var(--text); }
-  .btn-primary:hover { background: var(--accent-600); text-decoration: none; }
+  .btn-primary {
+    background: var(--alert);
+    color: var(--board);
+  }
+  .btn-primary:hover { background: #ff9a80; }
 
   .btn-secondary {
     background: transparent;
     border-color: var(--border);
     color: var(--text);
   }
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+  .btn-secondary:hover { border-color: var(--action); color: var(--action); }
 
-  .btn-lg { padding: 14px 24px; font-size: 1rem; }
+  .btn-sm {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    background: var(--panel-raised);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .btn-sm:hover { border-color: var(--alert); color: var(--alert); background: var(--panel-raised); }
 
-  .hero { padding: 72px 0 48px; text-align: center; }
-
-  .pill {
+  /* Status chips */
+  .status-chip {
     display: inline-flex;
-    gap: 8px;
     align-items: center;
-    padding: 6px 14px;
+    gap: 6px;
+    padding: 4px 10px;
     border-radius: 999px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 0.76rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 1px solid transparent;
+    white-space: nowrap;
   }
 
-  .pill .dot {
-    width: 7px;
-    height: 7px;
+  .status-chip.ready {
+    background: rgba(63, 185, 80, 0.12);
+    color: var(--ready);
+    border-color: rgba(63, 185, 80, 0.25);
+  }
+
+  .status-chip.restricted {
+    background: rgba(210, 153, 34, 0.12);
+    color: var(--restricted);
+    border-color: rgba(210, 153, 34, 0.25);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: var(--green);
+    background: currentColor;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .hero-wrap {
+    max-width: 860px;
+  }
+
+  .production-meta {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+
+  .production-id {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   h1 {
-    font-family: Inter, sans-serif;
-    font-size: clamp(2.6rem, 6vw, 4.2rem);
-    line-height: 1.08;
-    font-weight: 800;
+    font-family: var(--display);
+    font-size: clamp(2.6rem, 7vw, 4.8rem);
+    line-height: 0.95;
+    font-weight: 700;
     letter-spacing: -0.03em;
-    margin: 0 0 12px;
+    margin: 0 0 16px;
+    color: var(--text);
   }
 
   .lead {
     font-size: clamp(1.05rem, 1.8vw, 1.25rem);
     color: var(--text-muted);
-    max-width: 720px;
-    margin: 0 auto 28px;
+    max-width: 680px;
+    margin: 0 0 28px;
+    line-height: 1.55;
   }
 
   .hero-actions {
     display: flex;
     gap: 14px;
-    justify-content: center;
     flex-wrap: wrap;
   }
 
-  .section { padding: 64px 0; }
-  .section-alt { background: var(--bg-warm); }
-
-  .install-section { padding-top: 24px; }
-
-  .install-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px;
-    max-width: 760px;
-    margin: 0 auto;
-    box-shadow: 0 0 60px var(--accent-glow);
+  /* Call sheet */
+  .call-sheet {
+    padding: 40px 0 64px;
   }
 
-  .install-head {
+  .sheet-head {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 18px;
+    align-items: flex-end;
+    gap: 18px;
+    margin-bottom: 22px;
     flex-wrap: wrap;
   }
 
-  .install-label {
-    display: block;
+  .sheet-title-group h2 {
+    font-family: var(--display);
+    font-size: 1.6rem;
     font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 4px;
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
   }
 
-  .install-hint {
+  .sheet-subtitle {
     color: var(--text-muted);
-    font-size: 0.88rem;
     margin: 0;
+    font-size: 0.95rem;
   }
 
-  .install-steps {
+  .sheet-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .sheet-body-two-col .sheet-block-wide {
+    grid-column: 1;
+  }
+
+  .sheet-body-two-col .sheet-block-right {
+    grid-column: 2;
+  }
+
+  .sheet-block {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    min-width: 0;
+  }
+
+  .block-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .step-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-bottom: 14px;
+    gap: 16px;
   }
 
-  .install-step {
-    display: grid;
-    grid-template-columns: auto 1fr;
+  .step {
+    display: flex;
     gap: 12px;
-    align-items: center;
+    align-items: flex-start;
   }
 
-  .step-badge {
-    grid-row: span 2;
-    width: 28px;
-    height: 28px;
+  .step-mark {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: var(--accent);
-    color: var(--text);
+    background: var(--panel-raised);
+    border: 1px solid var(--border);
     display: grid;
     place-items: center;
-    font-size: 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
     font-weight: 700;
+    color: var(--text-muted);
+    margin-top: 2px;
   }
 
-  .install-cmd {
+  .step-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .step-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .cmd {
+    flex: 1 1 auto;
     display: block;
-    background: var(--bg-elevated);
+    background: var(--board);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 0.82rem;
     color: var(--text);
     overflow-x: auto;
-    white-space: nowrap;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .cmd-inline {
+    width: auto;
+    flex: 0 1 auto;
+    max-width: 100%;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   .step-caption {
+    display: block;
     color: var(--text-muted);
     font-size: 0.82rem;
+    line-height: 1.4;
   }
 
-  .install-more {
-    color: var(--text-muted);
-    font-size: 0.88rem;
-    margin: 0;
+  .step-note {
+    color: var(--text-dim);
+    font-size: 0.76rem;
+    font-style: italic;
+    grid-column: 1 / -1;
   }
 
   .copy-btn {
-    background: var(--bg-elevated);
-    border: 1px solid var(--text-muted);
-    color: var(--text);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    background: var(--panel-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
     cursor: pointer;
-    font-weight: 700;
-    font-family: Inter, sans-serif;
+    transition: border-color .12s ease, color .12s ease;
   }
-  .copy-btn:hover { background: var(--accent-600); color: var(--text); border-color: var(--accent); }
+  .copy-btn:hover {
+    border-color: var(--alert);
+    color: var(--alert);
+  }
 
-  .section-title {
-    text-align: center;
-    font-size: 1.4rem;
-    margin-bottom: 10px;
+  .sheet-foot {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--alert-soft);
+    border: 1px solid rgba(247, 129, 102, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .sheet-foot p { margin: 0; }
+  .sheet-foot a { color: var(--alert); font-weight: 600; }
+
+  /* Sections */
+  .section {
+    padding: 64px 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .section-head {
+    margin-bottom: 32px;
+  }
+
+  .section-head h2 {
+    font-family: var(--display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
   }
 
   .section-lead {
-    text-align: center;
     color: var(--text-muted);
-    max-width: 560px;
-    margin: 0 auto 28px;
+    margin: 0;
+    max-width: 640px;
+    font-size: 0.98rem;
   }
 
-  .products-section { background: var(--bg-elevated); border-top: 1px solid var(--border); }
-
-  .product-grid {
+  /* Roles */
+  .role-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 18px;
-    max-width: 960px;
-    margin: 0 auto;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
 
-  .product-card {
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-card);
+  .role-card {
+    background: var(--panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 24px;
-    color: var(--text);
+    padding: 18px;
   }
-  .product-card:hover {
-    border-color: var(--accent);
+
+  .role-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .role-name {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .role-duty {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* Stages */
+  .stages-section {
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+  }
+
+  .stage-lanes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stage-card {
+    background: var(--board);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stage-id {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+
+  .stage-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .stage-owner {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--action);
+  }
+
+  .stage-name {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  .stage-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* Components */
+  .components-section {
+    background: var(--board);
+  }
+
+  .component-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .component-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    color: var(--text);
+    transition: border-color .12s ease;
+  }
+  .component-card:hover {
+    border-color: var(--action);
     text-decoration: none;
   }
 
-  .product-card-primary {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent) inset, 0 0 40px var(--accent-glow);
-  }
-
-  .product-meta { margin-bottom: 10px; }
-  .product-tag {
+  .component-tag {
     display: inline-block;
     padding: 4px 10px;
     border-radius: 999px;
-    background: var(--amber-soft);
-    color: var(--amber);
-    font-size: 0.72rem;
+    background: var(--action-soft);
+    color: var(--action);
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
-  .product-card h3 {
-    font-size: 1.3rem;
+  .component-name {
+    font-family: var(--display);
+    font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 10px;
-  }
-  .product-card p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 16px;
+    margin: 12px 0 8px;
   }
 
-  .feature-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 18px;
-  }
-  .feature-list li {
-    display: flex;
-    gap: 10px;
-    align-items: baseline;
+  .component-desc {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin-bottom: 8px;
-  }
-  .feature-list li::before {
-    content: "✓";
-    color: var(--green);
-    font-weight: 700;
+    margin: 0 0 16px;
+    line-height: 1.5;
+    flex: 1;
   }
 
-  .product-link {
-    color: var(--accent);
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-top: auto;
-  }
-
-  .binary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    max-width: 860px;
-    margin: 0 auto 24px;
-  }
-
-  .binary-card {
+  .component-links {
     display: flex;
-    gap: 16px;
-    background: var(--bg-card);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .component-link {
+    font-size: 0.78rem;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--panel-raised);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
-
-  .binary-icon {
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    display: grid;
-    place-items: center;
-    font-family: JetBrains Mono, monospace;
-    font-weight: 700;
-    color: var(--accent);
-    font-size: 1.1rem;
-  }
-
-  .binary-body h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-  .binary-body p {
     color: var(--text-muted);
-    font-size: 0.88rem;
-    margin: 0;
+    font-weight: 500;
   }
 
-  .downloads-cta {
-    text-align: center;
-  }
-
-  .decision-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .decision-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px;
-  }
-
-  .decision-card h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .decision-card p {
-    color: var(--text-muted);
-    font-size: 0.92rem;
-    margin: 0;
-  }
-
-  .decision-answer {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent) inset;
-  }
-
-  .section-title-with-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 28px;
-  }
-
-  .section-title-with-link .section-title {
-    margin: 0;
-  }
-
-  .anchor-link {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-decoration: none;
-    opacity: 0.6;
-  }
-  .anchor-link:hover { color: var(--accent); opacity: 1; }
-
+  /* Footer */
   .site-footer {
     border-top: 1px solid var(--border);
     padding: 32px 0;
     color: var(--text-muted);
     font-size: 0.84rem;
-    background: var(--bg);
+    background: var(--board);
   }
 
   .footer-row {
@@ -697,16 +956,32 @@ const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.s
     gap: 14px;
   }
 
-  .footer-links .sep { margin: 0 6px; color: var(--text-muted); }
+  .footer-links a { color: var(--text-muted); }
+  .footer-links a:hover { color: var(--text); }
+  .footer-links .sep { margin: 0 6px; color: var(--text-dim); }
 
-  @media (max-width: 800px) {
-    .binary-grid { grid-template-columns: 1fr; }
-    .decision-grid { grid-template-columns: 1fr; }
-    .product-grid { grid-template-columns: 1fr; }
-    .hero { padding: 56px 0 40px; }
+  /* Responsive */
+  @media (max-width: 980px) {
+    .sheet-body { grid-template-columns: 1fr; }
+    .sheet-body-two-col .sheet-block-wide,
+    .sheet-body-two-col .sheet-block-right { grid-column: auto; }
+    .role-grid { grid-template-columns: repeat(2, 1fr); }
+    .stage-lanes { grid-template-columns: repeat(2, 1fr); }
+    .component-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 40px 0 32px; }
+    .call-sheet { padding: 32px 0 48px; }
     .section { padding: 48px 0; }
+    .role-grid { grid-template-columns: 1fr; }
+    .stage-lanes { grid-template-columns: 1fr; }
+    .component-grid { grid-template-columns: 1fr; }
+    .sheet-head { align-items: flex-start; flex-direction: column; }
     .hero-actions { flex-direction: column; align-items: stretch; }
     .hero-actions .btn { justify-content: center; }
-    .install-step { grid-template-columns: auto 1fr; }
+    .step-row { flex-wrap: wrap; }
+    .cmd { min-width: 100%; }
+    .copy-btn { order: 2; }
   }
 </style>

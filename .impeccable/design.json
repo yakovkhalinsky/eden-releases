@@ -1,0 +1,156 @@
+{
+  "name": "0d3sa",
+  "description": "Production Call Sheet design system for the Agentic Team Protocol docs and site.",
+  "north_star": "The site is a working production call sheet for ATP. Every entry surface leads with the install/setup path, followed by roles, lifecycle lanes, and component reference. Dark board ground, panel fills, hairline borders, alert coral for primary actions, action blue for links, status chips with colored dots.",
+  "form": "Production Call Sheet",
+  "seed_key": "05d59870",
+  "colors": [
+    { "name": "board", "hex": "#0d1117", "usage": "page background" },
+    { "name": "panel", "hex": "#161b22", "usage": "cards, panels, sidebar" },
+    { "name": "panel-raised", "hex": "#21262d", "usage": "code blocks, inputs, buttons, raised surfaces" },
+    { "name": "border", "hex": "#30363d", "usage": "standard 1px hairline border" },
+    { "name": "border-subtle", "hex": "#21262d", "usage": "section dividers" },
+    { "name": "text", "hex": "#c9d1d9", "usage": "headings and primary text" },
+    { "name": "text-muted", "hex": "#8b949e", "usage": "captions, descriptions, footer" },
+    { "name": "text-dim", "hex": "#6e7681", "usage": "labels, IDs, metadata" },
+    { "name": "alert", "hex": "#f78166", "usage": "primary action color" },
+    { "name": "alert-high", "hex": "#ff9a80", "usage": "primary button hover" },
+    { "name": "alert-soft", "hex": "rgba(247, 129, 102, 0.12)", "usage": "alert-tinted backgrounds" },
+    { "name": "action", "hex": "#58a6ff", "usage": "links and information accents" },
+    { "name": "action-high", "hex": "#79b8ff", "usage": "link hover" },
+    { "name": "action-soft", "hex": "rgba(88, 166, 255, 0.12)", "usage": "component-tag backgrounds" },
+    { "name": "ready", "hex": "#3fb950", "usage": "ready / success status" },
+    { "name": "ready-soft", "hex": "rgba(63, 185, 80, 0.12)", "usage": "ready status chip background" },
+    { "name": "ready-border-soft", "hex": "rgba(63, 185, 80, 0.25)", "usage": "ready status chip border" },
+    { "name": "restricted", "hex": "#d29922", "usage": "gated / restricted status" },
+    { "name": "restricted-soft", "hex": "rgba(210, 153, 34, 0.12)", "usage": "restricted status chip background" },
+    { "name": "restricted-border-soft", "hex": "rgba(210, 153, 34, 0.25)", "usage": "restricted status chip border" },
+    { "name": "blocked", "hex": "#f85149", "usage": "error / danger status" },
+    { "name": "blocked-soft", "hex": "rgba(248, 81, 73, 0.08)", "usage": "danger aside background" },
+    { "name": "blocked-border-soft", "hex": "rgba(248, 81, 73, 0.35)", "usage": "danger aside border" }
+  ],
+  "typography": {
+    "display": {
+      "fontFamily": "Chakra Petch, Saira, -apple-system, BlinkMacSystemFont, sans-serif",
+      "fontWeight": 700,
+      "letterSpacing": "-0.03em"
+    },
+    "body": {
+      "fontFamily": "Saira, -apple-system, BlinkMacSystemFont, sans-serif",
+      "fontWeight": 400,
+      "lineHeight": 1.6
+    },
+    "mono": {
+      "fontFamily": "JetBrains Mono, ui-monospace, monospace",
+      "fontWeight": 400
+    },
+    "sizes": {
+      "display": "clamp(2.6rem, 7vw, 4.8rem)",
+      "display-small": "clamp(2.4rem, 6vw, 4.2rem)",
+      "headline": "1.5rem",
+      "headline-large": "1.6rem",
+      "subtitle": "1.25rem",
+      "title": "1.15rem",
+      "title-small": "1.05rem",
+      "body": "1rem",
+      "lead": "clamp(1.05rem, 1.8vw, 1.25rem)",
+      "lead-small": "clamp(1rem, 1.6vw, 1.2rem)",
+      "ui": "0.92rem",
+      "caption": "0.82rem",
+      "small": "0.78rem",
+      "label": "0.72rem",
+      "mono-small": "0.78rem",
+      "mono-tiny": "0.7rem"
+    }
+  },
+  "spacing": {
+    "maxWidth": "1100px",
+    "sectionPadding": "64px 0",
+    "gap": "16px",
+    "gapLarge": "18px",
+    "radiusSmall": "8px",
+    "radiusMedium": "12px",
+    "radiusPill": "999px"
+  },
+  "tokens": {
+    "css": ":root { --board: #0d1117; --panel: #161b22; --panel-raised: #21262d; --border: #30363d; --border-subtle: #21262d; --text: #c9d1d9; --text-muted: #8b949e; --text-dim: #6e7681; --alert: #f78166; --alert-high: #ff9a80; --alert-soft: rgba(247, 129, 102, 0.12); --action: #58a6ff; --action-high: #79b8ff; --action-soft: rgba(88, 166, 255, 0.12); --ready: #3fb950; --ready-soft: rgba(63, 185, 80, 0.12); --ready-border-soft: rgba(63, 185, 80, 0.25); --restricted: #d29922; --restricted-soft: rgba(210, 153, 34, 0.12); --restricted-border-soft: rgba(210, 153, 34, 0.25); --blocked: #f85149; --radius-sm: 8px; --radius: 12px; --radius-pill: 999px; --max: 1100px; --display: Chakra Petch, Saira, -apple-system, BlinkMacSystemFont, sans-serif; --body: Saira, -apple-system, BlinkMacSystemFont, sans-serif; --mono: JetBrains Mono, ui-monospace, monospace; }"
+  },
+  "components": {
+    "button-primary": {
+      "selector": ".btn.btn-primary",
+      "snippet": ".btn.btn-primary { background: var(--alert); color: var(--board); } .btn.btn-primary:hover { background: #ff9a80; }",
+      "notes": "Main call-to-action. Alert coral on dark board text. No border."
+    },
+    "button-secondary": {
+      "selector": ".btn.btn-secondary",
+      "snippet": ".btn.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); } .btn.btn-secondary:hover { border-color: var(--action); color: var(--action); }",
+      "notes": "Secondary action. Transparent with hairline border; hover turns action blue."
+    },
+    "button-small": {
+      "selector": ".btn.btn-sm",
+      "snippet": ".btn.btn-sm { padding: 8px 14px; font-size: 0.82rem; background: var(--panel-raised); border: 1px solid var(--border); color: var(--text); } .btn.btn-sm:hover { border-color: var(--alert); color: var(--alert); }",
+      "notes": "Header navigation button."
+    },
+    "status-chip-ready": {
+      "selector": ".status-chip.ready",
+      "snippet": ".status-chip.ready { background: var(--ready-soft); color: var(--ready); border: 1px solid var(--ready-border-soft); border-radius: 999px; padding: 4px 10px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; } .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }",
+      "notes": "Use for ready / active / success states. Always include a colored dot."
+    },
+    "status-chip-restricted": {
+      "selector": ".status-chip.restricted",
+      "snippet": ".status-chip.restricted { background: var(--restricted-soft); color: var(--restricted); border: 1px solid var(--restricted-border-soft); border-radius: 999px; padding: 4px 10px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }",
+      "notes": "Use for gated or charter-dependent states."
+    },
+    "card": {
+      "selector": ".sheet-block, .role-card, .component-card, .stage-card",
+      "snippet": ".card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; min-width: 0; }",
+      "notes": "Flat panel surface with 1px border and 12px radius. No shadows."
+    },
+    "block-label": {
+      "selector": ".block-label",
+      "snippet": ".block-label { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle); }",
+      "notes": "Production-section label above call-sheet blocks."
+    },
+    "command-block": {
+      "selector": ".cmd",
+      "snippet": ".cmd { display: block; background: var(--board); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: var(--mono); font-size: 0.82rem; color: var(--text); overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-width: 100%; }",
+      "notes": "Copyable shell command in the call sheet. Wraps if too long."
+    },
+    "copy-button": {
+      "selector": ".copy-btn",
+      "snippet": ".copy-btn { width: 36px; height: 36px; display: grid; place-items: center; background: var(--panel-raised); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-muted); } .copy-btn:hover { border-color: var(--alert); color: var(--alert); }",
+      "notes": "Icon-only button next to a command block."
+    },
+    "site-header": {
+      "selector": ".site-header",
+      "snippet": ".site-header { border-bottom: 1px solid var(--border); background: var(--board); position: sticky; top: 0; height: 60px; }",
+      "notes": "Sticky header with hairline bottom border."
+    },
+    "brand-mark": {
+      "selector": ".brand-mark",
+      "snippet": ".brand-mark { width: 28px; height: 28px; border-radius: var(--radius-sm); background: var(--alert); color: var(--board); display: grid; place-items: center; font-family: var(--mono); font-weight: 700; }",
+      "notes": "Alert coral square badge containing the 0 mark."
+    },
+    "component-tag": {
+      "selector": ".component-tag",
+      "snippet": ".component-tag { display: inline-block; padding: 4px 10px; border-radius: 999px; background: var(--action-soft); color: var(--action); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }",
+      "notes": "Small pill tag above component card names."
+    },
+    "sheet-foot": {
+      "selector": ".sheet-foot",
+      "snippet": ".sheet-foot { padding: 14px 16px; background: var(--alert-soft); border: 1px solid rgba(247, 129, 102, 0.2); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.88rem; }",
+      "notes": "Alert-tinted reminder strip below the install panel."
+    }
+  },
+  "rules": [
+    { "name": "One Alert Rule", "type": "do", "text": "Alert coral is reserved for the primary action. Do not use it for decorative accents or secondary labels." },
+    { "name": "Status Dot Rule", "type": "do", "text": "Every status chip must carry a solid dot in its text color." },
+    { "name": "Monospace Is For Commands Rule", "type": "do", "text": "JetBrains Mono appears only for shell commands, paths, tool names, and production labels." },
+    { "name": "No Shadow Rule", "type": "dont", "text": "Shadows are not used as decoration. Depth comes from tonal panel layers and hairline borders." },
+    { "name": "No Gradient Or Glass Rule", "type": "dont", "text": "No gradients, glass, blur, or ornamental decoration." },
+    { "name": "No Emoji Icon Rule", "type": "dont", "text": "Use inline SVG or simple shapes for icons, never emoji or Unicode glyphs." },
+    { "name": "Hairline Rule", "type": "do", "text": "All dividing lines are 1px. Increase space, not stroke weight, if separation feels weak." },
+    { "name": "No Duplicate H1 Rule", "type": "do", "text": "In Starlight docs, rely on frontmatter title; do not repeat it with a markdown # heading." }
+  ],
+  "narrative": "A dark production-board world for the 0d3sa docs site. The dominant element on entry surfaces is the install/setup steps panel: numbered steps with copyable commands, role roster badges, and seven-stage lifecycle lanes. Headings are Chakra Petch, body is Saira, commands are JetBrains Mono. Palette is near-black board (#0d1117), panel (#161b22), hairline borders (#30363d), alert coral (#f78166) for primary actions, action blue (#58a6ff) for links, ready green (#3fb950) and restricted amber (#d29922) for status chips. User-facing copy avoids film-production jargon; flat, shadowless, no gradients, no emoji."
+}
