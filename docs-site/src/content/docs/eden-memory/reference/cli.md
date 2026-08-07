@@ -349,6 +349,6 @@ Pass `--sync-disabled` (or set `EDEN_SYNC_DISABLED=1`) to skip the v3 sync schem
 - [Knowledge packets](/eden-memory/concepts/knowledge-packets/)
 - [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/)
 - [How sync works](/eden-memory/concepts/how-sync-works/)
-- [Run your own relay server](/eden-memory/how-to/run-relay-server/)
+- [Run your own relay server](/eden-relay/how-to/run-relay-server/)
 - [Approve a peer key rotation](/eden-memory/how-to/approve-peer-key-change/)
 

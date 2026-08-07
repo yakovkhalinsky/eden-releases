@@ -155,4 +155,4 @@ If the eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash c
 
 - [Lifecycle](/agentic-team-protocol/lifecycle/) — the seven-stage flow these roles implement.
 - [Record kinds](/agentic-team-protocol/concepts/record-kinds/) — the records each role is responsible for producing.
-- [Set up a headless supervisor](/agentic-team-protocol/tutorials/headless-supervisor/) — running these subagents from a script or scheduler.
+- [Set up a headless supervisor](/eden-team/tutorials/headless-supervisor/) — running these subagents from a script or scheduler.

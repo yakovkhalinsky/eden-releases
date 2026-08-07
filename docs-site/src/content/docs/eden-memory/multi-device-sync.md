@@ -27,8 +27,8 @@ New to multi-device sync? Read the step-by-step tutorial:
 - [Connect your MCP client](/eden-memory/mcp-clients/) — first-time client wiring for Claude Code, Cursor, Hermes, or any stdio MCP client.
 
 ### How-to guides
-- [Run your own relay server](/eden-memory/how-to/run-relay-server/) — stand up and secure a self-hosted relay.
-- [Deploy on a public VPS](/eden-memory/how-to/deploy-public-vps/) — full public-internet relay walkthrough with Let's Encrypt, systemd, and hardening.
+- [Run your own relay server](/eden-relay/how-to/run-relay-server/) — stand up and secure a self-hosted relay.
+- [Deploy on a public VPS](/eden-relay/how-to/deploy-public-vps/) — full public-internet relay walkthrough with Let's Encrypt, systemd, and hardening.
 - [Approve a peer key rotation](/eden-memory/how-to/approve-peer-key-change/) — inspect and approve pending Ed25519/X25519 key changes.
 - [Back up and restore a database](/eden-memory/how-to/backup-restore/) — encrypted snapshots and sidecar backup strategy.
 - [Prune old memories](/eden-memory/how-to/prune-memories/) — scoped bulk deletion.

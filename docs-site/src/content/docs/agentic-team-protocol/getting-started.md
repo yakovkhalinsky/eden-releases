@@ -4,8 +4,6 @@ description: Install the Agentic Team Protocol, ratify a project charter, and ru
 content_type: tutorial
 ---
 
-# Quick start
-
 This tutorial gets the Agentic Team Protocol installed, a project charter ratified, and a trivial first goal dispatched in under ten minutes.
 
 > [!TIP]
@@ -98,5 +96,5 @@ You should see your first goal listed as `closed` or `recording_and_archival`, w
 
 - Follow the full [Run your first team goal](/agentic-team-protocol/tutorials/first-team-goal/) tutorial for a more detailed walkthrough and expected output.
 - Learn to amend and re-ratify the charter in [Ratify a project charter](/agentic-team-protocol/tutorials/ratify-charter/).
-- Set up an [Ollama-backed headless supervisor](/agentic-team-protocol/tutorials/headless-supervisor/) for automated goals.
+- Set up an [Ollama-backed headless supervisor](/eden-team/tutorials/headless-supervisor/) for automated goals.
 - Read the [slash command reference](/agentic-team-protocol/reference/slash-commands/) for `/team`, `/team-status`, `/team-continue`, and the rest.

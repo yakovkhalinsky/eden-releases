@@ -52,7 +52,7 @@ eden-relay \
   --addr :8787
 ```
 
-The relay needs a persistent SQLite database path and a listen address. Default port is `8787`. For a production relay, see [Run your own relay server](/eden-memory/how-to/run-relay-server/).
+The relay needs a persistent SQLite database path and a listen address. Default port is `8787`. For a production relay, see [Run your own relay server](/eden-relay/how-to/run-relay-server/).
 
 If someone else is hosting the relay, write down the base URL (for example, `http://relay.example.com:8787`).
 

@@ -1,0 +1,46 @@
+---
+title: eden-relay
+description: Dedicated, self-hosted relay server for encrypted eden-memory multi-device sync.
+content_type: concept
+template: splash
+hero:
+  tagline: Self-hosted relay for encrypted multi-device sync. Lightweight, no memory subcommands, opaque to the operator.
+  actions:
+    - text: Run a relay
+      link: /eden-relay/how-to/run-relay-server/
+      icon: rocket
+    - text: Deploy on VPS
+      link: /eden-relay/how-to/deploy-public-vps/
+      icon: setting
+---
+
+## What it is
+
+`eden-relay` is the **sync relay component** of the [Agentic Team Protocol](/agentic-team-protocol/). It is a lightweight, dedicated server that lets [eden-memory](/eden-memory/) devices discover each other and exchange encrypted delta envelopes across separate networks.
+
+The relay never sees memory contents. It only routes opaque envelopes between paired devices that share the same fleet root key.
+
+## When to use it
+
+Use `eden-relay` when you want continuous sync between eden-memory devices on different networks — for example, a laptop and a desktop, or a CI runner and a workstation.
+
+For one-shot sync between two databases on the same machine, use `eden-memory sync` directly. See [Sync two databases locally](/eden-memory/tutorials/sync-local-databases/).
+
+## How it fits together
+
+1. Devices pair via PAKE and share an account root key.
+2. Each device registers with the relay using the same `account-id`.
+3. Devices exchange signed delta logs through the relay.
+4. Conflicts are resolved locally with logical clocks.
+
+## Guides
+
+- [Run your own relay server](/eden-relay/how-to/run-relay-server/) — stand up and secure a self-hosted relay.
+- [Deploy on a public VPS](/eden-relay/how-to/deploy-public-vps/) — full public-internet walkthrough with Let's Encrypt, systemd, and hardening.
+
+## See also
+
+- [eden-memory multi-device sync overview](/eden-memory/multi-device-sync/)
+- [How sync works](/eden-memory/concepts/how-sync-works/)
+- [Security model](/eden-memory/concepts/security-model/)
+- [CLI reference](/eden-memory/reference/cli/)

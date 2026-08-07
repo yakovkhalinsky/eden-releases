@@ -105,5 +105,5 @@ eden-memory will never ask the relay operator for secrets.
 - [How sync works](/eden-memory/concepts/how-sync-works/)
 - [Sidecar files](/eden-memory/concepts/sidecar-files/)
 - [Approve a peer key rotation](/eden-memory/how-to/approve-peer-key-change/)
-- [Run your own relay server](/eden-memory/how-to/run-relay-server/)
+- [Run your own relay server](/eden-relay/how-to/run-relay-server/)
 - [Troubleshooting](/eden-memory/reference/troubleshooting/)

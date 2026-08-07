@@ -4,8 +4,6 @@ description: Install eden-memory, verify it, and test your first remember/recall
 content_type: tutorial
 ---
 
-# Quick start
-
 Get eden-memory running locally and confirm that your agent can remember and recall a fact across sessions.
 
 ## Prerequisites
