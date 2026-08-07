@@ -1,0 +1,50 @@
+---
+title: eden-team
+description: Headless ATP supervisor for CI, cron, and automated agent-team workflows.
+content_type: concept
+template: splash
+hero:
+  tagline: Headless ATP supervisor for CI, cron, and automated agent-team workflows. JSON output and resumable goals.
+  actions:
+    - text: Set up headless supervisor
+      link: /eden-team/tutorials/headless-supervisor/
+      icon: rocket
+    - text: ATP lifecycle
+      link: /agentic-team-protocol/lifecycle/
+      icon: open-book
+---
+
+## What it is
+
+`eden-team` is the **headless supervisor component** of the [Agentic Team Protocol](/agentic-team-protocol/). It runs ATP goals without an interactive Claude Code chat session, spawning role subagents and writing durable lifecycle records to [eden-memory](/eden-memory/).
+
+Use it for CI jobs, scheduled tasks, or any controller that can parse JSON output and resume an interrupted goal.
+
+## What it does
+
+- Reads a natural-language goal.
+- Writes a `goal_record` and dispatches the next required ATP role.
+- Spawns child Claude Code CLI processes with a strict MCP config.
+- Continues the lifecycle until a verdict is recorded.
+- Exposes the goal state so you can call `eden-team continue` to resume later.
+
+## When to use it
+
+Use `eden-team` when you need automation:
+
+- CI pipelines that run ATP goals against a repository.
+- Cron jobs that perform routine maintenance or checks.
+- Controllers that trigger goals from webhooks, file drops, or other external events.
+
+For interactive work inside Claude Code, use the ATP global agents and slash commands instead.
+
+## Guides
+
+- [Set up a headless supervisor](/eden-team/tutorials/headless-supervisor/) — build, configure, and run `eden-team` with a strict MCP config.
+
+## See also
+
+- [Agentic Team Protocol overview](/agentic-team-protocol/)
+- [Agent prompts reference](/agentic-team-protocol/reference/agent-prompts/)
+- [Slash command reference](/agentic-team-protocol/reference/slash-commands/)
+- [eden-memory getting started](/eden-memory/getting-started/)

@@ -1,14 +1,22 @@
 ---
-title: agentic-team-protocol
-description: Role-based agent teams with a seven-stage lifecycle and eden-memory as the durable substrate.
+title: Agentic Team Protocol
+description: Installable, role-based agent teams for Claude Code. Seven-stage lifecycle, durable memory records, and verifiable hand-offs.
 content_type: concept
+template: splash
+hero:
+  tagline: Installable agent teams for Claude Code. Seven-stage lifecycle, durable memory records, and verifiable hand-offs.
+  actions:
+    - text: Get started
+      link: /agentic-team-protocol/getting-started/
+      icon: download
+    - text: Lifecycle
+      link: /agentic-team-protocol/lifecycle/
+      icon: open-book
 ---
 
-# agentic-team-protocol
+## What it is
 
-A lightweight operating model for running small agentic teams inside Claude Code.
-It defines clear roles, a seven-stage goal lifecycle, and durable memory records
-in [eden-memory](/eden-memory/).
+The **Agentic Team Protocol (ATP)** is a lightweight operating model for running small, structured agent teams inside Claude Code. It defines clear roles, a seven-stage goal lifecycle, and durable memory records stored in [eden-memory](/eden-memory/).
 
 ## Seven-stage lifecycle
 
@@ -37,17 +45,34 @@ Runtime is not active unless your project charter explicitly authorises it.
 
 - [eden-memory](/eden-memory/getting-started/) installed and on your PATH.
 - Claude Code CLI (the protocol is implemented as global agents and slash commands).
-- Optionally, the [`eden-team`](/eden-memory/reference/downloads/) binary for headless, non-interactive goals. `eden-team` is a standalone supervisor from the eden-memory monorepo that writes ATP lifecycle records and spawns role subagents automatically.
+- Optionally, the [eden-team](/eden-team/) binary for headless, non-interactive goals.
+
+## Quick install
+
+Install `eden-memory` first, then install the ATP global primitives:
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
+```
+
+In each project where you will use ATP, wire the Eden-memory MCP server before restarting Claude Code:
+
+```bash
+cd ~/my-project
+eden-memory setup claude
+```
+
+Then restart Claude Code completely (`/exit`, then reopen). The agents and commands will be available in every workspace.
+
+See the [getting started](/agentic-team-protocol/getting-started/) guide for the manual install path and project-local charter setup. Read the [charter anatomy](/agentic-team-protocol/charter-anatomy/), [lifecycle](/agentic-team-protocol/lifecycle/), and [agent prompts](/agentic-team-protocol/reference/agent-prompts/) for the full protocol reference.
 
 ## How it uses eden-memory
 
 The protocol does not replace eden-memory; it stores every milestone in it.
 
-- `/team-charter` reads `.claude/agentic-team-charter.md`, computes a SHA-256
-  version hash, and writes a `charter_ratification` record to eden-memory.
-- Every role uses the eden-memory MCP tools (`eden_remember`, `eden_recall`,
-  `eden_search`, `eden_search_semantic`, `eden_edit`, `eden_forget`, etc.) to
-  read prior context and store new records.
+- `/team-charter` reads `.claude/agentic-team-charter.md`, computes a SHA-256 version hash, and writes a `charter_ratification` record to eden-memory.
+- Every role uses the eden-memory MCP tools (`eden_remember`, `eden_recall`, `eden_search`, `eden_search_semantic`, `eden_edit`, `eden_forget`, etc.) to read prior context and store new records.
 - Required record kinds link the lifecycle together:
 
   | Kind | Stage | Owner | Purpose |
@@ -61,32 +86,6 @@ The protocol does not replace eden-memory; it stores every milestone in it.
   | `charter_ratification` | charter_ratification | archivist | Project charter approval. |
   | `archival_record` | recording_and_archival | archivist | Final outcome and links. |
 
-Each record should include metadata fields: `goal_id`, `stage`, `owner_role`,
-`input_record_ids`, `output_record_ids`, and `recalled_memory_ids`.
+Each record should include metadata fields: `goal_id`, `stage`, `owner_role`, `input_record_ids`, `output_record_ids`, and `recalled_memory_ids`.
 
-When recalling memory, only treat results with a score **≥ 0.45** as relevant, and
-record the IDs of memories that shaped the record in `recalled_memory_ids`.
-
-## Quick install
-
-Install `eden-memory` first, then install the ATP global primitives:
-
-```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
-curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
-```
-
-In each project where you will use ATP, wire the Eden-memory MCP server before
-restarting Claude Code:
-
-```bash
-cd ~/my-project
-eden-memory setup claude
-```
-
-Then restart Claude Code completely (`/exit`, then reopen). The agents and commands
-will be available in every workspace.
-
-See the [getting started](/agentic-team-protocol/getting-started/) guide for the
-manual install path and project-local charter setup. Read the [charter anatomy](/agentic-team-protocol/charter-anatomy/),
-[lifecycle](/agentic-team-protocol/lifecycle/), and [agent prompts](/agentic-team-protocol/agents/) for the full protocol reference.
+When recalling memory, only treat results with a score **≥ 0.45** as relevant, and record the IDs of memories that shaped the record in `recalled_memory_ids`.

@@ -6,7 +6,11 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	site: 'https://0d3sa.com',
 	base: '/',
-	redirects: {},
+	redirects: {
+		'/eden-memory/how-to/run-relay-server/': '/eden-relay/how-to/run-relay-server/',
+		'/eden-memory/how-to/deploy-public-vps/': '/eden-relay/how-to/deploy-public-vps/',
+		'/agentic-team-protocol/tutorials/headless-supervisor/': '/eden-team/tutorials/headless-supervisor/',
+	},
 	integrations: [
 		starlight({
 			title: '0d3sa',
@@ -36,68 +40,6 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: 'eden-memory',
-					items: [
-						{ label: 'Overview', slug: 'eden-memory' },
-						{ label: 'Quick start', slug: 'eden-memory/getting-started' },
-						{
-							label: 'Tutorials',
-							items: [
-								{ label: 'Connect Claude Code', slug: 'eden-memory/tutorials/connect-claude-code' },
-								{ label: 'Connect Cursor', slug: 'eden-memory/tutorials/connect-cursor' },
-								{ label: 'Connect another MCP client', slug: 'eden-memory/tutorials/connect-mcp-client' },
-								{ label: 'Sync two devices with a relay', slug: 'eden-memory/tutorials/sync-two-devices-relay' },
-								{ label: 'Sync two databases locally', slug: 'eden-memory/tutorials/sync-local-databases' },
-							],
-						},
-						{
-							label: 'How-to guides',
-							items: [
-								{ label: 'Back up and restore', slug: 'eden-memory/how-to/backup-restore' },
-								{ label: 'Build a knowledge packet', slug: 'eden-memory/how-to/build-knowledge-packet' },
-								{ label: 'Migrate a workspace', slug: 'eden-memory/how-to/migrate-workspace' },
-								{ label: 'Prune old memories', slug: 'eden-memory/how-to/prune-memories' },
-								{ label: 'Run your own relay server', slug: 'eden-memory/how-to/run-relay-server' },
-								{ label: 'Deploy on a public VPS', slug: 'eden-memory/how-to/deploy-public-vps' },
-								{ label: 'Approve a peer key rotation', slug: 'eden-memory/how-to/approve-peer-key-change' },
-							],
-						},
-						{
-							label: 'Concepts',
-							items: [
-								{ label: 'Knowledge packets', slug: 'eden-memory/concepts/knowledge-packets' },
-								{ label: 'Memory model and embeddings', slug: 'eden-memory/concepts/memory-model' },
-								{ label: 'Scopes and identity', slug: 'eden-memory/concepts/scopes-identity' },
-								{ label: 'How sync works', slug: 'eden-memory/concepts/how-sync-works' },
-								{ label: 'Sidecar files', slug: 'eden-memory/concepts/sidecar-files' },
-								{ label: 'Security model', slug: 'eden-memory/concepts/security-model' },
-								{ label: 'Multi-device sync overview', slug: 'eden-memory/multi-device-sync' },
-							],
-						},
-						{
-							label: 'Reference',
-							items: [
-								{ label: 'Tools reference', slug: 'eden-memory/reference/tools' },
-								{ label: 'CLI reference', slug: 'eden-memory/reference/cli' },
-								{ label: 'Environment variables', slug: 'eden-memory/reference/environment-variables' },
-								{ label: 'Fallback slash commands', slug: 'eden-memory/reference/fallback-slash-commands' },
-								{ label: 'Troubleshooting', slug: 'eden-memory/reference/troubleshooting' },
-								{
-									label: 'Skills registry',
-									items: [
-										{ label: 'Overview', slug: 'eden-memory/skills' },
-										{ label: 'MCP usage', slug: 'eden-memory/skills/eden-memory-mcp-usage' },
-										{ label: 'Claude Code CLI', slug: 'eden-memory/skills/eden-memory-claude' },
-										{ label: 'Cursor', slug: 'eden-memory/skills/eden-memory-cursor' },
-										{ label: 'Hermes Agent', slug: 'eden-memory/skills/eden-memory-hermes' },
-									],
-								},
-								{ label: 'Downloads and checksums', slug: 'eden-memory/reference/downloads' },
-							],
-						},
-					],
-				},
-				{
 					label: 'agentic-team-protocol',
 					items: [
 						{ label: 'Overview', slug: 'agentic-team-protocol' },
@@ -107,7 +49,6 @@ export default defineConfig({
 							items: [
 								{ label: 'Run your first team goal', slug: 'agentic-team-protocol/tutorials/first-team-goal' },
 								{ label: 'Ratify a project charter', slug: 'agentic-team-protocol/tutorials/ratify-charter' },
-								{ label: 'Set up a headless supervisor', slug: 'agentic-team-protocol/tutorials/headless-supervisor' },
 							],
 						},
 						{
@@ -125,6 +66,95 @@ export default defineConfig({
 								{ label: 'Slash commands', slug: 'agentic-team-protocol/reference/slash-commands' },
 								{ label: 'Agent prompts', slug: 'agentic-team-protocol/reference/agent-prompts' },
 								{ label: 'Default charter', slug: 'agentic-team-protocol/reference/default-charter' },
+							],
+						},
+					],
+				},
+				{
+					label: 'Components',
+					items: [
+						{
+							label: 'eden-memory',
+							items: [
+								{ label: 'Overview', slug: 'eden-memory' },
+								{ label: 'Quick start', slug: 'eden-memory/getting-started' },
+								{
+									label: 'Tutorials',
+									items: [
+										{ label: 'Connect Claude Code', slug: 'eden-memory/tutorials/connect-claude-code' },
+										{ label: 'Connect Cursor', slug: 'eden-memory/tutorials/connect-cursor' },
+										{ label: 'Connect another MCP client', slug: 'eden-memory/tutorials/connect-mcp-client' },
+										{ label: 'Sync two devices with a relay', slug: 'eden-memory/tutorials/sync-two-devices-relay' },
+										{ label: 'Sync two databases locally', slug: 'eden-memory/tutorials/sync-local-databases' },
+									],
+								},
+								{
+									label: 'How-to guides',
+									items: [
+										{ label: 'Back up and restore', slug: 'eden-memory/how-to/backup-restore' },
+										{ label: 'Build a knowledge packet', slug: 'eden-memory/how-to/build-knowledge-packet' },
+										{ label: 'Migrate a workspace', slug: 'eden-memory/how-to/migrate-workspace' },
+										{ label: 'Prune old memories', slug: 'eden-memory/how-to/prune-memories' },
+										{ label: 'Approve a peer key rotation', slug: 'eden-memory/how-to/approve-peer-key-change' },
+									],
+								},
+								{
+									label: 'Concepts',
+									items: [
+										{ label: 'Knowledge packets', slug: 'eden-memory/concepts/knowledge-packets' },
+										{ label: 'Memory model and embeddings', slug: 'eden-memory/concepts/memory-model' },
+										{ label: 'Scopes and identity', slug: 'eden-memory/concepts/scopes-identity' },
+										{ label: 'How sync works', slug: 'eden-memory/concepts/how-sync-works' },
+										{ label: 'Sidecar files', slug: 'eden-memory/concepts/sidecar-files' },
+										{ label: 'Security model', slug: 'eden-memory/concepts/security-model' },
+										{ label: 'Multi-device sync overview', slug: 'eden-memory/multi-device-sync' },
+									],
+								},
+								{
+									label: 'Reference',
+									items: [
+										{ label: 'Tools reference', slug: 'eden-memory/reference/tools' },
+										{ label: 'CLI reference', slug: 'eden-memory/reference/cli' },
+										{ label: 'Environment variables', slug: 'eden-memory/reference/environment-variables' },
+										{ label: 'Fallback slash commands', slug: 'eden-memory/reference/fallback-slash-commands' },
+										{
+											label: 'Skills registry',
+											items: [
+												{ label: 'Overview', slug: 'eden-memory/skills' },
+												{ label: 'MCP usage', slug: 'eden-memory/skills/eden-memory-mcp-usage' },
+												{ label: 'Claude Code CLI', slug: 'eden-memory/skills/eden-memory-claude' },
+												{ label: 'Cursor', slug: 'eden-memory/skills/eden-memory-cursor' },
+												{ label: 'Hermes Agent', slug: 'eden-memory/skills/eden-memory-hermes' },
+											],
+										},
+										{ label: 'Downloads and checksums', slug: 'eden-memory/reference/downloads' },
+									],
+								},
+							],
+						},
+						{
+							label: 'eden-relay',
+							items: [
+								{ label: 'Overview', slug: 'eden-relay' },
+								{
+									label: 'How-to guides',
+									items: [
+										{ label: 'Run your own relay server', slug: 'eden-relay/how-to/run-relay-server' },
+										{ label: 'Deploy on a public VPS', slug: 'eden-relay/how-to/deploy-public-vps' },
+									],
+								},
+							],
+						},
+						{
+							label: 'eden-team',
+							items: [
+								{ label: 'Overview', slug: 'eden-team' },
+								{
+									label: 'Tutorials',
+									items: [
+										{ label: 'Set up a headless supervisor', slug: 'eden-team/tutorials/headless-supervisor' },
+									],
+								},
 							],
 						},
 					],

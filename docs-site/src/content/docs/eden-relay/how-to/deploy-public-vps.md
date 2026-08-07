@@ -1,10 +1,12 @@
 ---
 title: Deploy on a public VPS
-description: Run a self-hosted eden-memory relay on a public VPS with Let's Encrypt TLS, systemd, ufw, fail2ban, and certbot renewal hooks.
+description: Run a self-hosted eden-relay on a public VPS with Let's Encrypt TLS, systemd, ufw, fail2ban, and certbot renewal hooks.
 content_type: how-to
 ---
 
-This guide walks through running a self-hosted eden-memory relay on a public
+# Deploy on a public VPS
+
+This guide walks through running a self-hosted eden-relay on a public
 VPS with valid TLS, systemd, firewall rules, and basic hardening. All
 commands are copy-pasteable once you replace `relay.example.com` with your own
 domain.
@@ -13,7 +15,7 @@ For a private mesh deployment (for example, behind Tailscale), see the
 [Tailscale-only relay](#tailscale-only-relay-optional) section at the end of
 this guide instead of exposing port 443 to the public internet. For a simpler
 self-hosted relay without TLS hardening details, see [Run your own relay
-server](/eden-memory/how-to/run-relay-server/).
+server](/eden-relay/how-to/run-relay-server/).
 
 ## 1. VPS minimum specs and OS
 

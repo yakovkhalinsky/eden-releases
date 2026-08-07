@@ -1,10 +1,10 @@
 ---
 title: eden-memory
-description: Local-first memory for AI agents. Install one binary, connect any MCP client.
+description: The durable memory and sync component of the Agentic Team Protocol. Local SQLite, vector embeddings, MCP server, and optional multi-device sync.
 content_type: concept
 template: splash
 hero:
-  tagline: Local-first memory for AI agents. Three binaries. One SQLite store. Any MCP client.
+  tagline: The durable memory and sync component of ATP. Local SQLite, vector embeddings, MCP server, and optional multi-device sync.
   actions:
     - text: Get started
       link: /eden-memory/getting-started/
@@ -16,13 +16,9 @@ hero:
 
 ## What it is
 
-`eden-memory` is the flagship binary of the **eden-memory monorepo**, a family of Go binaries that give your AI agents persistent memory, relay infrastructure, and headless team orchestration:
+`eden-memory` is the **memory and sync component** of the [Agentic Team Protocol](/agentic-team-protocol/). It gives ATP agents persistent, local-first memory: facts, preferences, context, and lifecycle records stored in a SQLite database on your machine.
 
-- **`eden-memory`** — the full CLI with an MCP server, memory tools, sync/pairing, and a legacy `relay-server` subcommand.
-- **`eden-relay`** — a dedicated, lightweight relay server for multi-device sync.
-- **`eden-team`** — a headless ATP supervisor that drives the Agentic Team Protocol by spawning role subagents and writing durable lifecycle records.
-
-`eden-memory` bundles its own Python embedding runtime and stores memories with 256-dimensional embeddings in a local SQLite database. Your agent connects to it over MCP stdio.
+It is also useful on its own as an MCP memory server for any stdio MCP client.
 
 ## How it works
 
@@ -42,8 +38,16 @@ hero:
 
 ## Data stays local
 
-There is no cloud account, no external API, and no network call for recall. First run extracts the embedded runtime and model weights to your platform cache; the SQLite database stays under `~/.eden-memory/`. Optional encrypted multi-device sync runs through a self-hosted relay so the contents stay opaque to the relay operator.
+There is no cloud account, no external API, and no network call for recall. First run extracts the embedded runtime and model weights to your platform cache; the SQLite database stays under `~/.eden-memory/`. Optional encrypted multi-device sync runs through a [self-hosted eden-relay](/eden-relay/) so the contents stay opaque to the relay operator.
 
-## Built for teams?
+## Built for teams
 
-If you use Claude Code, you can run the [agentic-team-protocol](/agentic-team-protocol/) on top of eden-memory. It adds role-based subagents (Dispatcher, Researcher, Builder, Verifier, Archivist) and a seven-stage lifecycle, all backed by the same local SQLite store.
+If you use Claude Code, run the [agentic-team-protocol](/agentic-team-protocol/) on top of eden-memory. It adds role-based subagents (Dispatcher, Researcher, Builder, Verifier, Archivist) and a seven-stage lifecycle, all backed by the same local SQLite store.
+
+## Release binaries
+
+Each 0d3sa release ships three related single-file Go binaries:
+
+- **`eden-memory`** — this component: memory, MCP server, sync, and pairing.
+- **`eden-relay`** — dedicated relay server for multi-device sync. See [eden-relay docs](/eden-relay/).
+- **`eden-team`** — headless ATP supervisor for CI and automation. See [eden-team docs](/eden-team/).

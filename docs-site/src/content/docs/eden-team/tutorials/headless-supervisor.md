@@ -6,11 +6,11 @@ content_type: tutorial
 
 # Set up a headless supervisor
 
-A headless supervisor lets an automated controller run ATP goals through Claude Code CLI without an interactive chat session. This is useful for CI jobs, scheduled tasks, or any controller that can parse JSON output. This tutorial uses `eden-team`, the headless ATP supervisor from the [`eden-memory`](https://github.com/yakovkhalinsky/eden-memory) monorepo.
+A headless supervisor lets an automated controller run ATP goals through Claude Code CLI without an interactive chat session. This is useful for CI jobs, scheduled tasks, or any controller that can parse JSON output. This tutorial uses `eden-team`, the headless ATP supervisor.
 
 ## Prerequisites
 
-- [`eden-memory`](/eden-memory/getting-started/) installed and on your `PATH`.
+- [eden-memory](/eden-memory/getting-started/) installed and on your `PATH`.
 - `eden-team` binary built from the monorepo (or downloaded from a release).
 - Claude Code CLI installed.
 - Ollama 0.14 or newer with a tool-calling model of at least 32K context window.

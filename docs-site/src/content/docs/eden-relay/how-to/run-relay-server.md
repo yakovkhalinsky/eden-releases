@@ -1,6 +1,6 @@
 ---
 title: Run your own relay server
-description: Stand up a self-hosted eden-memory relay, configure flags and environment variables, and register devices with it.
+description: Stand up a self-hosted eden-relay, configure flags and environment variables, and register devices with it.
 content_type: how-to
 ---
 
@@ -8,7 +8,7 @@ content_type: how-to
 
 A self-hosted relay lets you sync eden-memory devices across separate networks without relying on a third-party service. This guide sets up the relay as a long-running process, verifies it, and registers a device.
 
-For a full public-internet VPS deployment with Let's Encrypt, systemd, firewall rules, and hardening, see [Deploy on a public VPS](/eden-memory/how-to/deploy-public-vps/). For a private mesh deployment (for example, Tailscale) without exposing ports to the internet, bind the relay to the mesh interface and use plain HTTP inside the mesh.
+For a full public-internet VPS deployment with Let's Encrypt, systemd, firewall rules, and hardening, see [Deploy on a public VPS](/eden-relay/how-to/deploy-public-vps/). For a private mesh deployment (for example, Tailscale) without exposing ports to the internet, bind the relay to the mesh interface and use plain HTTP inside the mesh.
 
 ## Prerequisites
 
@@ -124,6 +124,7 @@ Create a dedicated user, set the file permissions on `/var/lib/eden-relay`, and 
 
 ## See also
 
+- [Deploy on a public VPS](/eden-relay/how-to/deploy-public-vps/)
 - [How sync works](/eden-memory/concepts/how-sync-works/)
 - [Security model](/eden-memory/concepts/security-model/)
 - [Sync two devices with a relay](/eden-memory/tutorials/sync-two-devices-relay/)

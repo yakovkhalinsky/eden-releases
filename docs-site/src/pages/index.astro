@@ -1,8 +1,9 @@
 ---
 // Landing page for 0d3sa.com.
-// Short, product-focused entry point. Detailed install steps live in Starlight docs.
+// ATP-first product entry point. Detailed install steps live in Starlight docs.
 
-const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
+const edenMemoryInstall = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
+const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh';
 ---
 
 <!DOCTYPE html>
@@ -10,8 +11,8 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>0d3sa — local-first AI tools</title>
-  <meta name="description" content="Local-first memory and agent-team protocols for AI agents. One binary, any MCP client, everything on your machine." />
+  <title>0d3sa — installable agent teams for Claude Code</title>
+  <meta name="description" content="Agentic Team Protocol: installable, role-based agent teams for Claude Code. Durable memory, sync, and headless orchestration included." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -38,13 +39,13 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
           <span class="dot"></span>
           <span>Open source · Apache-2.0 · macOS + Linux</span>
         </div>
-        <h1>Local-first memory for AI agents</h1>
+        <h1>Installable agent teams for Claude Code</h1>
         <p class="lead">
-          eden-memory stores facts, preferences, and context in a local SQLite database with vector search. Add the Agentic Team Protocol on top for structured role-based collaboration inside Claude Code.
+          The Agentic Team Protocol gives Claude Code a structured, role-based team workflow with a seven-stage lifecycle and durable memory. eden-memory, eden-relay, and eden-team are the components that make it work.
         </p>
         <div class="hero-actions">
-          <a href="/eden-memory/getting-started/" class="btn btn-primary btn-lg">Get started</a>
-          <a href="/docs/" class="btn btn-secondary btn-lg">Read the docs</a>
+          <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary btn-lg">Install ATP</a>
+          <a href="/docs/" class="btn btn-secondary btn-lg">Explore components</a>
         </div>
       </div>
     </section>
@@ -54,14 +55,24 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
         <div class="install-card">
           <div class="install-head">
             <div>
-              <span class="install-label">Install the base binary</span>
-              <p class="install-hint">One command. No Python or package manager required.</p>
+              <span class="install-label">Install in two commands</span>
+              <p class="install-hint">No package manager required. Each binary is a single static file.</p>
             </div>
-            <button class="copy-btn" data-cmd={installCmd}>Copy</button>
           </div>
-          <code class="mono install-cmd">{installCmd}</code>
+          <div class="install-steps">
+            <div class="install-step">
+              <span class="step-badge">1</span>
+              <code class="mono install-cmd">{edenMemoryInstall}</code>
+              <span class="step-caption">Install the memory & sync layer</span>
+            </div>
+            <div class="install-step">
+              <span class="step-badge">2</span>
+              <code class="mono install-cmd">{atpInstall}</code>
+              <span class="step-caption">Install the Agentic Team Protocol</span>
+            </div>
+          </div>
           <p class="install-more">
-            Also available: <a href="/eden-memory/reference/downloads/">eden-relay</a> and <a href="/eden-memory/reference/downloads/">eden-team</a>.
+            Then run <code>eden-memory setup claude</code> in your project and restart Claude Code. Also available: <a href="/eden-memory/reference/downloads/">downloads and checksums</a>.
           </p>
         </div>
       </div>
@@ -69,32 +80,60 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
 
     <section class="section products-section">
       <div class="wrap">
-        <h2 class="section-title">Choose a product</h2>
+        <h2 class="section-title">What you get</h2>
         <div class="product-grid">
+          <a href="/agentic-team-protocol/" class="product-card product-card-primary">
+            <div class="product-meta">
+              <span class="product-tag">Installable product</span>
+            </div>
+            <h3>Agentic Team Protocol</h3>
+            <p>Role-based agent teams inside Claude Code. Dispatcher, Researcher, Builder, Verifier, Archivist, and Runtime with a seven-stage lifecycle and durable memory records.</p>
+            <ul class="feature-list">
+              <li>Structured role-based collaboration</li>
+              <li>Mandatory Verifier gate before closure</li>
+              <li>Resumable goals across sessions</li>
+            </ul>
+            <span class="product-link">Get started →</span>
+          </a>
+
           <a href="/eden-memory/" class="product-card">
             <div class="product-meta">
-              <span class="product-tag">MCP memory server</span>
+              <span class="product-tag">Memory & sync component</span>
             </div>
             <h3>eden-memory</h3>
-            <p>Local-first memory layer for AI agents. One static binary with an embedded Python runtime and model weights. Works with any stdio MCP client.</p>
+            <p>The durable memory layer for ATP. Local SQLite + 256-dim vector embeddings, semantic/keyword recall, optional encrypted multi-device sync.</p>
             <ul class="feature-list">
-              <li>SQLite + 256-dim vector embeddings</li>
+              <li>Local-first SQLite store</li>
               <li>Semantic and keyword search</li>
-              <li>Optional encrypted multi-device sync</li>
+              <li>MCP server for any stdio client</li>
             </ul>
             <span class="product-link">Read docs →</span>
           </a>
 
-          <a href="/agentic-team-protocol/" class="product-card">
+          <a href="/eden-relay/" class="product-card">
             <div class="product-meta">
-              <span class="product-tag">Claude Code team workflow</span>
+              <span class="product-tag">Infrastructure component</span>
             </div>
-            <h3>agentic-team-protocol</h3>
-            <p>Role-based agent teams with a seven-stage lifecycle and eden-memory as the durable substrate.</p>
+            <h3>eden-relay</h3>
+            <p>Self-hosted relay server for encrypted multi-device sync. Lightweight, no MCP or memory subcommands.</p>
             <ul class="feature-list">
-              <li>Dispatcher, Researcher, Builder, Verifier, Archivist, Runtime</li>
-              <li>Mandatory Verifier gate before closure</li>
-              <li>Resumable goals across sessions</li>
+              <li>Self-hosted fleet relay</li>
+              <li>TLS, systemd, VPS hardening guides</li>
+              <li>Devices stay opaque to the relay</li>
+            </ul>
+            <span class="product-link">Read docs →</span>
+          </a>
+
+          <a href="/eden-team/" class="product-card">
+            <div class="product-meta">
+              <span class="product-tag">Infrastructure component</span>
+            </div>
+            <h3>eden-team</h3>
+            <p>Headless ATP supervisor for CI, cron, or automated agent-team workflows. Spawns role subagents and writes durable lifecycle records.</p>
+            <ul class="feature-list">
+              <li>Headless goal execution</li>
+              <li>JSON output for automation</li>
+              <li>Resume interrupted goals</li>
             </ul>
             <span class="product-link">Read docs →</span>
           </a>
@@ -105,27 +144,27 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
     <section class="section section-alt">
       <div class="wrap">
         <h2 class="section-title">Three binaries, one release</h2>
-        <p class="section-lead">Each release ships three single-file Go binaries. Pick the one that matches the job.</p>
+        <p class="section-lead">Each release ships three single-file Go binaries. You usually install all three through the ATP installer; pick the component docs for deep configuration.</p>
         <div class="binary-grid">
           <div class="binary-card">
             <div class="binary-icon">M</div>
             <div class="binary-body">
               <h3>eden-memory</h3>
-              <p>The full CLI: MCP server, memory tools, sync, pairing, and the legacy relay-server subcommand.</p>
+              <p>Memory, MCP server, sync, pairing, and the legacy relay-server subcommand.</p>
             </div>
           </div>
           <div class="binary-card">
             <div class="binary-icon">R</div>
             <div class="binary-body">
               <h3>eden-relay</h3>
-              <p>A dedicated, lightweight relay server for multi-device sync. No MCP or memory subcommands.</p>
+              <p>Dedicated, lightweight relay server for multi-device sync.</p>
             </div>
           </div>
           <div class="binary-card">
             <div class="binary-icon">T</div>
             <div class="binary-body">
               <h3>eden-team</h3>
-              <p>Headless ATP supervisor for CI, cron, or automated agent-team workflows.</p>
+              <p>Headless ATP supervisor for automated agent-team workflows.</p>
             </div>
           </div>
         </div>
@@ -143,16 +182,16 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
         </div>
         <div class="decision-grid">
           <div class="decision-card">
-            <h3>Just want memory?</h3>
-            <p>Install <a href="/eden-memory/">eden-memory</a>. One binary, any MCP client, and every memory stays on your machine.</p>
+            <h3>Want a team workflow in Claude Code?</h3>
+            <p>Install <a href="/agentic-team-protocol/">Agentic Team Protocol</a>. It wires eden-memory as the durable substrate and gives you structured role-based collaboration.</p>
           </div>
           <div class="decision-card">
-            <h3>Want a team workflow?</h3>
-            <p>Add <a href="/agentic-team-protocol/">agentic-team-protocol</a>. It runs on top of eden-memory and adds structured role-based collaboration inside Claude Code.</p>
+            <h3>Just want memory or sync?</h3>
+            <p>Go straight to the <a href="/eden-memory/">eden-memory</a> component docs. You can add ATP later without reinstalling.</p>
           </div>
           <div class="decision-card decision-answer">
             <h3>Short answer</h3>
-            <p>Install eden-memory first. If you work in Claude Code and want structured team workflows, add the protocol.</p>
+            <p>Install ATP. It brings eden-memory with it. Add eden-relay only if you need multi-device sync, and eden-team only for headless automation.</p>
           </div>
         </div>
       </div>
@@ -340,7 +379,7 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
   .lead {
     font-size: clamp(1.05rem, 1.8vw, 1.25rem);
     color: var(--text-muted);
-    max-width: 680px;
+    max-width: 720px;
     margin: 0 auto 28px;
   }
 
@@ -371,7 +410,7 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
     justify-content: space-between;
     align-items: flex-start;
     gap: 16px;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     flex-wrap: wrap;
   }
 
@@ -388,17 +427,48 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
     margin: 0;
   }
 
+  .install-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .install-step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .step-badge {
+    grid-row: span 2;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--text);
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
   .install-cmd {
     display: block;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 0.9rem;
+    padding: 12px 14px;
+    font-size: 0.85rem;
     color: var(--text);
     overflow-x: auto;
     white-space: nowrap;
-    margin-bottom: 14px;
+  }
+
+  .step-caption {
+    color: var(--text-muted);
+    font-size: 0.82rem;
   }
 
   .install-more {
@@ -439,7 +509,7 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 18px;
-    max-width: 820px;
+    max-width: 960px;
     margin: 0 auto;
   }
 
@@ -455,6 +525,11 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
   .product-card:hover {
     border-color: var(--accent);
     text-decoration: none;
+  }
+
+  .product-card-primary {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent) inset, 0 0 40px var(--accent-glow);
   }
 
   .product-meta { margin-bottom: 10px; }
@@ -632,5 +707,6 @@ const installCmd = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
     .section { padding: 48px 0; }
     .hero-actions { flex-direction: column; align-items: stretch; }
     .hero-actions .btn { justify-content: center; }
+    .install-step { grid-template-columns: auto 1fr; }
   }
 </style>
