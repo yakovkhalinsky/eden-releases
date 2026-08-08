@@ -5,6 +5,10 @@
 #   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
 #   EDEN_INSTALL_BIN=eden-team curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 #
+# You can also pre-set EDEN_ORG_ID for a non-interactive install:
+#   export EDEN_ORG_ID=your-org
+#   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+#
 # Defaults to installing eden-memory. Valid binaries: eden-memory, eden-relay, eden-team.
 
 set -eu
@@ -99,6 +103,24 @@ TMP_BIN="${TARGET}.tmp.$$"
 cp "${TMPDIR}/${BIN}" "${TMP_BIN}"
 mv -f "${TMP_BIN}" "${TARGET}"
 
+# ANSI color helpers via printf, gated by TTY and NO_COLOR for portability.
+NO_COLOR="${NO_COLOR:-}"
+if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then
+    ESC="$(printf '\033')"
+    GREEN="${ESC}[32m"
+    CYAN="${ESC}[36m"
+    YELLOW="${ESC}[33m"
+    DIM="${ESC}[90m"
+    RESET="${ESC}[0m"
+else
+    ESC=""
+    GREEN=""
+    CYAN=""
+    YELLOW=""
+    DIM=""
+    RESET=""
+fi
+
 if ! command -v "${BIN_NAME}" >/dev/null 2>&1; then
     echo ""
     echo "${BIN_NAME} was installed to ${TARGET}, but it is not on your PATH."
@@ -110,6 +132,54 @@ fi
 UPDATED_VERSION=$("${TARGET}" version 2>/dev/null || echo "unknown")
 echo ""
 echo "${BIN_NAME} updated: ${PREVIOUS_VERSION} → ${UPDATED_VERSION}"
+
+# Prompt for EDEN_ORG_ID for eden-memory when running interactively.
+EDEN_ENV_DIR="${HOME}/.eden-memory"
+EDEN_ENV_FILE="${EDEN_ENV_DIR}/.env"
+EDEN_ORG_ID_WRITTEN=""
+
+write_eden_org_id() {
+    value="$1"
+    mkdir -p "${EDEN_ENV_DIR}"
+    if [ -f "${EDEN_ENV_FILE}" ] && grep -q "^EDEN_ORG_ID=" "${EDEN_ENV_FILE}"; then
+        sed -i.bak "s#^EDEN_ORG_ID=.*#EDEN_ORG_ID=${value}#" "${EDEN_ENV_FILE}" && rm -f "${EDEN_ENV_FILE}.bak"
+    else
+        {
+            printf "\n# Added by the eden-memory installer\n"
+            printf "EDEN_ORG_ID=%s\n" "${value}"
+        } >> "${EDEN_ENV_FILE}"
+    fi
+}
+
+if [ "${BIN_NAME}" = "eden-memory" ]; then
+    if [ -n "${EDEN_ORG_ID:-}" ]; then
+        write_eden_org_id "${EDEN_ORG_ID}"
+        EDEN_ORG_ID_WRITTEN="1"
+        echo ""
+        echo "${GREEN}Wrote EDEN_ORG_ID from environment to ${EDEN_ENV_FILE}${RESET}"
+    elif [ -t 0 ]; then
+        echo ""
+        printf "%sOptional:%s Enter your %sEDEN_ORG_ID%s to scope memories to an organization.\n" "${CYAN}" "${RESET}" "${YELLOW}" "${RESET}"
+        printf "Leave empty to configure it later: "
+        read -r EDEN_ORG_ID_INPUT || true
+        if [ -n "${EDEN_ORG_ID_INPUT:-}" ]; then
+            write_eden_org_id "${EDEN_ORG_ID_INPUT}"
+            EDEN_ORG_ID_WRITTEN="1"
+            echo ""
+            echo "${GREEN}Wrote EDEN_ORG_ID to ${EDEN_ENV_FILE}${RESET}"
+        fi
+    fi
+
+    if [ -z "${EDEN_ORG_ID_WRITTEN}" ]; then
+        echo ""
+        echo "${YELLOW}Note:${RESET} Memories are scoped by organization."
+        echo "      Create ${CYAN}${EDEN_ENV_FILE}${RESET} with:"
+        echo "        EDEN_ORG_ID=your-org"
+        echo ""
+        echo "      Then run ${CYAN}eden-memory setup claude${RESET} in each project to set EDEN_WORKSPACE_ID."
+    fi
+fi
+
 echo ""
 echo "Run:"
 case "${BIN_NAME}" in
@@ -124,35 +194,16 @@ case "${BIN_NAME}" in
         ;;
 esac
 
-# ANSI color helpers via printf, gated by TTY and NO_COLOR for portability.
-NO_COLOR="${NO_COLOR:-}"
-if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then
-    ESC="$(printf '\033')"
-    GREEN="${ESC}[32m"
-    CYAN="${ESC}[36m"
-    YELLOW="${ESC}[33m"
-    DIM="${ESC}[90m"
-    RESET="${ESC}[0m"
-else
-    GREEN=""
-    CYAN=""
-    YELLOW=""
-    DIM=""
-    RESET=""
+printf "\n%sYour memory garden is ready:%s\n\n" "${GREEN}" "${RESET}"
+printf "    %s%s%s\n" "${CYAN}" "${BIN_NAME}" "${RESET}"
+printf "    +-- %s%s%s\n" "${YELLOW}" "${TARGET}" "${RESET}"
+printf "    +-- %s~/.eden-memory/default.db%s\n" "${YELLOW}" "${RESET}"
+if [ "${BIN_NAME}" = "eden-memory" ]; then
+    printf "    +-- %s~/.eden-memory/.env%s\n" "${YELLOW}" "${RESET}"
 fi
-
-cat <<EOF
-
-${GREEN}Your memory garden is ready:${RESET}
-
-    ${CYAN}${BIN_NAME}${RESET}
-    +-- ${YELLOW}${TARGET}${RESET}
-    +-- ${YELLOW}~/.eden-memory/default.db${RESET}
-    +-- ${YELLOW}~/.cache/eden-memory/${RESET}
-    +-- ${DIM}~/.claude.json   (after setup claude)${RESET}
-
-${GREEN}Quick start:${RESET}
-EOF
+printf "    +-- %s~/.cache/eden-memory/%s\n" "${YELLOW}" "${RESET}"
+printf "    +-- %s~/.claude.json   (after setup claude)%s\n" "${DIM}" "${RESET}"
+printf "\n%sQuick start:%s\n" "${GREEN}" "${RESET}"
 
 case "${BIN_NAME}" in
     eden-memory)

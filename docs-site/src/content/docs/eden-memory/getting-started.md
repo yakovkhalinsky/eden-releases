@@ -20,7 +20,16 @@ Run the installer:
 curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/eden-memory`. If you prefer a manual install, see [Downloads and checksums](/eden-memory/reference/downloads/).
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/eden-memory`. If your terminal is interactive, the installer will prompt you for an `EDEN_ORG_ID` and write it to `~/.eden-memory/.env`. You can leave it empty and configure it later.
+
+For non-interactive installs, set the organization ID ahead of time:
+
+```bash
+export EDEN_ORG_ID=your-org
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
+
+If you prefer a manual install, see [Downloads and checksums](/eden-memory/reference/downloads/).
 
 ## 2. Verify
 
