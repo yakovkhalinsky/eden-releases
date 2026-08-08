@@ -119,6 +119,25 @@ Once those files exist, project-local definitions override the global ones.
 6. **Recording and archival** — Archivist ensures final outcome and skill/runbook updates are stored.
 7. **Hand-off or closure** — Archivist confirms records are complete and ownership is transferred if handing off.
 
+## Branch discipline
+
+- Non-trivial changes must be developed on a feature branch checked out from the
+  project default branch. Trivial one-line fixes may be committed directly to the
+  default branch.
+- Merges into the default branch must be non-fast-forward merge commits, and both
+  parent SHAs must be recorded in the Runtime action record.
+- After a successful non-fast-forward merge into the default branch and push to
+  origin, Runtime must delete the local feature branch (`git branch -d
+  <branch>`). If authorized and the branch is not protected, Runtime must also
+  delete the remote branch (`git push origin --delete <branch>`). Runtime records
+  the deleted branch names, post-merge default-branch SHA, and any skip reason in
+  the action record.
+- Protected/long-lived branches must never be deleted (default branch,
+  `release/*`, `hotfix/*`, etc.).
+- In headless/eden-team workflows, skip local deletion if the working copy is
+  not on the feature branch (e.g., detached or shallow checkout) and record
+  `headless_skip_local: true`.
+
 ## Slash commands
 
 After restart:

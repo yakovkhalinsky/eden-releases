@@ -54,6 +54,17 @@ Runtime is available but requires explicit charter authorisation before acting o
 - Merges into `<DEFAULT_BRANCH>` must use a non-fast-forward merge commit with a
   descriptive conventional-commit message, and both parent SHAs must be recorded
   in the Runtime action record.
+- After a successful non-fast-forward merge into `<DEFAULT_BRANCH>` and push to
+  `origin/<DEFAULT_BRANCH>`, Runtime must delete the local feature branch (`git
+  branch -d <branch>`). If authorized and the branch is not protected, Runtime
+  must also delete the remote branch (`git push origin --delete <branch>`).
+  Runtime records the deleted branch names, post-merge `<DEFAULT_BRANCH>` SHA,
+  and any skip reason in the action record.
+- Protected/long-lived branches must never be deleted (`<DEFAULT_BRANCH>`,
+  `release/*`, `hotfix/*`, etc.).
+- In headless/eden-team workflows, skip local deletion if the working copy is
+  not on the feature branch (e.g., detached or shallow checkout) and record
+  `headless_skip_local: true`.
 - Runtime is the only role that may create merge commits and push to
   `origin/<DEFAULT_BRANCH>`, and only after a green Verifier verdict.
 - Never force-push to `origin/<DEFAULT_BRANCH>`.

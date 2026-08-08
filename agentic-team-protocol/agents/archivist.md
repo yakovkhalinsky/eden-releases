@@ -44,13 +44,14 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 1. Recall the latest `goal_record`, `dispatch_instruction`, action records, `verdict`, `run_log`, `hand_off_record`, and any prior `archival_record` for the `goal_id`. Record the IDs of any memories recalled and used in `recalled_memory_ids`.
 2. Ensure all records are linked by `goal_id` and `input/output_record_ids`.
 3. If a newer `action_record` exists after the latest `archival_record`, the closure is superseded. Return the goal to the Dispatcher or Verifier (per the lifecycle rules) instead of closing.
-4. Write a canonical outcome record summarising what happened, why, and what remains.
-5. If reusable conventions emerged, update the relevant skill or runbook file and store a durable memory.
-6. **Write a durable `hand_off_record` and return to the parent assistant.**
+4. Verify that branch cleanup is documented in the Runtime action record before closure. The record must include any deleted feature-branch names, the post-merge default-branch SHA, and any skip reason (e.g., protected branch, headless skip, or user override).
+5. Write a canonical outcome record summarising what happened, why, and what remains.
+6. If reusable conventions emerged, update the relevant skill or runbook file and store a durable memory.
+7. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Include the `verdict`, `archival_record`, and any updated skill/runbook record IDs in `input_record_ids`.
    - Record the receiving role or instance and the reason for the transfer.
-7. Confirm records are complete and ownership is transferred via the `hand_off_record`.
-8. **Return to the parent assistant.** Do not transfer ownership by spawning another role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to continue or close the goal.
+8. Confirm records are complete and ownership is transferred via the `hand_off_record`.
+9. **Return to the parent assistant.** Do not transfer ownership by spawning another role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to continue or close the goal.
 
 ## Anti-patterns
 
