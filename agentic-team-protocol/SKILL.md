@@ -203,6 +203,17 @@ Required record types:
   preserve both parent SHAs.
 - Runtime is the only role that may create merge commits and push to the default
   branch, and only after a green Verifier verdict.
+- After a successful non-fast-forward merge into the default branch and push to
+  origin, Runtime must delete the local feature branch (`git branch -d
+  <branch>`). If authorized and the branch is not protected, Runtime must also
+  delete the remote branch (`git push origin --delete <branch>`). Runtime records
+  the deleted branch names, post-merge default-branch SHA, and any skip reason in
+  the action record.
+- Protected/long-lived branches must never be deleted (default branch,
+  `release/*`, `hotfix/*`, etc.).
+- In headless/eden-team workflows, skip local deletion if the working copy is
+  not on the feature branch (e.g., detached or shallow checkout) and record
+  `headless_skip_local: true`.
 - Never force-push the default branch.
 
 ## Slash commands

@@ -49,8 +49,16 @@ the project charter in `.claude/agentic-team-charter.md`.
 4. After a green Verifier verdict, Runtime merges the feature branch into
    `<DEFAULT_BRANCH>` with a non-fast-forward merge commit and pushes to
    `origin/<DEFAULT_BRANCH>`.
-5. Archivist records the closure, linking the action record, verdict, and merge
-   parent SHAs.
+5. Runtime cleans up the feature branch: delete the local branch (`git branch -d
+   <branch>`); if authorized and unprotected, delete the remote branch (`git push
+   origin --delete <branch>`). Record deleted branch names, the post-merge
+   `<DEFAULT_BRANCH>` SHA, and any skip reason (e.g., protected branch, headless
+   skip) in the action record. Never delete protected or long-lived branches
+   (`<DEFAULT_BRANCH>`, `release/*`, `hotfix/*`, etc.). In headless/eden-team
+   workflows, skip local deletion if the working copy is not on the feature branch
+   and record `headless_skip_local: true`.
+6. Archivist records the closure, linking the action record, verdict, merge
+   parent SHAs, and branch cleanup details.
 
 ## Escalation
 
