@@ -2,7 +2,7 @@
 name: team
 title: Agentic Team Protocol
 description: Use role-based agent teams with a seven-stage task lifecycle and Eden-memory as the durable substrate.
-version: 1.0.0
+version: 1.0.1
 tags: [agents, subagents, roles, eden-memory, protocol, team]
 tools:
   discoverable: true
