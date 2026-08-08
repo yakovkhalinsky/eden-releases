@@ -54,6 +54,7 @@ Circle.
 - Non-trivial changes require a feature branch; direct commits to the default branch are allowed only for trivial one-line fixes.
 - Merges into the default branch must be non-fast-forward merge commits that preserve both parent SHAs.
 - Force-pushing the default branch is prohibited.
+- Durable records must embed their `goal_id` and own `record_id` in searchable `content` (e.g., `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>`) so `eden_recall` and `eden_search` can locate them by UUID; metadata alone is not searchable.
 
 ## Branch discipline
 

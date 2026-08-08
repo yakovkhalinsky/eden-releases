@@ -127,7 +127,13 @@ When the Router spawns a role, it must first write a durable hand-off record (a 
 
 ## Eden-memory record schema
 
-Store records with metadata so they can be recalled, linked, and audited:
+Store records with metadata so they can be recalled, linked, and audited. Every durable record must also begin its `content` with a searchable identity line because `eden_recall` and `eden_search` inspect `content`, not metadata:
+
+```text
+Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>
+```
+
+The identity line embeds both `goal_id` and the record's own UUID in searchable text. If the storage tool returns the record ID after creation, update the content to insert the actual UUID.
 
 ```json
 {

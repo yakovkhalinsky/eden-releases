@@ -31,6 +31,14 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 5. Eden-memory record metadata:
    - `goal_id`, `stage: verification`, `owner_role: verifier`, `agent_id: "verifier"`, `input_record_ids`, `output_record_ids: [verdict_id]`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this verdict.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: verifier`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+
+   Example `eden_remember` content:
+
+   ```text
+   Goal: <goal_id> | Record ID: <this_record_id> | Stage: verification | Owner: verifier
+   {"record_type":"verdict","goal_id":"<goal_id>","stage":"verification","owner_role":"verifier","agent_id":"verifier","status":"green","input_record_ids":["<action_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   ```
 6. For `blocked` verdicts, record the unblock condition clearly so `/team-continue` can resume automatically when it is satisfied.
 
 ## Failure modes to avoid
