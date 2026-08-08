@@ -29,6 +29,14 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 4. A closure record in Eden-memory with metadata:
    - `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `agent_id: "archivist"`, `input_record_ids`, `output_record_ids`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: archivist`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+
+   Example `eden_remember` content:
+
+   ```text
+   Goal: <goal_id> | Record ID: <this_record_id> | Stage: recording_and_archival | Owner: archivist
+   {"record_type":"archival_record","goal_id":"<goal_id>","stage":"recording_and_archival","owner_role":"archivist","agent_id":"archivist","status":"completed","input_record_ids":["<verdict_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   ```
 5. For hand-offs: a durable `hand_off_record` promoted in Eden-memory, not just chat context.
 6. On discovering a newer `action_record` after an existing `archival_record` for the same `goal_id`, treat the closure as superseded and return the goal to the appropriate role (usually Verifier or Dispatcher).
 
@@ -42,6 +50,8 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 ## Procedure
 
 1. Recall the latest `goal_record`, `dispatch_instruction`, action records, `verdict`, `run_log`, `hand_off_record`, and any prior `archival_record` for the `goal_id`. Record the IDs of any memories recalled and used in `recalled_memory_ids`.
+   - **Exact-ID lookup:** to verify an upstream record, first try `eden_lookup <record_id>` (or the equivalent MCP/Bash command). If exact lookup is unavailable, fall back to `eden_search` scoped by `agent_id` and the keywords `goal_id=<goal_id>` or the goal_id string itself.
+   - If exact records cannot be recalled, still list them as `input_record_ids` and document the recall failure and fallback verification method in the archival record.
 2. Ensure all records are linked by `goal_id` and `input/output_record_ids`.
 3. If a newer `action_record` exists after the latest `archival_record`, the closure is superseded. Return the goal to the Dispatcher or Verifier (per the lifecycle rules) instead of closing.
 4. Verify that branch cleanup is documented in the Runtime action record before closure. The record must include any deleted feature-branch names, the post-merge default-branch SHA, and any skip reason (e.g., protected branch, headless skip, or user override).

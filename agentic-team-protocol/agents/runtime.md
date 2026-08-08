@@ -27,6 +27,14 @@ Operate live systems safely. Every runtime action must be reversible and observa
 5. A record in Eden-memory with metadata:
    - `goal_id`, `stage: action`, `owner_role: runtime`, `agent_id: "runtime"`, `input_record_ids`, `output_record_ids`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: runtime`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+
+   Example `eden_remember` content:
+
+   ```text
+   Goal: <goal_id> | Record ID: <this_record_id> | Stage: action | Owner: runtime
+   {"record_type":"action_record","goal_id":"<goal_id>","stage":"action","owner_role":"runtime","agent_id":"runtime","status":"completed","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   ```
 
 ## Failure modes to avoid
 

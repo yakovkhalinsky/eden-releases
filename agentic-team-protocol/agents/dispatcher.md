@@ -25,6 +25,14 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
    - Success criteria, deadline, and confidence/escalation trigger.
 2. A `dispatch_instruction` record stored in Eden-memory with metadata:
    - `goal_id`, `stage: routing_and_assignment`, `owner_role: dispatcher`, `agent_id: "dispatcher"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: dispatcher`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+
+   Example `eden_remember` content:
+
+   ```text
+   Goal: <goal_id> | Record ID: <this_record_id> | Stage: routing_and_assignment | Owner: dispatcher
+   {"record_type":"dispatch_instruction","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"dispatcher","agent_id":"dispatcher","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   ```
 
 ## Failure modes to avoid
 

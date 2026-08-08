@@ -21,6 +21,14 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 
 1. A `run_log` record marking the continuation attempt:
    - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `agent_id: "router"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: router`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+
+   Example `eden_remember` content:
+
+   ```text
+   Goal: <goal_id> | Record ID: <this_record_id> | Stage: routing_and_assignment | Owner: router
+   {"record_type":"run_log","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"router","agent_id":"router","status":"in_progress","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   ```
 2. A durable `hand_off_record` (or continuation `run_log` that satisfies the hand-off format) **written before spawning the next role**.
    - This record is the activation signal for the receiving role; it must contain the full hand-off payload.
    - `input_record_ids` must reference the latest durable stage record(s), not the `goal_id` itself.
