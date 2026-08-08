@@ -99,3 +99,7 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 - Do not silently drop blocked goals; report them.
 - Do not spawn a role without first writing a durable hand-off record; the receiving role needs an activation signal in Eden-memory.
 - Do not use the `goal_id` as the sole `input_record_id` or `output_record_id`; reference actual stage records.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

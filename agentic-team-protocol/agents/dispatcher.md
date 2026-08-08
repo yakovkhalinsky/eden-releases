@@ -73,3 +73,7 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 
 - Never act as another role while dispatching.
 - Never lose the link between the original request and the dispatched task.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

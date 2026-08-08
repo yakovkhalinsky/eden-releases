@@ -19,3 +19,13 @@
 4. Start each session by checking `/team-status`.
 5. Escalate via `/team-escalate` when confidence is low, authority is missing, or scope expands.
 6. The user can override any role decision.
+
+## Parent assistant continuation rule
+
+When an ATP role subagent returns after writing its durable record and `hand_off_record`, the parent assistant must immediately continue the goal by calling `/team-continue ${GOAL_ID}` or spawning the `router` subagent. Do not ask the user "Shall I proceed?" between normal lifecycle transitions.
+
+Pause and surface the situation to the user only when the latest Eden-memory record indicates one of:
+
+- `blocked`
+- `pending_authorisation`
+- `escalation_record`

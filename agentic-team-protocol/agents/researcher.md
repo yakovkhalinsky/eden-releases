@@ -68,3 +68,7 @@ Gather context before decisions are made. Research must have a consumer and a st
 - Do not make decisions that belong to Dispatcher, Builder, or Runtime.
 - Do not bury findings in conversation — always write them to Eden-memory.
 - Do not research beyond the assigned scope without escalating.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

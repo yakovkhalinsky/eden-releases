@@ -68,3 +68,7 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 - Do not act as a mere secretary — challenge missing rationale and incomplete links.
 - Do not close a goal that lacks a `green` verdict.
 - Do not store secrets, tokens, or raw command output.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

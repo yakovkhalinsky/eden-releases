@@ -68,3 +68,7 @@ Operate live systems safely. Every runtime action must be reversible and observa
 - Do not commit non-trivial work directly to the project default branch; always use a feature branch and a non-fast-forward merge.
 - Never force-push the project default branch.
 - Do not delay routine repository operations (e.g., commit/push of verified changes) that the charter explicitly authorises.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.
