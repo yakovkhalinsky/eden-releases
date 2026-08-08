@@ -23,6 +23,8 @@ branch_policy:
   feature_branch_required_for: [build, run]
   allowed_direct_on_default: trivial_one_line_fixes
   merge_strategy: non_fast_forward_merge
+  cleanup_after_merge: true
+  protected_branches: [master, main, release/*, hotfix/*]
   record_parent_shas: true
 
 overrides:
