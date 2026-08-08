@@ -65,3 +65,7 @@ Validate work before it is accepted. The verifier gate is mandatory before closu
 - Do not verify your own work.
 - Do not approve without reading the relevant records.
 - Do not ignore residual risks.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

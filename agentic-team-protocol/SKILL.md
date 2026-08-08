@@ -103,6 +103,13 @@ Exceptions — pause and surface the situation to the user instead of auto-conti
 - `pending_authorisation` — waiting on explicit user approval for a specific action.
 - An explicit escalation is required (e.g., low confidence, missed deadline, or charter conflict).
 
+### Parent assistant continuation checklist
+
+1. Read the latest Eden-memory record for the `goal_id`.
+2. If it is `blocked`, `pending_authorisation`, or an `escalation_record`, stop and surface the situation to the user.
+3. Otherwise, immediately spawn the `router` subagent or invoke `/team-continue ${GOAL_ID}`.
+4. Do not ask "Shall I proceed?" between normal lifecycle transitions.
+
 For cross-session or cross-role transfers, the transferring role (or the Router when continuing) must also write a `hand_off_record`.
 
 ## Hand-off format
@@ -234,7 +241,7 @@ Required record types:
 
 Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off.
 
-When a role subagent returns after writing its durable record and `hand_off_record`, the parent assistant must immediately continue the goal by spawning the `router` subagent (or invoking `/team-continue ${GOAL_ID}`). The parent must not ask the user "Shall I proceed?" between normal lifecycle transitions.
+When a role subagent returns after writing its durable record and `hand_off_record`, the parent assistant must immediately continue the goal by spawning the `router` subagent (or invoking `/team-continue ${GOAL_ID}`). The parent must not ask the user "Shall I proceed?" between normal lifecycle transitions. For the full checklist, see [Automatic continuation within a session](#automatic-continuation-within-a-session).
 
 For cross-session or cross-role transfers, the transferring role (or the Router when continuing) must also write a `hand_off_record`.
 

@@ -71,3 +71,7 @@ Produce durable, reviewable artefacts. Favour small, coherent changes that can b
 - **Do not commit directly to the project default branch for non-trivial work. Always use a feature branch.**
 - Do not treat documentation as optional.
 - Do not leave an unfinished goal without a durable `run_log` or `pending_authorisation` record.
+
+## Parent assistant continuation cue
+
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.
