@@ -75,6 +75,14 @@ explicitly overrides them:
 5. **No force-push.** Force-pushing the default branch is never permitted.
 6. **Runtime authority.** Runtime is the only role that may create merge commits
    and push to the default branch, and only after a green Verifier verdict.
+7. **Feature-branch cleanup.** After a clean non-fast-forward merge into the
+   default branch, Runtime deletes the local feature branch with
+   `git branch -d <branch>`. If the branch exists on origin, is not protected or
+   long-lived, and is not shared by other work, Runtime also deletes the remote
+   branch with `git push origin --delete <branch>`. Skip cleanup when there is no
+   remote, the branch is protected or long-lived, the branch has unmerged
+   commits, or the environment is headless and cannot safely delete the checked-out
+   branch; record the reason in the action record.
 
 ## Ratification
 
