@@ -74,7 +74,8 @@ Explicitly undecided / inferred only:
 - Name: `0d3sa.com` and `eden-releases`; product names `eden-memory`, `eden-relay`, `eden-team`, `Agentic Team Protocol`.
 - Voice: direct, technical, protocol-oriented. Favors concrete commands, file paths, and stage lifecycles over aspirational claims.
 - Identity: local-first, no cloud account, open protocol, MIT-licensed companion binaries.
-- Existing assets: CNAME, README, license, and generated docs. No custom logo or color system is currently committed in this repo.
+- Visual world: "Local-first product" — light off-white ground (#fafafa), white panels (#ffffff), green primary (#16a34a), Manrope display/body, JetBrains Mono for code. Light-mode only; no dark-mode toggle.
+- Existing assets: CNAME, README, license, generated docs, and a custom favicon and landing-page CSS override.
 
 ## Evidence on Hand
 

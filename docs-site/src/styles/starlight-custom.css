@@ -1,156 +1,195 @@
-/* Starlight theme override for 0d3sa Production Call Sheet world. */
+/* Starlight theme override for 0d3sa Local-first product world.
+   Light background, green accent, Manrope type, JetBrains Mono for code.
+   Targets both Starlight theme states so the override wins regardless
+   of data-theme or localStorage. */
 
-:root {
-  --sl-color-white: #c9d1d9;
-  --sl-color-gray-1: #b0b8c4;
-  --sl-color-gray-2: #8b949e;
-  --sl-color-gray-3: #6e7681;
-  --sl-color-gray-4: #484f58;
-  --sl-color-gray-5: #30363d;
-  --sl-color-gray-6: #21262d;
-  --sl-color-gray-7: #161b22;
-  --sl-color-black: #0d1117;
+html[data-theme="dark"],
+html[data-theme="light"] {
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #f9fafb;
+  --sl-color-gray-2: #f3f4f6;
+  --sl-color-gray-3: #e5e7eb;
+  --sl-color-gray-4: #d1d5db;
+  --sl-color-gray-5: #9ca3af;
+  --sl-color-gray-6: #6b7280;
+  --sl-color-gray-7: #4b5563;
+  --sl-color-black: #111827;
 
-  --sl-color-bg: var(--sl-color-black);
-  --sl-color-bg-nav: var(--sl-color-gray-7);
-  --sl-color-bg-sidebar: var(--sl-color-gray-7);
-  --sl-color-bg-inline-code: var(--sl-color-gray-6);
-  --sl-color-bg-accent: rgba(247, 129, 102, 0.12);
+  --sl-color-bg: #ffffff;
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: #ffffff;
+  --sl-color-bg-inline-code: #f3f4f6;
+  --sl-color-bg-accent: rgba(22, 163, 74, 0.08);
 
-  --sl-color-text: var(--sl-color-white);
-  --sl-color-text-accent: #f78166;
-  --sl-color-text-invert: #0d1117;
+  --sl-color-text: var(--sl-color-black);
+  --sl-color-text-accent: #15803d;
+  --sl-color-text-invert: #ffffff;
 
-  --sl-color-accent: #f78166;
-  --sl-color-accent-high: #ff9a80;
+  --sl-color-accent: #16a34a;
+  --sl-color-accent-high: #15803d;
 
-  --sl-color-border: var(--sl-color-gray-5);
+  --sl-color-border: #e5e7eb;
 
-  --sl-font: Saira, -apple-system, BlinkMacSystemFont, sans-serif;
+  --sl-font: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
   --sl-font-mono: JetBrains Mono, ui-monospace, monospace;
-  --sl-display: Chakra Petch, Saira, -apple-system, BlinkMacSystemFont, sans-serif;
+  --sl-display: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Header / nav */
-header.header {
-  background: var(--sl-color-gray-7) !important;
+html[data-theme="dark"] header.header,
+html[data-theme="light"] header.header {
+  background: var(--sl-color-bg) !important;
   border-bottom: 1px solid var(--sl-color-border) !important;
 }
 
-.site-title {
-  color: var(--sl-color-white);
+html[data-theme="dark"] .site-title,
+html[data-theme="light"] .site-title {
+  color: var(--sl-color-black);
   font-weight: 700;
 }
 
 /* Sidebar */
-nav.sidebar {
-  background: var(--sl-color-gray-7) !important;
+html[data-theme="dark"] nav.sidebar,
+html[data-theme="light"] nav.sidebar {
+  background: var(--sl-color-bg) !important;
   border-right: 1px solid var(--sl-color-border) !important;
 }
 
-.sidebar-content ul li a {
-  color: var(--sl-color-gray-2);
+html[data-theme="dark"] .sidebar-content ul li a,
+html[data-theme="light"] .sidebar-content ul li a {
+  color: var(--sl-color-gray-7);
   border-radius: 8px;
 }
 
-.sidebar-content ul li a:hover {
-  color: var(--sl-color-white);
-  background: var(--sl-color-gray-6);
+html[data-theme="dark"] .sidebar-content ul li a:hover,
+html[data-theme="light"] .sidebar-content ul li a:hover {
+  color: var(--sl-color-black);
+  background: var(--sl-color-gray-2);
 }
 
-.sidebar-content ul li a[aria-current="page"] {
+html[data-theme="dark"] .sidebar-content ul li a[aria-current="page"],
+html[data-theme="light"] .sidebar-content ul li a[aria-current="page"] {
   color: var(--sl-color-text-accent);
   background: var(--sl-color-bg-accent);
   font-weight: 600;
 }
 
 /* Main content area */
-main {
-  background: var(--sl-color-black);
-  color: var(--sl-color-white);
+html[data-theme="dark"] main,
+html[data-theme="light"] main {
+  background: var(--sl-color-bg);
+  color: var(--sl-color-black);
 }
 
-.content-panel {
-  background: var(--sl-color-black);
+html[data-theme="dark"] .content-panel,
+html[data-theme="light"] .content-panel {
+  background: var(--sl-color-bg);
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--sl-color-white);
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6 {
+  color: var(--sl-color-black);
   font-weight: 700;
   font-family: var(--sl-display);
 }
 
-.starlight-aside__title,
-.sidebar-pane header {
+html[data-theme="dark"] .starlight-aside__title,
+html[data-theme="dark"] .sidebar-pane header,
+html[data-theme="light"] .starlight-aside__title,
+html[data-theme="light"] .sidebar-pane header {
   font-family: var(--sl-display);
 }
 
-p, li {
-  color: var(--sl-color-gray-1);
+html[data-theme="dark"] p,
+html[data-theme="dark"] li,
+html[data-theme="light"] p,
+html[data-theme="light"] li {
+  color: var(--sl-color-gray-7);
 }
 
 /* Code */
-code {
+html[data-theme="dark"] code,
+html[data-theme="light"] code {
   font-family: var(--sl-font-mono);
-  background: var(--sl-color-gray-6);
-  color: var(--sl-color-white);
+  background: var(--sl-color-bg-inline-code);
+  color: var(--sl-color-black);
   border: 1px solid var(--sl-color-border);
   border-radius: 6px;
   padding: 2px 6px;
 }
 
-pre {
-  background: var(--sl-color-gray-7) !important;
+html[data-theme="dark"] pre,
+html[data-theme="light"] pre {
+  background: var(--sl-color-gray-1) !important;
   border: 1px solid var(--sl-color-border);
   border-radius: 10px;
   padding: 16px;
 }
 
-pre code {
+html[data-theme="dark"] pre code,
+html[data-theme="light"] pre code {
   background: transparent;
   border: none;
   padding: 0;
 }
 
 /* Links */
-a {
-  color: #58a6ff;
+html[data-theme="dark"] a,
+html[data-theme="light"] a {
+  color: #15803d;
 }
 
-a:hover {
-  color: #79b8ff;
+html[data-theme="dark"] a:hover,
+html[data-theme="light"] a:hover {
+  color: #166534;
 }
 
 /* Cards / asides */
-.starlight-aside {
-  background: var(--sl-color-gray-7);
+html[data-theme="dark"] .starlight-aside,
+html[data-theme="light"] .starlight-aside {
+  background: var(--sl-color-gray-1);
   border: 1px solid var(--sl-color-border);
   border-radius: 12px;
 }
 
-.starlight-aside--tip {
-  border-color: rgba(63, 185, 80, 0.35);
-  background: rgba(63, 185, 80, 0.08);
+html[data-theme="dark"] .starlight-aside--tip,
+html[data-theme="light"] .starlight-aside--tip {
+  border-color: rgba(22, 163, 74, 0.25);
+  background: rgba(22, 163, 74, 0.06);
 }
 
-.starlight-aside--note {
-  border-color: rgba(88, 166, 255, 0.35);
-  background: rgba(88, 166, 255, 0.08);
+html[data-theme="dark"] .starlight-aside--note,
+html[data-theme="light"] .starlight-aside--note {
+  border-color: rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.05);
 }
 
-.starlight-aside--caution {
-  border-color: rgba(210, 153, 34, 0.35);
-  background: rgba(210, 153, 34, 0.08);
+html[data-theme="dark"] .starlight-aside--caution,
+html[data-theme="light"] .starlight-aside--caution {
+  border-color: rgba(217, 119, 6, 0.25);
+  background: rgba(217, 119, 6, 0.06);
 }
 
-.starlight-aside--danger {
-  border-color: rgba(248, 81, 73, 0.35);
-  background: rgba(248, 81, 73, 0.08);
+html[data-theme="dark"] .starlight-aside--danger,
+html[data-theme="light"] .starlight-aside--danger {
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.05);
 }
 
 /* Tables */
-table {
+html[data-theme="dark"] table,
+html[data-theme="light"] table {
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid var(--sl-color-border);
@@ -158,121 +197,150 @@ table {
   overflow: hidden;
 }
 
-th {
-  background: var(--sl-color-gray-7);
-  color: var(--sl-color-white);
+html[data-theme="dark"] th,
+html[data-theme="light"] th {
+  background: var(--sl-color-gray-1);
+  color: var(--sl-color-black);
   font-weight: 600;
 }
 
-td {
+html[data-theme="dark"] td,
+html[data-theme="light"] td {
   border-top: 1px solid var(--sl-color-border);
-  color: var(--sl-color-gray-1);
+  color: var(--sl-color-gray-7);
 }
 
 /* Buttons in splash */
-.hero .sl-flex a[role="button"] {
-  background: var(--sl-color-text-accent);
+html[data-theme="dark"] .hero .sl-flex a[role="button"],
+html[data-theme="light"] .hero .sl-flex a[role="button"] {
+  background: var(--sl-color-accent);
   color: var(--sl-color-text-invert);
   border-radius: 8px;
   font-weight: 600;
 }
 
-.hero .sl-flex a[role="button"].secondary {
+html[data-theme="dark"] .hero .sl-flex a[role="button"].secondary,
+html[data-theme="light"] .hero .sl-flex a[role="button"].secondary {
   background: transparent;
-  color: var(--sl-color-white);
+  color: var(--sl-color-black);
   border: 1px solid var(--sl-color-border);
 }
 
-.hero .sl-flex a[role="button"].secondary:hover {
+html[data-theme="dark"] .hero .sl-flex a[role="button"].secondary:hover,
+html[data-theme="light"] .hero .sl-flex a[role="button"].secondary:hover {
   background: var(--sl-color-bg-accent);
-  border-color: var(--sl-color-text-accent);
+  border-color: var(--sl-color-accent);
   color: var(--sl-color-text-accent);
 }
 
 /* Starlight link buttons */
-.sl-link-button.primary {
+html[data-theme="dark"] .sl-link-button.primary,
+html[data-theme="light"] .sl-link-button.primary {
   color: var(--sl-color-text-invert);
-  background: var(--sl-color-text-accent);
+  background: var(--sl-color-accent);
 }
 
-.sl-link-button.primary:hover {
+html[data-theme="dark"] .sl-link-button.primary:hover,
+html[data-theme="light"] .sl-link-button.primary:hover {
   background: var(--sl-color-accent-high);
 }
 
-.sl-link-button.secondary {
-  color: var(--sl-color-white);
+html[data-theme="dark"] .sl-link-button.secondary,
+html[data-theme="light"] .sl-link-button.secondary {
+  color: var(--sl-color-black);
   background: transparent;
-  border: 1px solid var(--sl-color-text-accent);
+  border: 1px solid var(--sl-color-accent);
 }
 
-.sl-link-button.secondary:hover {
+html[data-theme="dark"] .sl-link-button.secondary:hover,
+html[data-theme="light"] .sl-link-button.secondary:hover {
   background: var(--sl-color-bg-accent);
   color: var(--sl-color-text-accent);
 }
 
 /* Search input */
-button[aria-label="Search"],
-site-search button[data-open-modal],
-#starlight__search > button {
-  background: var(--sl-color-gray-6);
+html[data-theme="dark"] button[aria-label="Search"],
+html[data-theme="dark"] site-search button[data-open-modal],
+html[data-theme="dark"] #starlight__search > button,
+html[data-theme="light"] button[aria-label="Search"],
+html[data-theme="light"] site-search button[data-open-modal],
+html[data-theme="light"] #starlight__search > button {
+  background: var(--sl-color-gray-1);
   border: 1px solid var(--sl-color-border);
-  color: var(--sl-color-white);
+  color: var(--sl-color-black);
   border-radius: 8px;
 }
 
-button[aria-label="Search"]:hover,
-site-search button[data-open-modal]:hover,
-#starlight__search > button:hover {
+html[data-theme="dark"] button[aria-label="Search"]:hover,
+html[data-theme="dark"] site-search button[data-open-modal]:hover,
+html[data-theme="dark"] #starlight__search > button:hover,
+html[data-theme="light"] button[aria-label="Search"]:hover,
+html[data-theme="light"] site-search button[data-open-modal]:hover,
+html[data-theme="light"] #starlight__search > button:hover {
   background: var(--sl-color-bg-accent);
-  border-color: var(--sl-color-text-accent);
+  border-color: var(--sl-color-accent);
   color: var(--sl-color-text-accent);
 }
 
 /* Mobile menu button */
-button[aria-label="Menu"] {
-  background: var(--sl-color-gray-6);
+html[data-theme="dark"] button[aria-label="Menu"],
+html[data-theme="light"] button[aria-label="Menu"] {
+  background: var(--sl-color-gray-1);
   border: 1px solid var(--sl-color-border);
-  color: var(--sl-color-white);
+  color: var(--sl-color-black);
   border-radius: 8px;
 }
 
-button[aria-label="Menu"]:hover {
+html[data-theme="dark"] button[aria-label="Menu"]:hover,
+html[data-theme="light"] button[aria-label="Menu"]:hover {
   background: var(--sl-color-bg-accent);
-  border-color: var(--sl-color-text-accent);
+  border-color: var(--sl-color-accent);
   color: var(--sl-color-text-accent);
 }
 
 /* Pagination links */
-.pagination-links a {
-  color: var(--sl-color-white);
+html[data-theme="dark"] .pagination-links a,
+html[data-theme="light"] .pagination-links a {
+  color: var(--sl-color-black);
   border: 1px solid var(--sl-color-border);
   border-radius: 8px;
 }
 
-.pagination-links a:hover {
+html[data-theme="dark"] .pagination-links a:hover,
+html[data-theme="light"] .pagination-links a:hover {
   color: var(--sl-color-text-accent);
-  border-color: var(--sl-color-text-accent);
+  border-color: var(--sl-color-accent);
   background: var(--sl-color-bg-accent);
 }
 
 /* Footer */
-footer.meta {
+html[data-theme="dark"] footer.meta,
+html[data-theme="light"] footer.meta {
   border-top: 1px solid var(--sl-color-border);
-  color: var(--sl-color-gray-2);
+  color: var(--sl-color-gray-6);
+}
+
+/* Remove theme toggle: site is light-only per the product direction. */
+starlight-theme-select {
+  display: none !important;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
+html[data-theme="dark"] ::-webkit-scrollbar,
+html[data-theme="light"] ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-::-webkit-scrollbar-track {
-  background: var(--sl-color-gray-7);
+html[data-theme="dark"] ::-webkit-scrollbar-track,
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--sl-color-gray-1);
 }
-::-webkit-scrollbar-thumb {
+html[data-theme="dark"] ::-webkit-scrollbar-thumb,
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
   background: var(--sl-color-gray-4);
   border-radius: 5px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--sl-color-gray-3);
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover,
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--sl-color-gray-5);
 }

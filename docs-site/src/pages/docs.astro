@@ -1,6 +1,6 @@
 ---
 // Docs landing page for 0d3sa.com/docs.
-// Visual world: Production Call Sheet.
+// Visual world: Local-first product — light, green, clean product surface.
 // ATP is the primary path; components are grouped below for deep configuration.
 
 const roles = [
@@ -62,22 +62,22 @@ const components = [
   <meta name="description" content="Agentic Team Protocol documentation, plus component guides for eden-memory, eden-relay, and eden-team." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Saira:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <!--
-    THESIS: The docs landing page foregrounds the ATP doc path: a quick scan of the install reminder, the role roster, and the component reference.
-    OWN-WORLD: Dark board ground, panel fills, hairline borders, paper text, alert coral for primary actions, action blue for links, status chips. Chakra Petch display, Saira body, JetBrains Mono for commands.
-    STORY: A developer looking for docs finds the ATP path immediately, sees the four doc quadrants, and can drop down to component reference without losing context.
-    FIRST VIEWPORT: Left-aligned production title and lead; below, a two-column install-reminder panel with ATP doc quadrants on one side and the commands on the other.
-    FORM: Production Call Sheet (#7 of 7 grounded directions; seed key 05d59870).
+    THESIS: The docs landing page foregrounds the ATP doc path on a light, green product surface. A developer finds the install reminder, the role roster, and component reference without visual noise.
+    OWN-WORLD: White/off-white ground, green primary (#16a34a), soft gray borders, Manrope type, JetBrains Mono for commands, rounded cards with subtle shadow. Generated product-style PNG spot image below the hero lead.
+    STORY: A developer looking for docs finds the ATP path immediately, sees the four doc quadrants, and can drop into component reference without losing context.
+    FIRST VIEWPORT: Centered product title and lead; below, a clean two-column install-reminder panel with ATP doc quadrants and commands.
+    FORM: Local-first product (brief-pinned green/white/product direction).
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
   -->
 
   <header class="site-header">
     <div class="wrap nav">
       <a href="/" class="brand" aria-label="0d3sa home">
-        <span class="brand-mark" aria-hidden="true">0</span>
+        <img src="/images/brand-icon.png" alt="" class="brand-mark" width="32" height="32" aria-hidden="true" />
         <span class="brand-name">0d3sa</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
@@ -91,50 +91,52 @@ const components = [
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-wrap">
-        <div class="production-meta">
+        <div class="product-meta">
           <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Documentation</span>
-          <span class="production-id">ATP-DOCS-001</span>
         </div>
-        <h1 id="hero-title">AGENTIC TEAM PROTOCOL</h1>
+        <h1 id="hero-title">Agentic Team Protocol docs</h1>
         <p class="lead">
           Docs for the protocol, the roles, and the components that power it. Start with the ATP path; drop into eden-memory, eden-relay, or eden-team when you need a specific part.
         </p>
       </div>
     </section>
 
-    <section class="call-sheet" aria-labelledby="docs-path-title">
+    <section class="docs-path" aria-labelledby="docs-path-title">
       <div class="wrap">
-        <div class="sheet-head">
-          <div class="sheet-title-group">
-            <h2 id="docs-path-title">Docs path</h2>
-            <p class="sheet-subtitle">Start with the protocol path, then pick a component reference.</p>
-          </div>
-          <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Install ATP</a>
-        </div>
-
-        <div class="sheet-body">
-          <div class="sheet-block sheet-block-wide">
-            <div class="block-label">Start here</div>
-            <div class="quadrant-grid">
-              {atpQuadrants.map(q => (
-                <a href={q.href} class="quadrant-card">
-                  <span class="quadrant-label">{q.label}</span>
-                  <span class="quadrant-hint">{q.hint}</span>
-                </a>
-              ))}
+        <div class="path-card">
+          <div class="path-head">
+            <div class="path-title-group">
+              <h2 id="docs-path-title">Start with the protocol</h2>
+              <p class="path-subtitle">Install ATP, ratify the charter, then explore components.</p>
             </div>
+            <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Install ATP</a>
           </div>
 
-          <div class="sheet-block">
-            <div class="block-label">Install reminder</div>
-            <p class="reminder-text">
-              New to ATP? Install the binaries and wire the project first.
-            </p>
-            <div class="reminder-commands">
-              <code class="cmd">curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh</code>
-              <code class="cmd">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</code>
+          <div class="path-body">
+            <div class="path-block path-block-wide">
+              <div class="block-label">Doc quadrants</div>
+              <div class="quadrant-grid">
+                {atpQuadrants.map(q => (
+                  <a href={q.href} class="quadrant-card">
+                    <span class="quadrant-label">{q.label}</span>
+                    <span class="quadrant-hint">{q.hint}</span>
+                  </a>
+                ))}
+              </div>
             </div>
-            <a href="/agentic-team-protocol/getting-started/" class="reminder-link">Full quick start →</a>
+
+            <div class="path-block">
+              <div class="block-label">How to install</div>
+              <p class="reminder-text">
+                Install the binaries, wire your project, then restart Claude Code.
+              </p>
+              <div class="reminder-commands">
+                <code class="cmd">curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh</code>
+                <code class="cmd">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</code>
+                <code class="cmd">cd ~/my-project && eden-memory setup claude</code>
+              </div>
+              <a href="/agentic-team-protocol/getting-started/" class="reminder-link">Full quick start →</a>
+            </div>
           </div>
         </div>
       </div>
@@ -202,25 +204,34 @@ const components = [
 
 <style>
   :root {
-    --board: #0d1117;
-    --panel: #161b22;
-    --panel-raised: #21262d;
-    --border: #30363d;
-    --border-subtle: #21262d;
-    --text: #c9d1d9;
-    --text-muted: #8b949e;
-    --text-dim: #6e7681;
-    --alert: #f78166;
-    --alert-soft: rgba(247, 129, 102, 0.12);
-    --action: #58a6ff;
-    --action-soft: rgba(88, 166, 255, 0.12);
-    --ready: #3fb950;
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-raised: #f3f4f6;
+    --surface-soft: #f0fdf4;
+    --border: #e5e7eb;
+    --border-subtle: #f3f4f6;
+    --text: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --text-dim: #9ca3af;
+    --primary: #16a34a;
+    --primary-dark: #15803d;
+    --primary-soft: rgba(22, 163, 74, 0.08);
+    --primary-soft-border: rgba(22, 163, 74, 0.2);
+    --accent: #2563eb;
+    --accent-soft: rgba(37, 99, 235, 0.08);
+    --ready: #16a34a;
+    --restricted: #d97706;
     --radius-sm: 8px;
     --radius: 12px;
+    --radius-lg: 16px;
     --max: 1100px;
-    --display: Chakra Petch, Saira, -apple-system, BlinkMacSystemFont, sans-serif;
-    --body: Saira, -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    --body: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
     --mono: JetBrains Mono, ui-monospace, monospace;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -230,24 +241,25 @@ const components = [
     padding: 0;
     font-family: var(--body);
     color: var(--text);
-    background: var(--board);
+    background: var(--bg);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   a {
-    color: var(--action);
+    color: var(--primary-dark);
     text-decoration: none;
   }
   a:hover { text-decoration: underline; }
 
   code {
     font-family: var(--mono);
-    font-size: 0.92em;
-    background: var(--panel-raised);
+    font-size: 0.9em;
+    background: var(--surface-raised);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 2px 6px;
+    color: var(--text-secondary);
   }
 
   .wrap {
@@ -259,7 +271,7 @@ const components = [
   /* Header */
   .site-header {
     border-bottom: 1px solid var(--border);
-    background: var(--board);
+    background: var(--surface);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -269,7 +281,7 @@ const components = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 60px;
+    height: 64px;
   }
 
   .brand {
@@ -278,32 +290,28 @@ const components = [
     gap: 10px;
     color: var(--text);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
   }
   .brand:hover { text-decoration: none; }
 
   .brand-mark {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-sm);
-    background: var(--alert);
-    color: var(--board);
-    display: grid;
-    place-items: center;
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    font-weight: 700;
+    display: block;
+    object-fit: cover;
+    box-shadow: var(--shadow-sm);
   }
 
   .nav-links {
     display: flex;
-    gap: 22px;
+    gap: 24px;
     align-items: center;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
   }
 
   .nav-links a {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-weight: 500;
   }
   .nav-links a:hover { color: var(--text); text-decoration: none; }
@@ -319,26 +327,34 @@ const components = [
     font-size: 0.92rem;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color .12s ease, border-color .12s ease, color .12s ease;
+    transition: background-color .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease;
     text-decoration: none;
     line-height: 1;
   }
   .btn:hover { text-decoration: none; }
 
   .btn-primary {
-    background: var(--alert);
-    color: var(--board);
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: var(--shadow-sm);
   }
-  .btn-primary:hover { background: #ff9a80; }
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  .btn-secondary {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text-secondary);
+  }
+  .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
 
   .btn-sm {
     padding: 8px 14px;
     font-size: 0.82rem;
-    background: var(--panel-raised);
+    background: var(--surface);
     border-color: var(--border);
-    color: var(--text);
+    color: var(--text-secondary);
   }
-  .btn-sm:hover { border-color: var(--alert); color: var(--alert); background: var(--panel-raised); }
+  .btn-sm:hover { border-color: var(--primary); color: var(--primary); background: var(--surface); }
 
   /* Status chips */
   .status-chip {
@@ -356,9 +372,9 @@ const components = [
   }
 
   .status-chip.ready {
-    background: rgba(63, 185, 80, 0.12);
+    background: rgba(22, 163, 74, 0.08);
     color: var(--ready);
-    border-color: rgba(63, 185, 80, 0.25);
+    border-color: rgba(22, 163, 74, 0.2);
   }
 
   .status-dot {
@@ -370,87 +386,96 @@ const components = [
 
   /* Hero */
   .hero {
-    padding: 56px 0 40px;
+    padding: 64px 0 48px;
+    text-align: center;
     border-bottom: 1px solid var(--border-subtle);
+    background: var(--surface) url('/images/hero-bg.png') center / cover no-repeat;
   }
 
   .hero-wrap {
-    max-width: 860px;
+    max-width: 720px;
+    margin: 0 auto;
   }
 
-  .production-meta {
+  .product-meta {
     display: flex;
+    justify-content: center;
     gap: 14px;
     align-items: center;
     margin-bottom: 18px;
     flex-wrap: wrap;
   }
 
-  .production-id {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
   h1 {
     font-family: var(--display);
-    font-size: clamp(2.4rem, 6vw, 4.2rem);
-    line-height: 0.98;
-    font-weight: 700;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1.1;
+    font-weight: 800;
     letter-spacing: -0.03em;
-    margin: 0 0 16px;
+    margin: 0 0 14px;
     color: var(--text);
   }
 
   .lead {
-    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
     color: var(--text-muted);
-    max-width: 680px;
-    margin: 0;
+    margin: 0 auto;
     line-height: 1.55;
+    max-width: 640px;
   }
 
-  /* Call sheet */
-  .call-sheet {
-    padding: 40px 0 64px;
+  /* Docs path */
+  .docs-path {
+    padding: 48px 0 80px;
   }
 
-  .sheet-head {
+  .path-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .path-head {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     gap: 18px;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
   }
 
-  .sheet-title-group h2 {
+  .path-title-group h2 {
     font-family: var(--display);
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
     margin: 0 0 4px;
     letter-spacing: -0.02em;
+    color: var(--text);
   }
 
-  .sheet-subtitle {
+  .path-subtitle {
     color: var(--text-muted);
     margin: 0;
     font-size: 0.95rem;
   }
 
-  .sheet-body {
+  .path-body {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 18px;
+    gap: 20px;
   }
 
-  .sheet-block {
-    background: var(--panel);
+  .path-block {
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
+  }
+
+  .path-block-wide {
+    grid-column: 1;
   }
 
   .block-label {
@@ -475,15 +500,16 @@ const components = [
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: var(--board);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 16px;
     color: var(--text);
-    transition: border-color .12s ease;
+    transition: border-color .12s ease, box-shadow .12s ease;
   }
   .quadrant-card:hover {
-    border-color: var(--action);
+    border-color: var(--primary-soft-border);
+    box-shadow: var(--shadow-sm);
     text-decoration: none;
   }
 
@@ -513,7 +539,7 @@ const components = [
 
   .cmd {
     display: block;
-    background: var(--board);
+    background: var(--surface-raised);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 10px 12px;
@@ -526,33 +552,40 @@ const components = [
   .reminder-link {
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--alert);
+    color: var(--primary-dark);
   }
 
   /* Sections */
   .section {
-    padding: 64px 0;
+    padding: 80px 0;
     border-top: 1px solid var(--border-subtle);
   }
 
   .section-head {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    text-align: center;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .section-head h2 {
     font-family: var(--display);
-    font-size: 1.5rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 700;
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     letter-spacing: -0.02em;
+    color: var(--text);
   }
 
   .section-lead {
     color: var(--text-muted);
     margin: 0;
-    max-width: 640px;
-    font-size: 0.98rem;
+    font-size: 1rem;
+    line-height: 1.55;
   }
+
+  .section-lead a { color: var(--primary-dark); }
 
   /* Roles */
   .role-grid {
@@ -561,14 +594,19 @@ const components = [
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 18px;
   }
 
   .role-card {
-    background: var(--panel);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 18px;
+    padding: 20px;
+    transition: border-color .12s ease, box-shadow .12s ease;
+  }
+  .role-card:hover {
+    border-color: var(--primary-soft-border);
+    box-shadow: var(--shadow);
   }
 
   .role-head {
@@ -581,8 +619,9 @@ const components = [
 
   .role-name {
     font-family: var(--display);
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 700;
+    color: var(--text);
   }
 
   .role-duty {
@@ -594,28 +633,31 @@ const components = [
 
   /* Components */
   .components-section {
-    background: var(--panel);
+    background: var(--surface);
     border-top: 1px solid var(--border);
   }
 
   .component-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 18px;
   }
 
   .component-card {
     display: flex;
     flex-direction: column;
-    background: var(--board);
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
+    border-radius: var(--radius-lg);
+    padding: 24px;
     color: var(--text);
-    transition: border-color .12s ease;
+    transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease;
+    box-shadow: var(--shadow-sm);
   }
   .component-card:hover {
-    border-color: var(--action);
+    border-color: var(--primary-soft-border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
     text-decoration: none;
   }
 
@@ -623,8 +665,8 @@ const components = [
     display: inline-block;
     padding: 4px 10px;
     border-radius: 999px;
-    background: var(--action-soft);
-    color: var(--action);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -635,13 +677,14 @@ const components = [
     font-family: var(--display);
     font-size: 1.25rem;
     font-weight: 700;
-    margin: 12px 0 8px;
+    margin: 14px 0 8px;
+    color: var(--text);
   }
 
   .component-desc {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin: 0 0 16px;
+    margin: 0 0 18px;
     line-height: 1.5;
     flex: 1;
   }
@@ -656,7 +699,7 @@ const components = [
     font-size: 0.78rem;
     padding: 5px 10px;
     border-radius: var(--radius-sm);
-    background: var(--panel-raised);
+    background: var(--surface-raised);
     border: 1px solid var(--border);
     color: var(--text-muted);
     font-weight: 500;
@@ -665,10 +708,10 @@ const components = [
   /* Footer */
   .site-footer {
     border-top: 1px solid var(--border);
-    padding: 32px 0;
+    padding: 40px 0;
     color: var(--text-muted);
-    font-size: 0.84rem;
-    background: var(--board);
+    font-size: 0.86rem;
+    background: var(--surface);
   }
 
   .footer-row {
@@ -684,19 +727,21 @@ const components = [
 
   /* Responsive */
   @media (max-width: 900px) {
-    .sheet-body { grid-template-columns: 1fr; }
+    .path-body { grid-template-columns: 1fr; }
+    .path-block-wide { grid-column: auto; }
     .role-grid { grid-template-columns: repeat(2, 1fr); }
     .component-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 640px) {
-    .hero { padding: 40px 0 32px; }
-    .call-sheet { padding: 32px 0 48px; }
-    .section { padding: 48px 0; }
+    .hero { padding: 48px 0 36px; }
+    .docs-path { padding: 36px 0 56px; }
+    .path-card { padding: 24px; }
+    .section { padding: 56px 0; }
     .quadrant-grid { grid-template-columns: 1fr; }
     .role-grid { grid-template-columns: 1fr; }
     .component-grid { grid-template-columns: 1fr; }
-    .sheet-head { align-items: flex-start; flex-direction: column; }
-    .sheet-head .btn { width: 100%; justify-content: center; }
+    .path-head { align-items: flex-start; flex-direction: column; }
+    .path-head .btn { width: 100%; justify-content: center; }
   }
 </style>
