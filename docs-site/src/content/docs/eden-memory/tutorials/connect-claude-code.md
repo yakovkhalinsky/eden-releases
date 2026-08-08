@@ -22,7 +22,14 @@ Run the installer:
 curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/eden-memory`. Make sure `~/.local/bin` is on your PATH, or use the full path in the next step.
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/eden-memory`. If your terminal is interactive, the installer prompts for `EDEN_ORG_ID` and writes it to `~/.eden-memory/.env`. Leave it empty to configure later, or pre-set it for non-interactive installs:
+
+```bash
+export EDEN_ORG_ID=your-org
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+```
+
+Make sure `~/.local/bin` is on your PATH, or use the full path in the next step.
 
 ## 2. Wire the MCP server
 

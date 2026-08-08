@@ -43,6 +43,8 @@ For example, passing `--db local.db` on the command line overrides `EDEN_DB_PATH
 
 If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls back to these environment variables. This is useful for project-scoped Claude Code processes that always tag memories with the current workspace.
 
+The public installer creates or updates `~/.eden-memory/.env` with `EDEN_ORG_ID` when you enter one at the prompt (or when `EDEN_ORG_ID` is already set in the environment). `eden-memory setup claude` writes `EDEN_WORKSPACE_ID` into the per-project MCP server configuration in `~/.claude.json`.
+
 ## Relay variables (eden-relay and `eden-memory relay-server`)
 
 The dedicated `eden-relay` binary and the `eden-memory relay-server` subcommand read these variables:
