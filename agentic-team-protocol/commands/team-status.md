@@ -18,7 +18,7 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
      --user-id "${USER_ID}" \
-     --keywords "agentic-team-protocol goal_record stage run_log hand_off_record pending_authorisation blocked" \
+     --keywords "agentic-team-protocol goal_record stage run_log hand_off_record pending_authorisation blocked cleanup_record" \
      --limit 100
    ```
 3. Group results by `goal_id` and find the latest stage per goal.

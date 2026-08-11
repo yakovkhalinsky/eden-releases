@@ -21,6 +21,19 @@ tools:
 
 Produce durable, reviewable artefacts. Favour small, coherent changes that can be verified.
 
+## Cleanup obligations
+
+Before finishing and returning the required durable record:
+
+1. Avoid TUI mode. Do not invoke `claude`, `vim`, `less`, `top`, `htop`, `tmux`, `screen`, or any other command that expects a controlling terminal. Run every tool in non-interactive, batch, or headless mode only.
+2. Close every file descriptor, file handle, writer, reader, pipe, socket, or network connection you opened during this role. Explicitly call `Close()` or the equivalent.
+3. Release temporary resources:
+   - Delete any temporary files or directories you created under `/tmp`, the project scratchpad, or the working directory.
+   - Terminate any subprocesses, background jobs, build daemons, watch processes, or long-running servers you started. Do not leave detached `claude` children running.
+   - Release any locks, ports, leases, or external resources you acquired.
+4. If cleanup is non-trivial (temporary files, subprocesses, ports, or leases), emit a `cleanup_record` with `stage: "cleanup"` documenting what was released, then hand off to `verifier`.
+5. If you cannot clean up safely, set `status` to `blocked` and describe the remaining resources and unblock condition in the record content and `escalation_trigger`.
+
 ## Required outputs
 
 1. The artefact itself (code, config, doc, test, etc.).

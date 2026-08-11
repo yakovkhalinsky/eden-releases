@@ -86,6 +86,22 @@ Builder or Runtime writes this after doing the work. It documents what changed, 
 | `stage` | `action`. |
 | `owner_role` | `builder` or `runtime`. |
 
+### `cleanup_record`
+
+Builder or Runtime writes this after a non-trivial turn to document what temporary resources were released before handing off to Verifier. It is not a terminal record; the goal still requires a `green` verdict before closure.
+
+| Field | Purpose |
+|-------|---------|
+| `summary` | Human-readable description of what was cleaned up. |
+| `released_resources` | List of files, subprocesses, ports, locks, leases, or other resources that were released. |
+| `verification_status` | `pending` until Verifier confirms the cleanup. |
+| `stage` | `cleanup`. |
+| `owner_role` | `builder` or `runtime`. |
+
+**When to emit:** a role created temporary files, spawned subprocesses, acquired locks or ports, or otherwise left resources that need explicit release.
+
+**Next role:** `verifier` — Verifier confirms the claimed resources were actually released.
+
 ### `verdict`
 
 The Verifier compares the outcome against the dispatch success criteria and writes a green, red, or blocked verdict.
@@ -166,6 +182,8 @@ dispatch_instruction
 context_summary  (optional, for non-trivial goals)
     ↓
 action_record
+    ↓
+cleanup_record  (optional — when non-trivial resources were released)
     ↓
 verdict
     ↓

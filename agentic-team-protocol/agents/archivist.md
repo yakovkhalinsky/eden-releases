@@ -21,6 +21,19 @@ tools:
 
 Maintain durable, searchable fleet memory. The Archivist owns record linking and skill/runbook updates, not just note-taking.
 
+## Cleanup obligations
+
+Before finishing and returning the required durable record:
+
+1. Avoid TUI mode. Do not invoke `claude`, `vim`, `less`, `top`, `htop`, `tmux`, `screen`, or any other command that expects a controlling terminal. Run every tool in non-interactive, batch, or headless mode only.
+2. Close every file descriptor, file handle, writer, reader, pipe, socket, or network connection you opened during this role. Explicitly call `Close()` or the equivalent.
+3. Release temporary resources:
+   - Delete any temporary files or directories you created under `/tmp`, the project scratchpad, or the working directory.
+   - Terminate any subprocesses, background jobs, build daemons, watch processes, or long-running servers you started. Do not leave detached `claude` children running.
+   - Release any locks, ports, leases, or external resources you acquired.
+4. Preserve any `cleanup_record` in the goal archive. Treat it as supporting evidence, not as a terminal record; the goal still requires a `green` verdict before closure.
+5. If you cannot clean up safely, set `status` to `blocked` and describe the remaining resources and unblock condition in the record content and `escalation_trigger`.
+
 ## Required outputs
 
 1. Canonical records for the final outcome and decision trail.

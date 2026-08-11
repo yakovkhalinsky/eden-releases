@@ -60,6 +60,14 @@ before closure.
 | 6 | **Recording and archival** | Archivist | `archival_record` | Link records, update skills or runbooks, capture rationale. |
 | 7 | **Hand-off or closure** | Archivist | `hand_off_or_closure` | Confirm completeness or transfer ownership. |
 
+### Optional cleanup stage
+
+A non-trivial action may be followed by an explicit cleanup stage before verification. The role that performed the action documents what temporary resources were released, and the goal then proceeds to Verifier to confirm the cleanup.
+
+| Stage | Owner | Record kind | What happens |
+|-------|-------|-------------|--------------|
+| **Cleanup** | Builder / Runtime | `cleanup_record` | Release temporary resources and document what was released so Verifier can confirm. |
+
 ## Routing rules
 
 - Every new goal starts with Dispatcher.
@@ -78,7 +86,7 @@ Each stage record should include this metadata so it can be traced and recalled:
 ```json
 {
   "goal_id": "<uuid>",
-  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure",
+  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure | cleanup",
   "owner_role": "dispatcher | researcher | builder | runtime | verifier | archivist",
   "owner_instance": "<optional instance id>",
   "input_record_ids": ["<id>"],
