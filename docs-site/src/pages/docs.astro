@@ -214,13 +214,13 @@ const components = [
     --text-secondary: #4b5563;
     --text-muted: #6b7280;
     --text-dim: #6b7280;
-    --primary: #16a34a;
-    --primary-dark: #15803d;
-    --primary-soft: rgba(22, 163, 74, 0.08);
-    --primary-soft-border: rgba(22, 163, 74, 0.2);
+    --primary: #157a39;
+    --primary-dark: #0f5f2c;
+    --primary-soft: rgba(21, 122, 57, 0.08);
+    --primary-soft-border: rgba(21, 122, 57, 0.2);
     --accent: #2563eb;
     --accent-soft: rgba(37, 99, 235, 0.08);
-    --ready: #16a34a;
+    --ready: #157a39;
     --restricted: #d97706;
     --radius-sm: 8px;
     --radius: 12px;
@@ -372,9 +372,9 @@ const components = [
   }
 
   .status-chip.ready {
-    background: rgba(22, 163, 74, 0.08);
+    background: rgba(21, 122, 57, 0.08);
     color: var(--ready);
-    border-color: rgba(22, 163, 74, 0.2);
+    border-color: rgba(21, 122, 57, 0.2);
   }
 
   .status-dot {
@@ -386,13 +386,24 @@ const components = [
 
   /* Hero */
   .hero {
+    position: relative;
     padding: 64px 0 48px;
     text-align: center;
     border-bottom: 1px solid var(--border-subtle);
     background: var(--surface) url('/images/hero-bg.png') center / cover no-repeat;
   }
 
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 0;
+  }
+
   .hero-wrap {
+    position: relative;
+    z-index: 1;
     max-width: 720px;
     margin: 0 auto;
   }
@@ -416,9 +427,9 @@ const components = [
     color: var(--text);
   }
 
-  .lead {
+  .hero .lead {
     font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-    color: var(--text-muted);
+    color: #374151;
     margin: 0 auto;
     line-height: 1.55;
     max-width: 640px;
@@ -701,7 +712,7 @@ const components = [
     border-radius: var(--radius-sm);
     background: var(--surface-raised);
     border: 1px solid var(--border);
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-weight: 500;
   }
 
