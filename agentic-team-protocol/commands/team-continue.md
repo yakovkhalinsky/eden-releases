@@ -46,6 +46,7 @@ Continue an Agentic Team Protocol goal by rehydrating its state from Eden-memory
 | `dispatch_instruction` | Route to the assigned role. |
 | `context_summary` | Route to Builder or Runtime per the Dispatcher plan. |
 | `action_record` | Route to Verifier. |
+| `cleanup_record` | Route to Verifier to verify claimed releases. |
 | `verdict` green | Route to Archivist for closure. |
 | `verdict` red | Route to Dispatcher for rework assignment. |
 | `verdict` blocked / `blocked` record | Report blocker and wait. |

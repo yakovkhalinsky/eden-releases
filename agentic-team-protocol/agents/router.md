@@ -85,6 +85,7 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 | `dispatch_instruction` | routing complete | assigned role | If package is `research`, route to Researcher; otherwise to the assigned Builder/Runtime/Verifier/Archivist. |
 | `context_summary` | context gathered | Builder or Runtime per Dispatcher plan | If no dispatch instruction names the actor, return to Dispatcher. |
 | `action_record` | action complete | Verifier | Mandatory verifier gate. |
+| `cleanup_record` | cleanup complete | Verifier | Verify claimed resources were released. |
 | `verdict` status `green` | verified | Archivist | Closure/archival. |
 | `verdict` status `red` | needs rework | Dispatcher | Dispatcher issues a rework dispatch instruction. |
 | `verdict` status `blocked` | blocked | owning role / user | Surface unblock condition; do not proceed. |

@@ -67,7 +67,7 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 1. **Goal receipt** — Dispatcher records the request, requester, constraints, and package type.
 2. **Routing and assignment** — Dispatcher assigns target role/package, owner, deadline, success criteria, confidence/escalation trigger.
 3. **Context gathering** — Researcher (or assigned role) records what is known, evaluates options, chooses a path, and captures any written plan. Planning is not a private activity; it belongs in this durable record.
-4. **Action** — Builder or Runtime executes the plan and records what was done, rollback options, and state changes. A role may park the goal as `pending_authorisation` if it needs explicit user approval before proceeding.
+4. **Action** — Builder or Runtime executes the plan and records what was done, rollback options, and state changes. A role may park the goal as `pending_authorisation` if it needs explicit user approval before proceeding. If a role created temporary files, subprocesses, ports, or leases during a non-trivial turn, it may emit a `cleanup_record` with `stage: cleanup` documenting what was released before handing off to Verifier.
 5. **Verification** — Verifier inspects outcome against success criteria and writes a verdict (`green`, `red`, or `blocked`).
 6. **Recording and archival** — Archivist ensures final outcome, decision trail, and skill/runbook updates are stored.
 7. **Hand-off or closure** — Archivist confirms records are complete and ownership is transferred if handing off. A new action record after closure supersedes the closure and returns the goal to Action.
@@ -76,6 +76,7 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 
 - `blocked` — waiting on an external dependency or authority. The owning role records the unblock condition. The router checks it on every `/team-continue`.
 - `pending_authorisation` — waiting on explicit user approval for a specific high-risk action outside routine charter authority (e.g., deleting a public release or modifying fleet-wide CI secrets). The exact question and prepared action are recorded so a new session can resume and apply the answer. Routine repository commit/push after a green Verifier verdict is not a pending_authorisation step.
+- `cleanup_record` — an optional cleanup stage after a non-trivial action. The role that performed the action documents what temporary resources were released; the router routes the goal to Verifier so the claimed releases can be confirmed.
 
 ## Routing rules and dispatcher defaults
 
@@ -145,7 +146,7 @@ The identity line embeds both `goal_id` and the record's own UUID in searchable 
 ```json
 {
   "goal_id": "<uuid>",
-  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure | blocked | pending_authorisation",
+  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure | blocked | pending_authorisation | cleanup",
   "owner_role": "dispatcher | researcher | builder | runtime | verifier | archivist | router",
   "owner_instance": "<optional instance id>",
   "input_record_ids": ["<id>"],
@@ -171,6 +172,7 @@ Required record types:
 - `escalation_record` — escalation request and routing.
 - `archival_record` — final outcome and links.
 - `run_log` — coarse-grained event written by a role at the start/end of each turn; used by the router to detect stale or interrupted work.
+- `cleanup_record` — release and evidence for temporary resources (files, subprocesses, ports, leases) created during a role's turn. Not a terminal record; the goal still requires a `green` verdict before closure.
 - `hand_off_record` — explicit ownership transfer between roles or instances, including input/output IDs, success criteria, and deadline.
 
 ## Memory-first rules
@@ -257,6 +259,7 @@ Given the latest non-terminal record for a `goal_id`:
 | `dispatch_instruction` | context_gathering or action | Researcher (if package is research) or assigned role |
 | `context_summary` | action | Builder or Runtime per Dispatcher plan |
 | `action_record` | verification | Verifier |
+| `cleanup_record` | verification | Verifier |
 | `verdict` status `red` | routing_and_assignment (rework) | Dispatcher |
 | `verdict` status `blocked` | blocked | owning role re-checks unblock condition |
 | `verdict` status `green` | recording_and_archival | Archivist |

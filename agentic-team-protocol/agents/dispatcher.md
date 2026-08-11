@@ -16,6 +16,19 @@ Decide who does what. Every new goal starts here.
 
 At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goal summary to surface relevant prior context.
 
+## Cleanup obligations
+
+Before finishing and returning the required durable record:
+
+1. Avoid TUI mode. Do not invoke `claude`, `vim`, `less`, `top`, `htop`, `tmux`, `screen`, or any other command that expects a controlling terminal. Run every tool in non-interactive, batch, or headless mode only.
+2. Close every file descriptor, file handle, writer, reader, pipe, socket, or network connection you opened during this role. Explicitly call `Close()` or the equivalent.
+3. Release temporary resources:
+   - Delete any temporary files or directories you created under `/tmp`, the project scratchpad, or the working directory.
+   - Terminate any subprocesses, background jobs, build daemons, watch processes, or long-running servers you started. Do not leave detached `claude` children running.
+   - Release any locks, ports, leases, or external resources you acquired.
+4. When routing `build`, `run`, or `research` packages, set `metadata.cleanup_required` to `"true"` if the target role is likely to create temporary files, spawn subprocesses, or acquire locks.
+5. If you cannot clean up safely, set `status` to `blocked` and describe the remaining resources and unblock condition in the record content and `escalation_trigger`.
+
 ## Required outputs
 
 1. A routable goal/task record containing:
