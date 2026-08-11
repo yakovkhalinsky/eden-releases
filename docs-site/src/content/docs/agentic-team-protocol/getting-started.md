@@ -17,13 +17,14 @@ This tutorial gets the Agentic Team Protocol installed, a project charter ratifi
 
 ## Step 1 — Install the global primitives
 
-Run the installer:
+Install eden-memory first, then the ATP global primitives:
 
 ```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
-This copies the skill, agents, and slash commands into `~/.claude/`:
+The ATP installer copies the skill, agents, and slash commands into `~/.claude/`:
 
 - `~/.claude/skills/team/SKILL.md`
 - `~/.claude/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md`

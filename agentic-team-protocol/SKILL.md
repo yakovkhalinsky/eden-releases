@@ -27,7 +27,19 @@ A role-based agent team protocol implemented as Claude Code primitives (skills, 
 
 ## Setup
 
-1. Install `eden-memory` and make sure it is on your `PATH`.
+Quick install for the global primitives:
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
+```
+
+Detailed steps:
+
+1. Install `eden-memory` and make sure it is on your `PATH`:
+   ```bash
+   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   ```
 2. Install the global ATP primitives:
    ```bash
    curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh

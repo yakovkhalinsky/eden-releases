@@ -153,29 +153,46 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
       <div class="wrap">
         <div class="section-head">
           <h2 id="install-title">Install in one command</h2>
-          <p class="section-lead">The ATP installer sets up the protocol primitives and expects eden-memory to be on your PATH.</p>
+          <p class="section-lead">First-time setup: install both global primitives, wire a project, restart Claude Code, then ratify the charter.</p>
         </div>
         <div class="install-card">
-          <div class="install-block">
-            <div class="block-label">Install Agentic Team Protocol</div>
-            <div class="step-row">
-              <code class="cmd">{atpInstall}</code>
-              <button class="copy-btn" type="button" data-cmd={atpInstall} aria-label="Copy ATP install command">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              </button>
-            </div>
-          </div>
-          <div class="install-divider"></div>
-          <div class="install-block">
-            <div class="block-label">Then wire your project</div>
-            <div class="step-row">
-              <code class="cmd">{setupCmd}</code>
-              <button class="copy-btn" type="button" data-cmd={setupCmd} aria-label="Copy setup command">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              </button>
-            </div>
-            <p class="install-hint">Restart Claude Code after wiring. See the <a href="/agentic-team-protocol/getting-started/">full quick start</a> for the eden-memory install step and project charter setup.</p>
-          </div>
+          <ol class="install-list" role="list">
+            <li class="install-block">
+              <div class="block-label">1. Install eden-memory</div>
+              <div class="step-row">
+                <code class="cmd">{memoryInstall}</code>
+                <button class="copy-btn" type="button" data-cmd={memoryInstall} aria-label="Copy eden-memory install command">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+              </div>
+            </li>
+            <li class="install-block">
+              <div class="block-label">2. Install Agentic Team Protocol</div>
+              <div class="step-row">
+                <code class="cmd">{atpInstall}</code>
+                <button class="copy-btn" type="button" data-cmd={atpInstall} aria-label="Copy ATP install command">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+              </div>
+            </li>
+            <li class="install-block">
+              <div class="block-label">3. Wire your project</div>
+              <div class="step-row">
+                <code class="cmd">{setupCmd}</code>
+                <button class="copy-btn" type="button" data-cmd={setupCmd} aria-label="Copy setup command">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+              </div>
+            </li>
+            <li class="install-block">
+              <div class="block-label">4. Restart Claude Code</div>
+              <p class="install-hint">Run <code>/exit</code>, then reopen Claude Code so the ATP agents and slash commands load.</p>
+            </li>
+            <li class="install-block">
+              <div class="block-label">5. Ratify the project charter</div>
+              <p class="install-hint">Follow the <a href="/agentic-team-protocol/getting-started/">ATP quick start</a> to edit and ratify your project charter, then run your first team goal.</p>
+            </li>
+          </ol>
         </div>
       </div>
     </section>
@@ -668,6 +685,12 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 28px;
+  }
+
+  .install-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .install-block + .install-block { margin-top: 24px; }

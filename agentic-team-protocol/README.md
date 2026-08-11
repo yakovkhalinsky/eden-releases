@@ -33,11 +33,14 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 
 ## Quick install
 
+Install eden-memory first, then the ATP global primitives:
+
 ```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
-In each project where you will use ATP, wire the Eden-memory MCP server first:
+In each project where you will use ATP, wire the Eden-memory MCP server:
 
 ```bash
 cd ~/my-project
