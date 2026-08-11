@@ -1,10 +1,19 @@
 ---
 title: eden-memory
-description: The durable memory and sync component of the Agentic Team Protocol. Local SQLite, vector embeddings, MCP server, and optional multi-device sync.
+description: The durable memory and sync component of the Agentic Team Protocol. Local SQLite, vector embeddings, MCP server, optional multi-device sync, and LLM-first dreaming curation.
 content_type: concept
 template: splash
+keywords:
+  - eden-memory
+  - MCP
+  - memory
+  - sync
+  - dreaming
+  - eden_dream
+  - vector embeddings
+  - SQLite
 hero:
-  tagline: The durable memory and sync component of ATP. Local SQLite, vector embeddings, MCP server, and optional multi-device sync.
+  tagline: The durable memory and sync component of ATP. Local SQLite, vector embeddings, MCP server, optional multi-device sync, and LLM-first dreaming curation.
   actions:
     - text: Get started
       link: /eden-memory/getting-started/
@@ -17,6 +26,8 @@ hero:
 ## What it is
 
 `eden-memory` is the **memory and sync component** of the [Agentic Team Protocol](/agentic-team-protocol/). It gives ATP agents persistent, local-first memory: facts, preferences, context, and lifecycle records stored in a SQLite database on your machine.
+
+It also provides **dreaming**, an LLM-first curation pass over a scoped memory corpus via the `eden_dream` and `eden_dream_apply` MCP tools or the `eden-memory dream` CLI.
 
 It is also useful on its own as an MCP memory server for any stdio MCP client.
 
@@ -35,6 +46,7 @@ It is also useful on its own as an MCP memory server for any stdio MCP client.
 - [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/)
 - [Set up multi-device sync](/eden-memory/multi-device-sync/)
 - [Browse skills](/eden-memory/skills/)
+- [Curate memories with dreaming](/eden-memory/concepts/dreaming/)
 
 ## Data stays local
 
