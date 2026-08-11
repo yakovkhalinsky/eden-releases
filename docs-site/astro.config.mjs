@@ -106,6 +106,7 @@ export default defineConfig({
 								{
 									label: 'Concepts',
 									items: [
+										{ label: 'Dreaming', slug: 'eden-memory/concepts/dreaming' },
 										{ label: 'Knowledge packets', slug: 'eden-memory/concepts/knowledge-packets' },
 										{ label: 'Memory model and embeddings', slug: 'eden-memory/concepts/memory-model' },
 										{ label: 'Scopes and identity', slug: 'eden-memory/concepts/scopes-identity' },
