@@ -1,84 +1,104 @@
-/* Starlight theme override for 0d3sa Local-first product world.
-   Light background, green accent, Manrope type, JetBrains Mono for code.
-   Targets both Starlight theme states so the override wins regardless
-   of data-theme or localStorage. */
+/* Starlight theme override for 0d3sa.
+   Refero-inspired obsidian command center: dark ground, neon green signal,
+   generous rounding, Saira body, Chakra Petch display, JetBrains Mono for code.
+   Targets both theme states so the dark world wins regardless of data-theme. */
 
+:root,
 html[data-theme="dark"],
 html[data-theme="light"] {
+  /* Gray scale: lightest to darkest */
   --sl-color-white: #ffffff;
-  --sl-color-gray-1: #f9fafb;
-  --sl-color-gray-2: #f3f4f6;
-  --sl-color-gray-3: #e5e7eb;
-  --sl-color-gray-4: #d1d5db;
-  --sl-color-gray-5: #9ca3af;
-  --sl-color-gray-6: #6b7280;
-  --sl-color-gray-7: #4b5563;
-  --sl-color-black: #111827;
+  --sl-color-gray-1: #edf7f5;
+  --sl-color-gray-2: #b2b6b4;
+  --sl-color-gray-3: #828786;
+  --sl-color-gray-4: #424f4f;
+  --sl-color-gray-5: #30363d;
+  --sl-color-gray-6: #1a2524;
+  --sl-color-gray-7: #0e1a19;
+  --sl-color-black: #070f0f;
 
-  --sl-color-bg: #ffffff;
-  --sl-color-bg-nav: #ffffff;
-  --sl-color-bg-sidebar: #ffffff;
-  --sl-color-bg-inline-code: #f3f4f6;
-  --sl-color-bg-accent: rgba(22, 163, 74, 0.08);
+  --sl-color-bg: #132322;
+  --sl-color-bg-nav: #132322;
+  --sl-color-bg-sidebar: #0e1a19;
+  --sl-color-bg-inline-code: #0e1a19;
+  --sl-color-bg-accent: rgba(61, 220, 145, 0.12);
 
-  --sl-color-text: var(--sl-color-black);
-  --sl-color-text-accent: #15803d;
-  --sl-color-text-invert: #ffffff;
+  --sl-color-text: #ffffff;
+  --sl-color-text-accent: #3ddc91;
+  --sl-color-text-invert: #132322;
 
-  --sl-color-accent: #16a34a;
-  --sl-color-accent-high: #15803d;
+  --sl-color-accent: #3ddc91;
+  --sl-color-accent-high: #97ddbc;
 
-  --sl-color-border: #e5e7eb;
+  --sl-color-border: #424f4f;
 
-  --sl-font: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
-  --sl-font-mono: JetBrains Mono, ui-monospace, monospace;
-  --sl-display: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+  --sl-font: "Saira", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --sl-font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --sl-display: "Chakra Petch", "Saira", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Rounded radii per Refero guide */
+  --sl-radius-sm: 10px;
+  --sl-radius-md: 20px;
+  --sl-radius-lg: 60px;
+  --sl-radius-pill: 56px;
 }
 
 /* Header / nav */
 html[data-theme="dark"] header.header,
 html[data-theme="light"] header.header {
-  background: var(--sl-color-bg) !important;
+  background: var(--sl-color-bg-nav) !important;
   border-bottom: 1px solid var(--sl-color-border) !important;
 }
 
 html[data-theme="dark"] .site-title,
 html[data-theme="light"] .site-title {
-  color: var(--sl-color-black);
-  font-weight: 700;
+  color: var(--sl-color-white);
+  font-family: var(--sl-display);
+  font-weight: 500;
 }
 
 /* Sidebar */
 html[data-theme="dark"] nav.sidebar,
 html[data-theme="light"] nav.sidebar {
-  background: var(--sl-color-bg) !important;
+  background: var(--sl-color-bg-sidebar) !important;
   border-right: 1px solid var(--sl-color-border) !important;
 }
 
 html[data-theme="dark"] .sidebar-content ul li a,
 html[data-theme="light"] .sidebar-content ul li a {
-  color: var(--sl-color-gray-7);
-  border-radius: 8px;
+  color: var(--sl-color-gray-2);
+  border-radius: var(--sl-radius-sm);
+  font-family: var(--sl-font);
+  font-weight: 400;
 }
 
 html[data-theme="dark"] .sidebar-content ul li a:hover,
 html[data-theme="light"] .sidebar-content ul li a:hover {
-  color: var(--sl-color-black);
-  background: var(--sl-color-gray-2);
+  color: var(--sl-color-white);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 html[data-theme="dark"] .sidebar-content ul li a[aria-current="page"],
 html[data-theme="light"] .sidebar-content ul li a[aria-current="page"] {
   color: var(--sl-color-text-accent);
   background: var(--sl-color-bg-accent);
-  font-weight: 600;
+  font-weight: 500;
+}
+
+html[data-theme="dark"] .sidebar-content .group-label,
+html[data-theme="light"] .sidebar-content .group-label {
+  color: var(--sl-color-gray-3);
+  font-family: var(--sl-font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Main content area */
 html[data-theme="dark"] main,
 html[data-theme="light"] main {
   background: var(--sl-color-bg);
-  color: var(--sl-color-black);
+  color: var(--sl-color-white);
 }
 
 html[data-theme="dark"] .content-panel,
@@ -99,9 +119,10 @@ html[data-theme="light"] h3,
 html[data-theme="light"] h4,
 html[data-theme="light"] h5,
 html[data-theme="light"] h6 {
-  color: var(--sl-color-black);
-  font-weight: 700;
+  color: var(--sl-color-white);
+  font-weight: 500;
   font-family: var(--sl-display);
+  letter-spacing: -0.02em;
 }
 
 html[data-theme="dark"] .starlight-aside__title,
@@ -115,7 +136,12 @@ html[data-theme="dark"] p,
 html[data-theme="dark"] li,
 html[data-theme="light"] p,
 html[data-theme="light"] li {
-  color: var(--sl-color-gray-7);
+  color: var(--sl-color-gray-2);
+}
+
+html[data-theme="dark"] strong,
+html[data-theme="light"] strong {
+  color: var(--sl-color-white);
 }
 
 /* Code */
@@ -123,17 +149,18 @@ html[data-theme="dark"] code,
 html[data-theme="light"] code {
   font-family: var(--sl-font-mono);
   background: var(--sl-color-bg-inline-code);
-  color: var(--sl-color-black);
+  color: var(--sl-color-white);
   border: 1px solid var(--sl-color-border);
-  border-radius: 6px;
+  border-radius: var(--sl-radius-sm);
   padding: 2px 6px;
+  font-size: 0.9em;
 }
 
 html[data-theme="dark"] pre,
 html[data-theme="light"] pre {
-  background: var(--sl-color-gray-1) !important;
+  background: var(--sl-color-bg-inline-code) !important;
   border: 1px solid var(--sl-color-border);
-  border-radius: 10px;
+  border-radius: var(--sl-radius-md);
   padding: 16px;
 }
 
@@ -147,44 +174,49 @@ html[data-theme="light"] pre code {
 /* Links */
 html[data-theme="dark"] a,
 html[data-theme="light"] a {
-  color: #15803d;
+  color: var(--sl-color-text-accent);
 }
 
 html[data-theme="dark"] a:hover,
 html[data-theme="light"] a:hover {
-  color: #166534;
+  color: var(--sl-color-accent-high);
 }
 
 /* Cards / asides */
 html[data-theme="dark"] .starlight-aside,
 html[data-theme="light"] .starlight-aside {
-  background: var(--sl-color-gray-1);
+  background: var(--sl-color-bg-sidebar);
   border: 1px solid var(--sl-color-border);
-  border-radius: 12px;
+  border-radius: var(--sl-radius-md);
 }
 
 html[data-theme="dark"] .starlight-aside--tip,
 html[data-theme="light"] .starlight-aside--tip {
-  border-color: rgba(22, 163, 74, 0.25);
-  background: rgba(22, 163, 74, 0.06);
+  border-color: rgba(61, 220, 145, 0.35);
+  background: rgba(61, 220, 145, 0.08);
+}
+
+html[data-theme="dark"] .starlight-aside--tip .starlight-aside__title,
+html[data-theme="light"] .starlight-aside--tip .starlight-aside__title {
+  color: var(--sl-color-text-accent);
 }
 
 html[data-theme="dark"] .starlight-aside--note,
 html[data-theme="light"] .starlight-aside--note {
-  border-color: rgba(37, 99, 235, 0.2);
-  background: rgba(37, 99, 235, 0.05);
+  border-color: rgba(151, 221, 188, 0.35);
+  background: rgba(151, 221, 188, 0.08);
 }
 
 html[data-theme="dark"] .starlight-aside--caution,
 html[data-theme="light"] .starlight-aside--caution {
-  border-color: rgba(217, 119, 6, 0.25);
-  background: rgba(217, 119, 6, 0.06);
+  border-color: rgba(255, 205, 72, 0.35);
+  background: rgba(255, 205, 72, 0.08);
 }
 
 html[data-theme="dark"] .starlight-aside--danger,
 html[data-theme="light"] .starlight-aside--danger {
-  border-color: rgba(220, 38, 38, 0.25);
-  background: rgba(220, 38, 38, 0.05);
+  border-color: rgba(248, 81, 73, 0.35);
+  background: rgba(248, 81, 73, 0.08);
 }
 
 /* Tables */
@@ -193,44 +225,54 @@ html[data-theme="light"] table {
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid var(--sl-color-border);
-  border-radius: 10px;
+  border-radius: var(--sl-radius-md);
   overflow: hidden;
 }
 
 html[data-theme="dark"] th,
 html[data-theme="light"] th {
-  background: var(--sl-color-gray-1);
-  color: var(--sl-color-black);
-  font-weight: 600;
+  background: var(--sl-color-bg-sidebar);
+  color: var(--sl-color-white);
+  font-weight: 500;
+  font-family: var(--sl-display);
 }
 
 html[data-theme="dark"] td,
 html[data-theme="light"] td {
   border-top: 1px solid var(--sl-color-border);
-  color: var(--sl-color-gray-7);
+  color: var(--sl-color-gray-2);
 }
 
-/* Buttons in splash */
+/* Buttons in splash hero */
 html[data-theme="dark"] .hero .sl-flex a[role="button"],
 html[data-theme="light"] .hero .sl-flex a[role="button"] {
   background: var(--sl-color-accent);
   color: var(--sl-color-text-invert);
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--sl-radius-pill);
+  font-family: var(--sl-font);
+  font-weight: 500;
+  padding: 14px 28px;
+  border: none;
+}
+
+html[data-theme="dark"] .hero .sl-flex a[role="button"]:hover,
+html[data-theme="light"] .hero .sl-flex a[role="button"]:hover {
+  background: var(--sl-color-accent-high);
+  color: var(--sl-color-text-invert);
 }
 
 html[data-theme="dark"] .hero .sl-flex a[role="button"].secondary,
 html[data-theme="light"] .hero .sl-flex a[role="button"].secondary {
   background: transparent;
-  color: var(--sl-color-black);
-  border: 1px solid var(--sl-color-border);
+  color: var(--sl-color-white);
+  border: 1.5px solid var(--sl-color-white);
 }
 
 html[data-theme="dark"] .hero .sl-flex a[role="button"].secondary:hover,
 html[data-theme="light"] .hero .sl-flex a[role="button"].secondary:hover {
-  background: var(--sl-color-bg-accent);
-  border-color: var(--sl-color-accent);
-  color: var(--sl-color-text-accent);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--sl-color-white);
+  color: var(--sl-color-white);
 }
 
 /* Starlight link buttons */
@@ -238,6 +280,10 @@ html[data-theme="dark"] .sl-link-button.primary,
 html[data-theme="light"] .sl-link-button.primary {
   color: var(--sl-color-text-invert);
   background: var(--sl-color-accent);
+  border-radius: var(--sl-radius-pill);
+  font-weight: 500;
+  padding: 14px 28px;
+  border: none;
 }
 
 html[data-theme="dark"] .sl-link-button.primary:hover,
@@ -247,15 +293,18 @@ html[data-theme="light"] .sl-link-button.primary:hover {
 
 html[data-theme="dark"] .sl-link-button.secondary,
 html[data-theme="light"] .sl-link-button.secondary {
-  color: var(--sl-color-black);
+  color: var(--sl-color-white);
   background: transparent;
-  border: 1px solid var(--sl-color-accent);
+  border: 1.5px solid var(--sl-color-white);
+  border-radius: var(--sl-radius-pill);
+  font-weight: 500;
+  padding: 14px 28px;
 }
 
 html[data-theme="dark"] .sl-link-button.secondary:hover,
 html[data-theme="light"] .sl-link-button.secondary:hover {
-  background: var(--sl-color-bg-accent);
-  color: var(--sl-color-text-accent);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--sl-color-white);
 }
 
 /* Search input */
@@ -265,10 +314,10 @@ html[data-theme="dark"] #starlight__search > button,
 html[data-theme="light"] button[aria-label="Search"],
 html[data-theme="light"] site-search button[data-open-modal],
 html[data-theme="light"] #starlight__search > button {
-  background: var(--sl-color-gray-1);
+  background: var(--sl-color-bg-sidebar);
   border: 1px solid var(--sl-color-border);
-  color: var(--sl-color-black);
-  border-radius: 8px;
+  color: var(--sl-color-gray-2);
+  border-radius: var(--sl-radius-sm);
 }
 
 html[data-theme="dark"] button[aria-label="Search"]:hover,
@@ -285,10 +334,10 @@ html[data-theme="light"] #starlight__search > button:hover {
 /* Mobile menu button */
 html[data-theme="dark"] button[aria-label="Menu"],
 html[data-theme="light"] button[aria-label="Menu"] {
-  background: var(--sl-color-gray-1);
+  background: var(--sl-color-bg-sidebar);
   border: 1px solid var(--sl-color-border);
-  color: var(--sl-color-black);
-  border-radius: 8px;
+  color: var(--sl-color-white);
+  border-radius: var(--sl-radius-sm);
 }
 
 html[data-theme="dark"] button[aria-label="Menu"]:hover,
@@ -301,9 +350,10 @@ html[data-theme="light"] button[aria-label="Menu"]:hover {
 /* Pagination links */
 html[data-theme="dark"] .pagination-links a,
 html[data-theme="light"] .pagination-links a {
-  color: var(--sl-color-black);
+  color: var(--sl-color-white);
+  background: var(--sl-color-bg-sidebar);
   border: 1px solid var(--sl-color-border);
-  border-radius: 8px;
+  border-radius: var(--sl-radius-md);
 }
 
 html[data-theme="dark"] .pagination-links a:hover,
@@ -317,10 +367,10 @@ html[data-theme="light"] .pagination-links a:hover {
 html[data-theme="dark"] footer.meta,
 html[data-theme="light"] footer.meta {
   border-top: 1px solid var(--sl-color-border);
-  color: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-3);
 }
 
-/* Remove theme toggle: site is light-only per the product direction. */
+/* Remove theme toggle: site is dark-only per the new direction. */
 starlight-theme-select {
   display: none !important;
 }
@@ -333,7 +383,7 @@ html[data-theme="light"] ::-webkit-scrollbar {
 }
 html[data-theme="dark"] ::-webkit-scrollbar-track,
 html[data-theme="light"] ::-webkit-scrollbar-track {
-  background: var(--sl-color-gray-1);
+  background: var(--sl-color-bg-sidebar);
 }
 html[data-theme="dark"] ::-webkit-scrollbar-thumb,
 html[data-theme="light"] ::-webkit-scrollbar-thumb {
@@ -342,5 +392,44 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb {
 }
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover,
 html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: var(--sl-color-gray-5);
+  background: var(--sl-color-gray-3);
+}
+
+/* Right sidebar / table of contents */
+html[data-theme="dark"] .right-sidebar-panel,
+html[data-theme="light"] .right-sidebar-panel {
+  border-left: 1px solid var(--sl-color-border);
+}
+
+html[data-theme="dark"] .right-sidebar-panel a,
+html[data-theme="light"] .right-sidebar-panel a {
+  color: var(--sl-color-gray-2);
+}
+
+html[data-theme="dark"] .right-sidebar-panel a:hover,
+html[data-theme="light"] .right-sidebar-panel a:hover {
+  color: var(--sl-color-white);
+}
+
+/* Splash hero title treatment */
+html[data-theme="dark"] .hero h1,
+html[data-theme="light"] .hero h1 {
+  font-family: var(--sl-display);
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+html[data-theme="dark"] .hero .tagline,
+html[data-theme="light"] .hero .tagline {
+  color: var(--sl-color-gray-2);
+  font-size: 1.15rem;
+  line-height: 1.55;
+}
+
+/* Expressive code / syntax highlighting backgrounds */
+html[data-theme="dark"] .expressive-code,
+html[data-theme="light"] .expressive-code {
+  border-radius: var(--sl-radius-md);
 }

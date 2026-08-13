@@ -1,6 +1,6 @@
 ---
 // Landing page for 0d3sa.com.
-// Mode: Product landing → pick a path → install → docs.
+// Conversion-focused: hero, install steps, product split, binaries, decision map.
 
 const atpCard = {
   tag: 'Agent teams',
@@ -27,24 +27,9 @@ const memoryCard = {
 };
 
 const binaries = [
-  {
-    name: 'eden-memory',
-    role: 'Memory, MCP server, sync, and device pairing',
-    href: '/eden-memory/',
-    size: '~66–107 MB',
-  },
-  {
-    name: 'eden-relay',
-    role: 'Self-hosted relay for encrypted multi-device sync',
-    href: '/eden-relay/',
-    size: '~10–11 MB',
-  },
-  {
-    name: 'eden-team',
-    role: 'Headless ATP supervisor for CI and automation',
-    href: '/eden-team/',
-    size: '~10–11 MB',
-  },
+  { name: 'eden-memory', role: 'Memory, MCP server, sync, and device pairing', href: '/eden-memory/', size: '~66–107 MB' },
+  { name: 'eden-relay', role: 'Self-hosted relay for encrypted multi-device sync', href: '/eden-relay/', size: '~10–11 MB' },
+  { name: 'eden-team', role: 'Headless ATP supervisor for CI and automation', href: '/eden-team/', size: '~10–11 MB' },
 ];
 
 const atpInstall = 'curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh';
@@ -61,13 +46,13 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
   <meta name="description" content="Agentic Team Protocol and eden-memory: local-first, role-based agent teams with durable SQLite memory and encrypted multi-device sync." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Saira:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <header class="site-header">
     <div class="wrap nav">
       <a href="/" class="brand" aria-label="0d3sa home">
-        <img src="/images/brand-icon.png" alt="" class="brand-mark" width="32" height="32" aria-hidden="true" />
+        <img src="/images/brand-mark.svg" alt="" class="brand-mark" width="32" height="32" aria-hidden="true" />
         <span class="brand-name">0d3sa</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
@@ -81,16 +66,121 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-wrap">
-        <div class="product-meta">
-          <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Production ready</span>
+        <div class="hero-text">
+          <div class="product-meta">
+            <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Production ready</span>
+            <span class="call-sheet-id">Call sheet ATP-001</span>
+          </div>
+          <h1 id="hero-title">Agentic Team Protocol</h1>
+          <p class="lead">
+            Installable, role-based agent teams for Claude Code. Dispatch goals, gather context, build, verify, and hand off — with every decision recorded in local durable memory.
+          </p>
+          <div class="hero-actions">
+            <a href="#install" class="btn btn-primary">Install in moments</a>
+            <a href="/docs/" class="btn btn-secondary">Read the docs</a>
+          </div>
         </div>
-        <h1 id="hero-title">Local-first agent infrastructure</h1>
-        <p class="lead">
-          Role-based agent teams and durable memory that stay on your machine. No cloud account, no external API for recall, no lock-in.
-        </p>
-        <div class="hero-actions">
-          <a href="#install" class="btn btn-primary">Install ATP</a>
-          <a href="/docs/" class="btn btn-secondary">Read the docs</a>
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 520 360" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="board" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0e1a19" />
+                <stop offset="100%" stop-color="#132322" />
+              </linearGradient>
+            </defs>
+            <rect x="40" y="220" width="440" height="100" rx="16" fill="url(#board)" stroke="#424f4f" stroke-width="1.5" />
+
+            <g transform="translate(70, 130)">
+              <path d="M0 40 L70 10 L140 40 L70 70 Z" fill="#0e1a19" stroke="#3ddc91" stroke-width="1.5" />
+              <path d="M0 40 L0 90 L70 120 L70 70 Z" fill="#132322" stroke="#3ddc91" stroke-width="1.5" />
+              <path d="M70 70 L70 120 L140 90 L140 40 Z" fill="#0a1615" stroke="#3ddc91" stroke-width="1.5" />
+              <text x="70" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" font-weight="700" fill="#3ddc91">DISPATCH</text>
+            </g>
+
+            <g transform="translate(200, 80)">
+              <path d="M0 40 L70 10 L140 40 L70 70 Z" fill="#0e1a19" stroke="#97ddbc" stroke-width="1.5" />
+              <path d="M0 40 L0 90 L70 120 L70 70 Z" fill="#132322" stroke="#97ddbc" stroke-width="1.5" />
+              <path d="M70 70 L70 120 L140 90 L140 40 Z" fill="#0a1615" stroke="#97ddbc" stroke-width="1.5" />
+              <text x="70" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" font-weight="700" fill="#97ddbc">RESEARCH</text>
+            </g>
+
+            <g transform="translate(330, 130)">
+              <path d="M0 40 L70 10 L140 40 L70 70 Z" fill="#0e1a19" stroke="#ffcd48" stroke-width="1.5" />
+              <path d="M0 40 L0 90 L70 120 L70 70 Z" fill="#132322" stroke="#ffcd48" stroke-width="1.5" />
+              <path d="M70 70 L70 120 L140 90 L140 40 Z" fill="#0a1615" stroke="#ffcd48" stroke-width="1.5" />
+              <text x="70" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" font-weight="700" fill="#ffcd48">BUILD</text>
+            </g>
+
+            <g transform="translate(140, 210)">
+              <path d="M0 40 L70 10 L140 40 L70 70 Z" fill="#0e1a19" stroke="#ffffff" stroke-width="1.5" />
+              <path d="M0 40 L0 90 L70 120 L70 70 Z" fill="#132322" stroke="#ffffff" stroke-width="1.5" />
+              <path d="M70 70 L70 120 L140 90 L140 40 Z" fill="#0a1615" stroke="#ffffff" stroke-width="1.5" />
+              <text x="70" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" font-weight="700" fill="#ffffff">VERIFY</text>
+            </g>
+
+            <path d="M175 200 L235 150" stroke="#424f4f" stroke-width="1.5" stroke-dasharray="4 4" />
+            <path d="M305 200 L370 155" stroke="#424f4f" stroke-width="1.5" stroke-dasharray="4 4" />
+            <circle cx="235" cy="150" r="4" fill="#3ddc91" />
+            <circle cx="370" cy="155" r="4" fill="#ffcd48" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section install-section" id="install" aria-labelledby="install-title">
+      <div class="wrap">
+        <div class="install-card">
+          <div class="install-head">
+            <div class="install-title-group">
+              <span class="eyebrow">Today's call sheet</span>
+              <h2 id="install-title">Install in moments</h2>
+              <p class="install-subtitle">Install ATP, wire your project, restart Claude Code, then ratify the charter.</p>
+            </div>
+            <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Ready to shoot</span>
+          </div>
+
+          <ol class="install-list" role="list">
+            <li class="install-block">
+              <div class="block-label">1. Install eden-memory</div>
+              <div class="step-row">
+                <code class="cmd">{memoryInstall}</code>
+                <button class="copy-btn" type="button" data-cmd={memoryInstall} aria-label="Copy eden-memory install command">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+              </div>
+              <p class="install-hint">Memory, sync, and the MCP server.</p>
+            </li>
+            <li class="install-block">
+              <div class="block-label">2. Install Agentic Team Protocol</div>
+              <div class="step-row">
+                <code class="cmd">{atpInstall}</code>
+                <button class="copy-btn" type="button" data-cmd={atpInstall} aria-label="Copy ATP install command">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+              </div>
+              <p class="install-hint">Global ATP primitives into ~/.claude/.</p>
+            </li>
+            <li class="install-block">
+              <div class="block-label">3. Wire your project</div>
+              <div class="step-row">
+                <code class="cmd">{setupCmd}</code>
+                <button class="copy-btn" type="button" data-cmd={setupCmd} aria-label="Copy setup command">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+              </div>
+              <p class="install-hint">Connects the MCP server to this project.</p>
+            </li>
+            <li class="install-block">
+              <div class="block-label">4. Restart Claude Code</div>
+              <p class="install-hint">Run <code>/exit</code>, then reopen so the ATP agents and slash commands load.</p>
+            </li>
+            <li class="install-block">
+              <div class="block-label">5. Ratify the project charter</div>
+              <p class="install-hint">
+                Follow the <a href="/agentic-team-protocol/getting-started/">ATP quick start</a> to edit and ratify your charter, then run your first team goal.
+              </p>
+            </li>
+          </ol>
         </div>
       </div>
     </section>
@@ -98,14 +188,12 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     <section class="section products-section" aria-labelledby="products-title">
       <div class="wrap">
         <div class="section-head">
-          <h2 id="products-title">Two paths into the same system</h2>
-          <p class="section-lead">Pick the surface that matches what you are building today.</p>
+          <span class="eyebrow">Two paths into the same system</span>
+          <h2 id="products-title">Pick the surface that matches what you are building today.</h2>
         </div>
         <div class="product-grid">
           <a href={atpCard.href} class="product-card">
-            <div class="product-meta">
-              <span class="product-tag">{atpCard.tag}</span>
-            </div>
+            <span class="product-tag">{atpCard.tag}</span>
             <h3 class="product-name">{atpCard.name}</h3>
             <p class="product-desc">{atpCard.desc}</p>
             <div class="product-links">
@@ -113,9 +201,7 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
             </div>
           </a>
           <a href={memoryCard.href} class="product-card">
-            <div class="product-meta">
-              <span class="product-tag">{memoryCard.tag}</span>
-            </div>
+            <span class="product-tag">{memoryCard.tag}</span>
             <h3 class="product-name">{memoryCard.name}</h3>
             <p class="product-desc">{memoryCard.desc}</p>
             <div class="product-links">
@@ -129,8 +215,8 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     <section class="section binaries-section" aria-labelledby="binaries-title">
       <div class="wrap">
         <div class="section-head">
-          <h2 id="binaries-title">Three binaries, one release</h2>
-          <p class="section-lead">Every 0d3sa release ships three static Go binaries. Install only the ones you need, or get all three with the ATP installer.</p>
+          <span class="eyebrow">Three binaries, one release</span>
+          <h2 id="binaries-title">Every release ships three static Go binaries.</h2>
         </div>
         <ul class="binary-list" role="list">
           {binaries.map(b => (
@@ -149,84 +235,35 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
       </div>
     </section>
 
-    <section class="section install-section" id="install" aria-labelledby="install-title">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="install-title">Install in one command</h2>
-          <p class="section-lead">First-time setup: install both global primitives, wire a project, restart Claude Code, then ratify the charter.</p>
-        </div>
-        <div class="install-card">
-          <ol class="install-list" role="list">
-            <li class="install-block">
-              <div class="block-label">1. Install eden-memory</div>
-              <div class="step-row">
-                <code class="cmd">{memoryInstall}</code>
-                <button class="copy-btn" type="button" data-cmd={memoryInstall} aria-label="Copy eden-memory install command">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </button>
-              </div>
-            </li>
-            <li class="install-block">
-              <div class="block-label">2. Install Agentic Team Protocol</div>
-              <div class="step-row">
-                <code class="cmd">{atpInstall}</code>
-                <button class="copy-btn" type="button" data-cmd={atpInstall} aria-label="Copy ATP install command">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </button>
-              </div>
-            </li>
-            <li class="install-block">
-              <div class="block-label">3. Wire your project</div>
-              <div class="step-row">
-                <code class="cmd">{setupCmd}</code>
-                <button class="copy-btn" type="button" data-cmd={setupCmd} aria-label="Copy setup command">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </button>
-              </div>
-            </li>
-            <li class="install-block">
-              <div class="block-label">4. Restart Claude Code</div>
-              <p class="install-hint">Run <code>/exit</code>, then reopen Claude Code so the ATP agents and slash commands load.</p>
-            </li>
-            <li class="install-block">
-              <div class="block-label">5. Ratify the project charter</div>
-              <p class="install-hint">Follow the <a href="/agentic-team-protocol/getting-started/">ATP quick start</a> to edit and ratify your project charter, then run your first team goal.</p>
-            </li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
     <section class="section decision-section" aria-labelledby="decision-title">
       <div class="wrap">
         <div class="section-head">
+          <span class="eyebrow">Decision map</span>
           <h2 id="decision-title">Which one do I need?</h2>
-          <p class="section-lead">A quick decision map for the two entry points and three binaries.</p>
         </div>
         <div class="decision-grid">
           <div class="decision-card">
             <h3 class="decision-question">I want role-based agent teams in Claude Code</h3>
             <p class="decision-answer">
               Install <a href="/eden-memory/getting-started/">eden-memory</a> first, then run the <a href="/agentic-team-protocol/getting-started/">ATP installer</a>.
-              You get the protocol agents, slash commands, and lifecycle records.
             </p>
           </div>
           <div class="decision-card">
             <h3 class="decision-question">I just want MCP memory for my client</h3>
             <p class="decision-answer">
-              Install <a href="/eden-memory/getting-started/">eden-memory</a> only, then run <code>eden-memory setup claude</code> (or your client’s equivalent).
+              Install <a href="/eden-memory/getting-started/">eden-memory</a> only, then run <code>eden-memory setup claude</code>.
             </p>
           </div>
           <div class="decision-card">
             <h3 class="decision-question">I need multi-device sync</h3>
             <p class="decision-answer">
-              Use <a href="/eden-relay/how-to/run-relay-server/">eden-relay</a> as a self-hosted relay. eden-memory encrypts contents end-to-end before they reach the relay.
+              Use <a href="/eden-relay/how-to/run-relay-server/">eden-relay</a> as a self-hosted relay. Contents are encrypted end-to-end.
             </p>
           </div>
           <div class="decision-card">
             <h3 class="decision-question">I want headless ATP in CI or cron</h3>
             <p class="decision-answer">
-              Use <a href="/eden-team/tutorials/headless-supervisor/">eden-team</a>, the headless supervisor that runs the same role lifecycle non-interactively.
+              Use <a href="/eden-team/tutorials/headless-supervisor/">eden-team</a>, the headless supervisor.
             </p>
           </div>
         </div>
@@ -276,33 +313,28 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
 
 <style>
   :root {
-    --bg: #fafafa;
-    --surface: #ffffff;
-    --surface-raised: #f3f4f6;
-    --surface-soft: #f0fdf4;
-    --border: #e5e7eb;
-    --border-subtle: #f3f4f6;
-    --text: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
-    --text-dim: #6b7280;
-    --primary: #157a39;
-    --primary-dark: #0f5f2c;
-    --primary-soft: rgba(21, 122, 57, 0.08);
-    --primary-soft-border: rgba(21, 122, 57, 0.2);
-    --accent: #2563eb;
-    --accent-soft: rgba(37, 99, 235, 0.08);
-    --ready: #157a39;
-    --radius-sm: 8px;
-    --radius: 12px;
-    --radius-lg: 16px;
-    --max: 1100px;
-    --display: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
-    --body: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
-    --mono: JetBrains Mono, ui-monospace, monospace;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --obsidian: #132322;
+    --abyss: #0e1a19;
+    --charcoal: #070f0f;
+    --neon: #3ddc91;
+    --mint: #97ddbc;
+    --yellow: #ffcd48;
+    --white: #ffffff;
+    --slate: #828786;
+    --graphite: #424f4f;
+    --fog: #d0d3d3;
+    --mint-frost: #edf7f5;
+    --neon-soft: rgba(61, 220, 145, 0.12);
+    --neon-border: rgba(61, 220, 145, 0.3);
+    --radius-sm: 10px;
+    --radius-md: 20px;
+    --radius-lg: 60px;
+    --radius-pill: 56px;
+    --max: 1200px;
+    --display: "Chakra Petch", "Saira", -apple-system, BlinkMacSystemFont, sans-serif;
+    --body: "Saira", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -311,14 +343,14 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     margin: 0;
     padding: 0;
     font-family: var(--body);
-    color: var(--text);
-    background: var(--bg);
+    color: var(--white);
+    background: var(--obsidian);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   a {
-    color: var(--primary-dark);
+    color: var(--neon);
     text-decoration: none;
   }
   a:hover { text-decoration: underline; }
@@ -326,11 +358,11 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
   code {
     font-family: var(--mono);
     font-size: 0.9em;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
+    background: var(--abyss);
+    border: 1px solid var(--graphite);
     border-radius: var(--radius-sm);
     padding: 2px 6px;
-    color: var(--text-secondary);
+    color: var(--white);
   }
 
   .wrap {
@@ -341,8 +373,8 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
 
   /* Header */
   .site-header {
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
+    border-bottom: 1px solid var(--graphite);
+    background: var(--obsidian);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -359,9 +391,10 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text);
-    font-weight: 700;
+    color: var(--white);
+    font-weight: 500;
     font-size: 1.1rem;
+    font-family: var(--display);
   }
   .brand:hover { text-decoration: none; }
 
@@ -370,62 +403,60 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     height: 32px;
     border-radius: var(--radius-sm);
     display: block;
-    object-fit: cover;
-    box-shadow: var(--shadow-sm);
   }
 
   .nav-links {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
 
   .nav-links a {
-    color: var(--text-secondary);
-    font-weight: 500;
+    color: var(--slate);
+    font-weight: 400;
   }
-  .nav-links a:hover { color: var(--text); text-decoration: none; }
+  .nav-links a:hover { color: var(--white); text-decoration: none; }
 
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 20px;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
     font-size: 0.92rem;
-    border: 1px solid transparent;
+    border: 1.5px solid transparent;
     cursor: pointer;
-    transition: background-color .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
     text-decoration: none;
     line-height: 1;
+    font-family: var(--body);
   }
   .btn:hover { text-decoration: none; }
 
   .btn-primary {
-    background: var(--primary);
-    color: #ffffff;
-    box-shadow: var(--shadow-sm);
+    background: var(--neon);
+    color: var(--obsidian);
   }
-  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-primary:hover { background: var(--mint); }
 
   .btn-secondary {
-    background: var(--surface);
-    border-color: var(--border);
-    color: var(--text-secondary);
+    background: transparent;
+    border-color: var(--white);
+    color: var(--white);
   }
-  .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
 
   .btn-sm {
-    padding: 8px 14px;
+    padding: 8px 16px;
     font-size: 0.82rem;
-    background: var(--surface);
-    border-color: var(--border);
-    color: var(--text-secondary);
+    background: var(--abyss);
+    border-color: var(--graphite);
+    color: var(--slate);
   }
-  .btn-sm:hover { border-color: var(--primary); color: var(--primary); background: var(--surface); }
+  .btn-sm:hover { border-color: var(--neon); color: var(--neon); background: var(--abyss); }
 
   /* Status chips */
   .status-chip {
@@ -437,15 +468,16 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
     border: 1px solid transparent;
     white-space: nowrap;
+    font-family: var(--mono);
   }
 
   .status-chip.ready {
-    background: rgba(21, 122, 57, 0.08);
-    color: var(--ready);
-    border-color: rgba(21, 122, 57, 0.2);
+    background: rgba(61, 220, 145, 0.12);
+    color: var(--neon);
+    border-color: var(--neon-border);
   }
 
   .status-dot {
@@ -457,143 +489,283 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
 
   /* Hero */
   .hero {
-    position: relative;
     padding: 80px 0 64px;
-    text-align: center;
-    border-bottom: 1px solid var(--border-subtle);
-    background: var(--surface) url('/images/hero-bg.png') center / cover no-repeat;
-  }
-
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.85);
-    z-index: 0;
+    border-bottom: 1px solid var(--graphite);
+    background: var(--obsidian);
   }
 
   .hero-wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 720px;
-    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
   }
 
   .product-meta {
     display: flex;
-    justify-content: center;
     gap: 14px;
     align-items: center;
     margin-bottom: 18px;
     flex-wrap: wrap;
   }
 
-  h1 {
-    font-family: var(--display);
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    line-height: 1.05;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    margin: 0 0 18px;
-    color: var(--text);
+  .call-sheet-id {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
-  .hero .lead {
-    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-    color: #374151;
-    margin: 0 auto 28px;
-    line-height: 1.6;
-    max-width: 640px;
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    margin: 0 0 18px;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+
+  .lead {
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    color: var(--slate);
+    margin: 0 0 28px;
+    line-height: 1.55;
+    max-width: 540px;
   }
 
   .hero-actions {
     display: flex;
-    justify-content: center;
     gap: 14px;
     flex-wrap: wrap;
+  }
+
+  .hero-visual svg {
+    width: 100%;
+    height: auto;
+    max-width: 520px;
   }
 
   /* Sections */
   .section {
     padding: 80px 0;
-    border-top: 1px solid var(--border-subtle);
   }
 
   .section-head {
-    margin-bottom: 40px;
-    text-align: center;
+    margin-bottom: 48px;
     max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
+  }
+
+  .eyebrow {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--neon);
+    margin-bottom: 12px;
   }
 
   .section-head h2 {
     font-family: var(--display);
     font-size: clamp(1.5rem, 3vw, 2.2rem);
-    font-weight: 700;
-    margin: 0 0 10px;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-
-  .section-lead {
-    color: var(--text-muted);
+    font-weight: 500;
+    line-height: 1.1;
     margin: 0;
-    font-size: 1.02rem;
-    line-height: 1.55;
+    letter-spacing: -0.02em;
+    color: var(--white);
   }
 
-  .section-lead a { color: var(--primary-dark); }
+  /* Install card */
+  .install-section { background: var(--obsidian); }
 
-  /* Product cards */
-  .products-section { background: var(--surface); }
+  .install-card {
+    background: var(--abyss);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+  }
+
+  .install-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .install-title-group h2 {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 500;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+
+  .install-subtitle {
+    color: var(--slate);
+    margin: 0;
+    font-size: 1rem;
+    max-width: 520px;
+  }
+
+  .install-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .install-block {
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .install-block + .install-block {
+    margin-top: 0;
+  }
+
+  .block-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--slate);
+  }
+
+  .step-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .cmd {
+    flex: 1 1 0;
+    min-width: 0;
+    display: block;
+    background: var(--obsidian);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    color: var(--white);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .copy-btn {
+    flex: 0 0 auto;
+    width: 40px;
+    height: auto;
+    display: grid;
+    place-items: center;
+    background: var(--obsidian);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-sm);
+    color: var(--slate);
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+    align-self: stretch;
+  }
+  .copy-btn:hover {
+    border-color: var(--neon);
+    color: var(--neon);
+  }
+
+  .install-hint {
+    color: var(--slate);
+    font-size: 0.88rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .install-hint a { color: var(--neon); font-weight: 500; }
+
+  /* Products */
+  .products-section { background: var(--mint-frost); }
+  .products-section h2,
+  .products-section .eyebrow,
+  .products-section .product-name,
+  .products-section .product-desc,
+  .products-section .product-link { color: var(--charcoal); }
+  .products-section .product-card {
+    background: var(--white);
+    border-color: var(--fog);
+  }
+  .products-section .product-card:hover {
+    border-color: var(--neon);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  }
+  .products-section .product-tag {
+    background: var(--mint-frost);
+    color: var(--neon);
+  }
+  .products-section .product-link {
+    background: var(--mint-frost);
+    border-color: var(--fog);
+  }
 
   .product-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    gap: 24px;
   }
 
   .product-card {
     display: flex;
     flex-direction: column;
-    background: var(--bg);
-    border: 1px solid var(--border);
+    background: var(--abyss);
+    border: 1px solid var(--graphite);
     border-radius: var(--radius-lg);
-    padding: 28px;
-    color: var(--text);
-    transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease;
-    box-shadow: var(--shadow-sm);
+    padding: 32px;
+    transition: border-color .15s ease, transform .15s ease;
   }
   .product-card:hover {
-    border-color: var(--primary-soft-border);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    border-color: var(--neon);
     text-decoration: none;
+    transform: translateY(-2px);
   }
 
   .product-tag {
     display: inline-block;
     padding: 4px 10px;
     border-radius: 999px;
-    background: var(--primary-soft);
-    color: var(--primary-dark);
+    background: var(--neon-soft);
+    color: var(--neon);
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    font-family: var(--mono);
+    align-self: flex-start;
   }
 
   .product-name {
     font-family: var(--display);
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 500;
     margin: 16px 0 10px;
-    color: var(--text);
+    color: var(--white);
   }
 
   .product-desc {
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.95rem;
     margin: 0 0 22px;
     line-height: 1.55;
@@ -610,14 +782,14 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     font-size: 0.78rem;
     padding: 5px 10px;
     border-radius: var(--radius-sm);
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
+    color: var(--slate);
     font-weight: 500;
   }
 
   /* Binaries */
-  .binaries-section { background: var(--bg); }
+  .binaries-section { background: var(--obsidian); }
 
   .binary-list {
     list-style: none;
@@ -633,172 +805,85 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    background: var(--abyss);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-md);
     padding: 20px 24px;
-    transition: border-color .12s ease, box-shadow .12s ease;
+    transition: border-color .15s ease;
   }
-  .binary-card:hover {
-    border-color: var(--primary-soft-border);
-    box-shadow: var(--shadow-sm);
-  }
+  .binary-card:hover { border-color: var(--neon); }
 
   .binary-name {
     font-family: var(--display);
     font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
+    font-weight: 500;
+    color: var(--white);
   }
-  .binary-name:hover { color: var(--primary-dark); }
+  .binary-name:hover { color: var(--neon); }
 
   .binary-role {
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.88rem;
     margin: 4px 0 0;
-    line-height: 1.45;
   }
 
   .binary-size {
     font-family: var(--mono);
     font-size: 0.76rem;
-    color: var(--text-dim);
+    color: var(--slate);
     white-space: nowrap;
   }
 
   .binaries-foot {
-    margin-top: 20px;
-    text-align: center;
+    margin-top: 24px;
   }
 
   .reminder-link {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--primary-dark);
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: var(--neon);
   }
-
-  /* Install */
-  .install-section { background: var(--surface); }
-
-  .install-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 28px;
-  }
-
-  .install-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .install-block + .install-block { margin-top: 24px; }
-
-  .install-divider {
-    height: 1px;
-    background: var(--border-subtle);
-    margin: 24px 0;
-  }
-
-  .block-label {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-dim);
-    margin-bottom: 12px;
-  }
-
-  .step-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .cmd {
-    display: block;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-size: 0.82rem;
-    color: var(--text);
-    overflow-x: auto;
-    white-space: nowrap;
-    max-width: 100%;
-  }
-
-  .copy-btn {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: border-color .12s ease, color .12s ease, background-color .12s ease;
-  }
-  .copy-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: var(--primary-soft);
-  }
-
-  .install-hint {
-    color: var(--text-muted);
-    font-size: 0.88rem;
-    margin: 14px 0 0;
-    line-height: 1.5;
-  }
-
-  .install-hint a { color: var(--primary-dark); font-weight: 600; }
 
   /* Decision */
-  .decision-section { background: var(--bg); }
+  .decision-section { background: var(--abyss); }
 
   .decision-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    gap: 20px;
   }
 
   .decision-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-md);
     padding: 24px;
   }
 
   .decision-question {
     font-family: var(--display);
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 500;
     margin: 0 0 10px;
-    color: var(--text);
+    color: var(--white);
   }
 
   .decision-answer {
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.9rem;
     margin: 0;
     line-height: 1.55;
   }
 
-  .decision-answer a { color: var(--primary-dark); font-weight: 600; }
+  .decision-answer a { font-weight: 500; }
 
   /* Footer */
   .site-footer {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--graphite);
     padding: 40px 0;
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.86rem;
-    background: var(--surface);
+    background: var(--obsidian);
   }
 
   .footer-row {
@@ -808,12 +893,14 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     gap: 14px;
   }
 
-  .footer-links a { color: var(--text-muted); }
-  .footer-links a:hover { color: var(--text); }
-  .footer-links .sep { margin: 0 6px; color: var(--text-dim); }
+  .footer-links a { color: var(--slate); }
+  .footer-links a:hover { color: var(--white); }
+  .footer-links .sep { margin: 0 6px; color: var(--graphite); }
 
   /* Responsive */
   @media (max-width: 900px) {
+    .hero-wrap { grid-template-columns: 1fr; }
+    .hero-visual { order: -1; }
     .product-grid { grid-template-columns: 1fr; }
     .decision-grid { grid-template-columns: 1fr; }
     .binary-card { flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -825,11 +912,9 @@ const setupCmd = 'cd ~/my-project && eden-memory setup claude';
     .section { padding: 56px 0; }
     .hero-actions { flex-direction: column; align-items: stretch; }
     .hero-actions .btn { justify-content: center; }
-    .product-card { padding: 22px; }
+    .install-card { padding: 24px; }
+    .install-head { flex-direction: column; }
+    .product-card { padding: 24px; }
     .product-name { font-size: 1.25rem; }
-    .install-card { padding: 22px; }
-    .step-row { flex-wrap: wrap; }
-    .cmd { min-width: 100%; }
-    .copy-btn { order: 2; }
   }
 </style>

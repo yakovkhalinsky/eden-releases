@@ -1,7 +1,6 @@
 ---
 // Docs landing page for 0d3sa.com/docs.
-// Visual world: Local-first product — light, green, clean product surface.
-// ATP is the primary path; components are grouped below for deep configuration.
+// Navigation-focused: doc quadrants, role roster, compact component reference.
 
 const roles = [
   { name: 'Dispatcher', duty: 'Assigns goals and routes work' },
@@ -17,6 +16,13 @@ const atpQuadrants = [
   { label: 'Tutorial', hint: 'Run your first team goal', href: '/agentic-team-protocol/tutorials/first-team-goal/' },
   { label: 'Concepts', hint: 'Lifecycle and roles', href: '/agentic-team-protocol/lifecycle/' },
   { label: 'Reference', hint: 'Agent prompts and commands', href: '/agentic-team-protocol/reference/slash-commands/' },
+];
+
+const memoryQuadrants = [
+  { label: 'Quick start', hint: 'Install and verify', href: '/eden-memory/getting-started/' },
+  { label: 'Tutorials', hint: 'Connect clients and sync devices', href: '/eden-memory/tutorials/connect-claude-code/' },
+  { label: 'Concepts', hint: 'Memory model, sync, security', href: '/eden-memory/concepts/memory-model/' },
+  { label: 'Reference', hint: 'Tools, CLI, environment', href: '/eden-memory/reference/tools/' },
 ];
 
 const components = [
@@ -62,22 +68,13 @@ const components = [
   <meta name="description" content="Agentic Team Protocol documentation, plus component guides for eden-memory, eden-relay, and eden-team." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Saira:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <!--
-    THESIS: The docs landing page foregrounds the ATP doc path on a light, green product surface. A developer finds the install reminder, the role roster, and component reference without visual noise.
-    OWN-WORLD: White/off-white ground, green primary (#16a34a), soft gray borders, Manrope type, JetBrains Mono for commands, rounded cards with subtle shadow. Generated product-style PNG spot image below the hero lead.
-    STORY: A developer looking for docs finds the ATP path immediately, sees the four doc quadrants, and can drop into component reference without losing context.
-    FIRST VIEWPORT: Centered product title and lead; below, a clean two-column install-reminder panel with ATP doc quadrants and commands.
-    FORM: Local-first product (brief-pinned green/white/product direction).
-    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
-  -->
-
   <header class="site-header">
     <div class="wrap nav">
       <a href="/" class="brand" aria-label="0d3sa home">
-        <img src="/images/brand-icon.png" alt="" class="brand-mark" width="32" height="32" aria-hidden="true" />
+        <img src="/images/brand-mark.svg" alt="" class="brand-mark" width="32" height="32" aria-hidden="true" />
         <span class="brand-name">0d3sa</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
@@ -91,13 +88,46 @@ const components = [
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-wrap">
-        <div class="product-meta">
-          <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Documentation</span>
+        <div class="hero-text">
+          <div class="product-meta">
+            <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Documentation</span>
+            <span class="call-sheet-id">Call sheet ATP-DOCS-001</span>
+          </div>
+          <h1 id="hero-title">0d3sa docs</h1>
+          <p class="lead">
+            Find the protocol, the roles, and the component guides. Start with the ATP path, or drop into eden-memory, eden-relay, or eden-team.
+          </p>
+          <div class="hero-actions">
+            <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Install ATP</a>
+            <a href="/" class="btn btn-secondary">Back to home</a>
+          </div>
         </div>
-        <h1 id="hero-title">Agentic Team Protocol docs</h1>
-        <p class="lead">
-          Docs for the protocol, the roles, and the components that power it. Start with the ATP path; drop into eden-memory, eden-relay, or eden-team when you need a specific part.
-        </p>
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 420 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="180" width="380" height="80" rx="16" fill="#0e1a19" stroke="#424f4f" stroke-width="1.5" />
+
+            <g transform="translate(60, 90)">
+              <path d="M0 40 L60 15 L120 40 L60 65 Z" fill="#0e1a19" stroke="#3ddc91" stroke-width="1.5" />
+              <path d="M0 40 L0 85 L60 110 L60 65 Z" fill="#132322" stroke="#3ddc91" stroke-width="1.5" />
+              <path d="M60 65 L60 110 L120 85 L120 40 Z" fill="#0a1615" stroke="#3ddc91" stroke-width="1.5" />
+              <text x="60" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" font-weight="700" fill="#3ddc91">DOCS</text>
+            </g>
+
+            <g transform="translate(190, 50)">
+              <path d="M0 40 L60 15 L120 40 L60 65 Z" fill="#0e1a19" stroke="#ffcd48" stroke-width="1.5" />
+              <path d="M0 40 L0 85 L60 110 L60 65 Z" fill="#132322" stroke="#ffcd48" stroke-width="1.5" />
+              <path d="M60 65 L60 110 L120 85 L120 40 Z" fill="#0a1615" stroke="#ffcd48" stroke-width="1.5" />
+              <text x="60" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" font-weight="700" fill="#ffcd48">ROLES</text>
+            </g>
+
+            <g transform="translate(270, 130)">
+              <path d="M0 40 L60 15 L120 40 L60 65 Z" fill="#0e1a19" stroke="#97ddbc" stroke-width="1.5" />
+              <path d="M0 40 L0 85 L60 110 L60 65 Z" fill="#132322" stroke="#97ddbc" stroke-width="1.5" />
+              <path d="M60 65 L60 110 L120 85 L120 40 Z" fill="#0a1615" stroke="#97ddbc" stroke-width="1.5" />
+              <text x="60" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" font-weight="700" fill="#97ddbc">TOOLS</text>
+            </g>
+          </svg>
+        </div>
       </div>
     </section>
 
@@ -106,37 +136,44 @@ const components = [
         <div class="path-card">
           <div class="path-head">
             <div class="path-title-group">
-              <h2 id="docs-path-title">Start with the protocol</h2>
-              <p class="path-subtitle">Install ATP, ratify the charter, then explore components.</p>
+              <span class="eyebrow">Start with the protocol</span>
+              <h2 id="docs-path-title">ATP doc quadrants</h2>
+              <p class="path-subtitle">The Agentic Team Protocol docs are organized by how you use them.</p>
             </div>
-            <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Install ATP</a>
+            <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Quick start</a>
           </div>
 
-          <div class="path-body">
-            <div class="path-block path-block-wide">
-              <div class="block-label">Doc quadrants</div>
-              <div class="quadrant-grid">
-                {atpQuadrants.map(q => (
-                  <a href={q.href} class="quadrant-card">
-                    <span class="quadrant-label">{q.label}</span>
-                    <span class="quadrant-hint">{q.hint}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
+          <div class="quadrant-grid">
+            {atpQuadrants.map(q => (
+              <a href={q.href} class="quadrant-card">
+                <span class="quadrant-label">{q.label}</span>
+                <span class="quadrant-hint">{q.hint}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <div class="path-block">
-              <div class="block-label">How to install</div>
-              <p class="reminder-text">
-                Install the binaries, wire your project, then restart Claude Code.
-              </p>
-              <div class="reminder-commands">
-                <code class="cmd">curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh</code>
-                <code class="cmd">curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh</code>
-                <code class="cmd">cd ~/my-project && eden-memory setup claude</code>
-              </div>
-              <a href="/agentic-team-protocol/getting-started/" class="reminder-link">Full quick start →</a>
+    <section class="section memory-section" aria-labelledby="memory-title">
+      <div class="wrap">
+        <div class="path-card">
+          <div class="path-head">
+            <div class="path-title-group">
+              <span class="eyebrow">Component deep dive</span>
+              <h2 id="memory-title">eden-memory quadrants</h2>
+              <p class="path-subtitle">Docs for the memory and sync component.</p>
             </div>
+            <a href="/eden-memory/getting-started/" class="btn btn-primary">Quick start</a>
+          </div>
+
+          <div class="quadrant-grid">
+            {memoryQuadrants.map(q => (
+              <a href={q.href} class="quadrant-card">
+                <span class="quadrant-label">{q.label}</span>
+                <span class="quadrant-hint">{q.hint}</span>
+              </a>
+            ))}
           </div>
         </div>
       </div>
@@ -145,15 +182,13 @@ const components = [
     <section class="section roles-section" aria-labelledby="roles-title">
       <div class="wrap">
         <div class="section-head">
-          <h2 id="roles-title">Role roster</h2>
-          <p class="section-lead">Six roles, each with a scope and a decision right. Read the <a href="/agentic-team-protocol/agents/">agents</a> and <a href="/agentic-team-protocol/lifecycle/">lifecycle</a> pages for the full protocol.</p>
+          <span class="eyebrow">Role roster</span>
+          <h2 id="roles-title">Six roles, one lifecycle</h2>
         </div>
         <ul class="role-grid" role="list">
           {roles.map(role => (
             <li class="role-card">
-              <div class="role-head">
-                <span class="role-name">{role.name}</span>
-              </div>
+              <span class="role-name">{role.name}</span>
               <p class="role-duty">{role.duty}</p>
             </li>
           ))}
@@ -164,15 +199,13 @@ const components = [
     <section class="section components-section" aria-labelledby="components-title">
       <div class="wrap">
         <div class="section-head">
-          <h2 id="components-title">Component reference</h2>
-          <p class="section-lead">Three single-file binaries power the protocol. Pick a component for deep configuration.</p>
+          <span class="eyebrow">Component reference</span>
+          <h2 id="components-title">Three single-file binaries</h2>
         </div>
         <div class="component-grid">
           {components.map(c => (
             <a href={c.href} class="component-card">
-              <div class="component-meta">
-                <span class="component-tag">{c.tag}</span>
-              </div>
+              <span class="component-tag">{c.tag}</span>
               <h3 class="component-name">{c.name}</h3>
               <p class="component-desc">{c.desc}</p>
               <div class="component-links">
@@ -204,34 +237,27 @@ const components = [
 
 <style>
   :root {
-    --bg: #fafafa;
-    --surface: #ffffff;
-    --surface-raised: #f3f4f6;
-    --surface-soft: #f0fdf4;
-    --border: #e5e7eb;
-    --border-subtle: #f3f4f6;
-    --text: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
-    --text-dim: #6b7280;
-    --primary: #157a39;
-    --primary-dark: #0f5f2c;
-    --primary-soft: rgba(21, 122, 57, 0.08);
-    --primary-soft-border: rgba(21, 122, 57, 0.2);
-    --accent: #2563eb;
-    --accent-soft: rgba(37, 99, 235, 0.08);
-    --ready: #157a39;
-    --restricted: #d97706;
-    --radius-sm: 8px;
-    --radius: 12px;
-    --radius-lg: 16px;
-    --max: 1100px;
-    --display: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
-    --body: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
-    --mono: JetBrains Mono, ui-monospace, monospace;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --obsidian: #132322;
+    --abyss: #0e1a19;
+    --charcoal: #070f0f;
+    --neon: #3ddc91;
+    --mint: #97ddbc;
+    --yellow: #ffcd48;
+    --white: #ffffff;
+    --slate: #828786;
+    --graphite: #424f4f;
+    --fog: #d0d3d3;
+    --mint-frost: #edf7f5;
+    --neon-soft: rgba(61, 220, 145, 0.12);
+    --neon-border: rgba(61, 220, 145, 0.3);
+    --radius-sm: 10px;
+    --radius-md: 20px;
+    --radius-lg: 60px;
+    --radius-pill: 56px;
+    --max: 1200px;
+    --display: "Chakra Petch", "Saira", -apple-system, BlinkMacSystemFont, sans-serif;
+    --body: "Saira", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -240,14 +266,14 @@ const components = [
     margin: 0;
     padding: 0;
     font-family: var(--body);
-    color: var(--text);
-    background: var(--bg);
+    color: var(--white);
+    background: var(--obsidian);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   a {
-    color: var(--primary-dark);
+    color: var(--neon);
     text-decoration: none;
   }
   a:hover { text-decoration: underline; }
@@ -255,11 +281,11 @@ const components = [
   code {
     font-family: var(--mono);
     font-size: 0.9em;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
+    background: var(--abyss);
+    border: 1px solid var(--graphite);
     border-radius: var(--radius-sm);
     padding: 2px 6px;
-    color: var(--text-secondary);
+    color: var(--white);
   }
 
   .wrap {
@@ -270,8 +296,8 @@ const components = [
 
   /* Header */
   .site-header {
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
+    border-bottom: 1px solid var(--graphite);
+    background: var(--obsidian);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -288,9 +314,10 @@ const components = [
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text);
-    font-weight: 700;
+    color: var(--white);
+    font-weight: 500;
     font-size: 1.1rem;
+    font-family: var(--display);
   }
   .brand:hover { text-decoration: none; }
 
@@ -299,62 +326,60 @@ const components = [
     height: 32px;
     border-radius: var(--radius-sm);
     display: block;
-    object-fit: cover;
-    box-shadow: var(--shadow-sm);
   }
 
   .nav-links {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
 
   .nav-links a {
-    color: var(--text-secondary);
-    font-weight: 500;
+    color: var(--slate);
+    font-weight: 400;
   }
-  .nav-links a:hover { color: var(--text); text-decoration: none; }
+  .nav-links a:hover { color: var(--white); text-decoration: none; }
 
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 20px;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
     font-size: 0.92rem;
-    border: 1px solid transparent;
+    border: 1.5px solid transparent;
     cursor: pointer;
-    transition: background-color .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
     text-decoration: none;
     line-height: 1;
+    font-family: var(--body);
   }
   .btn:hover { text-decoration: none; }
 
   .btn-primary {
-    background: var(--primary);
-    color: #ffffff;
-    box-shadow: var(--shadow-sm);
+    background: var(--neon);
+    color: var(--obsidian);
   }
-  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-primary:hover { background: var(--mint); }
 
   .btn-secondary {
-    background: var(--surface);
-    border-color: var(--border);
-    color: var(--text-secondary);
+    background: transparent;
+    border-color: var(--white);
+    color: var(--white);
   }
-  .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
 
   .btn-sm {
-    padding: 8px 14px;
+    padding: 8px 16px;
     font-size: 0.82rem;
-    background: var(--surface);
-    border-color: var(--border);
-    color: var(--text-secondary);
+    background: var(--abyss);
+    border-color: var(--graphite);
+    color: var(--slate);
   }
-  .btn-sm:hover { border-color: var(--primary); color: var(--primary); background: var(--surface); }
+  .btn-sm:hover { border-color: var(--neon); color: var(--neon); background: var(--abyss); }
 
   /* Status chips */
   .status-chip {
@@ -366,15 +391,16 @@ const components = [
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
     border: 1px solid transparent;
     white-space: nowrap;
+    font-family: var(--mono);
   }
 
   .status-chip.ready {
-    background: rgba(21, 122, 57, 0.08);
-    color: var(--ready);
-    border-color: rgba(21, 122, 57, 0.2);
+    background: var(--neon-soft);
+    color: var(--neon);
+    border-color: var(--neon-border);
   }
 
   .status-dot {
@@ -386,124 +412,115 @@ const components = [
 
   /* Hero */
   .hero {
-    position: relative;
     padding: 64px 0 48px;
-    text-align: center;
-    border-bottom: 1px solid var(--border-subtle);
-    background: var(--surface) url('/images/hero-bg.png') center / cover no-repeat;
-  }
-
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.85);
-    z-index: 0;
+    border-bottom: 1px solid var(--graphite);
+    background: var(--obsidian);
   }
 
   .hero-wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 720px;
-    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
   }
 
   .product-meta {
     display: flex;
-    justify-content: center;
     gap: 14px;
     align-items: center;
     margin-bottom: 18px;
     flex-wrap: wrap;
   }
 
+  .call-sheet-id {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
   h1 {
     font-family: var(--display);
-    font-size: clamp(2.2rem, 5vw, 3.2rem);
-    line-height: 1.1;
-    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 500;
     letter-spacing: -0.03em;
     margin: 0 0 14px;
-    color: var(--text);
+    color: var(--white);
   }
 
-  .hero .lead {
+  .lead {
     font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-    color: #374151;
-    margin: 0 auto;
+    color: var(--slate);
+    margin: 0 0 24px;
     line-height: 1.55;
-    max-width: 640px;
+    max-width: 520px;
   }
 
-  /* Docs path */
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .hero-visual svg {
+    width: 100%;
+    height: auto;
+    max-width: 420px;
+  }
+
+  /* Path cards */
   .docs-path {
-    padding: 48px 0 80px;
+    padding: 64px 0 32px;
   }
 
   .path-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--abyss);
+    border: 1px solid var(--graphite);
     border-radius: var(--radius-lg);
-    padding: 32px;
-    box-shadow: var(--shadow);
+    padding: 40px;
   }
 
   .path-head {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 18px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     flex-wrap: wrap;
   }
 
   .path-title-group h2 {
     font-family: var(--display);
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin: 0 0 4px;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 500;
+    margin: 0 0 8px;
     letter-spacing: -0.02em;
-    color: var(--text);
+    color: var(--white);
   }
 
   .path-subtitle {
-    color: var(--text-muted);
+    color: var(--slate);
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    max-width: 480px;
   }
 
-  .path-body {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-  }
-
-  .path-block {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
-
-  .path-block-wide {
-    grid-column: 1;
-  }
-
-  .block-label {
+  .eyebrow {
+    display: block;
     font-family: var(--mono);
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-dim);
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-subtle);
+    letter-spacing: 0.08em;
+    color: var(--neon);
+    margin-bottom: 12px;
   }
 
   .quadrant-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
   }
 
@@ -511,94 +528,67 @@ const components = [
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    color: var(--text);
-    transition: border-color .12s ease, box-shadow .12s ease;
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    color: var(--white);
+    transition: border-color .15s ease, background-color .15s ease;
   }
   .quadrant-card:hover {
-    border-color: var(--primary-soft-border);
-    box-shadow: var(--shadow-sm);
+    border-color: var(--neon);
+    background: var(--neon-soft);
     text-decoration: none;
   }
 
   .quadrant-label {
-    font-weight: 700;
-    font-size: 1rem;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.05rem;
   }
 
   .quadrant-hint {
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.82rem;
-  }
-
-  .reminder-text {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0 0 14px;
-    line-height: 1.5;
-  }
-
-  .reminder-commands {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .cmd {
-    display: block;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    font-size: 0.78rem;
-    color: var(--text);
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .reminder-link {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--primary-dark);
   }
 
   /* Sections */
   .section {
-    padding: 80px 0;
-    border-top: 1px solid var(--border-subtle);
+    padding: 48px 0 64px;
   }
 
   .section-head {
     margin-bottom: 40px;
-    text-align: center;
     max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   .section-head h2 {
     font-family: var(--display);
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700;
-    margin: 0 0 10px;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-
-  .section-lead {
-    color: var(--text-muted);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 500;
     margin: 0;
-    font-size: 1rem;
-    line-height: 1.55;
+    letter-spacing: -0.02em;
+    color: var(--white);
   }
 
-  .section-lead a { color: var(--primary-dark); }
+  /* Memory section */
+  .memory-section {
+    background: var(--obsidian);
+  }
 
   /* Roles */
+  .roles-section {
+    background: var(--mint-frost);
+  }
+  .roles-section h2,
+  .roles-section .eyebrow,
+  .roles-section .role-name,
+  .roles-section .role-duty { color: var(--charcoal); }
+  .roles-section .role-card {
+    background: var(--white);
+    border-color: var(--fog);
+  }
+
   .role-grid {
     list-style: none;
     margin: 0;
@@ -609,34 +599,23 @@ const components = [
   }
 
   .role-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
+    border-radius: var(--radius-md);
     padding: 20px;
-    transition: border-color .12s ease, box-shadow .12s ease;
-  }
-  .role-card:hover {
-    border-color: var(--primary-soft-border);
-    box-shadow: var(--shadow);
-  }
-
-  .role-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
   }
 
   .role-name {
     font-family: var(--display);
     font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text);
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 6px;
+    display: block;
   }
 
   .role-duty {
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.88rem;
     margin: 0;
     line-height: 1.45;
@@ -644,8 +623,7 @@ const components = [
 
   /* Components */
   .components-section {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
+    background: var(--obsidian);
   }
 
   .component-grid {
@@ -657,43 +635,42 @@ const components = [
   .component-card {
     display: flex;
     flex-direction: column;
-    background: var(--bg);
-    border: 1px solid var(--border);
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
     border-radius: var(--radius-lg);
     padding: 24px;
-    color: var(--text);
-    transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease;
-    box-shadow: var(--shadow-sm);
+    transition: border-color .15s ease, transform .15s ease;
   }
   .component-card:hover {
-    border-color: var(--primary-soft-border);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    border-color: var(--neon);
     text-decoration: none;
+    transform: translateY(-2px);
   }
 
   .component-tag {
     display: inline-block;
     padding: 4px 10px;
     border-radius: 999px;
-    background: var(--primary-soft);
-    color: var(--primary-dark);
+    background: var(--neon-soft);
+    color: var(--neon);
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    font-family: var(--mono);
+    align-self: flex-start;
   }
 
   .component-name {
     font-family: var(--display);
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 500;
     margin: 14px 0 8px;
-    color: var(--text);
+    color: var(--white);
   }
 
   .component-desc {
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.9rem;
     margin: 0 0 18px;
     line-height: 1.5;
@@ -710,19 +687,19 @@ const components = [
     font-size: 0.78rem;
     padding: 5px 10px;
     border-radius: var(--radius-sm);
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
+    background: var(--obsidian);
+    border: 1px solid var(--graphite);
+    color: var(--slate);
     font-weight: 500;
   }
 
   /* Footer */
   .site-footer {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--graphite);
     padding: 40px 0;
-    color: var(--text-muted);
+    color: var(--slate);
     font-size: 0.86rem;
-    background: var(--surface);
+    background: var(--obsidian);
   }
 
   .footer-row {
@@ -732,27 +709,28 @@ const components = [
     gap: 14px;
   }
 
-  .footer-links a { color: var(--text-muted); }
-  .footer-links a:hover { color: var(--text); }
-  .footer-links .sep { margin: 0 6px; color: var(--text-dim); }
+  .footer-links a { color: var(--slate); }
+  .footer-links a:hover { color: var(--white); }
+  .footer-links .sep { margin: 0 6px; color: var(--graphite); }
 
   /* Responsive */
   @media (max-width: 900px) {
-    .path-body { grid-template-columns: 1fr; }
-    .path-block-wide { grid-column: auto; }
+    .hero-wrap { grid-template-columns: 1fr; }
+    .hero-visual { order: -1; max-width: 360px; }
+    .quadrant-grid { grid-template-columns: repeat(2, 1fr); }
     .role-grid { grid-template-columns: repeat(2, 1fr); }
     .component-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 640px) {
     .hero { padding: 48px 0 36px; }
-    .docs-path { padding: 36px 0 56px; }
+    .docs-path { padding: 36px 0 24px; }
+    .section { padding: 36px 0 48px; }
     .path-card { padding: 24px; }
-    .section { padding: 56px 0; }
     .quadrant-grid { grid-template-columns: 1fr; }
     .role-grid { grid-template-columns: 1fr; }
     .component-grid { grid-template-columns: 1fr; }
-    .path-head { align-items: flex-start; flex-direction: column; }
+    .path-head { flex-direction: column; }
     .path-head .btn { width: 100%; justify-content: center; }
   }
 </style>
