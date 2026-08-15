@@ -71,12 +71,23 @@ jobs:
             --tag "${{ github.event.inputs.source_tag }}" \
             --assets-dir public-binaries
 
+      - name: Publish eden-memory VERSION and checksum files
+        run: |
+          VERSION="${{ github.event.inputs.source_tag }}"
+          VERSION="${VERSION#v}"
+          mkdir -p docs-site/public/eden-memory
+          printf '%s\n' "${VERSION}" > docs-site/public/eden-memory/VERSION
+          for f in public-binaries/eden-memory-*.sha256; do
+            [ -f "$f" ] || continue
+            cp "$f" "docs-site/public/eden-memory/$(basename "$f")"
+          done
+
       - name: Commit and push metadata
         id: publish
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add binaries/manifest.json docs-site/src/data/downloads.json
+          git add binaries/manifest.json docs-site/src/data/downloads.json docs-site/public/eden-memory/VERSION docs-site/public/eden-memory/eden-memory-*.sha256
           if git diff --cached --quiet; then
             echo "No metadata changes to commit."
           else

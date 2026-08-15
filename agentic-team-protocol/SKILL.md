@@ -42,6 +42,12 @@ The installers are designed to be piped to `sh`. If you run a script from a loca
 clone instead, the file is tracked with executable permissions; otherwise run
 `sh ./agentic-team-protocol/install.sh`.
 
+Check for ATP updates without modifying files:
+
+```bash
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
+```
+
 Detailed steps:
 
 1. Install `eden-memory` and make sure it is on your `PATH`:
