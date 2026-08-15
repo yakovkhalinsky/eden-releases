@@ -4,6 +4,10 @@ argument-hint: "[goal or request]"
 allowed-tools:
   - Agent
   - Bash
+  - TaskCreate
+  - TaskUpdate
+  - TaskGet
+  - TaskList
 ---
 
 # /team
@@ -21,6 +25,9 @@ This command is intentionally thin: it interprets the user's input and delegates
    - If it contains a `goal_id`, run `/team-continue ${GOAL_ID}` (the stored `mode` determines Lite or Full routing).
    - Otherwise, treat the text as a new **Lite** goal request and spawn the `dispatcher` subagent with `mode: lite`.
 2. When starting a new goal, pass the full user request to the Dispatcher. The Dispatcher records a `goal_record` (with `metadata.mode: lite`) and a `plan_record` in Eden-memory, then routes directly to `builder` for everyday tasks.
+   - Before spawning the Dispatcher, create a Claude Code task for this goal via `TaskCreate` with status `in_progress`. Pass the task ID to the Dispatcher so it can store `metadata.claude_task_id` in the `goal_record`.
+   - The task `subject` should be the user request (or a concise summary); the `description` should include `goal_id` placeholder and a note that it will be filled in after the Dispatcher stores the `goal_record`.
+   - On every subsequent hand-off, update the task via `TaskUpdate` to reflect the current stage and role.
 3. When continuing an existing goal, let `/team-continue` or the `router` subagent rehydrate the goal from Eden-memory and dispatch the correct next role.
 
 ## Behaviour

@@ -10,6 +10,8 @@ tools:
   - mcp__eden-memory__eden_search
   - Read
   - Bash
+  - TaskUpdate
+  - TaskGet
 ---
 
 # Verifier
@@ -21,6 +23,16 @@ tools:
 ## Obligation
 
 Validate work before it is accepted. The verifier gate is mandatory before closure.
+
+## Task list obligations
+
+1. At the start of the turn, extract `claude_task_id` from the hand-off payload or latest goal record.
+2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Verifying <goal_id>".
+3. After writing the verdict:
+   - `green` → update task to `completed` (or leave `in_progress` if Archivist will update it).
+   - `red` → update task to `in_progress` with a rework note and route to Dispatcher.
+   - `blocked` → update task to `in_progress` with the blocker note.
+4. If task tools are unavailable, record the skip in a `run_log` and continue.
 
 ## Cleanup obligations
 
@@ -47,6 +59,7 @@ Before finishing and returning the required durable record:
 5. Eden-memory record metadata:
    - `goal_id`, `stage: verification`, `owner_role: verifier`, `agent_id: "verifier"`, `input_record_ids`, `output_record_ids: [verdict_id]`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this verdict.
+   - `claude_task_id` — the Claude Code task ID for this goal, if available.
    - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: verifier`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
    Example `eden_remember` content:
@@ -70,11 +83,12 @@ Before finishing and returning the required durable record:
 2. Compare outcomes against the stated success criteria.
 3. Run or inspect the artefact/system as needed (Read, Bash, tests).
 4. Write the `verdict` record with status, evidence, scope, and residual risks.
-5. **Write a durable `hand_off_record` and return to the parent assistant based on the verdict:**
+5. Update the Claude Code task via `TaskUpdate` to match the verdict status (completed for green, in_progress for red/blocked).
+6. **Write a durable `hand_off_record` and return to the parent assistant based on the verdict:**
    - If `green`, write a hand-off to `archivist` with the verdict ID in `input_record_ids`.
    - If `red`, write a hand-off to `dispatcher` for rework with the verdict ID in `input_record_ids`.
    - If `blocked`, write a hand-off to the owning role or `dispatcher` with the unblock condition recorded.
-6. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the appropriate next role.
+7. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the appropriate next role.
 
 ## Anti-patterns
 

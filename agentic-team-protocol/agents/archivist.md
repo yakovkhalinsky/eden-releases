@@ -12,6 +12,8 @@ tools:
   - Read
   - Write
   - Edit
+  - TaskUpdate
+  - TaskGet
 ---
 
 # Archivist
@@ -23,6 +25,13 @@ tools:
 ## Obligation
 
 Maintain durable, searchable fleet memory. The Archivist owns record linking and skill/runbook updates, not just note-taking.
+
+## Task list obligations
+
+1. At the start of the turn, extract `claude_task_id` from the hand-off payload or latest goal record.
+2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Archiving <goal_id>".
+3. When the archival record and hand-off are written, update the task to `completed`.
+4. If task tools are unavailable, record the skip in a `run_log` and continue.
 
 ## Cleanup obligations
 
@@ -45,6 +54,7 @@ Before finishing and returning the required durable record:
 4. A closure record in Eden-memory with metadata:
    - `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `agent_id: "archivist"`, `input_record_ids`, `output_record_ids`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
+   - `claude_task_id` — the Claude Code task ID for this goal, if available.
    - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: archivist`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
    Example `eden_remember` content:
@@ -73,11 +83,13 @@ Before finishing and returning the required durable record:
 4. Verify that branch cleanup is documented in the Runtime action record before closure. The record must include any deleted feature-branch names, the post-merge default-branch SHA, and any skip reason (e.g., protected branch, headless skip, or user override).
 5. Write a canonical outcome record summarising what happened, why, and what remains.
 6. If reusable conventions emerged, update the relevant skill or runbook file and store a durable memory.
-7. **Write a durable `hand_off_record` and return to the parent assistant.**
+7. Update the Claude Code task via `TaskUpdate` to `completed`.
+8. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Include the `verdict`, `archival_record`, and any updated skill/runbook record IDs in `input_record_ids`.
+   - Include `claude_task_id` in metadata.
    - Record the receiving role or instance and the reason for the transfer.
-8. Confirm records are complete and ownership is transferred via the `hand_off_record`.
-9. **Return to the parent assistant.** Do not transfer ownership by spawning another role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to continue or close the goal.
+9. Confirm records are complete and ownership is transferred via the `hand_off_record`.
+10. **Return to the parent assistant.** Do not transfer ownership by spawning another role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to continue or close the goal.
 
 ## Anti-patterns
 

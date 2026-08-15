@@ -16,6 +16,10 @@ tools:
     - mcp__eden-memory__eden_forget_expired
     - mcp__eden-memory__eden_health
     - mcp__eden-memory__eden_vacuum
+    - TaskCreate
+    - TaskUpdate
+    - TaskGet
+    - TaskList
 harness: claude-code
 ---
 
@@ -59,6 +63,17 @@ the project charter in `.claude/agentic-team-charter.md`.
    and record `headless_skip_local: true`.
 6. Archivist records the closure, linking the action record, verdict, merge
    parent SHAs, and branch cleanup details.
+
+## Task list synchronization
+
+Keep the Claude Code in-app task list in sync with the Eden-memory trail. One
+task represents the whole goal; store its `claude_task_id` in every durable
+record's metadata. When a role starts, update the task to `in_progress` with an
+`activeForm` matching the current stage (e.g. "Planning goal", "Building goal").
+When the role finishes, update it to `completed`. When Verifier returns
+`blocked` or the goal is `pending_authorisation`, update the task with a blocker
+note and stop until resolved. Headless environments may skip updates if task
+tools are unavailable; record the skip in a `run_log`.
 
 ## Escalation
 

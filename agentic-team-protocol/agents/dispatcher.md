@@ -9,6 +9,9 @@ tools:
   - mcp__eden-memory__eden_recall
   - mcp__eden-memory__eden_search
   - Bash
+  - TaskCreate
+  - TaskUpdate
+  - TaskGet
 ---
 
 # Dispatcher
@@ -31,6 +34,15 @@ Before finishing and returning the required durable record:
    - Release any locks, ports, leases, or external resources you acquired.
 4. When routing `build`, `run`, or `research` packages, set `metadata.cleanup_required` to `"true"` if the target role is likely to create temporary files, spawn subprocesses, or acquire locks.
 5. If you cannot clean up safely, set `status` to `blocked` and describe the remaining resources and unblock condition in the record content and `escalation_trigger`.
+
+## Task list obligations
+
+When receiving a new goal from `/team` or `/team-full`:
+
+1. If a `claude_task_id` was provided by the parent assistant, update that task via `TaskUpdate` to `in_progress` with an `activeForm` like "Planning goal" and a description that includes the goal summary.
+2. If no task exists, create one via `TaskCreate` and capture its ID.
+3. Store `metadata.claude_task_id` in the `goal_record` and every subsequent planning/routing record so continuation can update the same task.
+4. When the planning/routing stage is complete, update the task to `completed` (or leave it `in_progress` if the next role will update it immediately).
 
 ## Required outputs
 

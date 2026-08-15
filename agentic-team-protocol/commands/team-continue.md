@@ -4,6 +4,10 @@ argument-hint: "[goal_id]"
 allowed-tools:
   - Bash
   - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskGet
+  - TaskList
 ---
 
 # /team-continue
@@ -32,17 +36,18 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
 5. If the goal is `blocked` or `pending_authorisation`, report the blocker or approval question to the user and stop.
 6. If the latest record is an `archival_record` with no newer action record, report that the goal is already closed.
 7. Identify the latest durable record ID for the `goal_id` (e.g., the latest `goal_record`, `plan_record`, `dispatch_instruction`, `action_record`, `verdict`, `hand_off_record`, etc.) from the search results. Store it as `LATEST_RECORD_ID`.
-8. Write a continuation `run_log` that references the latest stage record as its input, not the `goal_id`, and capture the new record ID:
+8. Extract the `claude_task_id` from the latest record's metadata (fall back to the `goal_record` or any record in the search results). Store it as `GOAL_TASK_ID`. If found, update the task via `TaskUpdate` to `in_progress` with a note that `/team-continue` is routing to the next role; if the task does not exist, create it.
+9. Write a continuation `run_log` that references the latest stage record as its input, not the `goal_id`, and capture the new record ID:
    ```bash
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    ROUTER_LOG_ID=$("${EDEN_MEMORY_BIN}" remember \
      --agent-id router \
      --user-id "${USER_ID}" \
-     --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"note\":\"Continued via /team-continue; router will write hand_off_record before spawning next role\"}" \
-     --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router"}')
+     --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"claude_task_id\":\"${GOAL_TASK_ID}\",\"note\":\"Continued via /team-continue; router will write hand_off_record before spawning next role\"}" \
+     --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router","claude_task_id":"'"${GOAL_TASK_ID}"'"}')
    ```
-9. Spawn the `router` subagent with the goal context, `LATEST_RECORD_ID`, `ROUTER_LOG_ID`, and the detected `mode`. The router reads Eden-memory, writes a durable `hand_off_record` (or equivalent continuation `run_log`) with the full hand-off payload **before** spawning the next role, then spawns that role directly. When `/team-continue` is invoked by the parent assistant immediately after a role subagent returns, the user must not be asked "Shall I proceed?" unless the goal is `blocked`, `pending_authorisation`, or requires escalation.
+10. Spawn the `router` subagent with the goal context, `LATEST_RECORD_ID`, `ROUTER_LOG_ID`, `GOAL_TASK_ID`, and the detected `mode`. The router reads Eden-memory, writes a durable `hand_off_record` (or equivalent continuation `run_log`) with the full hand-off payload **before** spawning the next role, then spawns that role directly. When `/team-continue` is invoked by the parent assistant immediately after a role subagent returns, the user must not be asked "Shall I proceed?" unless the goal is `blocked`, `pending_authorisation`, or requires escalation.
 
 ## Behaviour by goal state
 

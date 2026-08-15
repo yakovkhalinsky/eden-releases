@@ -12,6 +12,8 @@ tools:
   - Read
   - WebSearch
   - WebFetch
+  - TaskUpdate
+  - TaskGet
 ---
 
 # Researcher
@@ -23,6 +25,13 @@ tools:
 ## Obligation
 
 Gather context before decisions are made. Research must have a consumer and a stopping condition.
+
+## Task list obligations
+
+1. At the start of the turn, extract `claude_task_id` from the hand-off payload or latest goal record.
+2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Researching <goal_id>".
+3. When the context summary and hand-off are written, update the task to `completed`.
+4. If task tools are unavailable, record the skip in a `run_log` and continue.
 
 ## Cleanup obligations
 
@@ -49,6 +58,7 @@ Before finishing and returning the required durable record:
 2. A record in Eden-memory with metadata:
    - `goal_id`, `stage: context_gathering`, `owner_role: researcher`, `agent_id: "researcher"`, `input_record_ids`, `output_record_ids`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this summary.
+   - `claude_task_id` — the Claude Code task ID for this goal, if available.
    - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: researcher`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
    Example `eden_remember` content:
@@ -74,8 +84,10 @@ Before finishing and returning the required durable record:
 5. Record the IDs of any memories recalled via `eden_recall` or `eden_search` that shaped the summary in `recalled_memory_ids`.
 6. If the chosen path is written into a plan file, record its absolute path in the context summary metadata (`plan_file_path`).
 7. Store the context summary in Eden-memory.
-8. **Write a durable `hand_off_record` and return to the parent assistant.**
+8. Update the Claude Code task via `TaskUpdate` to `completed`.
+9. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Include the context summary record ID in `input_record_ids`.
+   - Include `claude_task_id` in metadata.
    - Record `next_role` and the reason for the transfer.
 9. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the next role.
 
