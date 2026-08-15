@@ -10,6 +10,37 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt
 file under `~/.claude/agents/` and a matching responsibility. Spawn the right
 subagent for the current lifecycle stage.
 
+## Frontmatter
+
+Every agent prompt begins with a YAML frontmatter block that declares the default `model` and `effort` for the role:
+
+```yaml
+---
+name: builder
+model: sonnet
+# model: ollama:kimi-k2.7-code:cloud
+effort: medium
+---
+```
+
+- `model` — the default Claude Code CLI model alias (or `backend:alias` form).
+- `effort` — the reasoning effort passed as `--effort` (`low`, `medium`, `high`).
+- Commented lines document the recommended Ollama Cloud alternative.
+
+Recommended interactive defaults:
+
+| Role | Default model | Effort |
+|------|---------------|--------|
+| Dispatcher | `sonnet` | `medium` |
+| Router | `sonnet` | `medium` |
+| Researcher | `opus` | `high` |
+| Builder | `sonnet` | `medium` |
+| Runtime | `sonnet` | `medium` |
+| Verifier | `opus` | `high` |
+| Archivist | `sonnet` | `medium` |
+
+In headless `eden-team` runs, these defaults are overridden by `ATP_DEFAULT_MODEL`, `ATP_<ROLE>_MODEL`, `--default-model`, and `--role-model` in that order.
+
 ## Quick reference
 
 | Role | File | Spawns when… | Active in |

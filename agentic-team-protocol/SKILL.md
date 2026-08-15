@@ -55,6 +55,73 @@ Detailed steps:
    ```
 5. Restart Claude Code completely so the MCP server, agents, and slash commands load.
 
+## Per-role model configuration
+
+Each agent prompt file starts with a YAML frontmatter block that declares a default `model` and `effort`:
+
+```yaml
+---
+name: builder
+model: sonnet
+# model: ollama:kimi-k2.7-code:cloud
+effort: medium
+---
+```
+
+- `model` is the default Claude Code CLI model alias for the role.
+- `effort` is passed to Claude Code CLI as `--effort` (`low`, `medium`, or `high`).
+- Commented lines show the recommended Ollama Cloud alternative.
+
+### Interactive Claude Code agents
+
+For the default interactive agents, the recommended defaults are:
+
+| Role | Default model | Default effort |
+|------|---------------|----------------|
+| Dispatcher | `sonnet` | `medium` |
+| Router | `sonnet` | `medium` |
+| Researcher | `opus` | `high` |
+| Builder | `sonnet` | `medium` |
+| Runtime | `sonnet` | `medium` |
+| Verifier | `opus` | `high` |
+| Archivist | `sonnet` | `medium` |
+
+### Headless `eden-team` supervisor
+
+The `eden-team` binary resolves the effective model per role in this order:
+
+1. `ATP_<ROLE>_MODEL`, `ATP_<ROLE>_BACKEND`, `ATP_<ROLE>_EFFORT` environment variables.
+2. `--role-model role=backend:model` CLI flag.
+3. `ATP_DEFAULT_MODEL` / `ATP_DEFAULT_BACKEND`.
+4. Role prompt frontmatter.
+
+Use `backend:model` form for cross-backend values, e.g. `anthropic:sonnet`, `ollama:kimi-k2.7-code:cloud`.
+
+### Env-file precedence
+
+`eden-team` loads environment files without polluting the parent process:
+
+1. Explicit `--env-file` or `ATP_ENV_FILE`.
+2. Project-level `$PWD/.env`.
+3. Global `~/.eden-memory/.env`.
+4. Process environment variables.
+5. CLI flags.
+6. Role prompt frontmatter.
+
+Run `eden-memory setup claude` in a project to generate or update the project `.env` with seed keys and per-role model comments.
+
+### Ollama Cloud wiring
+
+To target Ollama Cloud, set the Anthropic-compatible endpoint and authenticate with your Ollama API key:
+
+```bash
+export ANTHROPIC_BASE_URL=https://ollama.com
+export ANTHROPIC_AUTH_TOKEN=$OLLAMA_API_KEY
+export ANTHROPIC_API_KEY=
+```
+
+`eden-team` ensures these variables are forwarded to every child `claude` process and validates that `ANTHROPIC_AUTH_TOKEN` is set for any role using the `ollama` backend.
+
 ## Core idea
 
 The Agentic Team Protocol (ATP) defines role contracts and a durable memory trail for agent teams. The **Verifier gate is mandatory before any goal is closed**. By default, `/team` now uses **Lite mode**: a lightweight 4-stage path that reuses the same six agents but suppresses the ones not needed for everyday tasks. For complex, risky, or heavily-audited work, escalate to the **Full protocol** via `/team-full`.
