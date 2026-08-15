@@ -1,16 +1,48 @@
 ---
 title: Lifecycle
-description: The seven-stage Agentic Team Protocol lifecycle and the records produced at each stage.
+description: The Lite and Full ATP lifecycles and the records produced at each stage.
 content_type: concept
 ---
 
 # Lifecycle
 
-Every goal passes through seven stages. Each stage has an owner role, exit
-criteria, and a durable record in eden-memory. The Verifier gate is mandatory
-before closure.
+The Agentic Team Protocol has two lifecycles. **Lite mode** is the default for `/team`: four stages, four agents, and the same mandatory Verifier gate. **Full protocol** is available via `/team-full`: seven stages with dedicated research and runtime roles.
 
-## Seven-stage flow
+The Verifier gate is mandatory before any goal is closed in either mode.
+
+## Lite mode flow (default)
+
+```text
+          ┌─────────────────┐
+          │  Goal receipt   │ Dispatcher records the request.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Plan           │ Dispatcher also plans: approach,
+          │                 │ success criteria, deadline.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Action         │ Builder executes and records
+          │                 │ what was done.
+          └────────┬────────┘
+                   │
+          ┌────────▼────────┐
+          │  Check          │ Verifier writes a verdict;
+          │                 │ Archivist closes the goal.
+          └─────────────────┘
+```
+
+### Lite stage details
+
+| # | Stage | Owner | Record kind | What happens |
+|---|-------|-------|-------------|--------------|
+| 1 | **Goal receipt** | Dispatcher | `goal_record` | Capture the request, requester, constraints, and `mode: lite`. |
+| 2 | **Plan** | Dispatcher | `plan_record` | Combine routing, context, and success criteria in one record. |
+| 3 | **Action** | Builder | `action_record` | Do the work, test it, document rollback options. |
+| 4 | **Check** | Verifier → Archivist | `verdict` → `archival_record` | Verify outcome; close the durable trail. |
+
+## Full protocol: seven-stage flow
 
 ```text
           ┌─────────────────┐
@@ -48,7 +80,7 @@ before closure.
           └─────────────────┘
 ```
 
-## Stage details
+## Full protocol stage details
 
 | # | Stage | Owner | Record kind | What happens |
 |---|-------|-------|-------------|--------------|
@@ -71,7 +103,8 @@ A non-trivial action may be followed by an explicit cleanup stage before verific
 ## Routing rules
 
 - Every new goal starts with Dispatcher.
-- Package types map to roles:
+- In **Lite mode** (`/team`), the dispatcher is also the planner. It writes a `plan_record` and routes directly to `builder` for everyday tasks. Escalate to `/team-full` if research, runtime, or formal charter discipline is needed.
+- In **Full mode** (`/team-full`), package types map to roles:
   - `research` → Researcher
   - `build` → Builder
   - `run` → Runtime

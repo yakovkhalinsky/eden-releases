@@ -58,26 +58,47 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 
 ## Procedure
 
-1. Accept a `goal_id` from the caller (`/team-continue` or an external controller).
+1. Accept a `goal_id` from the caller (`/team`, `/team-full`, `/team-continue`, or an external controller).
 2. Search Eden-memory for the latest records of that `goal_id`:
    - latest `goal_record`
-   - latest `dispatch_instruction`
+   - latest `plan_record` (Lite) or `dispatch_instruction` (Full)
    - latest stage/action/context/verdict/archival record by `stored_at`
    - any `pending_authorisation` or `blocked` record
-3. Apply the lifecycle rules in `SKILL.md` to determine the required next stage and role.
-4. If the goal is `blocked` or `pending_authorisation`, report the blocker/approval question to the user and stop.
-5. If the latest record is an `archival_record` and no newer action record exists, report the goal is closed.
-6. Write a `run_log` recording the continuation decision.
-7. **Write a durable `hand_off_record` (or continuation `run_log` with full hand-off payload) before spawning the next role.**
+3. Determine the goal's `mode`:
+   - Prefer `metadata.mode` from the `goal_record`.
+   - If any record is a `plan_record`, treat the goal as Lite.
+   - If `mode` is absent, default to `full`.
+4. Apply the appropriate lifecycle table (Lite or Full) from `SKILL.md` to determine the required next stage and role.
+5. If the goal is `blocked` or `pending_authorisation`, report the blocker/approval question to the user and stop.
+6. If the latest record is an `archival_record` and no newer action record exists, report the goal is closed.
+7. Write a `run_log` recording the continuation decision and the detected `mode`.
+8. **Write a durable `hand_off_record` (or continuation `run_log` with full hand-off payload) before spawning the next role.**
    - Capture the latest input record IDs from the search in step 2.
    - Set `owner_role: router` and `stage: routing_and_assignment` or the inferred next stage.
-   - Record `next_role` and the reason for the routing decision in the content or metadata.
-8. Spawn the selected role subagent with the full goal context, record IDs, and the hand-off record ID using the `Agent` tool.
-9. **Recovery if the spawned role produces no durable record:**
+   - Record `next_role`, `mode`, and the reason for the routing decision in the content or metadata.
+9. Spawn the selected role subagent with the full goal context, record IDs, mode, and the hand-off record ID using the `Agent` tool.
+10. **Recovery if the spawned role produces no durable record:**
    - If, after spawning, the next role fails to store its expected record (no new action/context/verdict/etc. for the `goal_id` within the turn), write a second `hand_off_record` or `run_log` noting the missing downstream record.
    - Report the missing record to the user and suggest re-invoking the router (`/team-continue ${GOAL_ID}`) or escalating via `/team-escalate`.
 
-## Lifecycle decision table
+## Lifecycle decision tables
+
+### Lite mode
+
+| Latest durable record | Inferred state | Next role | Notes |
+|---|---|---|---|
+| `goal_record` only | goal receipt | Dispatcher | Goal has not been planned yet. |
+| `plan_record` | plan complete | Builder | Dispatcher has chosen the approach and success criteria. |
+| `action_record` | action complete | Verifier | Mandatory verifier gate. |
+| `cleanup_record` | cleanup complete | Verifier | Verify claimed resources were released. |
+| `verdict` status `green` | verified | Archivist | Closure/archival. |
+| `verdict` status `red` | needs rework | Dispatcher | Dispatcher issues a rework `plan_record`. |
+| `verdict` status `blocked` | blocked | owning role / user | Surface unblock condition; do not proceed. |
+| `pending_authorisation` | waiting for user | Builder after approval | Ask the recorded question; resume the prepared action if approved. |
+| `hand_off_record` | mid-hand-off | receiving role | Continue from the hand-off payload. |
+| `archival_record` | closed | none | If a newer action record exists for the same goal, treat as superseded and route to Verifier. |
+
+### Full protocol
 
 | Latest durable record | Inferred state | Next role | Notes |
 |---|---|---|---|

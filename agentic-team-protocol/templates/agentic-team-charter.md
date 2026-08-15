@@ -18,15 +18,19 @@ Purpose: <Short description of what the project does and why it uses the Agentic
 
 ## Roles/seats
 
-Active roles are defined in `.claude/agentic-team-config.yaml`. The default set is:
+Active roles are defined in `.claude/agentic-team-config.yaml`. The default set in **Lite mode** is:
 
-- Dispatcher
-- Researcher
+- Dispatcher (also performs lightweight planning)
 - Builder
 - Verifier
 - Archivist
 
-Runtime is available but requires explicit charter authorisation before acting on anything beyond local development tools. If the charter authorises it, Runtime may commit and push verified repository changes without per-action user approval.
+In **Full mode**, the following additional roles have separate seats:
+
+- Researcher — explicit context gathering and options analysis.
+- Runtime — live-system operations (commit/push, deploy, infrastructure changes).
+
+Runtime requires explicit charter authorisation before acting on anything beyond local development tools. If the charter authorises it, Runtime may commit and push verified repository changes without per-action user approval.
 
 ## Decision rights
 

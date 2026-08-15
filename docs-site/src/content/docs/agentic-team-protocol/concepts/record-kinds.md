@@ -15,7 +15,8 @@ Every record should include these fields so it can be traced:
 ```json
 {
   "goal_id": "<uuid-or-slug>",
-  "stage": "goal_receipt | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure | escalation | charter_ratification",
+  "mode": "lite | full",
+  "stage": "goal_receipt | plan | routing_and_assignment | context_gathering | action | verification | recording_and_archival | hand_off_or_closure | escalation | charter_ratification",
   "owner_role": "dispatcher | researcher | builder | runtime | verifier | archivist | router",
   "owner_instance": "<optional-instance-id>",
   "input_record_ids": ["<id>"],
@@ -56,6 +57,21 @@ The Dispatcher assigns the goal to a role, sets a deadline, defines success crit
 | `success_criteria` | What "done" looks like for the next stage. |
 | `escalation_trigger` | When to escalate (e.g., build failure, external dependency blocked). |
 | `stage` | `routing_and_assignment`. |
+| `owner_role` | `dispatcher`. |
+
+### `plan_record` (Lite mode only)
+
+In **Lite mode**, the Dispatcher combines routing and lightweight context gathering into a single `plan_record`. It replaces the `dispatch_instruction` + `context_summary` pair for everyday tasks.
+
+| Field | Purpose |
+|-------|---------|
+| `target_role` | Usually `builder` for Lite goals. |
+| `approach` | Chosen approach and why. |
+| `sources` | Key context recalled or read. |
+| `deadline` | ISO-8601 deadline. |
+| `success_criteria` | What "done" looks like for the next stage. |
+| `escalation_trigger` | When to escalate to `/team-full`. |
+| `stage` | `plan`. |
 | `owner_role` | `dispatcher`. |
 
 ### `context_summary`

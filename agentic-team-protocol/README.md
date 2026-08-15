@@ -1,6 +1,6 @@
 # Agentic Team Protocol for Claude Code
 
-Role-based agent teams with a seven-stage task lifecycle and Eden-memory as the durable substrate.
+Role-based agent teams with a durable Eden-memory trail. **Lite mode** is now the default for everyday tasks; the full seven-stage lifecycle remains available via `/team-full`.
 
 - **Source paper:** *A Protocol for Role-Based Agent Teams* — https://yakov.khalinsky.com/agentic-team-protocol/
 - **Requires:** [eden-memory](https://0d3sa.com/eden-memory/) (`~/.local/bin/eden-memory`) and Claude Code CLI.
@@ -20,6 +20,7 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 | Archivist subagent | Global | `~/.claude/agents/archivist.md` |
 | Router subagent | Global | `~/.claude/agents/router.md` |
 | `/team` command | Global | `~/.claude/commands/team.md` |
+| `/team-full` command | Global | `~/.claude/commands/team-full.md` |
 | `/team-charter` command | Global | `~/.claude/commands/team-charter.md` |
 | `/team-status` command | Global | `~/.claude/commands/team-status.md` |
 | `/team-escalate` command | Global | `~/.claude/commands/team-escalate.md` |
@@ -48,6 +49,12 @@ eden-memory setup claude
 ```
 
 Restart Claude Code after installing (`/exit`, then reopen).
+
+## Lite mode vs full protocol
+
+- `/team` — **Lite mode** (default). 4 stages: goal → plan → act → check. Reuses the dispatcher as planner and routes directly to builder for everyday tasks. Verifier gate is still mandatory.
+- `/team-full` — **Full protocol**. 6 roles, 7 stages. Use for research-heavy, live-system, risky, or heavily-audited goals.
+- `/team-escalate` — Promotes a Lite goal to full protocol when the scope grows.
 
 ## Project opt-in with enforced rules
 

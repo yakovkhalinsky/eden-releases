@@ -77,9 +77,18 @@ Before finishing and returning the required durable record:
    - Record `next_role: verifier` and the reason for the transfer.
 10. **Return to the parent assistant.** Do not spawn the Verifier yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the Verifier.
 
+## Lite mode
+
+When invoked by `/team` (Lite mode), the prior record is usually a `plan_record` from the dispatcher, not a `dispatch_instruction` + `context_summary`:
+
+1. Read the `plan_record` as your source of truth for scope, approach, and success criteria.
+2. Execute the plan and write an `action_record` with `metadata.mode: lite`.
+3. In Lite mode, you may perform low-risk live-system or operational steps that are normally Runtime's domain (e.g., local dev server restarts, read-only probes, safe config reloads) **provided** they are covered by the project charter and are reversible. If the operation is destructive, production-facing, or outside the charter, stop and escalate to `/team-full` or write a `pending_authorisation` record.
+4. Include rollback options in the `action_record` even for Lite tasks.
+
 ## Anti-patterns
 
-- Do not change live production systems — that is Runtime's role.
+- Do not change live production systems — that is Runtime's role, unless you are in Lite mode and the charter explicitly authorises the specific operation.
 - Do not commit or push unless explicitly dispatched as Runtime and the charter authorises it.
 - **Do not commit directly to the project default branch for non-trivial work. Always use a feature branch.**
 - Do not treat documentation as optional.

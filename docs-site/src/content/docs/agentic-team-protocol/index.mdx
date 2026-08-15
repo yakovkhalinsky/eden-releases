@@ -1,14 +1,17 @@
 ---
 title: Agentic Team Protocol
-description: Installable, role-based agent teams for Claude Code. Seven-stage lifecycle, durable memory records, and verifiable hand-offs.
+description: Installable, role-based agent teams for Claude Code. Lite mode for everyday tasks, full seven-stage lifecycle when you need it.
 content_type: concept
 template: splash
 hero:
-  tagline: Installable agent teams for Claude Code. Seven-stage lifecycle, durable memory records, and verifiable hand-offs.
+  tagline: Installable agent teams for Claude Code. Lite mode for everyday tasks, full seven-stage lifecycle when you need it.
   actions:
     - text: Get started
       link: /agentic-team-protocol/getting-started/
       icon: download
+    - text: Lite mode
+      link: /agentic-team-protocol/lite-mode/
+      icon: rocket
     - text: Lifecycle
       link: /agentic-team-protocol/lifecycle/
       icon: open-book
@@ -16,28 +19,31 @@ hero:
 
 ## What it is
 
-The **Agentic Team Protocol (ATP)** is a lightweight operating model for running small, structured agent teams inside Claude Code. It defines clear roles, a seven-stage goal lifecycle, and durable memory records stored in [eden-memory](/eden-memory/).
+The **Agentic Team Protocol (ATP)** is a lightweight operating model for running small, structured agent teams inside Claude Code. It stores a durable trail of every decision in [eden-memory](/eden-memory/) and keeps the **Verifier gate mandatory** before any goal is closed.
 
-## Seven-stage lifecycle
+By default, `/team` now runs **Lite mode**: a 4-stage path that handles everyday implementation tasks without the ceremony of the full protocol. For research-heavy, live-system, risky, or heavily-audited work, use `/team-full` to run the complete 6-role, 7-stage lifecycle.
 
-1. **Intake and triage** — capture the request, decide whether to accept it.
-2. **Scoping and charter check** — verify boundaries and authority.
-3. **Research and options** — evaluate approaches.
-4. **Dispatch and planning** — assign to the right role.
-5. **Execution and verification** — build and review.
-6. **Escalation (if needed)** — route blocked or risky goals upward.
-7. **Recording and archival** — close the loop in memory.
+## Lite mode vs full protocol
+
+| | Lite mode (`/team`) | Full protocol (`/team-full`) |
+|---|---|---|
+| Stages | 4 (goal → plan → act → check) | 7 (goal → route → research → act → verify → archive → close) |
+| Roles used | dispatcher, builder, verifier, archivist | dispatcher, researcher, builder, runtime, verifier, archivist |
+| Research phase | Folded into dispatcher planning | Separate `researcher` role |
+| Live-system work | Builder handles low-risk cases; escalate otherwise | Dedicated `runtime` role with charter gating |
+| Charter ratification | Optional | Required for charter-heavy projects |
+| Best for | Everyday implementation and docs | Complex, risky, or audited goals |
 
 ## Default roles
 
-| Role | Responsibility |
-|------|----------------|
-| Dispatcher | Decides what gets built and who does it. |
-| Researcher | Investigates options and writes decision-ready reports. |
-| Builder | Implements the chosen approach. |
-| Runtime | Executes operational actions — gated by default. |
-| Verifier | Reviews correctness, safety, and charter compliance. |
-| Archivist | Records the goal lifecycle and manages memory hygiene. |
+| Role | Responsibility | Active in |
+|------|----------------|-----------|
+| Dispatcher | Decides what gets built, records the goal, and plans the approach. | Lite + Full |
+| Researcher | Investigates options and writes decision-ready reports. | Full only |
+| Builder | Implements the chosen approach. | Lite + Full |
+| Runtime | Executes operational actions — gated by default. | Full only (Lite: builder handles low-risk ops) |
+| Verifier | Reviews correctness, safety, and charter compliance. | Lite + Full |
+| Archivist | Records the goal lifecycle and manages memory hygiene. | Lite + Full |
 
 Runtime is not active unless your project charter explicitly authorises it.
 
@@ -75,16 +81,17 @@ The protocol does not replace eden-memory; it stores every milestone in it.
 - Every role uses the eden-memory MCP tools (`eden_remember`, `eden_recall`, `eden_search`, `eden_search_semantic`, `eden_edit`, `eden_forget`, etc.) to read prior context and store new records.
 - Required record kinds link the lifecycle together:
 
-  | Kind | Stage | Owner | Purpose |
-  |------|-------|-------|---------|
-  | `goal_record` | goal_receipt | dispatcher | Initial request and constraints. |
-  | `dispatch_instruction` | routing_and_assignment | dispatcher | Who does what, by when. |
-  | `context_summary` | context_gathering | researcher | Findings and options considered. |
-  | `action_record` | action | builder / runtime | What was done and how to roll back. |
-  | `verdict` | verification | verifier | Green, red, or blocked assessment. |
-  | `escalation_record` | escalation | dispatcher | Authority or guardrail request. |
-  | `charter_ratification` | charter_ratification | archivist | Project charter approval. |
-  | `archival_record` | recording_and_archival | archivist | Final outcome and links. |
+  | Kind | Stage | Owner | Mode | Purpose |
+  |------|-------|-------|------|---------|
+  | `goal_record` | goal_receipt | dispatcher | lite + full | Initial request and constraints. |
+  | `plan_record` | plan | dispatcher | lite only | Combined routing + context + success criteria. |
+  | `dispatch_instruction` | routing_and_assignment | dispatcher | full only | Who does what, by when. |
+  | `context_summary` | context_gathering | researcher | full only | Findings and options considered. |
+  | `action_record` | action | builder / runtime | lite + full | What was done and how to roll back. |
+  | `verdict` | verification | verifier | lite + full | Green, red, or blocked assessment. |
+  | `escalation_record` | escalation | dispatcher | lite + full | Authority or guardrail request. |
+  | `charter_ratification` | charter_ratification | archivist | full mostly | Project charter approval. |
+  | `archival_record` | recording_and_archival | archivist | lite + full | Final outcome and links. |
 
 Each record should include metadata fields: `goal_id`, `stage`, `owner_role`, `input_record_ids`, `output_record_ids`, and `recalled_memory_ids`.
 
