@@ -2,7 +2,7 @@
 name: agentic-team-protocol
 title: Agentic Team Protocol — <PROJECT_NAME>
 description: Project-local override for the Agentic Team Protocol with branch discipline.
-version: 1.0.3
+version: 1.1.0
 tags: [agents, roles, protocol, team]
 tools:
   discoverable: true
