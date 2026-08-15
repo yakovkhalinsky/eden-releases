@@ -10,29 +10,30 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 
 ## Quick reference
 
-| Role | File | Spawns when… |
-|------|------|--------------|
-| Dispatcher | `~/.claude/agents/dispatcher.md` | A new goal arrives or routing is needed. |
-| Researcher | `~/.claude/agents/researcher.md` | Context must be gathered before a decision. |
-| Builder | `~/.claude/agents/builder.md` | A concrete artefact needs to be produced. |
-| Runtime | `~/.claude/agents/runtime.md` | Live systems need safe operational changes. |
-| Verifier | `~/.claude/agents/verifier.md` | Work is ready to be validated. |
-| Archivist | `~/.claude/agents/archivist.md` | A goal is closing and records need linking. |
-| Router | `~/.claude/agents/router.md` | A previously interrupted goal needs resuming. |
+| Role | File | Spawns when… | Active in |
+|------|------|--------------|-----------|
+| Dispatcher | `~/.claude/agents/dispatcher.md` | A new goal arrives or routing/planning is needed. | Lite + Full |
+| Researcher | `~/.claude/agents/researcher.md` | Context must be gathered before a decision. | Full only |
+| Builder | `~/.claude/agents/builder.md` | A concrete artefact needs to be produced. | Lite + Full |
+| Runtime | `~/.claude/agents/runtime.md` | Live systems need safe operational changes. | Full only (Lite: builder handles low-risk ops covered by charter) |
+| Verifier | `~/.claude/agents/verifier.md` | Work is ready to be validated. | Lite + Full |
+| Archivist | `~/.claude/agents/archivist.md` | A goal is closing and records need linking. | Lite + Full |
+| Router | `~/.claude/agents/router.md` | A previously interrupted goal needs resuming. | Lite + Full |
 
 ## Dispatcher
 
-**What it does:** Decides who does what. Every new goal starts here.
+**What it does:** Decides who does what. Every new goal starts here. In Lite mode, the Dispatcher is also the planner.
 
 **Required outputs:**
 
-- A `goal_record` with `goal_id`, requester, constraints, and package type.
-- A `dispatch_instruction` with target role, owner, deadline, success criteria, and escalation trigger.
+- A `goal_record` with `goal_id`, requester, constraints, package type, and `mode` (`lite` or `full`).
+- In **Lite mode** (`/team`): a `plan_record` with approach, success criteria, deadline, and `target_role: builder` (or `runtime` for authorised low-risk live-system steps).
+- In **Full mode** (`/team-full`): a `dispatch_instruction` with target role, owner, deadline, success criteria, and escalation trigger.
 - Memory-first: recall the latest relevant records, use only results with score **≥ 0.45**, and record any memory IDs that shaped dispatch decisions in `recalled_memory_ids`.
 
 **When to spawn:**
 
-- A user types `/team` with a new request.
+- A user types `/team` (Lite) or `/team-full` (Full) with a new request.
 - A headless supervisor receives a new goal.
 - A goal needs re-routing after a blocked or red verdict.
 
@@ -53,23 +54,24 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 
 ## Builder
 
-**What it does:** Produces durable, reviewable artefacts.
+**What it does:** Produces durable, reviewable artefacts. In Lite mode, may also execute low-risk live-system steps that are covered by the project charter.
 
 **Required outputs:**
 
 1. The artefact itself (code, config, doc, test, etc.).
 2. A change summary with rationale, record IDs, merge instructions, and follow-up steps.
 3. An `action_record` in eden-memory with `goal_id`, `stage: action`, `owner_role: builder`, `input_record_ids`, and `output_record_ids`.
-4. `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform the action; only treat recall results with score **≥ 0.45** as relevant.
+4. `metadata.mode: lite` when running in Lite mode.
+5. `recalled_memory_ids` listing the IDs of any Eden-memory memories recalled and used to inform the action; only treat recall results with score **≥ 0.45** as relevant.
 
 **When to spawn:**
 
-- A `dispatch_instruction` assigns a build package.
-- A `context_summary` recommends a concrete implementation.
+- A `plan_record` (Lite) or `dispatch_instruction` (Full) assigns a build package.
+- A `context_summary` (Full) recommends a concrete implementation.
 
 ## Runtime
 
-**What it does:** Executes operational actions safely on live systems.
+**What it does:** Executes operational actions safely on live systems in the **Full protocol**. In Lite mode, the Builder handles low-risk live-system steps that are covered by the charter; Runtime is not spawned unless the goal is escalated to Full.
 
 **Required outputs:**
 
@@ -82,11 +84,11 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 
 **When to spawn:**
 
-- A `dispatch_instruction` assigns a run package.
+- A `dispatch_instruction` (Full) assigns a run package.
 - A goal requires deploys, infrastructure changes, or data migrations.
 - The charter explicitly authorises Runtime for live operations.
 
-**Important:** Runtime is gated by default. Do not spawn it for live operations unless the project charter authorises it.
+**Important:** Runtime is gated by default and is active only in Full protocol goals. Do not spawn it for live operations unless the project charter authorises it.
 
 ## Verifier
 
@@ -128,7 +130,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 
 ## Router
 
-**What it does:** Resumes interrupted or unfinished goals by reading eden-memory and dispatching the correct next role.
+**What it does:** Resumes interrupted or unfinished goals by reading eden-memory and dispatching the correct next role. Detects whether the goal is in **Lite** or **Full** mode from `metadata.mode` or the presence of a `plan_record`.
 
 **Required outputs:**
 
@@ -145,7 +147,7 @@ The protocol is implemented as Claude Code subagents. Each role has a prompt fil
 
 ## Spawning a subagent
 
-Spawn the role with its `goal_id` and the latest record IDs. Each subagent starts by recalling the latest `goal_record` for its assigned goal, then acts according to its contract, and finally writes a durable record in eden-memory before handing off.
+Spawn the role with its `goal_id`, `mode`, and the latest record IDs. Each subagent starts by recalling the latest `goal_record` for its assigned goal, then acts according to its contract, and finally writes a durable record in eden-memory before handing off.
 
 ## Fallback
 
@@ -153,6 +155,6 @@ If the eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash c
 
 ## See also
 
-- [Lifecycle](/agentic-team-protocol/lifecycle/) — the seven-stage flow these roles implement.
+- [Lifecycle](/agentic-team-protocol/lifecycle/) — the Lite and Full flows these roles implement.
 - [Record kinds](/agentic-team-protocol/concepts/record-kinds/) — the records each role is responsible for producing.
 - [Set up a headless supervisor](/eden-team/tutorials/headless-supervisor/) — running these subagents from a script or scheduler.

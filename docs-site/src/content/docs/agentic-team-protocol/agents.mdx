@@ -12,42 +12,43 @@ subagent for the current lifecycle stage.
 
 ## Quick reference
 
-| Role | File | Spawns when… |
-|------|------|--------------|
-| [Dispatcher](#dispatcher) | `~/.claude/agents/dispatcher.md` | A new goal arrives or routing is needed. |
-| [Researcher](#researcher) | `~/.claude/agents/researcher.md` | Context must be gathered before a decision. |
-| [Builder](#builder) | `~/.claude/agents/builder.md` | A concrete artefact needs to be produced. |
-| [Runtime](#runtime) | `~/.claude/agents/runtime.md` | Live systems need safe operational changes. |
-| [Verifier](#verifier) | `~/.claude/agents/verifier.md` | Work is ready to be validated. |
-| [Archivist](#archivist) | `~/.claude/agents/archivist.md` | A goal is closing and records need linking. |
-| [Router](#router) | `~/.claude/agents/router.md` | A previously interrupted goal needs resuming. |
+| Role | File | Spawns when… | Active in |
+|------|------|--------------|-----------|
+| [Dispatcher](#dispatcher) | `~/.claude/agents/dispatcher.md` | A new goal arrives or routing/planning is needed. | Lite + Full |
+| [Researcher](#researcher) | `~/.claude/agents/researcher.md` | Context must be gathered before a decision. | Full only |
+| [Builder](#builder) | `~/.claude/agents/builder.md` | A concrete artefact needs to be produced. | Lite + Full |
+| [Runtime](#runtime) | `~/.claude/agents/runtime.md` | Live systems need safe operational changes. | Full only (Lite: builder handles low-risk ops covered by charter) |
+| [Verifier](#verifier) | `~/.claude/agents/verifier.md` | Work is ready to be validated. | Lite + Full |
+| [Archivist](#archivist) | `~/.claude/agents/archivist.md` | A goal is closing and records need linking. | Lite + Full |
+| [Router](#router) | `~/.claude/agents/router.md` | A previously interrupted goal needs resuming. | Lite + Full |
 
 ## Dispatcher
 
-**Obligation:** Decide who does what. Every new goal starts here.
+**Obligation:** Decide who does what. Every new goal starts here. In Lite mode, the Dispatcher also plans.
 
 **Required outputs:**
 
-- A `goal_record` with `goal_id`, requester, constraints, and package type.
-- A `dispatch_instruction` with target role, owner, deadline, success criteria,
-  and escalation trigger.
+- A `goal_record` with `goal_id`, requester, constraints, package type, and `mode` (`lite` or `full`).
+- In **Lite mode** (`/team`): a `plan_record` with approach, success criteria, deadline, and `target_role: builder` (or `runtime` for authorised low-risk live-system steps).
+- In **Full mode** (`/team-full`): a `dispatch_instruction` with target role, owner, deadline, success criteria, and escalation trigger.
 
 **Procedure:**
 
-1. Recall existing records for the `goal_id`.
-2. Pick a package type: `research`, `build`, `run`, `verify`, or `archive`.
-3. Assign the owning role and write the dispatch instruction.
+1. Recall existing records for the `goal_id`. If none exist, create a `goal_record` with the correct `mode`.
+2. In **Lite mode**, write a `plan_record` and route directly to `builder` (or `runtime` for covered low-risk ops).
+3. In **Full mode**, pick a package type: `research`, `build`, `run`, `verify`, or `archive`. Assign the owning role and write the `dispatch_instruction`.
 4. Hand off to the assigned role with context and record IDs.
 
 **Anti-patterns:**
 
-- Do not act as another role while dispatching.
-- Do not route non-trivial goals directly to Builder or Runtime without Researcher context.
+- Do not act as another role while dispatching, except in Lite mode where you also perform lightweight planning.
+- Do not route non-trivial Full-mode goals directly to Builder or Runtime without Researcher context.
 - Do not lose the link between the original request and the dispatched task.
+- Do not forget to set `metadata.mode: lite` on Lite records.
 
 ## Researcher
 
-**Obligation:** Gather context before decisions are made.
+**Obligation:** Gather context before decisions are made. Active only in the **Full protocol**.
 
 **Required outputs:**
 
@@ -70,7 +71,7 @@ subagent for the current lifecycle stage.
 
 ## Builder
 
-**Obligation:** Produce durable, reviewable artefacts.
+**Obligation:** Produce durable, reviewable artefacts. In Lite mode, may also execute low-risk live-system steps that are covered by the project charter.
 
 **Required outputs:**
 
@@ -78,25 +79,26 @@ subagent for the current lifecycle stage.
 2. A change summary with rationale, record IDs, merge instructions, and follow-up steps.
 3. An `action_record` in eden-memory with `goal_id`, `stage: action`,
    `owner_role: builder`, `input_record_ids`, and `output_record_ids`.
+4. `metadata.mode: lite` when running in Lite mode.
 
 **Procedure:**
 
-1. Recall the latest `goal_record` and `dispatch_instruction`.
-2. Gather context via Read/Eden-memory. Request Researcher support if needed.
+1. Recall the latest `goal_record` and `plan_record` (Lite) or `dispatch_instruction` (Full).
+2. Gather context via Read/Eden-memory. Request Researcher support in Full mode if needed.
 3. Implement with small, coherent, verifiable changes.
 4. Write the change summary and store the action record.
 5. Hand off to Verifier.
 
 **Anti-patterns:**
 
-- Do not change live production systems.
+- Do not change live production systems, unless you are in Lite mode and the charter explicitly authorises the specific operation.
 - Do not commit or push without explicit user direction.
 - Do not treat documentation as optional.
 - Do not skip verification.
 
 ## Runtime
 
-**Obligation:** Operate live systems safely.
+**Obligation:** Operate live systems safely. Active only in the **Full protocol**; Lite mode goals use the Builder for low-risk operational steps covered by the charter.
 
 **Required outputs:**
 
@@ -174,22 +176,26 @@ subagent for the current lifecycle stage.
 
 ## Router
 
-**Obligation:** Resume interrupted or unfinished goals by reading Eden-memory and dispatching the correct next role.
+**Obligation:** Resume interrupted or unfinished goals by reading Eden-memory and dispatching the correct next role. Detects whether the goal is in **Lite** or **Full** mode from `metadata.mode` or the presence of a `plan_record`.
 
 **Required outputs:**
 
 1. A `run_log` record marking the continuation attempt.
 2. A clear decision: which role should act next and why.
-3. A hand-off payload containing `goal_id`, inferred stage, next role, latest record IDs, success criteria, and any escalation trigger.
+3. A hand-off payload containing `goal_id`, `mode`, inferred stage, next role, latest record IDs, success criteria, and any escalation trigger.
 
 **Procedure:**
 
 1. Accept a `goal_id` from `/team-continue` or an external controller.
 2. Search Eden-memory for the latest records of that `goal_id`.
-3. Apply the lifecycle rules in `SKILL.md` to determine the required next stage and role.
-4. If the goal is `blocked` or `pending_authorisation`, report the blocker and stop.
-5. If the latest record is an `archival_record` with no newer action record, report the goal is closed.
-6. Write a `run_log` and spawn the selected role subagent with full context.
+3. Determine the goal's `mode`:
+   - Prefer `metadata.mode` from the `goal_record`.
+   - If any record is a `plan_record`, treat the goal as Lite.
+   - If `mode` is absent, default to `full`.
+4. Apply the appropriate lifecycle table (Lite or Full) from `SKILL.md` to determine the required next stage and role.
+5. If the goal is `blocked` or `pending_authorisation`, report the blocker and stop.
+6. If the latest record is an `archival_record` with no newer action record, report the goal is closed.
+7. Write a `run_log` and spawn the selected role subagent with full context, including the detected `mode`.
 
 **Anti-patterns:**
 
@@ -199,7 +205,7 @@ subagent for the current lifecycle stage.
 
 ## Spawning a subagent
 
-Spawn the role with its `goal_id` and the latest record IDs. Each subagent starts
+Spawn the role with its `goal_id`, `mode`, and the latest record IDs. Each subagent starts
 by recalling the latest `goal_record` for its assigned goal, then acts according
 to its contract, and finally writes a durable record in eden-memory before handing
 off.

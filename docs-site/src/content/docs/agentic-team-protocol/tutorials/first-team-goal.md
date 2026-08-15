@@ -58,13 +58,13 @@ This creates:
 - `.claude/agentic-team-config.yaml`
 - `.claude/skills/agentic-team-protocol/SKILL.md`
 
-## Step 4 — Edit and ratify the charter
+## Step 4 — (Optional) Edit and ratify the charter
 
-Open `.claude/agentic-team-charter.md` and replace the placeholders:
+For **Lite mode** goals, charter ratification is optional. For **Full protocol** goals, or if you want enforced branch/runtime discipline, open `.claude/agentic-team-charter.md` and replace the placeholders:
 
 1. Set the project name and path.
 2. Write a one-sentence mission.
-3. Confirm the default active roles (Dispatcher, Researcher, Builder, Verifier, Archivist).
+3. Confirm the default active roles for Lite mode (Dispatcher, Builder, Verifier, Archivist).
 4. Keep Runtime gated unless you intend to run live operations.
 
 Then run:
@@ -94,19 +94,20 @@ Run the top-level protocol command with a tiny request:
 /team Add a README file that lists the project purpose and ATP roles
 ```
 
-The `/team` command spawns the Dispatcher subagent. The Dispatcher records a `goal_record` and a `dispatch_instruction` in eden-memory, then hands off to the Builder.
+The `/team` command spawns the Dispatcher subagent in **Lite mode**. The Dispatcher records a `goal_record` with `metadata.mode: lite` and a `plan_record` in eden-memory, then hands off to the Builder.
 
 **Expected output:**
 
 ```text
 Goal recorded: goal-atp-first-goal-<id>
-Dispatch: builder
+Mode: lite
+Plan: builder
 Deadline: <timestamp>
 ```
 
 ## Step 6 — Observe the hand-off
 
-The Builder reads the dispatch instruction, creates the README, and writes an `action_record` in eden-memory. It then hands off to the Verifier.
+The Builder reads the `plan_record`, creates the README, and writes an `action_record` in eden-memory. It then hands off to the Verifier.
 
 You should see:
 
@@ -128,12 +129,12 @@ This lists active and recently closed goals with their current stage, owner role
 
 ## Expected final state
 
-- `.claude/agentic-team-charter.md` contains real project values and has been ratified.
-- Eden-memory contains at least a `charter_ratification`, `goal_record`, `dispatch_instruction`, `action_record`, and `verdict` for the same `goal_id`.
+- `.claude/agentic-team-charter.md` contains real project values if you chose to ratify it (optional for Lite mode).
+- Eden-memory contains at least a `goal_record` with `mode: lite`, a `plan_record`, an `action_record`, and a `verdict` for the same `goal_id`.
 - The sandbox repo has a new README summarising the project.
 
 ## Next steps
 
 - Learn how to amend and re-ratify the charter in the [Ratify a project charter](/agentic-team-protocol/tutorials/ratify-charter/) tutorial.
-- Read the [lifecycle](/agentic-team-protocol/lifecycle/) for the full seven-stage flow.
+- Read the [lifecycle](/agentic-team-protocol/lifecycle/) for the Lite and Full flows.
 - Browse the [slash command reference](/agentic-team-protocol/reference/slash-commands/) to know which command to use when.

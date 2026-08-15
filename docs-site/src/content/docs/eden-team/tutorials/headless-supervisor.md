@@ -22,7 +22,7 @@ The `eden-team` source lives in the `eden-memory` monorepo at `/home/yakov/git/e
 
 ```bash
 cd /home/yakov/git/eden-memory
-make build-team
+go build -o eden-team ./cmd/eden-team
 ```
 
 This produces `./eden-team` in the repository root. The binary uses role templates from `cmd/eden-team/roles/` and the runbook at `cmd/eden-team/runbooks/headless-deployment.md`.
@@ -49,11 +49,11 @@ Create a file named `mcp.json` in the supervisor working directory. It should lo
 }
 ```
 
-Replace `yourname` with the actual user that will run the supervisor. Use absolute paths; the supervisor process may not inherit your shell environment.
+Replace `yourname` with the actual user that will run the supervisor, and update `command` to the absolute path of the `eden-memory` binary you want role processes to use. For a local build from the `eden-memory` monorepo, use the path to the compiled binary (e.g., `/home/yourname/git/eden-memory/eden-memory`). Use absolute paths for both `command` and `--db`; child role processes may not inherit your shell environment.
 
 ## Step 3 — Launch the headless supervisor locally
 
-Run `eden-team start` with the strict MCP config:
+Run `eden-team start` with the strict MCP config. `eden-team` defaults to **Lite mode** (`--mode lite`), which is the fastest path for everyday headless goals:
 
 ```bash
 ./eden-team start \
@@ -69,10 +69,11 @@ Flags explained:
 |------|----------------|
 | `--goal` | The natural-language goal to dispatch through the ATP lifecycle. |
 | `--mcp-config ./mcp.json` | Points to the strict config from Step 2. Role processes inherit it. |
+| `--mode lite` / `--mode full` | Selects the ATP lifecycle. Defaults to `lite`. |
 | `--dangerously-skip-permissions` | Disables interactive tool-permission prompts (safe only in automated environments). |
 | `--verbose` | Prints lifecycle progress so you can follow dispatcher/builder/verifier transitions. |
 
-The supervisor writes a `goal_record`, spawns the dispatcher subagent, and continues the lifecycle until a verdict is recorded. Child Claude Code CLI processes use `--strict-mcp-config` with the supplied `mcp.json`.
+The supervisor writes a `goal_record` with `mode: lite`, spawns the dispatcher subagent, and continues the lifecycle until a verdict is recorded. Child Claude Code CLI processes use `--strict-mcp-config` with the supplied `mcp.json`.
 
 ## Step 4 — Target Ollama Cloud (optional)
 
@@ -87,6 +88,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=kimi-k2.5:cloud
 cd /home/yakov/git/eden-memory
 ./eden-team start \
   --goal "Create /tmp/atp-hello-cloud.txt containing exactly 'hello from ATP cloud'" \
+  --mode lite \
   --mcp-config ./mcp.json \
   --dangerously-skip-permissions \
   --verbose
@@ -106,7 +108,7 @@ If a run is interrupted or you want to continue a previously recorded goal, use 
   --verbose
 ```
 
-The supervisor reads the latest durable record for that `goal_id` from Eden-memory, dispatches the next required role, and continues the lifecycle.
+The supervisor reads the latest durable record for that `goal_id` from Eden-memory, detects the goal's `mode` from the records, dispatches the next required role, and continues the lifecycle.
 
 ## Step 6 — Verify durable records
 
@@ -124,10 +126,10 @@ You should see a `goal_record`, `dispatch_instruction`, `action_record`, and `ve
 
 ## Expected final state
 
-- `mcp.json` exists and declares only the eden-memory server.
+- `mcp.json` exists and declares only the eden-memory server, using the absolute path to the desired `eden-memory` binary.
 - `eden-team` launches without MCP auto-discovery and writes lifecycle records.
 - A test goal produces a traceable `goal_id` and a final verdict.
-- eden-memory contains the full lifecycle record chain for that goal.
+- For a **Lite mode** goal, eden-memory contains a `goal_record` with `mode: lite`, a `plan_record`, an `action_record`, and a `verdict` linked by the same `goal_id`.
 
 ## Caveats
 

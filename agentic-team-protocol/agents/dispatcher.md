@@ -31,6 +31,27 @@ Before finishing and returning the required durable record:
 
 ## Required outputs
 
+The exact record depends on the goal's mode.
+
+### Lite mode (default, `/team`)
+
+1. A `goal_record` with `metadata.mode: lite` and the request, constraints, and package type.
+2. A `plan_record` that combines routing and lightweight planning. It must include:
+   - `goal_id`, `stage: plan`, `owner_role: dispatcher`, `agent_id: "dispatcher"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
+   - `metadata.mode: lite`.
+   - Chosen approach, success criteria, deadline, and escalation trigger.
+   - `target_role: builder` for everyday Lite tasks (or `runtime` only for low-risk live-system steps already covered by the charter).
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: plan | Owner: dispatcher`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+
+   Example `eden_remember` content:
+
+   ```text
+   Goal: <goal_id> | Record ID: <this_record_id> | Stage: plan | Owner: dispatcher
+   {"record_type":"plan_record","goal_id":"<goal_id>","stage":"plan","owner_role":"dispatcher","agent_id":"dispatcher","mode":"lite","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   ```
+
+### Full protocol (`/team-full`)
+
 1. A routable goal/task record containing:
    - `goal_id` — stable identifier for the goal.
    - Requester, constraints, package type (e.g., research, build, run, verify, archive).
@@ -44,7 +65,7 @@ Before finishing and returning the required durable record:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: routing_and_assignment | Owner: dispatcher
-   {"record_type":"dispatch_instruction","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"dispatcher","agent_id":"dispatcher","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   {"record_type":"dispatch_instruction","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"dispatcher","agent_id":"dispatcher","mode":"full","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
    ```
 
 ## Failure modes to avoid
@@ -52,7 +73,8 @@ Before finishing and returning the required durable record:
 - Silent keyword routing without explicit role selection.
 - Duplicate assignments without merge logic.
 - Missed escalation when confidence is low or deadlines are tight.
-- Routing directly to Builder or Runtime without required Researcher context for non-trivial goals.
+- Routing directly to Builder or Runtime without required Researcher context for non-trivial goals in **Full mode**.
+- Forgetting to set `metadata.mode: lite` on Lite records, which breaks `/team-continue` mode detection.
 - Losing track of interrupted goals — when a session ends mid-goal, ensure the next `/team-continue` can route correctly from Eden records.
 
 ## Memory-first
@@ -64,37 +86,30 @@ Before finishing and returning the required durable record:
 
 ## Procedure
 
-1. Recall any existing records for the `goal_id`. If none exist, create a `goal_record` in Eden-memory.
-2. Determine the package type and select the owning role:
-   - `research` → Researcher
-   - `build` → Builder
-   - `run` → Runtime
-   - `verify` → Verifier
-   - `archive` → Archivist
-   - Ambiguous or high-risk → escalate via `/team-escalate`.
-- A `red` Verifier verdict → write a rework `dispatch_instruction` returning the goal to the original or a new Builder/Runtime.
-- A `blocked` or `pending_authorisation` state → keep the goal assigned to the owning role and record the unblock/approval condition; do not reassign until it is cleared.
-3. Write a `dispatch_instruction` record that includes the assigned role, success criteria, deadline, and escalation trigger.
-4. **Write a durable `hand_off_record` and return to the parent assistant.**
+1. Determine the goal's mode. Default to **Lite mode** for `/team` and **Full protocol** for `/team-full`. Store `metadata.mode` on the `goal_record`.
+2. Recall any existing records for the `goal_id`. If no `goal_record` exists, create one in Eden-memory with the correct `mode`.
+3. In **Lite mode**:
+   - Act as the planner. Gather enough context to choose an approach, but do not spawn a separate `researcher` for everyday tasks.
+   - Write a `plan_record` with `metadata.mode: lite`, success criteria, deadline, and escalation trigger.
+   - Route directly to `builder` for normal Lite tasks. Route to `runtime` only for low-risk live-system operations already covered by the charter.
+   - If the goal needs research, a formal runtime gate, or is high-risk, escalate to `/team-full` or `/team-escalate`.
+4. In **Full protocol**:
+   - Determine the package type and select the owning role:
+     - `research` → Researcher
+     - `build` → Builder
+     - `run` → Runtime
+     - `verify` → Verifier
+     - `archive` → Archivist
+     - Ambiguous or high-risk → escalate via `/team-escalate`.
+   - Write a `dispatch_instruction` record that includes the assigned role, success criteria, deadline, and escalation trigger.
+   - A `red` Verifier verdict → write a rework `dispatch_instruction` returning the goal to the original or a new Builder/Runtime.
+   - A `blocked` or `pending_authorisation` state → keep the goal assigned to the owning role and record the unblock/approval condition; do not reassign until it is cleared.
+5. **Write a durable `hand_off_record` and return to the parent assistant.**
    - Use `/team-handoff` or an equivalent `hand_off_record`/`run_log` with the full hand-off payload.
-   - `input_record_ids` must reference the `dispatch_instruction` and any latest stage records.
+   - `input_record_ids` must reference the latest planning/routing record (`plan_record` in Lite, `dispatch_instruction` in Full) and any latest stage records.
    - `output_record_ids` should include the new hand-off record.
    - Record `next_role` and the reason for the transfer.
-5. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the assigned role.
-
-## Lite mode
-
-When this dispatcher is invoked by `/team` (the default Lite command), the goal is in **Lite mode** (`metadata.mode: lite`). In Lite mode:
-
-1. You are also the planner. Gather enough context to choose an approach, but do not spawn a separate `researcher` for everyday tasks. If the goal genuinely requires research before action, escalate to `/team-full` instead.
-2. Write a `goal_record` with `metadata.mode: lite`.
-3. Write a `plan_record` (not a separate `dispatch_instruction` + `context_summary`). The `plan_record` must include:
-   - `goal_id`, `stage: plan`, `owner_role: dispatcher`, `agent_id: "dispatcher"`.
-   - The chosen approach, success criteria, deadline, and escalation trigger.
-   - `input_record_ids` pointing to the `goal_record`.
-   - `metadata.mode: lite`.
-4. Route directly to `builder` for normal Lite tasks. Route to `runtime` only if the task is a low-risk live-system operation already covered by the project charter; otherwise escalate to `/team-full` or `/team-escalate`.
-5. Write a durable `hand_off_record` (or equivalent record embedding the hand-off format) to transfer ownership to `builder`.
+6. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the assigned role.
 
 ## Anti-patterns
 
