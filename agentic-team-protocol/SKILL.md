@@ -34,6 +34,10 @@ curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
+The installers are designed to be piped to `sh`. If you run a script from a local
+clone instead, the file is tracked with executable permissions; otherwise run
+`sh ./agentic-team-protocol/install.sh`.
+
 Detailed steps:
 
 1. Install `eden-memory` and make sure it is on your `PATH`:

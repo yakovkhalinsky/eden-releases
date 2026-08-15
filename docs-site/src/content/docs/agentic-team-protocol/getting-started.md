@@ -24,6 +24,10 @@ curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
+These installers are designed to be piped to `sh`, so you do not need to `chmod +x`
+them when using `curl`. If you run a script directly from a local clone, the file is
+tracked with executable permissions; otherwise use `sh ./agentic-team-protocol/install.sh`.
+
 The ATP installer copies the skill, agents, and slash commands into `~/.claude/`:
 
 - `~/.claude/skills/team/SKILL.md`

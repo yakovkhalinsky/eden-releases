@@ -40,6 +40,13 @@ function copyRecursive(src, dest) {
   } else {
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(src, dest);
+    // Defensive: shell scripts must remain executable in the public tree so that
+    // consumers who download and run them directly (not via curl | sh) do not hit
+    // a permission-denied error. Preserve the source mode explicitly.
+    if (dest.endsWith('.sh')) {
+      const srcMode = fs.statSync(src).mode;
+      fs.chmodSync(dest, srcMode);
+    }
   }
 }
 
