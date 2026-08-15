@@ -57,11 +57,43 @@ Detailed steps:
 
 ## Core idea
 
-Every goal passes through a seven-stage lifecycle. Each stage has an owner role, exit criteria, and a durable record in Eden-memory. Roles are specialised subagents; the Dispatcher decides who does what; the Verifier gate is mandatory before closure.
+The Agentic Team Protocol (ATP) defines role contracts and a durable memory trail for agent teams. The **Verifier gate is mandatory before any goal is closed**. By default, `/team` now uses **Lite mode**: a lightweight 4-stage path that reuses the same six agents but suppresses the ones not needed for everyday tasks. For complex, risky, or heavily-audited work, escalate to the **Full protocol** via `/team-full`.
 
-## When to use
+## Lite mode (default for `/team`)
 
-Use this protocol when a task is non-trivial, risky, multi-step, or needs to be observable across sessions. For trivial one-line fixes, direct action is fine.
+Lite mode is designed for the common case: a well-scoped request that fits in a single session and does not need heavy research, live-system runtime work, or formal charter ratification. It keeps the contracts and the durable trail, but folds context gathering into planning and archives straight after verification.
+
+### Lite roles
+
+| Lite role | Full agent(s) used | Obligation |
+|-----------|-------------------|------------|
+| `planner` | `dispatcher` | Records the goal, evaluates context, chooses an approach, and writes the plan. In Lite, the dispatcher absorbs the `researcher` context-gathering step for everyday tasks. |
+| `maker` | `builder` (or `runtime` for live-system work) | Executes the plan and records what changed, including rollback options. |
+| `checker` | `verifier`, then `archivist` | Verifies the outcome, then closes the durable record trail. |
+
+### Lite lifecycle
+
+1. **Goal receipt** — planner records the request.
+2. **Plan** — planner writes a `plan_record` (routing + context + success criteria).
+3. **Act** — maker executes and writes an `action_record`.
+4. **Check** — verifier writes a `verdict`; archivist writes the terminal `archival_record`.
+
+### When Lite is enough
+
+- Small to medium implementation tasks.
+- Low-risk local development or documentation changes.
+- Tasks that need a clear trail but not a research phase or formal runtime gate.
+
+### When to use the full protocol (`/team-full`)
+
+- The goal requires explicit research before action.
+- It touches production, live systems, or security-sensitive surfaces.
+- Multiple owners, sessions, or audit checkpoints are expected.
+- Charter ratification, non-fast-forward branch discipline, or formal escalation is required.
+
+## Full protocol
+
+Use `/team-full` to run the original 6-role, 7-stage lifecycle. The full protocol is unchanged: every goal passes through goal receipt, routing and assignment, context gathering, action, verification, recording and archival, and hand-off or closure. The dispatcher, researcher, builder, runtime, verifier, and archivist each have their own turn.
 
 ## Roles
 
@@ -74,7 +106,9 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 | Verifier | Validates work before acceptance | `verifier` |
 | Archivist | Maintains durable, searchable fleet memory | `archivist` |
 
-## Seven-stage task lifecycle
+## Full protocol: seven-stage lifecycle
+
+The full `/team-full` lifecycle is unchanged:
 
 1. **Goal receipt** — Dispatcher records the request, requester, constraints, and package type.
 2. **Routing and assignment** — Dispatcher assigns target role/package, owner, deadline, success criteria, confidence/escalation trigger.
@@ -93,15 +127,16 @@ Use this protocol when a task is non-trivial, risky, multi-step, or needs to be 
 ## Routing rules and dispatcher defaults
 
 - Every new goal starts with Dispatcher.
-- Package types:
+- In **Lite mode**, the dispatcher also performs everyday context gathering and writes a `plan_record`. It routes directly to `builder` unless the task is obviously live-system or security-sensitive, in which case it routes to `runtime` or escalates to `/team-full`.
+- In **Full mode**, package types are:
   - `research` → Researcher
   - `build` → Builder
   - `run` → Runtime
   - `verify` → Verifier
   - `archive` → Archivist
-- Low confidence, missing authority, or tight deadline → escalate via `/team-escalate`.
-- Builder and Runtime must not start without sufficient context and a visible plan (either in `context_summary` or `action_record`); request Researcher support if needed.
-- When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role.
+- Low confidence, missing authority, or tight deadline → escalate via `/team-escalate` (Lite goals that need research or formal runtime gating are promoted to full protocol).
+- Builder and Runtime must not start without sufficient context and a visible plan (either in `plan_record`, `context_summary`, or `action_record`); request Researcher support if needed.
+- When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role using the stored `mode`.
 - A `blocked` or `pending_authorisation` goal remains active until the recorded unblock/approval condition is satisfied; the router re-checks it on continuation.
 
 ## Automatic continuation within a session
@@ -177,8 +212,9 @@ Use the clean role name as `agent_id` for all ATP role records (e.g., `dispatche
 Required record types:
 
 - `goal_record` — initial request and constraints.
-- `dispatch_instruction` — routing decision from Dispatcher.
-- `context_summary` — findings from Researcher.
+- `dispatch_instruction` — routing decision from Dispatcher (full protocol).
+- `context_summary` — findings from Researcher (full protocol).
+- `plan_record` — Lite-only combined routing + context + success-criteria record written by the dispatcher.
 - `action_record` — what Builder or Runtime did.
 - `verdict` — green/red/blocked from Verifier with evidence.
 - `escalation_record` — escalation request and routing.
@@ -186,6 +222,8 @@ Required record types:
 - `run_log` — coarse-grained event written by a role at the start/end of each turn; used by the router to detect stale or interrupted work.
 - `cleanup_record` — release and evidence for temporary resources (files, subprocesses, ports, leases) created during a role's turn. Not a terminal record; the goal still requires a `green` verdict before closure.
 - `hand_off_record` — explicit ownership transfer between roles or instances, including input/output IDs, success criteria, and deadline.
+
+Every goal record should include `mode: lite | full` in its metadata. The router and `/team-continue` use this to choose the correct lifecycle table. If `mode` is absent on an older goal, default to `full` to avoid breaking in-flight full-protocol goals.
 
 ## Memory-first rules
 
@@ -245,10 +283,12 @@ Required record types:
 
 ## Slash commands
 
-- `/team-charter` — read the project's `agentic-team-charter.md`, store a ratification record, and report whether the team may proceed.
-- `/team-status` — list active goals, current stage, owner role, latest record IDs, and continueable/blocked state.
-- `/team-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`.
-- `/team-continue` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role.
+- `/team [goal]` — start or continue a goal in **Lite mode** (default). The dispatcher acts as planner and routes directly to builder for everyday tasks.
+- `/team-full [goal]` — start or continue a goal in the **Full protocol** with the complete 6-role, 7-stage lifecycle.
+- `/team-charter` — read the project's `agentic-team-charter.md`, store a ratification record, and report whether the team may proceed (full protocol / charter-heavy projects).
+- `/team-status` — list active goals, current stage, owner role, latest record IDs, mode (`lite`/`full`), and continueable/blocked state.
+- `/team-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`. In Lite mode, escalation also promotes the goal to the full protocol.
+- `/team-continue [goal_id]` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role. Uses the goal's stored `mode` to pick the correct lifecycle table.
 - `/team-handoff` — transfer ownership of a goal to another role or instance in a durable `hand_off_record`.
 
 ## Using the subagents
@@ -263,7 +303,24 @@ For continuation, use the `router` subagent (or `/team-continue`) instead of man
 
 ### Router lifecycle rules
 
-Given the latest non-terminal record for a `goal_id`:
+The router first reads the goal's `mode` metadata. If `mode` is `lite` (or the goal uses Lite-specific records such as `plan_record`), it applies the Lite table. Otherwise it applies the Full table.
+
+#### Lite mode decision table
+
+| Latest record | Next stage | Next role |
+|---|---|---|
+| `goal_record` | plan | Dispatcher (as planner) |
+| `plan_record` | action | Builder |
+| `action_record` | verification | Verifier |
+| `cleanup_record` | verification | Verifier |
+| `verdict` status `red` | plan (rework) | Dispatcher |
+| `verdict` status `blocked` | blocked | owning role re-checks unblock condition |
+| `verdict` status `green` | recording_and_archival | Archivist |
+| `hand_off_record` | action / verification per hand-off | receiving role |
+| `pending_authorisation` | action | Builder after user approval |
+| `archival_record` | hand_off_or_closure | none — goal is closed; report only |
+
+#### Full protocol decision table
 
 | Latest record | Next stage | Next role |
 |---|---|---|
@@ -283,21 +340,33 @@ If a new `action_record` is stored after an `archival_record` for the same `goal
 
 ## Headless supervisor
 
-For automated or scheduled goals, use the `eden-team` binary from the `eden-memory` monorepo instead of an interactive Claude Code session. `eden-team` writes the ATP lifecycle records (`goal_record`, `dispatch_instruction`, `action_record`, `hand_off_record`, `verdict`) to Eden-memory and spawns Claude Code CLI subagent processes for each role.
+For automated or scheduled goals, use the `eden-team` binary from the `eden-memory` monorepo instead of an interactive Claude Code session. `eden-team` defaults to Lite mode (`--mode lite`) for everyday goals; use `--mode full` for the complete 6-role lifecycle. It writes the ATP lifecycle records to Eden-memory and spawns Claude Code CLI subagent processes for each role.
 
-Example:
+Example (Lite mode):
 
 ```bash
 cd /home/yakov/git/eden-memory
 make build-team
 ./eden-team start \
   --goal "Refactor the login handler to use table-driven tests" \
+  --mode lite \
   --mcp-config ./mcp.json \
   --dangerously-skip-permissions \
   --verbose
 ```
 
-Resume an interrupted goal with `eden-team continue --goal-id <goal-id> --mcp-config ./mcp.json`.
+Example (Full protocol):
+
+```bash
+./eden-team start \
+  --goal "Audit production certificate rotation process" \
+  --mode full \
+  --mcp-config ./mcp.json \
+  --dangerously-skip-permissions \
+  --verbose
+```
+
+Resume an interrupted goal with `eden-team continue --goal-id <goal-id> --mcp-config ./mcp.json` (the mode is read from the goal record).
 
 ## Fallback if MCP is unavailable
 

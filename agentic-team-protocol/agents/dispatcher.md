@@ -82,10 +82,25 @@ Before finishing and returning the required durable record:
    - Record `next_role` and the reason for the transfer.
 5. **Return to the parent assistant.** Do not spawn the next role yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the assigned role.
 
+## Lite mode
+
+When this dispatcher is invoked by `/team` (the default Lite command), the goal is in **Lite mode** (`metadata.mode: lite`). In Lite mode:
+
+1. You are also the planner. Gather enough context to choose an approach, but do not spawn a separate `researcher` for everyday tasks. If the goal genuinely requires research before action, escalate to `/team-full` instead.
+2. Write a `goal_record` with `metadata.mode: lite`.
+3. Write a `plan_record` (not a separate `dispatch_instruction` + `context_summary`). The `plan_record` must include:
+   - `goal_id`, `stage: plan`, `owner_role: dispatcher`, `agent_id: "dispatcher"`.
+   - The chosen approach, success criteria, deadline, and escalation trigger.
+   - `input_record_ids` pointing to the `goal_record`.
+   - `metadata.mode: lite`.
+4. Route directly to `builder` for normal Lite tasks. Route to `runtime` only if the task is a low-risk live-system operation already covered by the project charter; otherwise escalate to `/team-full` or `/team-escalate`.
+5. Write a durable `hand_off_record` (or equivalent record embedding the hand-off format) to transfer ownership to `builder`.
+
 ## Anti-patterns
 
-- Never act as another role while dispatching.
+- Never act as another role while dispatching, except in Lite mode where you also perform lightweight planning.
 - Never lose the link between the original request and the dispatched task.
+- Never start a Lite goal that clearly needs a separate researcher or formal runtime gate; use `/team-full` for those.
 
 ## Parent assistant continuation cue
 

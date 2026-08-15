@@ -1,25 +1,26 @@
 ---
 title: Slash commands
-description: Reference for the six global ATP slash commands — when to use them, what arguments they accept, and what they return.
+description: Reference for the seven global ATP slash commands — when to use them, what arguments they accept, and what they return.
 content_type: reference
 ---
 
 # Slash commands
 
-The Agentic Team Protocol installs six global slash commands into Claude Code. They are the user-facing control surface for starting, continuing, and governing goals.
+The Agentic Team Protocol installs seven global slash commands into Claude Code. They are the user-facing control surface for starting, continuing, and governing goals.
 
-| Command | Purpose |
-|---------|---------|
-| `/team` | Start or continue a goal. |
-| `/team-charter` | Ratify the project charter. |
-| `/team-status` | Show active goals and stages. |
-| `/team-escalate` | Write an escalation record for a blocked or risky goal. |
-| `/team-continue` | Resume an unfinished goal from eden-memory. |
-| `/team-handoff` | Transfer goal ownership to another role. |
+| Command | Purpose | Mode |
+|---------|---------|------|
+| `/team` | Start or continue a goal in **Lite** mode. | lite |
+| `/team-full` | Start or continue a goal in the **Full** protocol. | full |
+| `/team-charter` | Ratify the project charter. | full / optional |
+| `/team-status` | Show active goals and stages. | both |
+| `/team-escalate` | Write an escalation record; can promote Lite to Full. | both |
+| `/team-continue` | Resume an unfinished goal from eden-memory. | both |
+| `/team-handoff` | Transfer goal ownership to another role. | both |
 
 ## `/team`
 
-Top-level entry point. It is intentionally thin: it parses the argument and delegates to the Dispatcher or `/team-continue`.
+Top-level entry point for **Lite mode**. It is intentionally thin: it parses the argument and delegates to the Dispatcher or `/team-continue`.
 
 **Usage**
 
@@ -35,11 +36,34 @@ Top-level entry point. It is intentionally thin: it parses the argument and dele
 |-------|--------|
 | No argument | Show status and ask for a goal. |
 | UUID-like or contains `-` | Resume via `/team-continue`. |
-| Any other text | Spawn the `dispatcher` subagent with the request. |
+| Any other text | Spawn the `dispatcher` subagent with the request in **Lite** mode. |
 
 **Output**
 
-- A `goal_record` and `dispatch_instruction` stored in eden-memory.
+- A `goal_record` with `mode: lite` stored in eden-memory.
+- A `plan_record` combining routing, context, and success criteria.
+- A hand-off to the `builder` subagent (or `runtime` for authorised live-system tasks).
+
+## `/team-full`
+
+Top-level entry point for the **full 6-role, 7-stage protocol**. Use for complex, risky, or heavily-audited goals.
+
+**Usage**
+
+```text
+/team-full
+/team-full <request>
+/team-full <goal_id>
+```
+
+**Behaviour**
+
+Same as `/team`, but starts the goal with `mode: full` and produces a `dispatch_instruction` followed by the full lifecycle (researcher, builder/runtime, verifier, archivist).
+
+**Output**
+
+- A `goal_record` with `mode: full`.
+- A `dispatch_instruction`.
 - A hand-off to the assigned role subagent.
 
 ## `/team-charter`
@@ -70,7 +94,7 @@ Status: proceed | no-proceed
 
 ## `/team-status`
 
-Lists active goals, current stage, owner role, latest record ID, and whether each goal is continueable, blocked, or closed.
+Lists active goals, current stage, owner role, mode, latest record ID, and whether each goal is continueable, blocked, or closed.
 
 **Usage**
 
@@ -87,13 +111,14 @@ Lists active goals, current stage, owner role, latest record ID, and whether eac
 | `goal_id` | Stable goal identifier. |
 | `stage` | Current lifecycle stage. |
 | `owner_role` | Role currently responsible. |
+| `mode` | `lite` or `full`. |
 | `latest_record_id` | Most recent durable record. |
 | `deadline` | Dispatch deadline if recorded. |
 | `state` | `active`, `blocked`, `pending_authorisation`, `continueable`, `closed`. |
 
 ## `/team-escalate`
 
-Writes a structured `escalation_record` and reports the escalation chain.
+Writes a structured `escalation_record` and reports the escalation chain. In Lite mode, escalation often means promoting the goal to the full protocol.
 
 **Usage**
 
@@ -104,6 +129,8 @@ Writes a structured `escalation_record` and reports the escalation chain.
 **What it captures**
 
 - Goal ID and escalation reason.
+- Current `mode` (`lite` or `full`).
+- Whether to promote a Lite goal to full protocol.
 - Consulted roles.
 - Recommended default resolution.
 - Specific question or authority requested.
@@ -114,6 +141,7 @@ Writes a structured `escalation_record` and reports the escalation chain.
 - An `escalation_record` in eden-memory.
 - The assigned escalation level (1–4).
 - The next authority in the chain.
+- If `promote_to_full` is true, instructions to resume with `/team-full` or `/team-continue`.
 
 ## `/team-continue`
 

@@ -59,6 +59,7 @@ export default defineConfig({
 						{
 							label: 'Concepts',
 							items: [
+								{ label: 'Lite mode', slug: 'agentic-team-protocol/lite-mode' },
 								{ label: 'Lifecycle', slug: 'agentic-team-protocol/lifecycle' },
 								{ label: 'Roles and agents', slug: 'agentic-team-protocol/agents' },
 								{ label: 'Charter anatomy', slug: 'agentic-team-protocol/charter-anatomy' },

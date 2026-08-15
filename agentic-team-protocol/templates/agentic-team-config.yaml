@@ -3,14 +3,20 @@
 project: <PROJECT_PATH>
 charter_path: .claude/agentic-team-charter.md
 
+# Default mode for /team. Use "lite" for everyday implementation tasks; use "full"
+# for research-heavy, live-system, or heavily-audited goals.
+mode: lite
+
 active_roles:
+  # Lite mode uses dispatcher, builder, verifier, and archivist directly.
   - dispatcher
-  - researcher
   - builder
   - verifier
   - archivist
 
-# Runtime is available but gated; include it only when live-system work is expected.
+# Researcher and Runtime are available in full mode. Uncomment them if your
+# project charter authorises full-protocol research or live-system work.
+# - researcher
 # - runtime
 
 # Router is a harness-level controller used by /team-continue to resume goals.

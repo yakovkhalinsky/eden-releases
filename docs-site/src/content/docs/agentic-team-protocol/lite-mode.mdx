@@ -1,0 +1,60 @@
+---
+title: Lite mode
+description: ATP's default lightweight path for everyday tasks — four stages, four agents, and the same mandatory Verifier gate.
+content_type: concept
+---
+
+## What Lite mode is
+
+**Lite mode** is the default experience when you run `/team`. It keeps the core contract of the Agentic Team Protocol — durable records, clear role ownership, and a mandatory Verifier gate — but folds the full 6-role, 7-stage lifecycle into a faster 4-stage path for everyday tasks.
+
+## When to use Lite mode
+
+- Small to medium implementation tasks.
+- Documentation, config, or test changes.
+- Low-risk local development work.
+- Any task that benefits from a durable trail but does not need a separate research phase, formal runtime gate, or charter ratification.
+
+## When to escalate to the full protocol
+
+Use `/team-full` or `/team-escalate` when:
+
+- The goal needs explicit research before action.
+- It touches production, live systems, or security-sensitive surfaces.
+- Multiple owners, sessions, or audit checkpoints are expected.
+- Charter ratification, non-fast-forward branch discipline, or formal escalation is required.
+
+## Lite lifecycle
+
+1. **Goal receipt** — dispatcher records the request.
+2. **Plan** — dispatcher also acts as planner, evaluating context and writing a `plan_record` with approach, success criteria, and deadline.
+3. **Act** — builder executes the plan and writes an `action_record`.
+4. **Check** — verifier writes a `verdict`, then the archivist writes the terminal `archival_record`.
+
+```text
+/team → dispatcher (plan) → builder (act) → verifier (check) → archivist (close)
+```
+
+## Lite roles
+
+| Lite role | Full agent | What it does |
+|-----------|------------|--------------|
+| Planner | dispatcher | Records the goal, gathers enough context, chooses an approach, and writes the `plan_record`. |
+| Maker | builder | Executes the plan. In Lite mode, builder may also handle low-risk operational steps that are covered by the charter. |
+| Checker | verifier, then archivist | Verifier validates the outcome; archivist closes the durable trail. |
+
+## Records in Lite mode
+
+| Record | Purpose |
+|--------|---------|
+| `goal_record` | Initial request and constraints. |
+| `plan_record` | Combined routing, context, and success criteria. |
+| `action_record` | What was done and how to roll back. |
+| `verdict` | Green, red, or blocked assessment. |
+| `archival_record` | Final outcome and links. |
+
+Every goal record should include `metadata.mode: lite` so `/team-continue` can pick the right lifecycle table.
+
+## Promoting a Lite goal to full protocol
+
+If a Lite goal grows in scope, run `/team-escalate` with `promote_to_full: true`. The next `/team-continue` or `/team-full` invocation will route the goal through the full 6-role lifecycle from its current state.
