@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 # Installer for eden-memory.
-# Usage: curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+# Usage (recommended): curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+# Local usage from a clone: ./scripts/install.sh
 
 set -eu
 

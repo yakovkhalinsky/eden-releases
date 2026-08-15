@@ -62,6 +62,10 @@ curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
+The installers are designed to be piped to `sh`. If you run a script from a local
+clone, the file is tracked with executable permissions; otherwise use
+`sh ./agentic-team-protocol/install.sh`.
+
 In each project where you will use ATP, wire the Eden-memory MCP server before restarting Claude Code:
 
 ```bash
