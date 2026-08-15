@@ -40,6 +40,12 @@ This page lists common eden-memory problems, the most likely cause, and the fix.
 | `sync list-pending-key-changes` shows a peer | A peer device has new identity keys. | Verify the new fingerprints out-of-band, then run `sync approve-key-change`. If suspicious, run `sync reject-key-change`. |
 | Pending change reappears after approval | The peer device keeps regenerating keys. | Check whether the peer is restoring an old sidecar or reinstalling repeatedly. |
 
+## Relay connection refused
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `connection refused` during `relay-register`, pairing, or sync | The relay is not running, or the client is pointing at the wrong relay host/port. | Confirm the relay process is up, that `--relay-url` matches the address in `--addr`, and that the client can reach the relay host and port. See the [relay-first sync topology runbook](/eden-memory/how-to/relay-first-sync-topology/) for the full topology checklist. |
+
 ## Sync loop issues
 
 | Symptom | Cause | Fix |
