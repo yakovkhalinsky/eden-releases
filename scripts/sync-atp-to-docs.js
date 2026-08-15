@@ -23,6 +23,13 @@ const sourceDir = path.join(repoRoot, 'agentic-team-protocol');
 const targetDir = path.join(repoRoot, 'docs-site', 'public', 'agentic-team-protocol');
 const tarballName = 'agentic-team-protocol.tar.gz';
 
+// The version lives in agentic-team-protocol/VERSION. Sync it into every
+// SKILL.md before publishing so the live installer reports the same number as
+// the source tree.
+execFileSync('node', [path.join(__dirname, 'set-atp-version.js')], {
+  stdio: 'inherit',
+});
+
 function copyRecursive(src, dest) {
   const stat = fs.statSync(src);
   if (stat.isDirectory()) {

@@ -1,0 +1,111 @@
+name: Bump ATP version
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'agentic-team-protocol/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atp-version-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'chore(atp): auto-bump version')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine next version
+        id: bump
+        env:
+          COMMITS_JSON: ${{ toJson(github.event.commits) }}
+        run: |
+          import json, os, re, sys
+
+          version_file = 'agentic-team-protocol/VERSION'
+          current = open(version_file).read().strip()
+          major, minor, patch = map(int, current.split('.'))
+
+          bump = 'patch'
+          try:
+              commits = json.loads(os.environ['COMMITS_JSON'])
+          except (json.JSONDecodeError, KeyError):
+              commits = []
+
+          for c in commits:
+              msg = c.get('message', '')
+              first = msg.split('\n')[0]
+              # Breaking change: type(scope)!: or BREAKING CHANGE anywhere in body
+              if re.search(
+                  r'^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)\((atp|agentic-team-protocol)\)!:',
+                  first,
+                  re.IGNORECASE,
+              ):
+                  bump = 'major'
+                  break
+              if 'BREAKING CHANGE' in msg:
+                  bump = 'major'
+                  break
+              if re.search(
+                  r'^feat\((atp|agentic-team-protocol)\):',
+                  first,
+                  re.IGNORECASE,
+              ) and bump != 'major':
+                  bump = 'minor'
+
+          if bump == 'major':
+              next_version = f'{major + 1}.0.0'
+          elif bump == 'minor':
+              next_version = f'{major}.{minor + 1}.0'
+          else:
+              next_version = f'{major}.{minor}.{patch + 1}'
+
+          print(f'current={current}')
+          print(f'bump={bump}')
+          print(f'next={next_version}')
+
+          output = os.environ.get('GITHUB_OUTPUT')
+          if output:
+              with open(output, 'a') as f:
+                  f.write(f'current={current}\n')
+                  f.write(f'bump={bump}\n')
+                  f.write(f'next={next_version}\n')
+        shell: python
+
+      - name: Apply version bump
+        run: |
+          echo "${{ steps.bump.outputs.next }}" > agentic-team-protocol/VERSION
+          node scripts/set-atp-version.js
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agentic-team-protocol/VERSION
+          git add agentic-team-protocol/SKILL.md
+          git add agentic-team-protocol/templates/skills/agentic-team-protocol/SKILL.md
+          if git diff --cached --quiet; then
+            echo "No version changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(atp): auto-bump version to ${{ steps.bump.outputs.next }}"
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt: pulling latest main and pushing..."
+            git pull --rebase origin ${{ github.ref_name }} || { echo "Rebase failed"; exit 1; }
+            if git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" ${{ github.ref_name }}; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Push rejected after 3 attempts." >&2
+          exit 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
