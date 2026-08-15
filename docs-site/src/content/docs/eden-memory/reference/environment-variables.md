@@ -45,6 +45,31 @@ If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls ba
 
 The public installer creates or updates `~/.eden-memory/.env` with `EDEN_ORG_ID` when you enter one at the prompt (or when `EDEN_ORG_ID` is already set in the environment). `eden-memory setup claude` writes `EDEN_WORKSPACE_ID` into the per-project MCP server configuration in `~/.claude.json`.
 
+## Agent identity for `setup claude`
+
+`eden-memory setup claude` decides the value it writes for `EDEN_AGENT_ID` using this precedence:
+
+1. Explicit `--agent-id` / `--agent` CLI flag (highest).
+2. `EDEN_ATP_ROLE` environment variable, when it is one of the supported values.
+3. `claude-code-cli` fallback (lowest).
+
+Supported `EDEN_ATP_ROLE` values: `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`.
+
+```bash
+# Run setup as the builder role
+EDEN_ATP_ROLE=builder eden-memory setup claude
+
+# Override the role with an explicit agent id
+EDEN_ATP_ROLE=builder eden-memory setup claude --agent-id my-custom-agent
+```
+
+The public `setup-claude.sh` installer uses a different order because it has no `--agent-id` flag: `EDEN_ATP_ROLE` wins over a positional argument, and the positional argument wins over the `claude-code-cli` fallback. The Go CLI, by contrast, puts an explicit `--agent-id` flag above `EDEN_ATP_ROLE`.
+
+| Variable | Used by | Default | Description |
+|----------|---------|---------|-------------|
+| `EDEN_ATP_ROLE` | `setup claude` | none | ATP role that becomes the agent_id when valid. |
+| `EDEN_AGENT_ID` | `setup claude`, ATP supervisor | `claude-code-cli` | Agent identity written to the project `.env` file. |
+
 ## Relay variables (eden-relay and `eden-memory relay-server`)
 
 The dedicated `eden-relay` binary and the `eden-memory relay-server` subcommand read these variables:
