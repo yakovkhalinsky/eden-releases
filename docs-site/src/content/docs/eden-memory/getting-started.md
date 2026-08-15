@@ -39,6 +39,12 @@ Check the binary:
 eden-memory version
 ```
 
+Check for updates without installing:
+
+```bash
+eden-memory update --check
+```
+
 Then confirm it can open its database:
 
 ```bash

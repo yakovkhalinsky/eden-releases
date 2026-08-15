@@ -67,6 +67,35 @@ These flags can appear before or after the subcommand:
 | `--code` | — | Invitation code for `pair accept-invitation` (alternative to the positional argument). |
 | `--start-sync-loop` | — | After `pair accept-invitation`, run the foreground sync loop in this process until SIGINT/SIGTERM. |
 
+## `update`
+
+Check for, download, and install a newer eden-memory binary. The command fetches the canonical `VERSION` file and the platform binary matching your OS and architecture, verifies the SHA-256 sidecar, backs up the existing binary to `~/.cache/eden-memory/backups/`, and atomically replaces it.
+
+```bash
+# Check whether a newer release exists
+eden-memory update --check
+
+# Download and install if newer (explicit)
+eden-memory update
+
+# Preview what would happen
+eden-memory update --dry-run
+
+# Restore the most recent backup
+eden-memory update --rollback
+
+# Use a different distribution URL
+eden-memory update --prefix https://example.com/eden-memory/
+```
+
+| Flag | Env var | Description |
+|------|---------|-------------|
+| `--check` | — | Only report whether an update is available; do not download. |
+| `--dry-run` | — | Print the remote version, download URL, and backup location without changing files. |
+| `--rollback` | — | Restore the latest backup from `~/.cache/eden-memory/backups/`. |
+| `--prefix` | `EDEN_UPDATE_PREFIX` | Base URL that hosts `VERSION` and platform binaries (default `https://0d3sa.com/eden-memory/`). |
+| `--binary-path` | `EDEN_MEMORY_BIN` | Path to the binary to update (defaults to the running executable). |
+
 ## `packet`
 
 Build a deterministic, scope-bound knowledge packet for the current workspace and print it to stdout. A packet is a self-contained snapshot of memories, stats, and optional semantic clusters. It is useful for exporting context, hand-offs between agents, or offline review.

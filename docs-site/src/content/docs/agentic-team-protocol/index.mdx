@@ -66,6 +66,12 @@ The installers are designed to be piped to `sh`. If you run a script from a loca
 clone, the file is tracked with executable permissions; otherwise use
 `sh ./agentic-team-protocol/install.sh`.
 
+Check for updates without modifying files:
+
+```bash
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
+```
+
 In each project where you will use ATP, wire the Eden-memory MCP server before restarting Claude Code:
 
 ```bash

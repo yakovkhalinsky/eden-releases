@@ -45,6 +45,12 @@ The installers are designed to be piped to `sh`, so you do not need to `chmod +x
 them when using `curl`. If you run `install.sh` from a local clone, the script is
 tracked with executable permissions (`./install.sh`).
 
+Check for updates without modifying any files:
+
+```bash
+curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
+```
+
 In each project where you will use ATP, wire the Eden-memory MCP server:
 
 ```bash

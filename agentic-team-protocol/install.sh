@@ -31,16 +31,20 @@ _extract_version() {
 LOCAL_INSTALL=false
 CLAUDE_MD_INSTALL=false
 DRY_RUN=false
+CHECK=false
+VERSION_URL="https://0d3sa.com/agentic-team-protocol/VERSION"
 while [ $# -gt 0 ]; do
   case "$1" in
     --local) LOCAL_INSTALL=true; shift ;;
     --claude-md) CLAUDE_MD_INSTALL=true; shift ;;
     --dry-run) DRY_RUN=true; shift ;;
+    --check) CHECK=true; shift ;;
     -h|--help)
-      echo "Usage: $0 [--local] [--claude-md] [--dry-run]"
+      echo "Usage: $0 [--local] [--claude-md] [--dry-run] [--check]"
       echo "  --local       Also copy project-local templates into ./.claude/"
       echo "  --claude-md   Also write protocol enforcement rules into ./CLAUDE.md"
       echo "  --dry-run     Show what would be installed without copying"
+      echo "  --check       Compare the installed version with the latest remote VERSION"
       exit 0
       ;;
     *) echo "Unknown option: $1" >&2; exit 1 ;;
@@ -76,6 +80,28 @@ else
   OLD_VERSION="$(_extract_version "${CLAUDE_DIR}/skills/team/SKILL.md")"
 fi
 [ -z "$OLD_VERSION" ] && OLD_VERSION="none"
+
+# --check reports whether the installed version is current and exits.
+if [ "$CHECK" = true ]; then
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "Error: --check requires curl." >&2
+    exit 1
+  fi
+  REMOTE_VERSION="$(curl -fsSL "${VERSION_URL}" 2>/dev/null || true)"
+  REMOTE_VERSION="$(printf '%s' "${REMOTE_VERSION}" | tr -d '[:space:]')"
+  if [ -z "${REMOTE_VERSION}" ]; then
+    echo "Could not fetch remote version from ${VERSION_URL}."
+    exit 1
+  fi
+  if [ "$OLD_VERSION" = "none" ]; then
+    echo "Agentic Team Protocol is not installed. Latest version is ${REMOTE_VERSION}."
+  elif [ "$OLD_VERSION" = "$REMOTE_VERSION" ]; then
+    echo "Agentic Team Protocol is up to date (${OLD_VERSION})."
+  else
+    echo "Agentic Team Protocol update available: ${OLD_VERSION} → ${REMOTE_VERSION}"
+  fi
+  exit 0
+fi
 
 # If we are running from a curl pipe, the package directory is unknown.
 # Try to download the canonical tarball; if it is unavailable, fall back

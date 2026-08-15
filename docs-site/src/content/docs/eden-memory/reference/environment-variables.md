@@ -81,7 +81,14 @@ If either check fails, no config files are mutated. Fix the underlying issue (up
 
 | Variable | Used by | Default | Description |
 |----------|---------|---------|-------------|
-| `EDEN_MEMORY_BIN` | `setup claude` | running binary or `~/.local/bin/eden-memory` | Path to the `eden-memory` binary used for the health preflight. |
+| `EDEN_MEMORY_BIN` | `setup claude`, `update` | running binary or `~/.local/bin/eden-memory` | Path to the `eden-memory` binary used for the health preflight or the target of an update. |
+
+## Update variables
+
+| Variable | Used by | Default | Description |
+|----------|---------|---------|-------------|
+| `EDEN_UPDATE_PREFIX` | `update` | `https://0d3sa.com/eden-memory/` | Base URL that hosts the `VERSION` file and platform binaries for `eden-memory update`. |
+| `EDEN_MEMORY_BIN` | `update` | running binary | Path to the binary to update; also set by `setup claude`. |
 
 ## Relay variables (eden-relay and `eden-memory relay-server`)
 
