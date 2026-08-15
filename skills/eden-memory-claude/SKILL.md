@@ -252,6 +252,14 @@ If you cannot call the eden-memory tools:
 
 ## Troubleshooting
 
+Run this first whenever eden-memory feels broken:
+
+```bash
+eden-memory --db ~/.eden-memory/default.db health
+```
+
+A healthy install prints a JSON report with `"status":"ok"`. If this fails, fix the path or reinstall before debugging MCP or sync issues.
+
 - **Server exits**: ensure `--db` uses an absolute path and the parent directory exists.
 - **Command not found**: add `~/.local/bin` to your PATH, or use the absolute binary path in the MCP config.
 - **Config not picked up**: restart Claude Code after changing the config. The `mcpServers` key lives in `~/.claude.json` per project directory.
