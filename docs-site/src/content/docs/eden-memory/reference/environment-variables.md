@@ -70,6 +70,19 @@ The public `setup-claude.sh` installer uses a different order because it has no 
 | `EDEN_ATP_ROLE` | `setup claude` | none | ATP role that becomes the agent_id when valid. |
 | `EDEN_AGENT_ID` | `setup claude`, ATP supervisor | `claude-code-cli` | Agent identity written to the project `.env` file. |
 
+## Preflight checks for `setup claude`
+
+`eden-memory setup claude` now runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
+
+1. **Health check** — executes `eden-memory --db <path> health` against the target database and aborts if the reported status is not `ok`.
+2. **MCP protocol version check** — verifies the compiled-in MCP server advertises the protocol version Claude Code expects (`2024-11-05`). If the binary advertises an incompatible version, setup aborts without writing config.
+
+If either check fails, no config files are mutated. Fix the underlying issue (update `eden-memory`, create the database directory, or repair the binary path) and re-run `eden-memory setup claude`.
+
+| Variable | Used by | Default | Description |
+|----------|---------|---------|-------------|
+| `EDEN_MEMORY_BIN` | `setup claude` | running binary or `~/.local/bin/eden-memory` | Path to the `eden-memory` binary used for the health preflight. |
+
 ## Relay variables (eden-relay and `eden-memory relay-server`)
 
 The dedicated `eden-relay` binary and the `eden-memory relay-server` subcommand read these variables:
