@@ -1,6 +1,9 @@
 ---
 name: router
 description: Rehydrates an unfinished Agentic Team Protocol goal from Eden-memory and selects the next role required by the lifecycle.
+model: sonnet
+# model: ollama:kimi-k2.7-code:cloud
+effort: medium
 tools:
   - mcp__eden-memory__eden_remember
   - mcp__eden-memory__eden_recall

@@ -1,6 +1,9 @@
 ---
 name: archivist
 description: Maintains durable, searchable fleet memory for an Agentic Team Protocol goal.
+model: sonnet
+# model: ollama:deepseek-v4-flash:cloud
+effort: medium
 tools:
   - mcp__eden-memory__eden_remember
   - mcp__eden-memory__eden_recall

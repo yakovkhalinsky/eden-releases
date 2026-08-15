@@ -1,6 +1,9 @@
 ---
 name: runtime
 description: Operates live systems safely for an Agentic Team Protocol goal.
+model: sonnet
+# model: ollama:deepseek-v4-pro:cloud
+effort: medium
 tools:
   - mcp__eden-memory__eden_remember
   - mcp__eden-memory__eden_recall

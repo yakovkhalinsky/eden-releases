@@ -1,6 +1,9 @@
 ---
 name: builder
 description: Produces durable, reviewable artefacts for an Agentic Team Protocol goal.
+model: sonnet
+# model: ollama:kimi-k2.7-code:cloud
+effort: medium
 tools:
   - mcp__eden-memory__eden_remember
   - mcp__eden-memory__eden_recall

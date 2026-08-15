@@ -1,6 +1,9 @@
 ---
 name: verifier
 description: Validates work before it is accepted for an Agentic Team Protocol goal.
+model: opus
+# model: ollama:minimax-m3:cloud
+effort: high
 tools:
   - mcp__eden-memory__eden_remember
   - mcp__eden-memory__eden_recall

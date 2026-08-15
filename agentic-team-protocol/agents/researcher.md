@@ -1,6 +1,9 @@
 ---
 name: researcher
 description: Gathers context before decisions are made for an Agentic Team Protocol goal.
+model: opus
+# model: ollama:deepseek-v4-pro:cloud
+effort: high
 tools:
   - mcp__eden-memory__eden_remember
   - mcp__eden-memory__eden_recall
