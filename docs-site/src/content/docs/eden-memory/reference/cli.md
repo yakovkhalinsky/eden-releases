@@ -6,6 +6,48 @@ content_type: reference
 
 eden-memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the [fallback slash commands](/eden-memory/reference/fallback-slash-commands/) installed by `eden-memory setup claude`.
 
+## `setup claude`
+
+Wire the current project directory to Claude Code CLI. The helper writes the project `.env` file, registers the project in `~/.claude.json`, removes any stale `eden-memory` entry from `~/.claude/settings.json`, and installs fallback slash commands in `~/.claude/commands/`.
+
+```bash
+cd ~/project-a
+eden-memory setup claude --db ~/.eden-memory/default.db --org-id your-org
+```
+
+| Flag | Required | Description |
+|------|----------|-------------|
+| `--db` | Yes* | SQLite database path. Defaults to `EDEN_DB_PATH` or `~/.eden-memory/default.db`. |
+| `--org-id` | Yes* | Organization scope. Defaults to `EDEN_ORG_ID`. |
+| `--workspace-id` | No | Workspace scope. Defaults to `EDEN_WORKSPACE_ID` or the project directory name / git remote. |
+| `--agent-id` | No | Agent identity. Defaults to `EDEN_ATP_ROLE` or `claude-code-cli`. |
+| `--user-id` | No | User identity. Defaults to `EDEN_USER_ID` or `USER`. |
+| `--env-file` | No | Project-level `.env` path (default `./.env`). |
+| `--no-env-file` | No | Skip writing the project-level `.env` file. |
+| `--force-env` | No | Overwrite existing values in the project `.env` file. |
+| `--dry-run` | No | Preview the configuration without writing any files. |
+| `--setup-command` | No | Binary path used in generated configs (defaults to the running binary). |
+
+\* Required values are prompted for in normal mode when missing. `--dry-run` aborts instead of prompting, so pass them explicitly.
+
+### `--dry-run`
+
+Use `--dry-run` to validate preflight checks and inspect what `setup claude` would configure before it writes anything:
+
+```bash
+eden-memory setup claude --db ~/.eden-memory/default.db --org-id your-org --dry-run
+```
+
+In dry-run mode the command:
+
+- Runs the same preflight health and protocol-version checks as normal mode.
+- Prints a JSON preview with `project_dir`, `db_path`, `command`, `org_id`, `workspace_id`, `agent_id`, `user_id`, `env_file`, `write_claude_json`, and `install_slash_commands`.
+- Does **not** write the project `.env` file.
+- Does **not** update `~/.claude.json`.
+- Does **not** update `~/.claude/settings.json`.
+- Does **not** install slash commands in `~/.claude/commands/`.
+- Aborts with an error if `org_id` or `workspace_id` cannot be determined, instead of prompting interactively.
+
 ## Global flags
 
 These flags can appear before or after the subcommand:
