@@ -16,6 +16,10 @@ tools:
     - mcp__eden-memory__eden_forget_expired
     - mcp__eden-memory__eden_health
     - mcp__eden-memory__eden_vacuum
+    - TaskCreate
+    - TaskUpdate
+    - TaskGet
+    - TaskList
 harness: claude-code
 related_skills:
   - eden-memory-claude
@@ -194,6 +198,22 @@ The full `/team-full` lifecycle is unchanged:
 - `blocked` — waiting on an external dependency or authority. The owning role records the unblock condition. The router checks it on every `/team-continue`.
 - `pending_authorisation` — waiting on explicit user approval for a specific high-risk action outside routine charter authority (e.g., deleting a public release or modifying fleet-wide CI secrets). The exact question and prepared action are recorded so a new session can resume and apply the answer. Routine repository commit/push after a green Verifier verdict is not a pending_authorisation step.
 - `cleanup_record` — an optional cleanup stage after a non-trivial action. The role that performed the action documents what temporary resources were released; the router routes the goal to Verifier so the claimed releases can be confirmed.
+
+## Task list synchronization
+
+In Claude Code CLI interactive sessions, keep the in-app task list aligned with the durable Eden-memory trail so the user can see progress without reading every record.
+
+- One task represents the whole goal. Its `subject` is the goal summary; its `description` lists the current stage, owning role, and latest record ID.
+- The `claude_task_id` is stored in Eden-memory record metadata so `/team-continue` can update the same task across sessions.
+- Lifecycle updates:
+  - New goal (`/team` or `/team-full`) → `TaskCreate` with status `in_progress`.
+  - Role starts work → `TaskUpdate` to `in_progress` with `activeForm` like "Planning <goal_id>" or "Building <goal_id>".
+  - Role finishes and writes its durable record → `TaskUpdate` to `completed`.
+  - Verifier returns `green` → mark verification `completed`.
+  - Verifier returns `red` → update task to `in_progress` with a rework note.
+  - Verifier returns `blocked` or the goal is `pending_authorisation` → update task to `in_progress` with the blocker/approval note; do not proceed until resolved.
+  - Archivist closes the goal → mark the goal task `completed`.
+- In headless environments (e.g. `eden-team`), task tools may be unavailable. If a task update fails, record the failure in a `run_log` and continue; do not block the lifecycle.
 
 ## Routing rules and dispatcher defaults
 

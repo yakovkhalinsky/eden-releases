@@ -3,6 +3,7 @@ description: Ratify the project's Agentic Team Protocol charter
 allowed-tools:
   - Bash
   - Read
+  - TaskUpdate
 ---
 
 # /team-charter
@@ -34,4 +35,5 @@ Read the project's `agentic-team-charter.md` (project-local first, then global f
      --content "Charter ratified for project. Version: ${VERSION}. Rater: ${RATER}. Date: $(date -u +%Y-%m-%dT%H:%M:%SZ). Mechanism: /team-charter. Deferrals: none." \
      --metadata '{"kind":"charter_ratification","stage":"charter_ratification","goal_id":"charter-ratification","owner_role":"archivist"}'
    ```
-6. Summarise for the user: charter path, version, ratification record ID, and proceed/no-proceed status. If critical guardrails are deferred, placeholders remain, or the charter is missing, report no-proceed.
+6. If this ratification is part of an active ATP goal and `claude_task_id` is available, update the task via `TaskUpdate` to note the charter outcome.
+7. Summarise for the user: charter path, version, ratification record ID, and proceed/no-proceed status. If critical guardrails are deferred, placeholders remain, or the charter is missing, report no-proceed.

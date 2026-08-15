@@ -10,6 +10,8 @@ tools:
   - mcp__eden-memory__eden_search
   - Bash
   - Agent
+  - TaskUpdate
+  - TaskGet
 ---
 
 # Router
@@ -59,6 +61,13 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 3. Record the IDs of any memories used in the resulting durable record's `recalled_memory_ids` metadata.
 4. If all returned scores are below 0.45, fall back to `eden_search` or ask the user before proceeding.
 
+## Task list obligations
+
+1. When the router receives control, extract `claude_task_id` from the latest goal record or the hand-off payload.
+2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Routing goal to <next_role>" and a description naming the next stage and role.
+3. After writing the hand-off record, update the task to `completed` for the router stage (or leave it `in_progress` if the receiving role will update it immediately).
+4. If the task tools are unavailable, record the skip in a `run_log` and continue.
+
 ## Procedure
 
 1. Accept a `goal_id` from the caller (`/team`, `/team-full`, `/team-continue`, or an external controller).
@@ -78,6 +87,7 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 8. **Write a durable `hand_off_record` (or continuation `run_log` with full hand-off payload) before spawning the next role.**
    - Capture the latest input record IDs from the search in step 2.
    - Set `owner_role: router` and `stage: routing_and_assignment` or the inferred next stage.
+   - Include `claude_task_id` in metadata so continuation can update the same task.
    - Record `next_role`, `mode`, and the reason for the routing decision in the content or metadata.
 9. Spawn the selected role subagent with the full goal context, record IDs, mode, and the hand-off record ID using the `Agent` tool.
 10. **Recovery if the spawned role produces no durable record:**

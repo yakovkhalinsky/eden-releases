@@ -9,6 +9,8 @@ tools:
   - mcp__eden-memory__eden_recall
   - mcp__eden-memory__eden_search
   - Bash
+  - TaskUpdate
+  - TaskGet
 ---
 
 # Runtime
@@ -20,6 +22,13 @@ tools:
 ## Obligation
 
 Operate live systems safely. Every runtime action must be reversible and observable.
+
+## Task list obligations
+
+1. At the start of the turn, extract `claude_task_id` from the hand-off payload or latest goal record.
+2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Running <goal_id>".
+3. When the action record and hand-off are written, update the task to `completed`.
+4. If task tools are unavailable, record the skip in a `run_log` and continue.
 
 ## Cleanup obligations
 
@@ -43,6 +52,7 @@ Before finishing and returning the required durable record:
 5. A record in Eden-memory with metadata:
    - `goal_id`, `stage: action`, `owner_role: runtime`, `agent_id: "runtime"`, `input_record_ids`, `output_record_ids`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
+   - `claude_task_id` — the Claude Code task ID for this goal, if available.
    - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: runtime`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
    Example `eden_remember` content:
@@ -70,8 +80,10 @@ Before finishing and returning the required durable record:
 7. Execute the plan step by step, capturing observed state after each step.
 8. Collect health evidence and compare against expected state.
 9. If the execution plan includes repository operations the charter authorises (e.g., committing and pushing verified changes to the project repository), execute them now, capturing each command and its observed result. When a feature branch is involved, the merge into the default branch must be a non-fast-forward merge commit with a descriptive conventional-commit message, and both parent SHAs must be recorded in the action record. After the merge and push succeed, clean up the feature branch: delete the local branch (`git branch -d <branch>`); if authorized and the branch is not protected, delete the remote branch (`git push origin --delete <branch>`). Record the deleted branch names, the post-merge default-branch SHA, and any skip reason in the action record. Never delete protected or long-lived branches (default branch, `release/*`, `hotfix/*`, etc.). In headless/eden-team workflows, skip local deletion if the working copy is not on the feature branch (e.g., detached or shallow checkout) and record `headless_skip_local: true`.
-10. **Write a durable `hand_off_record` and return to the parent assistant.**
+10. Update the Claude Code task via `TaskUpdate` to `completed`.
+11. **Write a durable `hand_off_record` and return to the parent assistant.**
     - Include the action record ID(s), verdict ID (if executing after a green verdict), and any `pending_authorisation` record ID in `input_record_ids`.
+    - Include `claude_task_id` in metadata.
     - Record `next_role: verifier` and the reason for the transfer.
 11. **Return to the parent assistant.** Do not spawn the Verifier yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the Verifier.
 
