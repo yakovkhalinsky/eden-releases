@@ -98,6 +98,7 @@ export default defineConfig({
 									label: 'How-to guides',
 									items: [
 										{ label: 'Back up and restore', slug: 'eden-memory/how-to/backup-restore' },
+										{ label: 'Relay-first sync topology', slug: 'eden-memory/how-to/relay-first-sync-topology' },
 										{ label: 'Build a knowledge packet', slug: 'eden-memory/how-to/build-knowledge-packet' },
 										{ label: 'Migrate a workspace', slug: 'eden-memory/how-to/migrate-workspace' },
 										{ label: 'Prune old memories', slug: 'eden-memory/how-to/prune-memories' },

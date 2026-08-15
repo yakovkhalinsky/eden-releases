@@ -153,6 +153,7 @@ A `peer_count` greater than zero means the relay has registered peers.
 
 ## Next steps
 
+- [Relay-first sync topology](/eden-memory/how-to/relay-first-sync-topology/)
 - [Sync two databases locally](/eden-memory/tutorials/sync-local-databases/)
 - [How sync works](/eden-memory/concepts/how-sync-works/)
 - [Security model](/eden-memory/concepts/security-model/)
