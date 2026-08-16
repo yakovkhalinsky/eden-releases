@@ -485,6 +485,8 @@ If a new `action_record` is stored after an `archival_record` for the same `goal
 
 For automated or scheduled goals, use the `eden-team` binary from the `eden-memory` monorepo instead of an interactive Claude Code session. `eden-team` defaults to Lite mode (`--mode lite`) for everyday goals; use `--mode full` for the complete 6-role lifecycle. It writes the ATP lifecycle records to Eden-memory and spawns Claude Code CLI subagent processes for each role.
 
+> **Scope propagation note:** `eden-team` is implemented in the `eden-memory` monorepo, not under `agentic-team-protocol/deployable/`. Its propagation of `org_id`/`workspace_id` to child `claude` processes and to the records it writes should be audited separately; ensure it follows the same ordered identity sources and empty-scope prohibition as interactive ATP commands.
+
 Example (Lite mode):
 
 ```bash
@@ -520,13 +522,88 @@ If the Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash c
 Before any direct `eden-memory` call, verify that `org_id` and `workspace_id` are non-empty. Abort with an error instead of calling the CLI with empty scope values.
 
 ```bash
+# Resolve identity from project config first, then .env files in subshells.
+# See the "Workspace identity and isolation rules" section for the ordered sources.
+_resolve_identity_from_config_or_env() {
+  _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
+  _project_env="${PWD:-.}/.env"
+  _global_env="${HOME}/.eden-memory/.env"
+
+  _yaml_value() {
+    _file="$1"
+    _key="$2"
+    if [ -f "$_file" ]; then
+      awk -v key="$_key" '
+        /^---$/ { in_frontmatter = !in_frontmatter; next }
+        {
+          line = $0
+          gsub(/#.*$/, "", line)
+          pattern = "^[ \t]*" key "[ \t]*:[ \t]*"
+          if (line ~ pattern) {
+            sub(pattern, "", line)
+            gsub(/^[ \t]+/, "", line)
+            gsub(/[ \t]+$/, "", line)
+            gsub(/^"+|"$/, "", line)
+            gsub(/^'"'"'+|'"'"'$/, "", line)
+            if (line != "") {
+              print line
+              exit
+            }
+          }
+        }
+      ' "$_file"
+    fi
+  }
+
+  if [ -f "$_project_config" ]; then
+    _cfg_org="$(_yaml_value "$_project_config" org_id)"
+    _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
+    if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
+      EDEN_ORG_ID="$_cfg_org"
+      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      return
+    fi
+  fi
+
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ -f "$_project_env" ]; then
+      eval "$(
+        (
+        set +u
+        set -a
+        . "$_project_env"
+        set +a
+        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+      ))"
+    fi
+  fi
+
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ -f "$_global_env" ]; then
+      eval "$(
+        (
+        set +u
+        set -a
+        . "$_global_env"
+        set +a
+        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+      ))"
+    fi
+  fi
+}
+_resolve_identity_from_config_or_env
+
 USER_ID="${USER:-$(id -un)}"
 EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
 EDEN_ORG_ID="${EDEN_ORG_ID:-}"
 EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
-if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
-  echo "Error: EDEN_ORG_ID and EDEN_WORKSPACE_ID must be non-empty." >&2
-  echo "Run 'eden-memory setup claude' in this project, or set them explicitly." >&2
+if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ] || [ -z "${EDEN_AGENT_ID}" ]; then
+  echo "Error: EDEN_ORG_ID, EDEN_WORKSPACE_ID, and EDEN_AGENT_ID must be non-empty." >&2
+  echo "Run 'eden-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
   exit 1
 fi
 ```

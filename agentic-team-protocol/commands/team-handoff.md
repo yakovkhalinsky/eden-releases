@@ -24,21 +24,89 @@ Transfer ownership of a team goal to another role or instance. The transfer is s
    - latest action/context/verdict record IDs
 3. Determine the transferring role. If the hand-off is triggered by `/team-continue` or the Router, `FROM_ROLE` is `router`; otherwise it is the current owner role (e.g., `builder`, `verifier`, `archivist`).
 4. Extract `claude_task_id` from the latest record metadata. Update the task via `TaskUpdate` to `in_progress` with a description naming `to_role` and `CURRENT_STAGE` (or create a new task if none exists).
-5. Resolve the Eden-memory workspace identity from the project `.env` or `~/.eden-memory/.env`:
+5. Resolve the Eden-memory workspace identity from the project `agentic-team-config.yaml`, then `.env`, then `~/.eden-memory/.env`. Abort if `EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`, or `EDEN_AGENT_ID` would be empty.
    ```bash
-   if [ -f "${PWD:-.}/.env" ]; then
-     set -a
-     . "${PWD:-.}/.env"
-     set +a
-   fi
+   # Resolve identity from project config first, then .env files in subshells.
+   _resolve_identity_from_config_or_env() {
+     _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
+     _project_env="${PWD:-.}/.env"
+     _global_env="${HOME}/.eden-memory/.env"
+
+     _yaml_value() {
+       _file="$1"
+       _key="$2"
+       if [ -f "$_file" ]; then
+         awk -v key="$_key" '
+           /^---$/ { in_frontmatter = !in_frontmatter; next }
+           {
+             line = $0
+             gsub(/#.*$/, "", line)
+             pattern = "^[ \t]*" key "[ \t]*:[ \t]*"
+             if (line ~ pattern) {
+               sub(pattern, "", line)
+               gsub(/^[ \t]+/, "", line)
+               gsub(/[ \t]+$/, "", line)
+               gsub(/^"+|"$/, "", line)
+               gsub(/^'"'"'+|'"'"'$/, "", line)
+               if (line != "") {
+                 print line
+                 exit
+               }
+             }
+           }
+         ' "$_file"
+       fi
+     }
+
+     if [ -f "$_project_config" ]; then
+       _cfg_org="$(_yaml_value "$_project_config" org_id)"
+       _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
+       if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
+         EDEN_ORG_ID="$_cfg_org"
+         EDEN_WORKSPACE_ID="$_cfg_workspace"
+         return
+       fi
+     fi
+
+     if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+       if [ -f "$_project_env" ]; then
+         eval "$(
+           (
+           set +u
+           set -a
+           . "$_project_env"
+           set +a
+           printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+           printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+           printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+         ))"
+       fi
+     fi
+
+     if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+       if [ -f "$_global_env" ]; then
+         eval "$(
+           (
+           set +u
+           set -a
+           . "$_global_env"
+           set +a
+           printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+           printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+           printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+         ))"
+       fi
+     fi
+   }
+   _resolve_identity_from_config_or_env
+
    EDEN_ORG_ID="${EDEN_ORG_ID:-}"
    EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
-   if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
-     if [ -f "${HOME}/.eden-memory/.env" ]; then
-       set -a
-       . "${HOME}/.eden-memory/.env"
-       set +a
-     fi
+   EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
+   if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ] || [ -z "${EDEN_AGENT_ID}" ]; then
+     echo "Error: EDEN_ORG_ID, EDEN_WORKSPACE_ID, and EDEN_AGENT_ID must be non-empty." >&2
+     echo "Run 'eden-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+     exit 1
    fi
    ```
 6. Write a `hand_off_record`:

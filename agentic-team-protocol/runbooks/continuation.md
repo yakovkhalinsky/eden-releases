@@ -21,10 +21,95 @@ It applies after the durable hand-off mechanics added in P0: every role transiti
 Search for the `goal_id` first to see the full timeline:
 
 ```bash
+# Resolve identity from project config first, then .env files in subshells.
+_resolve_identity() {
+  _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
+  _project_env="${PWD:-.}/.env"
+  _global_env="${HOME}/.eden-memory/.env"
+
+  _yaml_value() {
+    _file="$1"
+    _key="$2"
+    if [ -f "$_file" ]; then
+      awk -v key="$_key" '
+        /^---$/ { in_frontmatter = !in_frontmatter; next }
+        {
+          line = $0
+          gsub(/#.*$/, "", line)
+          pattern = "^[ \t]*" key "[ \t]*:[ \t]*"
+          if (line ~ pattern) {
+            sub(pattern, "", line)
+            gsub(/^[ \t]+/, "", line)
+            gsub(/[ \t]+$/, "", line)
+            gsub(/^"+|"$/, "", line)
+            gsub(/^'"'"'+|'"'"'$/, "", line)
+            if (line != "") {
+              print line
+              exit
+            }
+          }
+        }
+      ' "$_file"
+    fi
+  }
+
+  if [ -f "$_project_config" ]; then
+    _cfg_org="$(_yaml_value "$_project_config" org_id)"
+    _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
+    if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
+      EDEN_ORG_ID="$_cfg_org"
+      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      return
+    fi
+  fi
+
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ -f "$_project_env" ]; then
+      eval "$(
+        (
+        set +u
+        set -a
+        . "$_project_env"
+        set +a
+        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+      ))"
+    fi
+  fi
+
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ -f "$_global_env" ]; then
+      eval "$(
+        (
+        set +u
+        set -a
+        . "$_global_env"
+        set +a
+        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+      ))"
+    fi
+  fi
+}
+
 USER_ID="${USER:-$(id -un)}"
+EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
+_resolve_identity
+
+if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ] || [ -z "${EDEN_AGENT_ID:-}" ]; then
+  echo "Error: EDEN_ORG_ID, EDEN_WORKSPACE_ID, and EDEN_AGENT_ID must be non-empty." >&2
+  echo "Run 'eden-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+  exit 1
+fi
+
 EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
 "${EDEN_MEMORY_BIN}" search \
+  --agent-id "${EDEN_AGENT_ID}" \
   --user-id "${USER_ID}" \
+  --org-id "${EDEN_ORG_ID}" \
+  --workspace-id "${EDEN_WORKSPACE_ID}" \
   --keywords "${GOAL_ID}" \
   --limit 50
 ```
