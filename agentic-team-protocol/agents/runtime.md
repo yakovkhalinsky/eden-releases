@@ -1,6 +1,6 @@
 ---
 name: runtime
-description: Operates live systems safely for an Agentic Team Protocol goal.
+description: Operates live systems safely for a team goal.
 model: sonnet
 # model: ollama:deepseek-v4-pro:cloud
 effort: medium
@@ -18,6 +18,7 @@ tools:
 ## Memory-first rules
 
 - When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -59,7 +60,7 @@ Before finishing and returning the required durable record:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: action | Owner: runtime
-   {"record_type":"action_record","goal_id":"<goal_id>","stage":"action","owner_role":"runtime","agent_id":"runtime","status":"completed","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   {"record_type":"action_record","goal_id":"<goal_id>","stage":"action","owner_role":"runtime","agent_id":"runtime","status":"completed","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
    ```
 
 ## Failure modes to avoid

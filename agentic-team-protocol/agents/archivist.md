@@ -1,6 +1,6 @@
 ---
 name: archivist
-description: Maintains durable, searchable fleet memory for an Agentic Team Protocol goal.
+description: Maintains durable, searchable fleet memory for a team goal.
 model: sonnet
 # model: ollama:deepseek-v4-flash:cloud
 effort: medium
@@ -21,6 +21,7 @@ tools:
 ## Memory-first rules
 
 - When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -61,7 +62,7 @@ Before finishing and returning the required durable record:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: recording_and_archival | Owner: archivist
-   {"record_type":"archival_record","goal_id":"<goal_id>","stage":"recording_and_archival","owner_role":"archivist","agent_id":"archivist","status":"completed","input_record_ids":["<verdict_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   {"record_type":"archival_record","goal_id":"<goal_id>","stage":"recording_and_archival","owner_role":"archivist","agent_id":"archivist","status":"completed","input_record_ids":["<verdict_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
    ```
 5. For hand-offs: a durable `hand_off_record` promoted in Eden-memory, not just chat context.
 6. On discovering a newer `action_record` after an existing `archival_record` for the same `goal_id`, treat the closure as superseded and return the goal to the appropriate role (usually Verifier or Dispatcher).

@@ -1,5 +1,5 @@
 ---
-description: Ratify the project's Agentic Team Protocol charter
+description: Ratify the project's team charter
 allowed-tools:
   - Bash
   - Read
@@ -24,7 +24,24 @@ Read the project's `agentic-team-charter.md` (project-local first, then global f
    - Confirm the charter file exists.
    - Confirm the active roles in `agentic-team-config.yaml` match the charter.
    - If the charter still contains placeholder values such as `<PROJECT_NAME>`, report `no-proceed`.
-5. Store a ratification record in Eden-memory:
+5. Resolve the Eden-memory workspace identity before storing the record:
+   ```bash
+   if [ -f "${PWD:-.}/.env" ]; then
+     set -a
+     . "${PWD:-.}/.env"
+     set +a
+   fi
+   EDEN_ORG_ID="${EDEN_ORG_ID:-}"
+   EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
+   if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
+     if [ -f "${HOME}/.eden-memory/.env" ]; then
+       set -a
+       . "${HOME}/.eden-memory/.env"
+       set +a
+     fi
+   fi
+   ```
+6. Store a ratification record in Eden-memory:
    ```bash
    USER_ID="${USER:-$(id -un)}"
    RATER="${RATER:-${USER_ID}}"
@@ -32,8 +49,10 @@ Read the project's `agentic-team-charter.md` (project-local first, then global f
    "${EDEN_MEMORY_BIN}" remember \
      --agent-id archivist \
      --user-id "${USER_ID}" \
-     --content "Charter ratified for project. Version: ${VERSION}. Rater: ${RATER}. Date: $(date -u +%Y-%m-%dT%H:%M:%SZ). Mechanism: /team-charter. Deferrals: none." \
-     --metadata '{"kind":"charter_ratification","stage":"charter_ratification","goal_id":"charter-ratification","owner_role":"archivist"}'
+     --org-id "${EDEN_ORG_ID}" \
+     --workspace-id "${EDEN_WORKSPACE_ID}" \
+     --content "Charter ratified for project ${EDEN_WORKSPACE_ID}. Version: ${VERSION}. Rater: ${RATER}. Date: $(date -u +%Y-%m-%dT%H:%M:%SZ). Mechanism: /team-charter. Deferrals: none." \
+     --metadata '{"kind":"charter_ratification","stage":"charter_ratification","goal_id":"charter-ratification","owner_role":"archivist","org_id":"'"${EDEN_ORG_ID}"'","workspace_id":"'"${EDEN_WORKSPACE_ID}"'"}'
    ```
-6. If this ratification is part of an active ATP goal and `claude_task_id` is available, update the task via `TaskUpdate` to note the charter outcome.
-7. Summarise for the user: charter path, version, ratification record ID, and proceed/no-proceed status. If critical guardrails are deferred, placeholders remain, or the charter is missing, report no-proceed.
+7. If this ratification is part of an active ATP goal and `claude_task_id` is available, update the task via `TaskUpdate` to note the charter outcome.
+8. Summarise for the user: charter path, version, ratification record ID, and proceed/no-proceed status. If critical guardrails are deferred, placeholders remain, or the charter is missing, report no-proceed.

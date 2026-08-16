@@ -1,6 +1,12 @@
 # Agentic Team Protocol configuration for <PROJECT_NAME>
 
 project: <PROJECT_PATH>
+
+# Workspace identity for Eden-memory. These must be non-empty and must match the
+# values used by `eden-memory setup claude` (stored in the project .env).
+org_id: <ORG_ID>
+workspace_id: <WORKSPACE_ID>
+
 charter_path: .claude/agentic-team-charter.md
 
 # Default mode for /team. Use "lite" for everyday implementation tasks; use "full"

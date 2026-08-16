@@ -1,5 +1,5 @@
 ---
-description: Transfer ownership of an Agentic Team Protocol goal to another role or instance in a durable, searchable record
+description: Transfer ownership of a team goal to another role or instance in a durable, searchable record
 argument-hint: "goal_id: to_role [reason]"
 allowed-tools:
   - Bash
@@ -12,7 +12,7 @@ allowed-tools:
 
 # /team-handoff
 
-Transfer ownership of an Agentic Team Protocol goal to another role or instance. The transfer is stored as a `hand_off_record` in Eden-memory so the receiving role can resume without relying on chat history.
+Transfer ownership of a team goal to another role or instance. The transfer is stored as a `hand_off_record` in Eden-memory so the receiving role can resume without relying on chat history.
 
 ## Steps
 
@@ -24,17 +24,36 @@ Transfer ownership of an Agentic Team Protocol goal to another role or instance.
    - latest action/context/verdict record IDs
 3. Determine the transferring role. If the hand-off is triggered by `/team-continue` or the Router, `FROM_ROLE` is `router`; otherwise it is the current owner role (e.g., `builder`, `verifier`, `archivist`).
 4. Extract `claude_task_id` from the latest record metadata. Update the task via `TaskUpdate` to `in_progress` with a description naming `to_role` and `CURRENT_STAGE` (or create a new task if none exists).
-5. Write a `hand_off_record`:
+5. Resolve the Eden-memory workspace identity from the project `.env` or `~/.eden-memory/.env`:
+   ```bash
+   if [ -f "${PWD:-.}/.env" ]; then
+     set -a
+     . "${PWD:-.}/.env"
+     set +a
+   fi
+   EDEN_ORG_ID="${EDEN_ORG_ID:-}"
+   EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
+   if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
+     if [ -f "${HOME}/.eden-memory/.env" ]; then
+       set -a
+       . "${HOME}/.eden-memory/.env"
+       set +a
+     fi
+   fi
+   ```
+6. Write a `hand_off_record`:
    ```bash
    USER_ID="${USER:-$(id -un)}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    HAND_OFF_ID=$("${EDEN_MEMORY_BIN}" remember \
      --agent-id "${FROM_ROLE}" \
      --user-id "${USER_ID}" \
+     --org-id "${EDEN_ORG_ID}" \
+     --workspace-id "${EDEN_WORKSPACE_ID}" \
      --content "{\"kind\":\"hand_off_record\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"${CURRENT_STAGE}\",\"from_role\":\"${FROM_ROLE}\",\"to_role\":\"${TO_ROLE}\",\"reason\":\"${REASON}\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"claude_task_id\":\"${CLAUDE_TASK_ID}\",\"success_criteria\":\"${SUCCESS_CRITERIA}\",\"deadline\":\"${DEADLINE}\",\"escalation_trigger\":\"${ESCALATION_TRIGGER}\"}" \
-     --metadata '{"kind":"hand_off_record","stage":"hand_off_or_closure","goal_id":"'"${GOAL_ID}"'","owner_role":"'"${FROM_ROLE}"'","claude_task_id":"'"${CLAUDE_TASK_ID}"'"}')
+     --metadata '{"kind":"hand_off_record","stage":"hand_off_or_closure","goal_id":"'"${GOAL_ID}"'","owner_role":"'"${FROM_ROLE}"'","claude_task_id":"'"${CLAUDE_TASK_ID}"'","org_id":"'"${EDEN_ORG_ID}"'","workspace_id":"'"${EDEN_WORKSPACE_ID}"'"}')
    ```
-6. Spawn the receiving role subagent with the hand-off payload, `HAND_OFF_ID`, `CLAUDE_TASK_ID`, and the full goal context.
+7. Spawn the receiving role subagent with the hand-off payload, `HAND_OFF_ID`, `CLAUDE_TASK_ID`, and the full goal context.
 
 ## Required fields
 

@@ -1,6 +1,6 @@
 ---
 name: builder
-description: Produces durable, reviewable artefacts for an Agentic Team Protocol goal.
+description: Produces durable, reviewable artefacts for a team goal.
 model: sonnet
 # model: ollama:kimi-k2.7-code:cloud
 effort: medium
@@ -21,6 +21,7 @@ tools:
 ## Memory-first rules
 
 - When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -65,7 +66,7 @@ Before finishing and returning the required durable record:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: action | Owner: builder
-   {"record_type":"action_record","goal_id":"<goal_id>","stage":"action","owner_role":"builder","agent_id":"builder","status":"completed","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"plan_file_path":"/absolute/path/to/plan.md"}
+   {"record_type":"action_record","goal_id":"<goal_id>","stage":"action","owner_role":"builder","agent_id":"builder","status":"completed","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"plan_file_path":"/absolute/path/to/plan.md","org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
    ```
 
 ## Failure modes to avoid

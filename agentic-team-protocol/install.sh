@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Install the Agentic Team Protocol Claude Code primitives.
+# Install the Team Protocol Claude Code primitives.
 # Usage:
 #   curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 #   curl -fsSL ... | sh -s -- --local                 # project-local templates
@@ -68,6 +68,28 @@ if [ -z "${EDEN_MEMORY_BIN}" ]; then
   EDEN_MEMORY_BIN="${HOME}/.local/bin/eden-memory"
 fi
 
+# Resolve Eden-memory workspace identity before installing.
+if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ "$LOCAL_INSTALL" = true ] && [ -n "${PWD:-}" ] && [ -f "${PWD}/.env" ]; then
+    set -a
+    . "${PWD}/.env"
+    set +a
+  fi
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ -f "${HOME}/.eden-memory/.env" ]; then
+      set -a
+      . "${HOME}/.eden-memory/.env"
+      set +a
+    fi
+  fi
+fi
+EDEN_ORG_ID="${EDEN_ORG_ID:-}"
+EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
+echo "Eden-memory identity: org_id='${EDEN_ORG_ID}' workspace_id='${EDEN_WORKSPACE_ID}'"
+if [ "$LOCAL_INSTALL" = true ] && [ -z "${EDEN_WORKSPACE_ID}" ]; then
+  echo "Warning: EDEN_WORKSPACE_ID is empty. Run 'eden-memory setup claude' in this project first so ATP Eden-memory calls are scoped to the correct workspace." >&2
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PACKAGE_DIR="${SCRIPT_DIR}"
 CLAUDE_DIR="${HOME}/.claude"
@@ -94,11 +116,11 @@ if [ "$CHECK" = true ]; then
     exit 1
   fi
   if [ "$OLD_VERSION" = "none" ]; then
-    echo "Agentic Team Protocol is not installed. Latest version is ${REMOTE_VERSION}."
+    echo "Team Protocol is not installed. Latest version is ${REMOTE_VERSION}."
   elif [ "$OLD_VERSION" = "$REMOTE_VERSION" ]; then
-    echo "Agentic Team Protocol is up to date (${OLD_VERSION})."
+    echo "Team Protocol is up to date (${OLD_VERSION})."
   else
-    echo "Agentic Team Protocol update available: ${OLD_VERSION} → ${REMOTE_VERSION}"
+    echo "Team Protocol update available: ${OLD_VERSION} → ${REMOTE_VERSION}"
   fi
   exit 0
 fi
@@ -110,7 +132,7 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
   if command -v curl >/dev/null 2>&1; then
     TMPDIR="$(mktemp -d)"
     trap 'rm -rf "$TMPDIR"' EXIT
-    echo "Downloading Agentic Team Protocol package..."
+    echo "Downloading Team Protocol package..."
     TARBALL_URL="https://0d3sa.com/agentic-team-protocol/agentic-team-protocol.tar.gz"
     if curl -fsSL "${TARBALL_URL}" -o "${TMPDIR}/agentic-team-protocol.tar.gz" 2>/dev/null; then
       tar -xzf "${TMPDIR}/agentic-team-protocol.tar.gz" -C "$TMPDIR"
@@ -169,9 +191,9 @@ if [ "$DRY_RUN" = true ]; then
     [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
   fi
   if [ "$OLD_VERSION" = "none" ]; then
-    echo "[dry-run] Agentic Team Protocol installed at ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
+    echo "[dry-run] Team Protocol installed at ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
   else
-    echo "[dry-run] Agentic Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
+    echo "[dry-run] Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
   fi
   exit 0
 fi
@@ -180,7 +202,7 @@ mkdir -p "${CLAUDE_DIR}/skills"
 mkdir -p "${CLAUDE_DIR}/agents"
 mkdir -p "${CLAUDE_DIR}/commands"
 
-echo "Installing Agentic Team Protocol global primitives..."
+echo "Installing Team Protocol global primitives..."
 
 rm -rf "${CLAUDE_DIR}/skills/agentic-team-protocol"
 rm -rf "${CLAUDE_DIR}/skills/team"
@@ -245,12 +267,12 @@ if [ "$LOCAL_INSTALL" = true ]; then
 fi
 
 if [ "$OLD_VERSION" = "none" ]; then
-  echo "Agentic Team Protocol installed at ${NEW_VERSION}."
+  echo "Team Protocol installed at ${NEW_VERSION}."
 else
-  echo "Agentic Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}."
+  echo "Team Protocol updated from ${OLD_VERSION} to ${NEW_VERSION}."
 fi
 echo ""
-echo "In each project where you will use ATP, run:"
+echo "To enable team mode in a project, run:"
 echo "  cd ~/your-project"
 echo "  eden-memory setup claude"
 echo ""
