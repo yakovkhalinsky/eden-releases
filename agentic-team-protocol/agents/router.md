@@ -1,6 +1,6 @@
 ---
 name: router
-description: Rehydrates an unfinished Agentic Team Protocol goal from Eden-memory and selects the next role required by the lifecycle.
+description: Rehydrates an unfinished team goal from Eden-memory and selects the next role required by the lifecycle.
 model: sonnet
 # model: ollama:kimi-k2.7-code:cloud
 effort: medium
@@ -21,6 +21,7 @@ tools:
 Resume interrupted or unfinished goals by reading Eden-memory and dispatching the correct next role. The router is the controller the protocol paper assumes: local harness context is disposable, so all continuation happens through durable Eden records.
 
 At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goal summary to surface relevant prior context.
+Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Required outputs
 
@@ -32,7 +33,7 @@ At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goa
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: routing_and_assignment | Owner: router
-   {"record_type":"run_log","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"router","agent_id":"router","status":"in_progress","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   {"record_type":"run_log","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"router","agent_id":"router","status":"in_progress","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
    ```
 2. A durable `hand_off_record` (or continuation `run_log` that satisfies the hand-off format) **written before spawning the next role**.
    - This record is the activation signal for the receiving role; it must contain the full hand-off payload.

@@ -16,6 +16,12 @@ Purpose: <Short description of what the project does and why it uses the Agentic
 - <Boundary 3 (optional), e.g. "Routine commit and push of verified changes to this project's repository is authorised for Runtime after a green Verifier verdict.">
 - Secrets, tokens, and credentials must never be stored in Eden-memory or conversation logs.
 
+## Workspace identity and memory scope
+
+- This project declares its Eden-memory workspace identity in `.claude/agentic-team-config.yaml` as `org_id` and `workspace_id`.
+- Every ATP Eden-memory call (`eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, `eden_forget`) must include these explicit values so the team does not recall or write memories that belong to other workspaces.
+- If `org_id` or `workspace_id` is empty, ATP commands must refuse to call Eden-memory until the identity is resolved (e.g., by running `eden-memory setup claude` and restarting Claude Code).
+
 ## Roles/seats
 
 Active roles are defined in `.claude/agentic-team-config.yaml`. The default set in **Lite mode** is:

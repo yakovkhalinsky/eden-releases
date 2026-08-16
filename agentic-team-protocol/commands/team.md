@@ -1,5 +1,5 @@
 ---
-description: Invoke the Agentic Team Protocol skill to start or continue a goal
+description: Invoke the team protocol to start or continue a goal
 argument-hint: "[goal or request]"
 allowed-tools:
   - Agent
@@ -12,7 +12,7 @@ allowed-tools:
 
 # /team
 
-Top-level entry point for the Agentic Team Protocol **Lite mode** (default). Use it to kick off a new goal, ask for help with the lifecycle, or route an existing request through the Dispatcher.
+Top-level entry point for the team protocol **Lite mode** (default). Use it to kick off a new goal, ask for help with the lifecycle, or route an existing request through the Dispatcher.
 
 In Lite mode, the dispatcher also performs everyday context gathering and writes a `plan_record`. The full 6-role, 7-stage protocol is available via `/team-full`.
 
@@ -26,6 +26,7 @@ This command is intentionally thin: it interprets the user's input and delegates
    - Otherwise, treat the text as a new **Lite** goal request and spawn the `dispatcher` subagent with `mode: lite`.
 2. When starting a new goal, pass the full user request to the Dispatcher. The Dispatcher records a `goal_record` (with `metadata.mode: lite`) and a `plan_record` in Eden-memory, then routes directly to `builder` for everyday tasks.
    - Before spawning the Dispatcher, create a Claude Code task for this goal via `TaskCreate` with status `in_progress`. Pass the task ID to the Dispatcher so it can store `metadata.claude_task_id` in the `goal_record`.
+   - Resolve `EDEN_ORG_ID` and `EDEN_WORKSPACE_ID` from the project `.env`, `agentic-team-config.yaml`, or `~/.eden-memory/.env`, and pass them in the agent context so every Eden-memory call is scoped to this workspace.
    - The task `subject` should be the user request (or a concise summary); the `description` should include `goal_id` placeholder and a note that it will be filled in after the Dispatcher stores the `goal_record`.
    - On every subsequent hand-off, update the task via `TaskUpdate` to reflect the current stage and role.
 3. When continuing an existing goal, let `/team-continue` or the `router` subagent rehydrate the goal from Eden-memory and dispatch the correct next role.

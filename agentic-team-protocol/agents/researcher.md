@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Gathers context before decisions are made for an Agentic Team Protocol goal.
+description: Gathers context before decisions are made for a team goal.
 model: opus
 # model: ollama:deepseek-v4-pro:cloud
 effort: high
@@ -21,6 +21,7 @@ tools:
 ## Memory-first rules
 
 - When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_search_semantic`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -65,7 +66,7 @@ Before finishing and returning the required durable record:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: context_gathering | Owner: researcher
-   {"record_type":"context_summary","goal_id":"<goal_id>","stage":"context_gathering","owner_role":"researcher","agent_id":"researcher","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   {"record_type":"context_summary","goal_id":"<goal_id>","stage":"context_gathering","owner_role":"researcher","agent_id":"researcher","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
    ```
 
 ## Failure modes to avoid

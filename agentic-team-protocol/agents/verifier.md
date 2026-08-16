@@ -1,6 +1,6 @@
 ---
 name: verifier
-description: Validates work before it is accepted for an Agentic Team Protocol goal.
+description: Validates work before it is accepted for a team goal.
 model: opus
 # model: ollama:minimax-m3:cloud
 effort: high
@@ -19,6 +19,7 @@ tools:
 ## Memory-first rules
 
 - When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
+- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -66,7 +67,7 @@ Before finishing and returning the required durable record:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: verification | Owner: verifier
-   {"record_type":"verdict","goal_id":"<goal_id>","stage":"verification","owner_role":"verifier","agent_id":"verifier","status":"green","input_record_ids":["<action_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"]}
+   {"record_type":"verdict","goal_id":"<goal_id>","stage":"verification","owner_role":"verifier","agent_id":"verifier","status":"green","input_record_ids":["<action_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
    ```
 6. For `blocked` verdicts, record the unblock condition clearly so `/team-continue` can resume automatically when it is satisfied.
 
