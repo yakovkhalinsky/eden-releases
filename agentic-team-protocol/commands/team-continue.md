@@ -39,8 +39,10 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
 3. Search Eden-memory for the latest records of that `goal_id`:
    ```bash
    USER_ID="${USER:-$(id -un)}"
+   EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
+     --agent-id "${EDEN_AGENT_ID}" \
      --user-id "${USER_ID}" \
      --org-id "${EDEN_ORG_ID}" \
      --workspace-id "${EDEN_WORKSPACE_ID}" \

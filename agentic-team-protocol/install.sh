@@ -28,6 +28,83 @@ _extract_version() {
   fi
 }
 
+# Extract a simple key: value from a YAML file without external tools.
+# Handles optional quotes, inline comments, and frontmatter delimiters.
+_extract_yaml_value() {
+  _file="$1"
+  _key="$2"
+  if [ -f "$_file" ]; then
+    awk -v key="$_key" '
+      /^---$/ { in_frontmatter = !in_frontmatter; next }
+      {
+        line = $0
+        # Strip inline comments outside quotes (best-effort).
+        gsub(/#.*$/, "", line)
+        pattern = "^[ \t]*" key "[ \t]*:[ \t]*"
+        if (line ~ pattern) {
+          sub(pattern, "", line)
+          gsub(/^[ \t]+/, "", line)
+          gsub(/[ \t]+$/, "", line)
+          gsub(/^"+|"$/, "", line)
+          gsub(/^'"'"'+|'"'"'$/, "", line)
+          if (line != "") {
+            print line
+            exit
+          }
+        }
+      }
+    ' "$_file"
+  fi
+}
+
+# Resolve org_id and workspace_id from the project config first, then .env files.
+# Uses a subshell when sourcing .env so `set -a` does not leak into this process.
+_resolve_identity() {
+  _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
+  _project_env="${PWD:-.}/.env"
+  _global_env="${HOME}/.eden-memory/.env"
+
+  if [ -f "$_project_config" ]; then
+    _cfg_org="$(_extract_yaml_value "$_project_config" org_id)"
+    _cfg_workspace="$(_extract_yaml_value "$_project_config" workspace_id)"
+    if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
+      EDEN_ORG_ID="$_cfg_org"
+      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      return
+    fi
+  fi
+
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ "$LOCAL_INSTALL" = true ] && [ -n "${PWD:-}" ] && [ -f "$_project_env" ]; then
+      eval "$(
+        (
+          set +u
+          set -a
+          . "$_project_env"
+          set +a
+          printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+          printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+        )
+      )"
+    fi
+  fi
+
+  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+    if [ -f "$_global_env" ]; then
+      eval "$(
+        (
+          set +u
+          set -a
+          . "$_global_env"
+          set +a
+          printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
+          printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+        )
+      )"
+    fi
+  fi
+}
+
 LOCAL_INSTALL=false
 CLAUDE_MD_INSTALL=false
 DRY_RUN=false
@@ -69,25 +146,24 @@ if [ -z "${EDEN_MEMORY_BIN}" ]; then
 fi
 
 # Resolve Eden-memory workspace identity before installing.
+# Prefer project-local agentic-team-config.yaml, then .env files, then the global env.
 if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
-  if [ "$LOCAL_INSTALL" = true ] && [ -n "${PWD:-}" ] && [ -f "${PWD}/.env" ]; then
-    set -a
-    . "${PWD}/.env"
-    set +a
-  fi
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
-    if [ -f "${HOME}/.eden-memory/.env" ]; then
-      set -a
-      . "${HOME}/.eden-memory/.env"
-      set +a
-    fi
-  fi
+  _resolve_identity
 fi
 EDEN_ORG_ID="${EDEN_ORG_ID:-}"
 EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
 echo "Eden-memory identity: org_id='${EDEN_ORG_ID}' workspace_id='${EDEN_WORKSPACE_ID}'"
-if [ "$LOCAL_INSTALL" = true ] && [ -z "${EDEN_WORKSPACE_ID}" ]; then
-  echo "Warning: EDEN_WORKSPACE_ID is empty. Run 'eden-memory setup claude' in this project first so ATP Eden-memory calls are scoped to the correct workspace." >&2
+
+# The eden-memory CLI currently accepts empty --org-id/--workspace-id values and
+# reads/writes unscoped records. ATP refuses to proceed with empty scope for a
+# project-local install; the permanent fix requires an eden-memory binary update.
+if [ "$LOCAL_INSTALL" = true ]; then
+  if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
+    echo "Error: EDEN_ORG_ID and EDEN_WORKSPACE_ID must be non-empty for a project-local install." >&2
+    echo "Run 'eden-memory setup claude' in this project first, or set them in .claude/agentic-team-config.yaml / .env." >&2
+    echo "If the values are set but empty, escalate or file an issue against eden-memory; the CLI should reject empty scope." >&2
+    exit 1
+  fi
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"

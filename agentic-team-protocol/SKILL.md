@@ -332,7 +332,7 @@ Every goal record should include `mode: lite | full` in its metadata. The router
 - After corrections, working solutions, or settled conventions, call `eden_remember`.
 - At the end of every task, batch 3–5 durable takeaways into `eden_remember` calls.
 - Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-- If Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands or the `eden-memory` CLI with `--org-id` and `--workspace-id`.
+- If Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands or the `eden-memory` CLI with `--agent-id`, `--user-id`, `--org-id`, and `--workspace-id`.
 
 ## Anti-patterns to avoid
 
@@ -368,6 +368,8 @@ Every ATP Eden-memory tool call (`eden_recall`, `eden_remember`, `eden_search`, 
 4. As a last resort, `~/.eden-memory/.env`.
 
 The project-local `agentic-team-config.yaml` must declare non-empty `org_id` and `workspace_id`. If either is empty, tools that default to an empty workspace must not be called; resolve the identity first or warn the user.
+
+**Empty-scope prohibition:** If `org_id` or `workspace_id` would be empty, the command must abort with an error rather than call eden-memory with an empty scope. The eden-memory CLI currently accepts empty strings for `--org-id`/`--workspace-id` and stores or fetches unscoped records; the long-term fix requires an eden-memory binary change. Until that fix ships, ATP commands and agents must validate scope before invoking the CLI and ask the user to escalate or file an issue if validation fails.
 
 `eden_recall` example:
 
@@ -512,3 +514,47 @@ Resume an interrupted goal with `eden-team continue --goal-id <goal-id> --mcp-co
 ## Fallback if MCP is unavailable
 
 If the Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands or invoke `eden-memory` directly from Bash. Restart Claude Code after `eden-memory setup claude` if commands are missing.
+
+### Scope guard for direct CLI calls
+
+Before any direct `eden-memory` call, verify that `org_id` and `workspace_id` are non-empty. Abort with an error instead of calling the CLI with empty scope values.
+
+```bash
+USER_ID="${USER:-$(id -un)}"
+EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
+EDEN_ORG_ID="${EDEN_ORG_ID:-}"
+EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
+if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
+  echo "Error: EDEN_ORG_ID and EDEN_WORKSPACE_ID must be non-empty." >&2
+  echo "Run 'eden-memory setup claude' in this project, or set them explicitly." >&2
+  exit 1
+fi
+```
+
+### Direct CLI examples
+
+Search fallback:
+
+```bash
+eden-memory search \
+  --agent-id "${EDEN_AGENT_ID}" \
+  --user-id "${USER_ID}" \
+  --org-id "${EDEN_ORG_ID}" \
+  --workspace-id "${EDEN_WORKSPACE_ID}" \
+  --keywords "agentic-team-protocol goal_record" \
+  --limit 50
+```
+
+Remember fallback:
+
+```bash
+eden-memory remember \
+  --agent-id "${EDEN_AGENT_ID}" \
+  --user-id "${USER_ID}" \
+  --org-id "${EDEN_ORG_ID}" \
+  --workspace-id "${EDEN_WORKSPACE_ID}" \
+  --content "Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>" \
+  --metadata '{"kind":"run_log","goal_id":"<goal_id>","stage":"<stage>","owner_role":"<owner_role>","org_id":"'"${EDEN_ORG_ID}"'","workspace_id":"'"${EDEN_WORKSPACE_ID}"'"}'
+```
+
+> The eden-memory CLI currently accepts empty `--org-id`/`--workspace-id` values and writes or reads unscoped records. ATP never calls the CLI with empty scope; the permanent fix requires an eden-memory binary update. Escalate or file an issue against eden-memory if scope validation is missing.
