@@ -91,6 +91,9 @@ Run the top-level command with a small request:
 /team Add a README file that lists the project purpose and ATP roles
 ```
 
+> [!NOTE]
+> By default, non-trivial `build` and `run` goals create a dedicated git worktree under `.claude/worktrees/atp/` and a feature branch. The README will live in that worktree until the goal is merged. Your main checkout stays clean. To work directly in the main checkout, set `worktree_policy.enabled: false` in `.claude/agentic-team-config.yaml`.
+
 The Dispatcher records a `goal_record` and a Lite `plan_record`, then hands off to the Builder. The Builder creates the README and writes an `action_record`. The Verifier reviews it and writes a `verdict`. If the verdict is green, the Archivist closes the goal.
 
 For goals that need research, runtime, or formal escalation, use `/team-full` instead.

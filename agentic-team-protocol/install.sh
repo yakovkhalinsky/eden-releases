@@ -313,6 +313,13 @@ if [ "$LOCAL_INSTALL" = true ]; then
       cp "${PACKAGE_DIR}/templates/agentic-team-config.yaml" "${PROJECT_CLAUDE_DIR}/agentic-team-config.yaml"
     else
       echo "  Skipping agentic-team-config.yaml (already exists)"
+      # Warn users whose existing config predates worktree_policy so they know
+      # they remain on the legacy single-checkout flow until they opt in.
+      if ! grep -q '^worktree_policy:' "${PROJECT_CLAUDE_DIR}/agentic-team-config.yaml"; then
+        echo "  Note: your existing agentic-team-config.yaml does not contain worktree_policy."
+        echo "        Worktree-per-goal isolation is disabled until you add the worktree_policy block."
+        echo "        See https://0d3sa.com/agentic-team-protocol/how-to/parallel-goals/"
+      fi
     fi
 
     LOCAL_SKILL_DIR="${PROJECT_CLAUDE_DIR}/skills/agentic-team-protocol"

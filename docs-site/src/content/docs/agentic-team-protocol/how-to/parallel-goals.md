@@ -68,6 +68,17 @@ worktree_policy:
 | `auto_remove_after_merge` | When `true`, Runtime removes the worktree after a successful merge if it is clean. Defaults to `false` so you can inspect results first. |
 | `max_concurrent` | Soft cap on active ATP worktrees. When at the cap, new goals are `blocked` until you finish or remove an active one. |
 
+### Disabling worktrees
+
+To return to the legacy single-checkout flow, set `enabled: false`:
+
+```yaml
+worktree_policy:
+  enabled: false
+```
+
+You can also pass `--no-worktree` or set `ATP_WORKTREE_POLICY_ENABLED=false` for `eden-team` headless runs.
+
 ## What you'll see
 
 1. Dispatcher records the goal and decides the package type.

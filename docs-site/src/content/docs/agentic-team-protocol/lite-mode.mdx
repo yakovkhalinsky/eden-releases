@@ -35,6 +35,9 @@ Use `/team-full` or `/team-escalate` when:
 /team → dispatcher (plan) → builder (act) → verifier (check) → archivist (close)
 ```
 
+> [!NOTE]
+> By default, non-trivial `build` and `run` goals in Lite mode create a dedicated git worktree under `.claude/worktrees/atp/` and commit to a feature branch. The main checkout stays clean, but the goal does **not** auto-merge into the default branch. To merge automatically, promote the goal to the full protocol so Runtime can run the merge step.
+
 ## Lite roles
 
 | Lite role | Full agent | What it does |

@@ -169,6 +169,8 @@ When the project `agentic-team-config.yaml` enables `worktree_policy`, `eden-tea
 
 The supervisor enforces `max_concurrent` from the config or the command line. When the cap is reached, `eden-team` records a `blocked` state and lists active goals instead of creating another worktree.
 
+To disable worktree isolation for a run, pass `--no-worktree` or set `ATP_WORKTREE_POLICY_ENABLED=false`.
+
 ## Caveats
 
 - Use a tool-calling model with a context window of at least 32K tokens.

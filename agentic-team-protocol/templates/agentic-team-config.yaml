@@ -42,6 +42,11 @@ branch_policy:
 # When worktree_policy.enabled is true, non-trivial build and run goals receive
 # a dedicated git worktree under worktree_policy.root. This lets multiple goals
 # proceed in parallel without contending for the default-branch working copy.
+#
+# This block is included in new project templates with enabled: true. Existing
+# projects that do not have a worktree_policy block stay on the legacy
+# single-checkout flow until they explicitly opt in. To disable worktrees for
+# this project, set enabled: false below.
 worktree_policy:
   enabled: true
   root: .claude/worktrees/atp

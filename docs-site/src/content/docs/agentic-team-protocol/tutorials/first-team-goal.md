@@ -96,26 +96,31 @@ Run the top-level protocol command with a tiny request:
 
 The `/team` command spawns the Dispatcher subagent in **Lite mode**. The Dispatcher records a `goal_record` with `metadata.mode: lite` and a `plan_record` in eden-memory, then hands off to the Builder.
 
+> [!NOTE]
+> With the default `worktree_policy` in the project template, non-trivial `build` goals create a dedicated git worktree under `.claude/worktrees/atp/` and a feature branch. The README will be committed there, not on your default branch. You can inspect it with `git -C <worktree_path> log --oneline`, or merge it yourself, or promote the goal to full protocol so Runtime merges it.
+
 **Expected output:**
 
 ```text
 Goal recorded: goal-atp-first-goal-<id>
 Mode: lite
 Plan: builder
+Worktree: .claude/worktrees/atp/goal-<short>-feat-<branch>
 Deadline: <timestamp>
 ```
 
 ## Step 6 — Observe the hand-off
 
-The Builder reads the `plan_record`, creates the README, and writes an `action_record` in eden-memory. It then hands off to the Verifier.
+The Builder reads the `plan_record`, checks or creates the goal worktree, and writes an `action_record` in eden-memory with `worktree_path` and `branch_name`. It then hands off to the Verifier.
 
 You should see:
 
-1. A draft README in your repository.
-2. A Builder action summary in the conversation.
-3. A Verifier review that results in `green`, `red`, or `blocked`.
+1. A new worktree directory under `.claude/worktrees/atp/`.
+2. A draft README inside that worktree, committed to a feature branch.
+3. A Builder action summary in the conversation, including the worktree path.
+4. A Verifier review that results in `green`, `red`, or `blocked`.
 
-If the Verifier returns green, the Archivist links the records and closes the goal.
+If the Verifier returns green, the Archivist links the records and closes the goal. In Lite mode the merge into the default branch is manual unless you escalate to `/team-full`.
 
 ## Step 7 — Inspect the durable record
 
@@ -125,13 +130,14 @@ Run:
 /team-status
 ```
 
-This lists active and recently closed goals with their current stage, owner role, and latest record ID. The goal you just ran should appear as `closed` or `recording_and_archival`.
+This lists active and recently closed goals with their current stage, owner role, latest record ID, and **Location** (worktree path or "main checkout").
 
 ## Expected final state
 
 - `.claude/agentic-team-charter.md` contains real project values if you chose to ratify it (optional for Lite mode).
-- Eden-memory contains at least a `goal_record` with `mode: lite`, a `plan_record`, an `action_record`, and a `verdict` for the same `goal_id`.
-- The sandbox repo has a new README summarising the project.
+- Eden-memory contains at least a `goal_record` with `mode: lite`, a `plan_record`, an `action_record` (with `worktree_path` and `branch_name`), and a `verdict` for the same `goal_id`.
+- The sandbox repo has a new worktree and feature branch containing the README.
+- To land the README on the default branch, either merge the feature branch manually or run `/team-full` for the same goal so Runtime performs the merge.
 
 ## Next steps
 
