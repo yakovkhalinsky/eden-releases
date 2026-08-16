@@ -634,4 +634,4 @@ eden-memory remember \
   --metadata '{"kind":"run_log","goal_id":"<goal_id>","stage":"<stage>","owner_role":"<owner_role>","org_id":"'"${EDEN_ORG_ID}"'","workspace_id":"'"${EDEN_WORKSPACE_ID}"'"}'
 ```
 
-> The eden-memory CLI currently accepts empty `--org-id`/`--workspace-id` values and writes or reads unscoped records. ATP never calls the CLI with empty scope; the permanent fix requires an eden-memory binary update. Escalate or file an issue against eden-memory if scope validation is missing.
+> The eden-memory CLI rejects empty `--org-id`/`--workspace-id` values (merged to eden-memory `master`). ATP never calls the CLI with empty scope; if you see unscoped records, check that `eden-memory` is up to date and that identity was resolved before the call.
