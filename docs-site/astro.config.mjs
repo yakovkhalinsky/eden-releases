@@ -57,6 +57,12 @@ export default defineConfig({
 							],
 						},
 						{
+							label: 'How-to guides',
+							items: [
+								{ label: 'Run goals in parallel', slug: 'agentic-team-protocol/how-to/parallel-goals' },
+							],
+						},
+						{
 							label: 'Concepts',
 							items: [
 								{ label: 'Lite mode', slug: 'agentic-team-protocol/lite-mode' },

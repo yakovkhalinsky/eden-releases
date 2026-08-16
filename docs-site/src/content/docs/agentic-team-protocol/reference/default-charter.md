@@ -64,6 +64,16 @@ Projects ratifying this charter keep the default branch protected unless a proje
 5. **No force-push.** Force-pushing the default branch is never permitted.
 6. **Runtime authority.** Runtime is the only role that may create merge commits and push to the default branch, and only after a green Verifier verdict.
 
+### Worktree discipline
+
+When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
+
+1. Non-trivial `build` and `run` goals use a dedicated git worktree under `.claude/worktrees/atp/`, checked out on the goal's feature branch.
+2. Builder may create goal worktrees; Runtime may remove them when `auto_remove_after_merge` is true, but only after verifying the worktree is clean.
+3. Runtime must verify the default-branch working copy is clean before fetching `origin/<DEFAULT_BRANCH>` and merging.
+4. Runtime records the actual `origin/<DEFAULT_BRANCH>` SHA as a merge parent.
+5. The default-branch working copy stays reserved for trivial fixes, status checks, and merge operations.
+
 ### Ratification and version control
 
 - Ratified when `/team-charter` stores a `charter_ratification` record in eden-memory.
@@ -94,6 +104,7 @@ Key sections in the template:
 | Decision rights | Who decides routing, implementation, verdicts, live ops, and user overrides. |
 | Escalation paths | Chain from owning role up to founders. |
 | Branch discipline | Feature-branch rules, merge-commit style, Runtime authority. |
+| Worktree discipline | Worktree-per-goal rules when `worktree_policy.enabled` is true. |
 | Interfaces and dependencies | eden-memory path, global skill path, project-local skill override. |
 | Runbooks and skills owned | Files the Archivist should maintain. |
 | Status cadence | How often to run `/team-status`. |
@@ -111,6 +122,7 @@ Before running `/team-charter`, confirm each item below.
 - [ ] Roles in `.claude/agentic-team-config.yaml` match the active roles in the charter.
 - [ ] Runtime is either omitted, explicitly gated, or explicitly authorised with scope limits.
 - [ ] Branch discipline states the default branch name.
+- [ ] If worktrees are enabled, `worktree_policy` is present and `Worktree discipline` is described.
 - [ ] Escalation paths name real people, roles, or channels for the project.
 - [ ] Retirement condition is described.
 

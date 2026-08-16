@@ -155,12 +155,26 @@ You should see a `goal_record`, `dispatch_instruction`, `action_record`, and `ve
 - A test goal produces a traceable `goal_id` and a final verdict.
 - For a **Lite mode** goal, eden-memory contains a `goal_record` with `mode: lite`, a `plan_record`, an `action_record`, and a `verdict` linked by the same `goal_id`.
 
+## Worktree flags for parallel goals
+
+When the project `agentic-team-config.yaml` enables `worktree_policy`, `eden-team` creates a git worktree for each non-trivial `build` or `run` goal. You can override the policy from the command line:
+
+| Flag | Default | Effect |
+|---|---|---|
+| `--worktree-root` | `.claude/worktrees/atp` | Directory under the repo root where worktrees are created. |
+| `--worktree-naming` | `goal-{goal_id_short}-{branch}` | Template for worktree directory names. |
+| `--[no-]worktree-auto-create` | `true` | Whether to create worktrees automatically. |
+| `--[no-]worktree-auto-remove` | `false` | Whether to remove worktrees after a successful merge. |
+
+The supervisor also enforces `max_concurrent` from the config. When the cap is reached, `eden-team` records a `blocked` state and lists active goals instead of creating another worktree.
+
 ## Caveats
 
 - Use a tool-calling model with a context window of at least 32K tokens.
 - Prefer `--dangerously-skip-permissions` only in fully automated, isolated accounts; for semi-automated setups use `--permission-mode auto` or `--allowedTools mcp__eden-memory__eden_*`.
 - Headless supervisors share memory scope with the configured database; isolate production and sandbox databases.
 - The supervisor forwards the current process environment to every child `claude` process; set provider variables before invoking `eden-team`.
+- Worktrees share the same object store as the main checkout, but submodules and sparse checkouts can break `git worktree add`. The supervisor records the failure and escalates rather than silently falling back to the main checkout.
 
 ## Next steps
 

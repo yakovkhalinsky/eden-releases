@@ -43,6 +43,7 @@ Top-level entry point for **Lite mode**. It is intentionally thin: it parses the
 - A `goal_record` with `mode: lite` stored in eden-memory.
 - A `plan_record` combining routing, context, and success criteria.
 - A hand-off to the `builder` subagent (or `runtime` for authorised live-system tasks).
+- For non-trivial `build` or `run` goals, a dedicated git worktree under `.claude/worktrees/atp/` if `worktree_policy.enabled` is true.
 
 ## `/team-full`
 
@@ -65,6 +66,7 @@ Same as `/team`, but starts the goal with `mode: full` and produces a `dispatch_
 - A `goal_record` with `mode: full`.
 - A `dispatch_instruction`.
 - A hand-off to the assigned role subagent.
+- For non-trivial `build` or `run` goals, a dedicated git worktree under `.claude/worktrees/atp/` if `worktree_policy.enabled` is true.
 
 ## `/team-charter`
 
@@ -115,6 +117,7 @@ Lists active goals, current stage, owner role, mode, latest record ID, and wheth
 | `latest_record_id` | Most recent durable record. |
 | `deadline` | Dispatch deadline if recorded. |
 | `state` | `active`, `blocked`, `pending_authorisation`, `continueable`, `closed`. |
+| `Location` | Worktree path for the goal, or "main checkout". |
 
 ## `/team-escalate`
 
@@ -170,7 +173,8 @@ Resumes an unfinished goal by reading the latest records from eden-memory and di
 **Output**
 
 - A `run_log` continuation record.
-- A hand-off to the next role with the latest context.
+- A check that the recorded `worktree_path` still exists, if one is present. If it does not exist, `/team-continue` asks whether to recreate the worktree or abort.
+- A hand-off to the next role with the latest context and worktree location.
 
 ## `/team-handoff`
 
@@ -190,7 +194,7 @@ Transfers ownership of a goal to another role in a durable `hand_off_record`.
 
 **What it copies**
 
-The hand-off record copies `success_criteria`, `deadline`, and `escalation_trigger` from the latest dispatch instruction so the receiving role can continue without re-reading the full history.
+The hand-off record copies `success_criteria`, `deadline`, and `escalation_trigger` from the latest dispatch instruction so the receiving role can continue without re-reading the full history. When the latest action record includes `worktree_path` and `branch_name`, those are also copied so the receiver starts in the correct checkout.
 
 **Output**
 

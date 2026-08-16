@@ -64,6 +64,32 @@ the project charter in `.claude/agentic-team-charter.md`.
 6. Archivist records the closure, linking the action record, verdict, merge
    parent SHAs, and branch cleanup details.
 
+### Worktree-first workflow
+
+When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
+
+1. Dispatcher decides the `package_type`. Only `build` and `run` packages may use
+   a worktree.
+2. Before the action role starts, Builder or Runtime checks whether a worktree
+   exists for the current `goal_id` in Eden-memory (look for `worktree_path` and
+   `branch_name` in the latest action record).
+3. If no worktree is recorded, fetch `origin/<DEFAULT_BRANCH>` and create a
+   worktree under `worktree_policy.root` from the fetched tip, checking out the
+   feature branch there with `git worktree add -b <branch>`. Record
+   `worktree_path` and `branch_name` in the action record.
+4. All mutating work happens in the recorded worktree. Do not switch branches in
+   the default-branch working copy for this goal.
+5. After a green Verifier verdict, Runtime verifies the default-branch working
+   copy is clean. If it is dirty, record a `blocked` state and ask the user to
+   clean it before merging.
+6. Runtime fetches `origin/<DEFAULT_BRANCH>`, fast-forwards the main checkout,
+   and creates the non-fast-forward merge commit there. If another goal landed
+   first and push is rejected, rebase/retest the feature branch inside the goal
+   worktree and retry up to three times.
+7. Runtime deletes the feature branch. If `auto_remove_after_merge` is true and
+   the worktree is clean, Runtime also removes the worktree. If the worktree is
+   dirty, record a `blocked` state and ask the user.
+
 ## Task list synchronization
 
 Keep the Claude Code in-app task list in sync with the Eden-memory trail. One

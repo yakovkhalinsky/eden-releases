@@ -39,6 +39,17 @@ branch_policy:
   protected_branches: [master, main, release/*, hotfix/*]
   record_parent_shas: true
 
+# When worktree_policy.enabled is true, non-trivial build and run goals receive
+# a dedicated git worktree under worktree_policy.root. This lets multiple goals
+# proceed in parallel without contending for the default-branch working copy.
+worktree_policy:
+  enabled: true
+  root: .claude/worktrees/atp
+  naming: "goal-{goal_id_short}-{branch}"
+  auto_create: true
+  auto_remove_after_merge: false
+  max_concurrent: 8
+
 overrides:
   # Project-local skill, agents, and commands override global ones.
   use_local_skill: true

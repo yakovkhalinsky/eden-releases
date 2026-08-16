@@ -113,8 +113,9 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
    ```
 4. Group results by `goal_id` and find the latest stage per goal.
 5. If a filter is provided, restrict the output to matching goals or roles.
-6. Present a table with columns: goal_id, current stage, owner role, **mode** (`lite` or `full`), latest record ID, deadline (if recorded), confidence/escalation trigger, and state (`active`, `blocked`, `pending_authorisation`, `continueable`, `closed`).
+6. Present a table with columns: goal_id, current stage, owner role, **mode** (`lite` or `full`), **Location** (worktree path or "main checkout"), latest record ID, deadline (if recorded), confidence/escalation trigger, and state (`active`, `blocked`, `pending_authorisation`, `continueable`, `closed`). Source the Location value from the latest action record's `worktree_path` metadata; if absent, show "main checkout".
 7. Determine each goal's `mode` from the `goal_record` metadata; if absent, inspect the records for a `plan_record` (Lite) or `dispatch_instruction`/`context_summary` (Full). Default to `full` when uncertain.
 8. Flag goals whose latest record is non-terminal and not `blocked` or `pending_authorisation` as `continueable` — these are candidates for `/team-continue`.
-9. Optionally call `TaskList` to surface any Claude Code tasks associated with active goals and report stale or orphaned tasks.
-10. If no active goals are found, report that clearly and suggest starting a new task via `/team` (Lite) or `/team-full` (Full). Do not invent or reference a `/agentic-start` command, because no such command exists.
+9. Print the note: "The next role for this goal will run in the listed Location."
+10. Optionally call `TaskList` to surface any Claude Code tasks associated with active goals and report stale or orphaned tasks.
+11. If no active goals are found, report that clearly and suggest starting a new task via `/team` (Lite) or `/team-full` (Full). Do not invent or reference a `/agentic-start` command, because no such command exists.

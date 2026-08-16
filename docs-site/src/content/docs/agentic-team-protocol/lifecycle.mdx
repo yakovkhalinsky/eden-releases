@@ -39,7 +39,7 @@ The Verifier gate is mandatory before any goal is closed in either mode.
 |---|-------|-------|-------------|--------------|
 | 1 | **Goal receipt** | Dispatcher | `goal_record` | Capture the request, requester, constraints, and `mode: lite`. |
 | 2 | **Plan** | Dispatcher | `plan_record` | Combine routing, context, and success criteria in one record. |
-| 3 | **Action** | Builder | `action_record` | Do the work, test it, document rollback options. |
+| 3 | **Action** | Builder | `action_record` | Do the work, test it, document rollback options. When `worktree_policy` is enabled, non-trivial `build` and `run` goals happen in a dedicated git worktree. See [Run goals in parallel](/agentic-team-protocol/how-to/parallel-goals/). |
 | 4 | **Check** | Verifier → Archivist | `verdict` → `archival_record` | Verify outcome; close the durable trail. |
 
 ## Full protocol: seven-stage flow
@@ -87,7 +87,7 @@ The Verifier gate is mandatory before any goal is closed in either mode.
 | 1 | **Goal receipt** | Dispatcher | `goal_record` | Capture the request, requester, constraints, and package type. |
 | 2 | **Routing and assignment** | Dispatcher | `dispatch_instruction` | Pick the role, owner, deadline, success criteria, and escalation trigger. |
 | 3 | **Context gathering** | Researcher | `context_summary` | Gather facts, consider options, recommend a path. |
-| 4 | **Action** | Builder / Runtime | `action_record` | Do the work, test it, document rollback options. |
+| 4 | **Action** | Builder / Runtime | `action_record` | Do the work, test it, document rollback options. When `worktree_policy` is enabled, non-trivial `build` and `run` goals happen in a dedicated git worktree. See [Run goals in parallel](/agentic-team-protocol/how-to/parallel-goals/). |
 | 5 | **Verification** | Verifier | `verdict` | Compare outcome against success criteria; produce evidence. |
 | 6 | **Recording and archival** | Archivist | `archival_record` | Link records, update skills or runbooks, capture rationale. |
 | 7 | **Hand-off or closure** | Archivist | `hand_off_or_closure` | Confirm completeness or transfer ownership. |
