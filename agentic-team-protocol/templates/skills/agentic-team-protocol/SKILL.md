@@ -28,7 +28,7 @@ harness: claude-code
 This is the project-local override for the Agentic Team Protocol in
 `<PROJECT_PATH>`. It supplements the global skill at
 `~/.claude/skills/team/SKILL.md` with repository-specific branch discipline and
-the project charter in `.claude/agentic-team-charter.md`.
+the project charter in `.claude/agentic-team-charter.md`. Run `/team-charter` to interactively ratify or re-ratify the charter; use `--non-interactive` to skip the checklist.
 
 ## Branch policy
 

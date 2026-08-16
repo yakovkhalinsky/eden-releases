@@ -169,7 +169,7 @@ Once those files exist, project-local definitions override the global ones.
 After restart:
 
 - `/team` — invoke the Agentic Team Protocol skill to kick off a goal or ask for help with the lifecycle.
-- `/team-charter` — read the project charter, store a ratification record in Eden-memory.
+- `/team-charter` — run an interactive ratification checklist for the project charter and store a ratification record in Eden-memory. Use `--non-interactive` to skip the checklist.
 - `/team-status` — list active goals, stage, owner role, latest record IDs, and continueable/blocked state.
 - `/team-escalate` — write a structured escalation record and route by level.
 - `/team-continue` — resume an unfinished goal by rehydrating it from Eden-memory and dispatching the next role.

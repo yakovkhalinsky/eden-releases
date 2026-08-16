@@ -428,7 +428,7 @@ This prevents team-mode Eden-memory calls from recalling memories that belong to
 
 - `/team [goal]` — start or continue a goal in **Lite mode** (default). The dispatcher acts as planner and routes directly to builder for everyday tasks.
 - `/team-full [goal]` — start or continue a goal in the **Full protocol** with the complete 6-role, 7-stage lifecycle.
-- `/team-charter` — read the project's `agentic-team-charter.md`, store a ratification record, and report whether the team may proceed (full protocol / charter-heavy projects).
+- `/team-charter` — run an interactive ratification checklist for the project's `agentic-team-charter.md`, surface placeholders and role mismatches, and store a `charter_ratification` record in Eden-memory only after explicit confirmation. Use `/team-charter --non-interactive` or set `ATP_NON_INTERACTIVE=1` to run the original one-shot deterministic flow.
 - `/team-status` — list active goals, current stage, owner role, latest record IDs, mode (`lite`/`full`), and continueable/blocked state.
 - `/team-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`. In Lite mode, escalation also promotes the goal to the full protocol.
 - `/team-continue [goal_id]` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role. Uses the goal's stored `mode` to pick the correct lifecycle table.

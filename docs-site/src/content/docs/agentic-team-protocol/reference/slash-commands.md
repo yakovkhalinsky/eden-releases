@@ -70,29 +70,41 @@ Same as `/team`, but starts the goal with `mode: full` and produces a `dispatch_
 
 ## `/team-charter`
 
-Reads the project charter and stores a ratification record.
+Runs an interactive ratification checklist for the project charter and stores a ratification record.
 
 **Usage**
 
 ```text
 /team-charter
+/team-charter --non-interactive
 ```
 
 **What it does**
 
-1. Finds `.claude/agentic-team-charter.md` (project-local) or falls back to `~/.claude/skills/team/CHARTER.md`.
-2. Computes a SHA-256 version hash.
-3. Checks for unresolved placeholders and role mismatches with `.claude/agentic-team-config.yaml`.
-4. Stores a `charter_ratification` record in eden-memory.
+1. Finds `.claude/agentic-team-charter.md` (project-local) or asks before falling back to `~/.claude/skills/team/CHARTER.md`.
+2. Computes a full SHA-256 version hash and a 16-character display hash.
+3. Scans for unresolved placeholders and template example text.
+4. Compares active roles in `.claude/agentic-team-config.yaml` to the charter.
+5. Resolves the Eden-memory workspace identity.
+6. Presents a checklist: confirm, defer, edit, or abort each item.
+7. After final confirmation, stores a `charter_ratification` record in eden-memory.
 
 **Output**
 
 ```text
 Charter path: .claude/agentic-team-charter.md
-Version: <16-char-sha>
+Version: <16-char-sha> (full SHA-256 in record metadata)
 Record ID: <uuid>
 Status: proceed | no-proceed
+Reason: <specific reason if no-proceed>
 ```
+
+**Non-interactive bypass**
+
+- `/team-charter --non-interactive`
+- `ATP_NON_INTERACTIVE=1` or `CI=1`
+
+Runs the original deterministic locate-hash-validate-store flow without prompting.
 
 ## `/team-status`
 

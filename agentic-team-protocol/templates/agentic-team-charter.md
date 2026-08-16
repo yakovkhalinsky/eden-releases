@@ -1,5 +1,16 @@
 # Agentic Team Charter — <PROJECT_NAME>
 
+<!--
+RATIFICATION DEFERRALS
+The /team-charter command may record deferrals for items that are intentionally
+not final yet. Common examples:
+- Runtime authority scope pending security review
+- Escalation path names pending org confirmation
+- Default branch name pending CI migration
+- worktree_policy.max_concurrent pending disk assessment
+Replace or remove this comment block once the charter is fully ratified.
+-->
+
 ## Identity
 
 Project: `<PROJECT_PATH>`  

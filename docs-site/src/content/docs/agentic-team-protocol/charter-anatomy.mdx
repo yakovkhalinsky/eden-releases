@@ -11,8 +11,12 @@ boundaries, roles, decision rights, and escalation paths. The global charter is 
 safe default; a project-local charter overrides it.
 
 Every charter must be ratified with `/team-charter` before the team proceeds.
-Ratification stores a `charter_ratification` record in eden-memory with a SHA-256
-version hash of the charter content.
+`/team-charter` runs an interactive checklist: it locates the charter, computes
+a full SHA-256 version hash, scans for placeholders, compares active roles to
+`.claude/agentic-team-config.yaml`, and asks you to confirm or defer each item
+before storing a `charter_ratification` record in eden-memory. Use
+`/team-charter --non-interactive` or `ATP_NON_INTERACTIVE=1` to skip the
+checklist.
 
 ## Sections
 
