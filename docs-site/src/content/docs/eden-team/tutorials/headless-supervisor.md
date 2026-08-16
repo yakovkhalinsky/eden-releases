@@ -165,8 +165,9 @@ When the project `agentic-team-config.yaml` enables `worktree_policy`, `eden-tea
 | `--worktree-naming` | `goal-{goal_id_short}-{branch}` | Template for worktree directory names. |
 | `--[no-]worktree-auto-create` | `true` | Whether to create worktrees automatically. |
 | `--[no-]worktree-auto-remove` | `false` | Whether to remove worktrees after a successful merge. |
+| `--worktree-max-concurrent` | `8` | Maximum active ATP worktrees before new goals are blocked. |
 
-The supervisor also enforces `max_concurrent` from the config. When the cap is reached, `eden-team` records a `blocked` state and lists active goals instead of creating another worktree.
+The supervisor enforces `max_concurrent` from the config or the command line. When the cap is reached, `eden-team` records a `blocked` state and lists active goals instead of creating another worktree.
 
 ## Caveats
 
