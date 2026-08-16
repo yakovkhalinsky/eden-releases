@@ -123,8 +123,8 @@ The Builder reads the `plan_record`, checks or creates the goal worktree, and wr
 You should see:
 
 1. A new worktree directory under `.claude/worktrees/atp/` (only if `worktree_policy.enabled` is true).
-2. A draft README inside that worktree, committed to a feature branch.
-3. A Builder action summary in the conversation, including the worktree path.
+2. A draft README in the worktree (or in the main checkout if `worktree_policy.enabled` is false), committed to a feature branch.
+3. A Builder action summary in the conversation, including the worktree path (or "main checkout" if worktrees are disabled).
 4. A Verifier review that results in `green`, `red`, or `blocked`.
 
 If the Verifier returns green, the Archivist links the records and closes the goal. In Lite mode the merge into the default branch is manual unless you escalate to `/team-full`.
