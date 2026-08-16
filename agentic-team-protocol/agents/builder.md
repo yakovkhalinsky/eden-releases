@@ -59,6 +59,7 @@ Before finishing and returning the required durable record:
    - `goal_id`, `stage: action`, `owner_role: builder`, `agent_id: "builder"`, `input_record_ids`, `output_record_ids`.
    - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
    - `plan_file_path` (optional) — if a written plan is produced or updated, include its absolute path so the plan remains discoverable.
+   - `worktree_path` and `branch_name` in the `action_record` metadata when a worktree is used.
    - `claude_task_id` — the Claude Code task ID for this goal, if available.
    - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: builder`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
@@ -81,17 +82,18 @@ Before finishing and returning the required durable record:
 1. Recall the latest `goal_record` and `dispatch_instruction` for the assigned `goal_id`.
 2. Gather context via Read/Eden-memory. Record the IDs of any memories recalled and used in `recalled_memory_ids`. If context is insufficient, request Researcher support.
 3. Produce or load a plan. If the plan is written or updated to a file, record its absolute path as `plan_file_path` in the action record metadata. Do not begin implementation without a durable, visible plan.
-4. **Check the current git branch.** If you are on the project default branch (usually `master` or `main`) and the change is non-trivial, create a feature branch from the current state with a descriptive name (e.g., `feat/<goal-or-feature>`) and do all implementation work on that branch. Only trivial one-line fixes may be committed directly to the default branch.
-5. Implement the artefact using Write/Edit/Bash as appropriate.
-6. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
-7. If a step requires explicit user authorisation beyond the project charter (e.g., deleting a public release, modifying fleet-wide CI secrets, or touching production-adjacent config outside the charter), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user. Routine repository commit/push is not a pending_authorisation step; it is executed by Runtime after a green Verifier verdict.
-8. Write a change summary and store it in Eden-memory.
-9. Update the Claude Code task via `TaskUpdate` to `completed` (or leave it `in_progress` if Verifier will update it immediately).
-10. **Write a durable `hand_off_record` and return to the parent assistant.**
+4. **Check or create the goal worktree.** After reading the `plan_record` or `dispatch_instruction`, if the project config has `worktree_policy.enabled: true` and the package is `build` (or `run` in Lite mode), look for a `worktree_path` in the latest action record for this `goal_id`. If absent, fetch `origin/<DEFAULT_BRANCH>`, create a worktree under `worktree_policy.root` from the fetched tip, check out the feature branch there with `git worktree add -b <branch>`, and record the `worktree_path` and `branch_name` in the action record. Do all mutating work inside that worktree.
+5. **Check the current git branch inside the worktree.** If you are on the project default branch (usually `master` or `main`) and the change is non-trivial, create a feature branch from the current state with a descriptive name (e.g., `feat/<goal-or-feature>`) and do all implementation work on that branch. Only trivial one-line fixes may be committed directly to the default branch.
+6. Implement the artefact using Write/Edit/Bash as appropriate.
+7. Write periodic `run_log` records at natural boundaries (before/after a large edit, before a long command, before a hand-off). This lets `/team-continue` resume if the session is interrupted.
+8. If a step requires explicit user authorisation beyond the project charter (e.g., deleting a public release, modifying fleet-wide CI secrets, or touching production-adjacent config outside the charter), store a `pending_authorisation` record with the exact question and the prepared action, then stop and ask the user. Routine repository commit/push is not a pending_authorisation step; it is executed by Runtime after a green Verifier verdict.
+9. Write a change summary and store it in Eden-memory.
+10. Update the Claude Code task via `TaskUpdate` to `completed` (or leave it `in_progress` if Verifier will update it immediately).
+11. **Write a durable `hand_off_record` and return to the parent assistant.**
     - Include the action record ID and change summary record ID in `input_record_ids`.
     - Include `claude_task_id` in metadata.
     - Record `next_role: verifier` and the reason for the transfer.
-10. **Return to the parent assistant.** Do not spawn the Verifier yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the Verifier.
+12. **Return to the parent assistant.** Do not spawn the Verifier yourself. The parent assistant will immediately spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) to dispatch the Verifier.
 
 ## Lite mode
 

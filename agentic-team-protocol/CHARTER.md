@@ -84,6 +84,28 @@ explicitly overrides them:
    commits, or the environment is headless and cannot safely delete the checked-out
    branch; record the reason in the action record.
 
+### Worktree discipline
+
+When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
+
+1. Non-trivial `build` and `run` goals use a dedicated git worktree under
+   `.claude/worktrees/atp/`, checked out on the goal's feature branch.
+2. The worktree is created from `origin/<DEFAULT_BRANCH>` before the action role
+   begins; Builder and Runtime do all mutating work inside that worktree.
+3. Builder is authorised to create goal worktrees; Runtime is authorised to
+   remove them when `auto_remove_after_merge` is true.
+4. Runtime must verify the worktree is clean (no uncommitted changes or untracked
+   files) before removing it.
+5. Runtime may merge the worktree branch into the default branch from the main
+   checkout.
+6. Runtime must verify the default-branch working copy is clean before fetching
+   `origin/<DEFAULT_BRANCH>`; if it is not clean, record a `blocked` state and ask
+   the user to clean it.
+7. Runtime must fetch `origin/<DEFAULT_BRANCH>`, fast-forward the local default
+   branch, and record the actual origin SHA as a merge parent.
+8. The default-branch working copy remains reserved for trivial fixes, status
+   checks, and merge operations.
+
 ## Ratification
 
 This charter is ratified when `/team-charter` records a

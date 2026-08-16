@@ -22,7 +22,9 @@ Every record should include these fields so it can be traced:
   "input_record_ids": ["<id>"],
   "output_record_ids": ["<id>"],
   "recalled_memory_ids": ["<id>"],
-  "verdict_id": "<id-when-applicable>"
+  "verdict_id": "<id-when-applicable>",
+  "worktree_path": "<absolute-path-when-worktree-is-used>",
+  "branch_name": "<feature-branch-when-worktree-is-used>"
 }
 ```
 
@@ -99,6 +101,8 @@ Builder or Runtime writes this after doing the work. It documents what changed, 
 | `rollback_steps` | How to undo the change if needed. |
 | `build_result` | Test/build outcome when applicable. |
 | `phase` | Optional phase marker for multi-phase goals. |
+| `worktree_path` | Absolute path to the goal's worktree, when used. |
+| `branch_name` | Feature branch checked out in the worktree, when used. |
 | `stage` | `action`. |
 | `owner_role` | `builder` or `runtime`. |
 
@@ -183,6 +187,8 @@ Used whenever ownership of a goal moves from one role to another, including at t
 | `success_criteria` | Copied from the latest dispatch instruction. |
 | `deadline` | Copied from the latest dispatch instruction. |
 | `escalation_trigger` | Copied from the latest dispatch instruction. |
+| `worktree_path` | From the latest action record, so the receiver can operate in the right checkout. |
+| `branch_name` | From the latest action record, so the receiver knows the checked-out branch. |
 | `stage` | `hand_off_or_closure`. |
 | `owner_role` | The transferring role. |
 

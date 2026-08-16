@@ -36,6 +36,8 @@ For everyday implementation tasks, use `/team` (Lite mode) instead.
 | `goal_id` or UUID-like argument | Resume the goal via `/team-continue`. |
 | Any other request | Spawn the `dispatcher` subagent to record and route a new **Full** goal. |
 
+For non-trivial `build` or `run` goals, the assigned role may create a dedicated git worktree under `.claude/worktrees/atp/` if `worktree_policy.enabled` is true.
+
 ## Examples
 
 ```text

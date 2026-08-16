@@ -45,6 +45,7 @@ Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edi
    - current inferred stage
    - next role
    - latest record IDs (`goal_record`, `dispatch_instruction`, latest stage record, latest verdict if any)
+   - `worktree_path` and `branch_name` from the latest action record, if present
    - success criteria and deadline from the latest dispatch instruction
    - escalation trigger, if any
 
@@ -77,21 +78,22 @@ Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edi
    - latest `plan_record` (Lite) or `dispatch_instruction` (Full)
    - latest stage/action/context/verdict/archival record by `stored_at`
    - any `pending_authorisation` or `blocked` record
-3. Determine the goal's `mode`:
+3. Extract `worktree_path` and `branch_name` from the latest action record for this goal. Include them in the hand-off payload to the next role so `/team-continue` can operate in the correct checkout. If the worktree no longer exists on disk and the goal is not closed, route back to Dispatcher with a note to recreate it.
+4. Determine the goal's `mode`:
    - Prefer `metadata.mode` from the `goal_record`.
    - If any record is a `plan_record`, treat the goal as Lite.
    - If `mode` is absent, default to `full`.
-4. Apply the appropriate lifecycle table (Lite or Full) from `SKILL.md` to determine the required next stage and role.
-5. If the goal is `blocked` or `pending_authorisation`, report the blocker/approval question to the user and stop.
-6. If the latest record is an `archival_record` and no newer action record exists, report the goal is closed.
-7. Write a `run_log` recording the continuation decision and the detected `mode`.
-8. **Write a durable `hand_off_record` (or continuation `run_log` with full hand-off payload) before spawning the next role.**
+5. Apply the appropriate lifecycle table (Lite or Full) from `SKILL.md` to determine the required next stage and role.
+6. If the goal is `blocked` or `pending_authorisation`, report the blocker/approval question to the user and stop.
+7. If the latest record is an `archival_record` and no newer action record exists, report the goal is closed.
+8. Write a `run_log` recording the continuation decision and the detected `mode`.
+9. **Write a durable `hand_off_record` (or continuation `run_log` with full hand-off payload) before spawning the next role.**
    - Capture the latest input record IDs from the search in step 2.
    - Set `owner_role: router` and `stage: routing_and_assignment` or the inferred next stage.
    - Include `claude_task_id` in metadata so continuation can update the same task.
    - Record `next_role`, `mode`, and the reason for the routing decision in the content or metadata.
-9. Spawn the selected role subagent with the full goal context, record IDs, mode, and the hand-off record ID using the `Agent` tool.
-10. **Recovery if the spawned role produces no durable record:**
+10. Spawn the selected role subagent with the full goal context, record IDs, mode, worktree context, and the hand-off record ID using the `Agent` tool.
+11. **Recovery if the spawned role produces no durable record:**
    - If, after spawning, the next role fails to store its expected record (no new action/context/verdict/etc. for the `goal_id` within the turn), write a second `hand_off_record` or `run_log` noting the missing downstream record.
    - Report the missing record to the user and suggest re-invoking the router (`/team-continue ${GOAL_ID}`) or escalating via `/team-escalate`.
 
