@@ -2,7 +2,7 @@
 name: team
 title: Team Protocol
 description: Use role-based agent teams with a seven-stage task lifecycle and Eden-memory as the durable substrate.
-version: 1.1.2
+version: 1.1.3
 tags: [agents, subagents, roles, eden-memory, protocol, team]
 tools:
   discoverable: true
