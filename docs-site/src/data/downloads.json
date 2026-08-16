@@ -1,5 +1,5 @@
 {
-  "version": "0.3.117",
+  "version": "0.3.118",
   "released": "2026-08-16",
   "binaries": {
     "eden-memory": {
@@ -10,7 +10,7 @@
           "filename": "eden-memory-linux-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64.sha256",
-          "sha256": "c26ee25550a412f71c2b484305b1c3e7a0865983434353c54067d5479745e664",
+          "sha256": "861a098ed0f694eef1fdfea065b0cdc7187a17e547102a2d00598e1511bd217a",
           "sizeBytes": 107565240
         },
         "linux-arm64": {
@@ -19,7 +19,7 @@
           "filename": "eden-memory-linux-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-arm64.sha256",
-          "sha256": "be24576abac2c88f2c257c79d6023a32fd53d3bed67509b4404be7ab39a8a1fb",
+          "sha256": "4e68b26512bc4347303800e43caa975f778c37ff867afc1eb415be7473cd71cc",
           "sizeBytes": 70058168
         },
         "darwin-amd64": {
@@ -28,7 +28,7 @@
           "filename": "eden-memory-darwin-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-amd64.sha256",
-          "sha256": "b7bb3f1516259a7c8803bd2fbd664103e9eb2337d38fcac29b1e443cedc20eab",
+          "sha256": "7c181eb1421f252f77d385fb10fd61778b11b8cb5c4e459c12ed76a9abf30d51",
           "sizeBytes": 67080272
         },
         "darwin-arm64": {
@@ -37,7 +37,7 @@
           "filename": "eden-memory-darwin-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-darwin-arm64.sha256",
-          "sha256": "c8c692295d36c7db2891ae23740bf01a85f1bdb817889719fc3a77e548e1d716",
+          "sha256": "d53b50e9fac3d331b7a03a0ffbdec4e01194151bfa56b18719b71ac63855e4f8",
           "sizeBytes": 66835730
         }
       }
@@ -50,7 +50,7 @@
           "filename": "eden-relay-linux-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-linux-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-linux-amd64.sha256",
-          "sha256": "a3a9ba14ce89e93d23864e408ef6fdedcad8f5a200b89bdd1ffdffdf97207a37",
+          "sha256": "224f520379a767b3f2a68086168519a36003cdf27ccbcc56883cc8d640866c4f",
           "sizeBytes": 10637496
         },
         "linux-arm64": {
@@ -59,7 +59,7 @@
           "filename": "eden-relay-linux-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-linux-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-linux-arm64.sha256",
-          "sha256": "94780cfb90512d7739959804ed087f2fb44e5d2062380a37420af6f0393bac50",
+          "sha256": "711f8919e7b7619647b4d0f15980432f0db4c472f1c0a4152082f4c7e28ce2ba",
           "sizeBytes": 10223800
         },
         "darwin-amd64": {
@@ -68,7 +68,7 @@
           "filename": "eden-relay-darwin-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-darwin-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-darwin-amd64.sha256",
-          "sha256": "ee311f5ba60c424f1f66f29fed76999a04fce9c8675b433905e68ecc97dcae01",
+          "sha256": "19a411957e7fa0d8877cf4fc5752328a27695051436cbd25c60d6fac35a7b43f",
           "sizeBytes": 10843808
         },
         "darwin-arm64": {
@@ -77,7 +77,7 @@
           "filename": "eden-relay-darwin-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-darwin-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-darwin-arm64.sha256",
-          "sha256": "8b812b730746dc63cf2257b6dec20da269f77d305b4d13afdca9a0a596d29fd3",
+          "sha256": "67ed05a6ed1d5b4a81dbd0013a091978398d5287b6be0584f8d55fb7c45204cd",
           "sizeBytes": 10411746
         }
       }
@@ -90,7 +90,7 @@
           "filename": "eden-team-linux-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-amd64.sha256",
-          "sha256": "042e0633b9444479063deb15b77439f915b31a53e68b8395e681dc0b8570024e",
+          "sha256": "f660c1c41265a4092ad11a26bc9458219de26ae2912dda02a4a00fc91afa792f",
           "sizeBytes": 10821816
         },
         "linux-arm64": {
@@ -99,7 +99,7 @@
           "filename": "eden-team-linux-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-arm64.sha256",
-          "sha256": "995aa74d54c8efac22a11384c423416a9bb6b4b871800b80caeae995f3820246",
+          "sha256": "e6e7cbf8651df9e79b886247d093288cfe622c72124a4acb9f5abd885d5544a8",
           "sizeBytes": 10420408
         },
         "darwin-amd64": {
@@ -108,7 +108,7 @@
           "filename": "eden-team-darwin-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-amd64.sha256",
-          "sha256": "5ae6e4d4cea9755bebd1d1bae3b4af6a16503867777474556226aaa7ce6fc049",
+          "sha256": "d2d329892b8d8a439d60e5c1eb344167a29959744090a46691e24c7458403718",
           "sizeBytes": 11001184
         },
         "darwin-arm64": {
@@ -117,7 +117,7 @@
           "filename": "eden-team-darwin-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-arm64.sha256",
-          "sha256": "e65733666e33a2687438940ee30592cb6dd9e8ae0941224ec51a2cb0ec6ec4a2",
+          "sha256": "58dab82ea04c4038369000e50a3e7ddc40f5ae45db519078340bf6c55bba0e06",
           "sizeBytes": 10566386
         }
       }
