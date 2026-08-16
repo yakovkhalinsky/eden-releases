@@ -64,7 +64,9 @@ explicitly overrides them:
 
 1. **Feature branches for non-trivial work.** Any change that touches more than
    one file, alters behaviour, or is dispatched as a `build` or `run` package
-   must be developed on a feature branch.
+   must be developed on a feature branch. The feature branch is the durable
+   audit and merge artifact regardless of whether the goal uses a dedicated
+   worktree.
 2. **Trivial fixes only on the default branch.** Single-line corrections (for
    example, typo fixes or single flag default changes) may be committed directly to
    the default branch.
@@ -89,7 +91,9 @@ explicitly overrides them:
 When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
 
 1. Non-trivial `build` and `run` goals use a dedicated git worktree under
-   `.claude/worktrees/atp/`, checked out on the goal's feature branch.
+   `.claude/worktrees/atp/`, checked out on the goal's feature branch. The
+   worktree is an isolated working copy; the feature branch remains the audit
+   and merge artifact.
 2. The worktree is created from `origin/<DEFAULT_BRANCH>` before the action role
    begins; Builder and Runtime do all mutating work inside that worktree.
 3. Builder is authorised to create goal worktrees; Runtime is authorised to

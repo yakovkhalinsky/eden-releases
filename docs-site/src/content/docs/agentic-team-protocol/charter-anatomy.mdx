@@ -96,7 +96,7 @@ When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
 2. The worktree is created from `origin/<DEFAULT_BRANCH>` before the action role begins.
 3. Builder may create goal worktrees; Runtime may remove them when `auto_remove_after_merge` is true, but only after verifying the worktree is clean.
 4. Runtime must keep the default-branch working copy clean for status checks and merge operations.
-5. Runtime merges the worktree branch into the default branch from the main checkout, records both parent SHAs, and cleans up the feature branch.
+5. Runtime merges the feature branch that lives in the worktree into the default branch from the main checkout, records both parent SHAs, and cleans up the feature branch.
 
 See [Run goals in parallel](/agentic-team-protocol/how-to/parallel-goals/) for the operator guide.
 

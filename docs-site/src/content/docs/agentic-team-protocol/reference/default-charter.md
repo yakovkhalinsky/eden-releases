@@ -57,7 +57,7 @@ The charter governs agentic teams using ATP with eden-memory as the durable memo
 
 Projects ratifying this charter keep the default branch protected unless a project-local charter overrides these rules:
 
-1. **Feature branches for non-trivial work.** Any change touching more than one file, altering behaviour, or dispatched as `build` or `run` must be developed on a feature branch.
+1. **Feature branches for non-trivial work.** Any change touching more than one file, altering behaviour, or dispatched as `build` or `run` must be developed on a feature branch. The feature branch is the durable audit and merge artifact regardless of whether the goal uses a dedicated worktree.
 2. **Trivial fixes only on the default branch.** Single-line corrections may be committed directly.
 3. **Non-fast-forward merge commits.** Merges into the default branch must create a merge commit with a descriptive conventional-commit message.
 4. **Record both parent SHAs.** Runtime records the feature-branch SHA and the previous default-branch SHA in the merge action record.

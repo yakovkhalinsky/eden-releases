@@ -144,10 +144,12 @@ Once those files exist, project-local definitions override the global ones.
 - Non-trivial changes must be developed on a feature branch checked out from the
   project default branch. Trivial one-line fixes may be committed directly to the
   default branch.
-- By default, non-trivial `build` and `run` goals use a dedicated git worktree
-  under `.claude/worktrees/atp/` when `worktree_policy.enabled` is true. Each goal
-  gets its own working copy on its feature branch; the default-branch checkout
-  stays clean for status checks and Runtime merge operations.
+- When `worktree_policy.enabled` is true, non-trivial `build` and `run` goals
+  use a dedicated git worktree under `.claude/worktrees/atp/`. Each goal gets
+  its own working copy on its feature branch; the default-branch checkout stays
+  clean for status checks and Runtime merge operations. Without a worktree
+  policy (or with `enabled: false`), goals use the main checkout and still
+  require a feature branch for non-trivial work.
 - Merges into the default branch must be non-fast-forward merge commits, and both
   parent SHAs must be recorded in the Runtime action record.
 - After a successful non-fast-forward merge into the default branch and push to

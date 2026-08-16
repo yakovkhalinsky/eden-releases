@@ -97,7 +97,14 @@ Run the top-level protocol command with a tiny request:
 The `/team` command spawns the Dispatcher subagent in **Lite mode**. The Dispatcher records a `goal_record` with `metadata.mode: lite` and a `plan_record` in eden-memory, then hands off to the Builder.
 
 > [!NOTE]
-> With the default `worktree_policy` in the project template, non-trivial `build` goals create a dedicated git worktree under `.claude/worktrees/atp/` and a feature branch. The README will be committed there, not on your default branch. You can inspect it with `git -C <worktree_path> log --oneline`, or merge it yourself, or promote the goal to full protocol so Runtime merges it.
+> The project template enables `worktree_policy` by default. When it is enabled,
+> non-trivial `build` goals create a dedicated git worktree under
+> `.claude/worktrees/atp/` and a feature branch. The README will be committed
+> there, not on your default branch. You can inspect it with
+> `git -C <worktree_path> log --oneline`, or merge it yourself, or promote the
+> goal to full protocol so Runtime merges it. If `worktree_policy.enabled` is
+> false or the block is absent, the README is committed to a feature branch in
+> your main checkout instead.
 
 **Expected output:**
 
@@ -105,7 +112,7 @@ The `/team` command spawns the Dispatcher subagent in **Lite mode**. The Dispatc
 Goal recorded: goal-atp-first-goal-<id>
 Mode: lite
 Plan: builder
-Worktree: .claude/worktrees/atp/goal-<short>-feat-<branch>
+Worktree (if enabled): .claude/worktrees/atp/goal-<short>-feat-<branch>
 Deadline: <timestamp>
 ```
 
@@ -115,7 +122,7 @@ The Builder reads the `plan_record`, checks or creates the goal worktree, and wr
 
 You should see:
 
-1. A new worktree directory under `.claude/worktrees/atp/`.
+1. A new worktree directory under `.claude/worktrees/atp/` (only if `worktree_policy.enabled` is true).
 2. A draft README inside that worktree, committed to a feature branch.
 3. A Builder action summary in the conversation, including the worktree path.
 4. A Verifier review that results in `green`, `red`, or `blocked`.
@@ -136,7 +143,7 @@ This lists active and recently closed goals with their current stage, owner role
 
 - `.claude/agentic-team-charter.md` contains real project values if you chose to ratify it (optional for Lite mode).
 - Eden-memory contains at least a `goal_record` with `mode: lite`, a `plan_record`, an `action_record` (with `worktree_path` and `branch_name`), and a `verdict` for the same `goal_id`.
-- The sandbox repo has a new worktree and feature branch containing the README.
+- The sandbox repo has a new feature branch containing the README (and a new worktree under `.claude/worktrees/atp/` if `worktree_policy.enabled` is true).
 - To land the README on the default branch, either merge the feature branch manually or run `/team-full` for the same goal so Runtime performs the merge.
 
 ## Next steps

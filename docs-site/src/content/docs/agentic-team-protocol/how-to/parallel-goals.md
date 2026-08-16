@@ -10,7 +10,7 @@ The Agentic Team Protocol normally puts every non-trivial `build` or `run` goal 
 
 ## What a worktree means here
 
-A git worktree is a linked working copy that shares the same `.git` directory as your main checkout. For ATP, each non-trivial `build` or `run` goal gets a worktree under `.claude/worktrees/atp/`, checked out on the goal's feature branch.
+A git worktree is a linked working copy that shares the same `.git` directory as your main checkout. For ATP, each non-trivial `build` or `run` goal with `worktree_policy.enabled: true` gets a worktree under `.claude/worktrees/atp/`, checked out on the goal's feature branch.
 
 A typical layout looks like this:
 
@@ -93,7 +93,7 @@ You can also pass `--no-worktree` or set `ATP_WORKTREE_POLICY_ENABLED=false` for
 
 | Approach | Use when |
 |---|---|
-| **Worktree-per-goal** (default) | Most parallel `build`/`run` goals. Shares object store, stays in sync with origin, keeps main checkout clean. |
+| **Worktree-per-goal** (recommended when enabled) | Most parallel `build`/`run` goals. Shares object store, stays in sync with origin, keeps main checkout clean. |
 | **Clone-per-goal** | Long-running, build-heavy goals where a fully isolated object store is worth the disk cost. Not automated in this first release. |
 | **Stacked branches** | Goals depend on each other and you want to build branch B on top of branch A. Out of scope for the first release. |
 | **Subagent fan-out** | The task itself is embarrassingly parallel (e.g., review many files). ATP already supports this; worktrees solve repo-level contention, not task decomposition. |
