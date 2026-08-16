@@ -33,8 +33,10 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
 3. Search Eden-memory for recent `goal_record`, stage, `run_log`, `hand_off_record`, `pending_authorisation`, and `blocked` records:
    ```bash
    USER_ID="${USER:-$(id -un)}"
+   EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
    EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
    "${EDEN_MEMORY_BIN}" search \
+     --agent-id "${EDEN_AGENT_ID}" \
      --user-id "${USER_ID}" \
      --org-id "${EDEN_ORG_ID}" \
      --workspace-id "${EDEN_WORKSPACE_ID}" \
