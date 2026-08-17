@@ -258,13 +258,13 @@ NEW_VERSION="$(_extract_version "${PACKAGE_DIR}/SKILL.md")"
 
 if [ "$DRY_RUN" = true ]; then
   echo "Would install to:"
-  echo "  skill:    ${CLAUDE_DIR}/skills/team/SKILL.md"
-  echo "  agents:   ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md"
-  echo "  commands: ${CLAUDE_DIR}/commands/{team-charter,team-status,team-escalate,team-continue,team-handoff}.md"
+  echo "  skill:     ${CLAUDE_DIR}/skills/team/SKILL.md"
+  echo "  agents:    ${CLAUDE_DIR}/agents/{dispatcher,builder,runtime,verifier,researcher,archivist,router}.md"
+  echo "  commands:  ${CLAUDE_DIR}/commands/{team-charter,team-status,team-escalate,team-continue,team-handoff}.md"
   if [ "$LOCAL_INSTALL" = true ]; then
-    echo "  templates:${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
-    echo "  skill:   ${PWD:-.}/.claude/skills/agentic-team-protocol/SKILL.md"
-    [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md:${PWD:-.}/CLAUDE.md"
+    echo "  templates: ${PWD:-.}/.claude/{agentic-team-charter.md,agentic-team-config.yaml}"
+    echo "  skill:     ${PWD:-.}/.claude/skills/agentic-team-protocol/SKILL.md"
+    [ "$CLAUDE_MD_INSTALL" = true ] && echo "  claude-md: ${PWD:-.}/CLAUDE.md"
   fi
   if [ "$OLD_VERSION" = "none" ]; then
     echo "[dry-run] Team Protocol installed at ${NEW_VERSION}. Restart Claude Code to load the new agents and commands."
