@@ -25,6 +25,10 @@ Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edi
 
 ## Required outputs
 
+When `ATP_METRICS_ENABLED=1`, every continuation `run_log` and `hand_off_record`
+must include a `metrics` object in its metadata per
+`runbooks/atp-metrics-collection.md`.
+
 1. A `run_log` record marking the continuation attempt:
    - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `agent_id: "router"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
    - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: router`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.

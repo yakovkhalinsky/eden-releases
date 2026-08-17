@@ -1,0 +1,1140 @@
+#!/usr/bin/env python3
+"""atp-metrics — aggregate token-efficiency metrics from Eden-memory run_logs.
+
+Reads run_log records from the Eden-memory SQLite database, extracts the
+embedded `metrics` metadata object defined by the ATP metrics runbook, and
+writes per-goal / per-stage / per-role aggregates to a local SQLite database or
+a JSONL file. Computes cost_estimate_usd from per-model input/output prices.
+
+No Eden-memory binary schema change is required; the script queries the
+existing `memories` table directly and parses the JSON `metadata` column.
+"""
+
+import argparse
+import json
+import os
+import sqlite3
+import sys
+import textwrap
+from datetime import datetime, timezone
+from pathlib import Path
+
+DEFAULT_EDEN_DB = os.path.expanduser("~/.eden-memory/default.db")
+DEFAULT_METRICS_DB = os.path.expanduser("~/.eden-memory/atp-metrics.db")
+DEFAULT_EXPERIMENT_ID = "atp-metrics-20-goal-2026-08"
+DEFAULT_TOKEN_RATIO = 4.0
+
+ATP_ROLES = (
+    "dispatcher",
+    "researcher",
+    "builder",
+    "runtime",
+    "verifier",
+    "archivist",
+    "router",
+)
+
+# Default per-model price table (USD per 1,000,000 tokens).
+# These are illustrative defaults and must be refreshed from the provider.
+DEFAULT_PRICE_TABLE = {
+    "claude-sonnet": {"input": 3.0, "output": 15.0},
+    "claude-haiku": {"input": 0.25, "output": 1.25},
+    "claude-opus": {"input": 15.0, "output": 75.0},
+    "kimi-k2.7-code": {"input": 2.0, "output": 8.0},
+    "deepseek-v4-pro": {"input": 1.5, "output": 6.0},
+    "deepseek-v4-flash": {"input": 0.5, "output": 2.0},
+    "minimax-m3": {"input": 2.5, "output": 10.0},
+}
+
+
+def _now():
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _resolve_env_path(var, default):
+    value = os.environ.get(var)
+    if value:
+        return os.path.expanduser(value)
+    return os.path.expanduser(default)
+
+
+def _resolve_identity():
+    """Resolve org_id/workspace_id from env or project config (best-effort)."""
+    org_id = os.environ.get("EDEN_ORG_ID", "")
+    workspace_id = os.environ.get("EDEN_WORKSPACE_ID", "")
+    if org_id and workspace_id:
+        return org_id, workspace_id
+
+    # Try .env in current directory.
+    env_path = Path(".env")
+    if env_path.exists():
+        try:
+            with env_path.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    if "=" in line:
+                        key, val = line.split("=", 1)
+                        key = key.strip()
+                        val = val.strip().strip('"').strip("'")
+                        if key == "EDEN_ORG_ID" and not org_id:
+                            org_id = val
+                        elif key == "EDEN_WORKSPACE_ID" and not workspace_id:
+                            workspace_id = val
+        except OSError:
+            pass
+
+    return org_id, workspace_id
+
+
+def _load_prices(prices_arg):
+    """Load a per-model price table from a JSON file/inline JSON or use defaults.
+
+    Returns a dict mapping model name -> {"input": float, "output": float}.
+    Prices are in USD per 1,000,000 tokens.
+    """
+    if not prices_arg:
+        return dict(DEFAULT_PRICE_TABLE)
+
+    raw = prices_arg.strip()
+    try:
+        if raw.startswith("{"):
+            table = json.loads(raw)
+        else:
+            with open(os.path.expanduser(raw), "r", encoding="utf-8") as f:
+                table = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Unable to load price table from {prices_arg!r}: {exc}")
+
+    normalized = {}
+    for key, value in table.items():
+        if isinstance(value, dict):
+            normalized[key] = {
+                "input": float(value.get("input", 0)),
+                "output": float(value.get("output", 0)),
+            }
+        elif isinstance(value, (list, tuple)) and len(value) >= 2:
+            normalized[key] = {"input": float(value[0]), "output": float(value[1])}
+        else:
+            raise ValueError(f"Invalid price entry for {key!r}: {value!r}")
+    return normalized
+
+
+def _normalize_model_name(model):
+    """Strip backend prefixes and suffixes to improve price-table matching."""
+    if not model:
+        return ""
+    name = str(model)
+    for prefix in ("anthropic:", "ollama:", "openai:", "google:"):
+        if name.startswith(prefix):
+            name = name[len(prefix):]
+    if ":" in name:
+        name = name.split(":")[0]
+    return name.strip()
+
+
+def _lookup_price(prices, model):
+    """Return {"input": price, "output": price} for a model, or zero prices."""
+    name = _normalize_model_name(model)
+    if not name:
+        return {"input": 0.0, "output": 0.0}
+
+    # Exact match on full or normalized model identifier.
+    for key in (model, name):
+        if key in prices:
+            return prices[key]
+
+    # Substring match (longest key first to prefer specific entries).
+    for key in sorted(prices, key=len, reverse=True):
+        if key in name or key in str(model):
+            return prices[key]
+
+    return {"input": 0.0, "output": 0.0}
+
+
+def _extract_metrics(metadata):
+    """Return the metrics dict from metadata, or None if absent/invalid."""
+    if not isinstance(metadata, dict):
+        return None
+    metrics = metadata.get("metrics")
+    if not isinstance(metrics, dict):
+        return None
+    return metrics
+
+
+def _extract_goal_id(content):
+    """Parse the searchable identity line for a goal_id fallback."""
+    if not content:
+        return None
+    # Expected: "Goal: <uuid> | Record ID: ..."
+    prefix = "Goal: "
+    if not content.startswith(prefix):
+        return None
+    rest = content[len(prefix):]
+    if " |" in rest:
+        return rest.split(" |", 1)[0].strip()
+    return None
+
+
+def _coerce_bool(value):
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        return value.lower() in ("true", "1", "yes", "on")
+    return False
+
+
+def _coerce_int(value, default=0):
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _coerce_str(value, default=None):
+    if value is None:
+        return default
+    return str(value)
+
+
+def _parse_rfc3339(value):
+    """Parse an RFC3339-ish timestamp to a datetime object, or None."""
+    if not value:
+        return None
+    text = str(value)
+    for fmt in (
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S.%fZ",
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%dT%H:%M:%S.%f%z",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d",
+    ):
+        try:
+            return datetime.strptime(text, fmt).replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+
+def _iso(dt):
+    if dt is None:
+        return None
+    return dt.isoformat().replace("+00:00", "Z")
+
+
+def _safe_div(n, d):
+    if d == 0:
+        return 0.0
+    return n / d
+
+
+def _short_id(goal_id, length=8):
+    if not goal_id:
+        return ""
+    return goal_id[:length]
+
+
+def _add_column_if_missing(cur, table, column, ddl):
+    """Idempotent ALTER TABLE ADD COLUMN."""
+    try:
+        cur.execute(f"ALTER TABLE {table} ADD COLUMN {column} {ddl}")
+    except sqlite3.OperationalError as exc:
+        if "duplicate column name" not in str(exc).lower():
+            raise
+
+
+def _init_aggregate_db(conn):
+    cur = conn.cursor()
+    cur.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS run_log_metrics (
+            id TEXT PRIMARY KEY,
+            goal_id TEXT NOT NULL,
+            role TEXT,
+            stage TEXT,
+            stored_at TEXT,
+            metrics_json TEXT,
+            input_tokens_est INTEGER DEFAULT 0,
+            output_tokens_est INTEGER DEFAULT 0,
+            total_tokens_est INTEGER DEFAULT 0,
+            context_size INTEGER DEFAULT 0,
+            cost_estimate_usd REAL DEFAULT 0.0,
+            lifecycle_transition INTEGER DEFAULT 0,
+            verdict TEXT,
+            rework INTEGER DEFAULT 0,
+            reopen INTEGER DEFAULT 0,
+            human_intervention INTEGER DEFAULT 0,
+            source_db TEXT,
+            ingested_at TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_rlm_goal ON run_log_metrics(goal_id);
+        CREATE INDEX IF NOT EXISTS idx_rlm_role ON run_log_metrics(role);
+        CREATE INDEX IF NOT EXISTS idx_rlm_stage ON run_log_metrics(stage);
+
+        CREATE TABLE IF NOT EXISTS goal_summary (
+            goal_id TEXT PRIMARY KEY,
+            mode TEXT,
+            experiment_id TEXT,
+            first_record_at TEXT,
+            last_record_at TEXT,
+            duration_seconds INTEGER,
+            total_input_tokens_est INTEGER DEFAULT 0,
+            total_output_tokens_est INTEGER DEFAULT 0,
+            total_tokens_est INTEGER DEFAULT 0,
+            transition_count INTEGER DEFAULT 0,
+            role_count INTEGER DEFAULT 0,
+            green_count INTEGER DEFAULT 0,
+            red_count INTEGER DEFAULT 0,
+            blocked_count INTEGER DEFAULT 0,
+            rework_count INTEGER DEFAULT 0,
+            reopen_count INTEGER DEFAULT 0,
+            human_intervention_count INTEGER DEFAULT 0,
+            cost_estimate_usd REAL DEFAULT 0.0,
+            final_verdict TEXT,
+            recorded_at TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_gs_experiment ON goal_summary(experiment_id);
+
+        CREATE TABLE IF NOT EXISTS role_summary (
+            goal_id TEXT NOT NULL,
+            role TEXT NOT NULL,
+            turns INTEGER DEFAULT 0,
+            total_input_tokens_est INTEGER DEFAULT 0,
+            total_output_tokens_est INTEGER DEFAULT 0,
+            total_tokens_est INTEGER DEFAULT 0,
+            lifecycle_transitions INTEGER DEFAULT 0,
+            cost_estimate_usd REAL DEFAULT 0.0,
+            first_turn_at TEXT,
+            last_turn_at TEXT,
+            PRIMARY KEY (goal_id, role)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_rs_goal ON role_summary(goal_id);
+
+        CREATE TABLE IF NOT EXISTS stage_summary (
+            goal_id TEXT NOT NULL,
+            stage TEXT NOT NULL,
+            turns INTEGER DEFAULT 0,
+            total_input_tokens_est INTEGER DEFAULT 0,
+            total_output_tokens_est INTEGER DEFAULT 0,
+            total_tokens_est INTEGER DEFAULT 0,
+            cost_estimate_usd REAL DEFAULT 0.0,
+            first_turn_at TEXT,
+            last_turn_at TEXT,
+            PRIMARY KEY (goal_id, stage)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_ss_goal ON stage_summary(goal_id);
+        """
+    )
+    # Backward-compatible column additions for databases created before cost support.
+    _add_column_if_missing(cur, "run_log_metrics", "cost_estimate_usd", "REAL DEFAULT 0.0")
+    _add_column_if_missing(cur, "goal_summary", "cost_estimate_usd", "REAL DEFAULT 0.0")
+    _add_column_if_missing(cur, "role_summary", "cost_estimate_usd", "REAL DEFAULT 0.0")
+    _add_column_if_missing(cur, "stage_summary", "cost_estimate_usd", "REAL DEFAULT 0.0")
+    conn.commit()
+
+
+def _estimate_tokens_from_fallback(record, token_ratio):
+    """Estimate input/output tokens when metrics object is missing.
+
+    Uses the content byte size as a rough proxy for context window size.
+    """
+    content = record.get("content") or ""
+    content_bytes = len(content.encode("utf-8"))
+    context_proxy = int(content_bytes * 1.5)
+    input_tokens = int(context_proxy / token_ratio)
+    output_tokens = int((content_bytes / 4) / token_ratio)
+    return input_tokens, output_tokens
+
+
+def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
+                     goal_id, mode, token_ratio, source_label, prices):
+    """Read matching run_log records from source_db and write to dest_conn."""
+    if not os.path.exists(source_db):
+        raise FileNotFoundError(f"Eden-memory database not found: {source_db}")
+
+    source_conn = sqlite3.connect(source_db)
+    source_conn.row_factory = sqlite3.Row
+
+    params = [org_id, workspace_id]
+    filters = [
+        "m.org_id = ?",
+        "m.workspace_id = ?",
+        "(json_extract(m.metadata, '$.record_type') = 'run_log' OR json_extract(m.metadata, '$.record_type') IS NULL)",
+    ]
+
+    if goal_id:
+        filters.append("json_extract(m.metadata, '$.goal_id') = ?")
+        params.append(goal_id)
+
+    if since:
+        filters.append("COALESCE(json_extract(m.metadata, '$.stored_at'), datetime(m.created_at, 'unixepoch')) >= ?")
+        params.append(since)
+
+    if until:
+        filters.append("COALESCE(json_extract(m.metadata, '$.stored_at'), datetime(m.created_at, 'unixepoch')) <= ?")
+        params.append(until)
+
+    if mode:
+        filters.append(
+            "json_extract(m.metadata, '$.goal_id') IN ("
+            "  SELECT json_extract(mm.metadata, '$.goal_id') FROM memories mm"
+            "  WHERE mm.org_id = ? AND mm.workspace_id = ?"
+            "    AND json_extract(mm.metadata, '$.record_type') = 'goal_record'"
+            "    AND json_extract(mm.metadata, '$.mode') = ?"
+            ")"
+        )
+        params.extend([org_id, workspace_id, mode])
+
+    sql = (
+        "SELECT m.id, m.content, m.created_at, m.metadata "
+        "FROM memories m "
+        "WHERE " + " AND ".join(filters) + " "
+        "ORDER BY COALESCE(json_extract(m.metadata, '$.stored_at'), datetime(m.created_at, 'unixepoch')) ASC"
+    )
+
+    cur = source_conn.cursor()
+    cur.execute(sql, params)
+    rows = cur.fetchall()
+
+    dest_cur = dest_conn.cursor()
+    ingested = 0
+    for row in rows:
+        try:
+            metadata = json.loads(row["metadata"] or "{}")
+        except json.JSONDecodeError:
+            metadata = {}
+
+        metrics = _extract_metrics(metadata)
+        if metrics:
+            input_tokens = _coerce_int(metrics.get("input_tokens_est"))
+            output_tokens = _coerce_int(metrics.get("output_tokens_est"))
+            total_tokens = _coerce_int(
+                metrics.get("total_tokens_est"), input_tokens + output_tokens
+            )
+            context_size = _coerce_int(metrics.get("context_size"))
+            model = _coerce_str(metrics.get("model"))
+        else:
+            input_tokens, output_tokens = _estimate_tokens_from_fallback(
+                dict(row), token_ratio
+            )
+            total_tokens = input_tokens + output_tokens
+            context_size = 0
+            model = None
+
+        if not model:
+            model = _coerce_str(metadata.get("model"))
+        if not model:
+            model = "unknown"
+
+        price = _lookup_price(prices, model)
+        cost_estimate_usd = round(
+            (input_tokens * price["input"] + output_tokens * price["output"]) / 1_000_000,
+            6,
+        )
+
+        stored_at = metadata.get("stored_at")
+        if not stored_at:
+            stored_at = datetime.fromtimestamp(
+                row["created_at"], tz=timezone.utc
+            ).isoformat().replace("+00:00", "Z")
+
+        goal_id = metadata.get("goal_id")
+        if not goal_id:
+            goal_id = _extract_goal_id(row["content"])
+        if not goal_id:
+            # Skip orphaned run_logs without a goal_id; they cannot be aggregated.
+            continue
+
+        role = _coerce_str(metadata.get("owner_role"), metadata.get("agent_id")) or "unknown"
+        stage = _coerce_str(metadata.get("stage")) or "unknown"
+        verdict = _coerce_str(metrics.get("verdict") if metrics else None)
+
+        dest_cur.execute(
+            """
+            INSERT INTO run_log_metrics (
+                id, goal_id, role, stage, stored_at, metrics_json,
+                input_tokens_est, output_tokens_est, total_tokens_est, context_size,
+                cost_estimate_usd, lifecycle_transition, verdict, rework, reopen,
+                human_intervention, source_db, ingested_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                role = excluded.role,
+                stage = excluded.stage,
+                stored_at = excluded.stored_at,
+                metrics_json = excluded.metrics_json,
+                input_tokens_est = excluded.input_tokens_est,
+                output_tokens_est = excluded.output_tokens_est,
+                total_tokens_est = excluded.total_tokens_est,
+                context_size = excluded.context_size,
+                cost_estimate_usd = excluded.cost_estimate_usd,
+                lifecycle_transition = excluded.lifecycle_transition,
+                verdict = excluded.verdict,
+                rework = excluded.rework,
+                reopen = excluded.reopen,
+                human_intervention = excluded.human_intervention,
+                source_db = excluded.source_db,
+                ingested_at = excluded.ingested_at
+            """,
+            (
+                row["id"],
+                goal_id,
+                role,
+                stage,
+                stored_at,
+                json.dumps(metrics) if metrics else None,
+                input_tokens,
+                output_tokens,
+                total_tokens,
+                context_size,
+                cost_estimate_usd,
+                int(_coerce_bool(metrics.get("lifecycle_transition")) if metrics else False),
+                verdict,
+                int(_coerce_bool(metrics.get("rework")) if metrics else False),
+                int(_coerce_bool(metrics.get("reopen")) if metrics else False),
+                int(_coerce_bool(metrics.get("human_intervention")) if metrics else False),
+                source_label,
+                _now(),
+            ),
+        )
+        ingested += 1
+
+    dest_conn.commit()
+    source_conn.close()
+    return ingested
+
+
+def _read_goal_modes(source_db, org_id, workspace_id, goal_id):
+    """Read mode from the latest goal_record per goal_id."""
+    if not os.path.exists(source_db):
+        return {}
+
+    source_conn = sqlite3.connect(source_db)
+    source_conn.row_factory = sqlite3.Row
+    cur = source_conn.cursor()
+
+    params = [org_id, workspace_id]
+    filters = [
+        "m.org_id = ?",
+        "m.workspace_id = ?",
+        "json_extract(m.metadata, '$.record_type') = 'goal_record'",
+    ]
+    if goal_id:
+        filters.append("json_extract(m.metadata, '$.goal_id') = ?")
+        params.append(goal_id)
+
+    sql = (
+        "SELECT m.id, json_extract(m.metadata, '$.goal_id') AS goal_id, "
+        "json_extract(m.metadata, '$.mode') AS mode, "
+        "COALESCE(json_extract(m.metadata, '$.stored_at'), datetime(m.created_at, 'unixepoch')) AS stored_at "
+        "FROM memories m "
+        "WHERE " + " AND ".join(filters) + " "
+        "ORDER BY stored_at ASC"
+    )
+
+    cur.execute(sql, params)
+    modes = {}
+    for row in cur.fetchall():
+        modes[row["goal_id"]] = row["mode"]
+
+    source_conn.close()
+    return modes
+
+
+def _read_verdicts(source_db, org_id, workspace_id, goal_id):
+    """Read latest verdict records per goal to determine final_verdict."""
+    if not os.path.exists(source_db):
+        return {}
+
+    source_conn = sqlite3.connect(source_db)
+    source_conn.row_factory = sqlite3.Row
+    cur = source_conn.cursor()
+
+    params = [org_id, workspace_id]
+    filters = [
+        "m.org_id = ?",
+        "m.workspace_id = ?",
+        "json_extract(m.metadata, '$.record_type') = 'verdict'",
+    ]
+    if goal_id:
+        filters.append("json_extract(m.metadata, '$.goal_id') = ?")
+        params.append(goal_id)
+
+    sql = (
+        "SELECT m.id, json_extract(m.metadata, '$.goal_id') AS goal_id, "
+        "json_extract(m.metadata, '$.status') AS status, "
+        "COALESCE(json_extract(m.metadata, '$.stored_at'), datetime(m.created_at, 'unixepoch')) AS stored_at "
+        "FROM memories m "
+        "WHERE " + " AND ".join(filters) + " "
+        "ORDER BY stored_at ASC"
+    )
+
+    cur.execute(sql, params)
+    verdicts = {}
+    for row in cur.fetchall():
+        verdicts[row["goal_id"]] = row["status"]
+
+    source_conn.close()
+    return verdicts
+
+
+def _compute_aggregates(dest_conn, experiment_id, modes):
+    cur = dest_conn.cursor()
+
+    # Per-goal and per-role working data.
+    cur.execute(
+        """
+        SELECT goal_id, role, stage, stored_at, input_tokens_est, output_tokens_est,
+               total_tokens_est, cost_estimate_usd, lifecycle_transition, verdict, rework,
+               reopen, human_intervention
+        FROM run_log_metrics
+        ORDER BY goal_id, stored_at ASC
+        """
+    )
+
+    goals = {}
+    role_totals = {}
+    stage_totals = {}
+
+    for row in cur.fetchall():
+        gid = row["goal_id"]
+        role = row["role"]
+        stage = row["stage"]
+        stored = _parse_rfc3339(row["stored_at"])
+        cost = float(row["cost_estimate_usd"] or 0.0)
+
+        if gid not in goals:
+            goals[gid] = {
+                "first": stored,
+                "last": stored,
+                "total_input": 0,
+                "total_output": 0,
+                "total": 0,
+                "cost": 0.0,
+                "transitions": 0,
+                "roles": set(),
+                "green": 0,
+                "red": 0,
+                "blocked": 0,
+                "rework": 0,
+                "reopen": 0,
+                "human": 0,
+                "experiment_id": experiment_id,
+                "mode": modes.get(gid),
+            }
+        g = goals[gid]
+        if stored:
+            if g["first"] is None or stored < g["first"]:
+                g["first"] = stored
+            if g["last"] is None or stored > g["last"]:
+                g["last"] = stored
+        if role:
+            g["roles"].add(role)
+        g["total_input"] += row["input_tokens_est"]
+        g["total_output"] += row["output_tokens_est"]
+        g["total"] += row["total_tokens_est"]
+        g["cost"] += cost
+        g["transitions"] += row["lifecycle_transition"]
+        if row["verdict"] == "green":
+            g["green"] += 1
+        elif row["verdict"] == "red":
+            g["red"] += 1
+        elif row["verdict"] == "blocked":
+            g["blocked"] += 1
+        if row["rework"]:
+            g["rework"] += 1
+        if row["reopen"]:
+            g["reopen"] += 1
+        if row["human_intervention"]:
+            g["human"] += 1
+
+        # Per-role totals.
+        rkey = (gid, role)
+        if rkey not in role_totals:
+            role_totals[rkey] = {
+                "turns": 0,
+                "input": 0,
+                "output": 0,
+                "total": 0,
+                "cost": 0.0,
+                "transitions": 0,
+                "first": stored,
+                "last": stored,
+            }
+        rt = role_totals[rkey]
+        rt["turns"] += 1
+        rt["input"] += row["input_tokens_est"]
+        rt["output"] += row["output_tokens_est"]
+        rt["total"] += row["total_tokens_est"]
+        rt["cost"] += cost
+        rt["transitions"] += row["lifecycle_transition"]
+        if stored:
+            if rt["first"] is None or stored < rt["first"]:
+                rt["first"] = stored
+            if rt["last"] is None or stored > rt["last"]:
+                rt["last"] = stored
+
+        # Per-stage totals.
+        skey = (gid, stage)
+        if skey not in stage_totals:
+            stage_totals[skey] = {
+                "turns": 0,
+                "input": 0,
+                "output": 0,
+                "total": 0,
+                "cost": 0.0,
+                "first": stored,
+                "last": stored,
+            }
+        st = stage_totals[skey]
+        st["turns"] += 1
+        st["input"] += row["input_tokens_est"]
+        st["output"] += row["output_tokens_est"]
+        st["total"] += row["total_tokens_est"]
+        st["cost"] += cost
+        if stored:
+            if st["first"] is None or stored < st["first"]:
+                st["first"] = stored
+            if st["last"] is None or stored > st["last"]:
+                st["last"] = stored
+
+    return goals, role_totals, stage_totals
+
+
+def _write_aggregates(dest_conn, goals, role_totals, stage_totals, verdicts):
+    cur = dest_conn.cursor()
+    recorded_at = _now()
+
+    for gid, g in goals.items():
+        duration = 0
+        if g["first"] and g["last"]:
+            duration = int((g["last"] - g["first"]).total_seconds())
+
+        final_verdict = verdicts.get(gid)
+        if not final_verdict:
+            if g["red"] > 0:
+                final_verdict = "red"
+            elif g["blocked"] > 0:
+                final_verdict = "blocked"
+            elif g["green"] > 0:
+                final_verdict = "green"
+            else:
+                final_verdict = None
+
+        cur.execute(
+            """
+            INSERT INTO goal_summary (
+                goal_id, mode, experiment_id, first_record_at, last_record_at,
+                duration_seconds, total_input_tokens_est, total_output_tokens_est,
+                total_tokens_est, transition_count, role_count, green_count, red_count,
+                blocked_count, rework_count, reopen_count, human_intervention_count,
+                cost_estimate_usd, final_verdict, recorded_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(goal_id) DO UPDATE SET
+                mode = excluded.mode,
+                experiment_id = excluded.experiment_id,
+                first_record_at = excluded.first_record_at,
+                last_record_at = excluded.last_record_at,
+                duration_seconds = excluded.duration_seconds,
+                total_input_tokens_est = excluded.total_input_tokens_est,
+                total_output_tokens_est = excluded.total_output_tokens_est,
+                total_tokens_est = excluded.total_tokens_est,
+                transition_count = excluded.transition_count,
+                role_count = excluded.role_count,
+                green_count = excluded.green_count,
+                red_count = excluded.red_count,
+                blocked_count = excluded.blocked_count,
+                rework_count = excluded.rework_count,
+                reopen_count = excluded.reopen_count,
+                human_intervention_count = excluded.human_intervention_count,
+                cost_estimate_usd = excluded.cost_estimate_usd,
+                final_verdict = excluded.final_verdict,
+                recorded_at = excluded.recorded_at
+            """,
+            (
+                gid,
+                g["mode"],
+                g["experiment_id"],
+                _iso(g["first"]),
+                _iso(g["last"]),
+                duration,
+                g["total_input"],
+                g["total_output"],
+                g["total"],
+                g["transitions"],
+                len(g["roles"]),
+                g["green"],
+                g["red"],
+                g["blocked"],
+                g["rework"],
+                g["reopen"],
+                g["human"],
+                round(g["cost"], 6),
+                final_verdict,
+                recorded_at,
+            ),
+        )
+
+    for (gid, role), rt in role_totals.items():
+        cur.execute(
+            """
+            INSERT INTO role_summary (
+                goal_id, role, turns, total_input_tokens_est, total_output_tokens_est,
+                total_tokens_est, lifecycle_transitions, cost_estimate_usd, first_turn_at,
+                last_turn_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(goal_id, role) DO UPDATE SET
+                turns = excluded.turns,
+                total_input_tokens_est = excluded.total_input_tokens_est,
+                total_output_tokens_est = excluded.total_output_tokens_est,
+                total_tokens_est = excluded.total_tokens_est,
+                lifecycle_transitions = excluded.lifecycle_transitions,
+                cost_estimate_usd = excluded.cost_estimate_usd,
+                first_turn_at = excluded.first_turn_at,
+                last_turn_at = excluded.last_turn_at
+            """,
+            (
+                gid,
+                role,
+                rt["turns"],
+                rt["input"],
+                rt["output"],
+                rt["total"],
+                rt["transitions"],
+                round(rt["cost"], 6),
+                _iso(rt["first"]),
+                _iso(rt["last"]),
+            ),
+        )
+
+    for (gid, stage), st in stage_totals.items():
+        cur.execute(
+            """
+            INSERT INTO stage_summary (
+                goal_id, stage, turns, total_input_tokens_est, total_output_tokens_est,
+                total_tokens_est, cost_estimate_usd, first_turn_at, last_turn_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(goal_id, stage) DO UPDATE SET
+                turns = excluded.turns,
+                total_input_tokens_est = excluded.total_input_tokens_est,
+                total_output_tokens_est = excluded.total_output_tokens_est,
+                total_tokens_est = excluded.total_tokens_est,
+                cost_estimate_usd = excluded.cost_estimate_usd,
+                first_turn_at = excluded.first_turn_at,
+                last_turn_at = excluded.last_turn_at
+            """,
+            (
+                gid,
+                stage,
+                st["turns"],
+                st["input"],
+                st["output"],
+                st["total"],
+                round(st["cost"], 6),
+                _iso(st["first"]),
+                _iso(st["last"]),
+            ),
+        )
+
+    dest_conn.commit()
+
+
+def _export_jsonl(dest_conn, output_file):
+    cur = dest_conn.cursor()
+    cur.execute(
+        """
+        SELECT goal_id, mode, experiment_id, first_record_at, last_record_at,
+               duration_seconds, total_input_tokens_est, total_output_tokens_est,
+               total_tokens_est, transition_count, role_count, green_count, red_count,
+               blocked_count, rework_count, reopen_count, human_intervention_count,
+               cost_estimate_usd, final_verdict, recorded_at
+        FROM goal_summary
+        ORDER BY first_record_at ASC
+        """
+    )
+    with open(output_file, "w", encoding="utf-8") as f:
+        for row in cur.fetchall():
+            f.write(json.dumps(dict(row), default=str) + "\n")
+
+
+def _print_summary(dest_conn, missing_metrics_count, ingested):
+    cur = dest_conn.cursor()
+    cur.execute(
+        """
+        SELECT goal_id, mode, experiment_id, role_count, total_tokens_est,
+               cost_estimate_usd, duration_seconds, final_verdict, transition_count,
+               green_count, red_count, blocked_count, rework_count, reopen_count
+        FROM goal_summary
+        ORDER BY first_record_at ASC
+        """
+    )
+    rows = cur.fetchall()
+
+    if not rows:
+        print("No goal metrics found for the requested filters.")
+        return
+
+    headers = [
+        "goal_id", "mode", "roles", "turns", "total_tokens",
+        "cost_usd", "duration_s", "verdict", "transitions", "red", "reopen",
+    ]
+    col_widths = [len(h) for h in headers]
+
+    data = []
+    for row in rows:
+        cur.execute(
+            "SELECT COUNT(*) FROM run_log_metrics WHERE goal_id = ?",
+            (row["goal_id"],),
+        )
+        turn_count = cur.fetchone()[0]
+        data.append([
+            _short_id(row["goal_id"], 12),
+            row["mode"] or "-",
+            str(row["role_count"]),
+            str(turn_count),
+            str(row["total_tokens_est"]),
+            f"{row['cost_estimate_usd']:.4f}",
+            str(row["duration_seconds"]),
+            row["final_verdict"] or "-",
+            str(row["transition_count"]),
+            str(row["red_count"]),
+            str(row["reopen_count"]),
+        ])
+
+    for row in data:
+        for i, val in enumerate(row):
+            col_widths[i] = max(col_widths[i], len(val))
+
+    def _sep():
+        return "| " + " | ".join("-" * w for w in col_widths) + " |"
+
+    def _line(values):
+        return "| " + " | ".join(
+            val.ljust(col_widths[i]) for i, val in enumerate(values)
+        ) + " |"
+
+    print()
+    print("ATP token-efficiency metrics summary")
+    print(_line(headers))
+    print(_sep())
+    for row in data:
+        print(_line(row))
+    print()
+    print(f"Ingested run_log rows: {ingested}")
+    if missing_metrics_count:
+        print(
+            f"Warning: {missing_metrics_count} run_log(s) lacked a metrics object "
+            "and were estimated from content size."
+        )
+
+
+def _print_cost_breakdown(dest_conn, goal_id=None):
+    """Print a Markdown table of per-goal and per-role cost estimates."""
+    cur = dest_conn.cursor()
+
+    # Per-goal totals.
+    cur.execute(
+        """
+        SELECT goal_id, mode, total_tokens_est, cost_estimate_usd
+        FROM goal_summary
+        WHERE (? IS NULL OR goal_id = ?)
+        ORDER BY first_record_at ASC
+        """,
+        (goal_id, goal_id),
+    )
+    goal_rows = cur.fetchall()
+
+    if not goal_rows:
+        print("No goal cost data found.")
+        return
+
+    print("\nATP cost estimate breakdown (USD)")
+    print("| goal_id | mode | total_tokens | cost_usd |")
+    print("|---------|------|--------------|----------|")
+    for row in goal_rows:
+        print(
+            f"| {_short_id(row['goal_id'], 12)} | {row['mode'] or '-'} | "
+            f"{row['total_tokens_est']} | {row['cost_estimate_usd']:.4f} |"
+        )
+
+    # Per-role totals.
+    cur.execute(
+        """
+        SELECT goal_id, role, total_tokens_est, cost_estimate_usd
+        FROM role_summary
+        WHERE (? IS NULL OR goal_id = ?)
+        ORDER BY goal_id, role
+        """,
+        (goal_id, goal_id),
+    )
+    role_rows = cur.fetchall()
+
+    print("\nPer-role cost estimate breakdown (USD)")
+    print("| goal_id | role | total_tokens | cost_usd |")
+    print("|---------|------|--------------|----------|")
+    for row in role_rows:
+        print(
+            f"| {_short_id(row['goal_id'], 12)} | {row['role'] or '-'} | "
+            f"{row['total_tokens_est']} | {row['cost_estimate_usd']:.4f} |"
+        )
+    print()
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Aggregate ATP token-efficiency metrics from Eden-memory run_log records.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=textwrap.dedent(
+            """
+            Examples:
+              atp-metrics --goal-id 50598512-4eb0-4e0b-b0a1-f2ccbe1f0f7d
+              atp-metrics --since 2026-08-01 --until 2026-08-31 --mode full
+              atp-metrics --goal-id <id> --output jsonl --output-file ./metrics.jsonl
+              atp-metrics --prices '{"claude-sonnet":{"input":3,"output":15}}' --goal-id <id>
+              atp-metrics cost --goal-id <id>
+            """
+        ),
+    )
+    parser.add_argument("--db", default=_resolve_env_path("EDEN_DB_PATH", DEFAULT_EDEN_DB),
+                        help="Path to the Eden-memory SQLite database.")
+    parser.add_argument("--metrics-db", default=_resolve_env_path("ATP_METRICS_DB_PATH", DEFAULT_METRICS_DB),
+                        help="Path to the aggregate metrics SQLite database.")
+    parser.add_argument("--goal-id", help="Filter to a single goal_id.")
+    parser.add_argument("--since", help="ISO date/time lower bound (inclusive).")
+    parser.add_argument("--until", help="ISO date/time upper bound (inclusive).")
+    parser.add_argument("--mode", choices=["lite", "full"],
+                        help="Filter by goal mode (lite or full).")
+    parser.add_argument("--output", choices=["sqlite", "jsonl", "none"], default="sqlite",
+                        help="Output format for aggregates. Default: sqlite.")
+    parser.add_argument("--output-file", help="Destination for --output jsonl (defaults to stdout).")
+    parser.add_argument("--org-id", default=os.environ.get("EDEN_ORG_ID", ""),
+                        help="Organization scope override.")
+    parser.add_argument("--workspace-id", default=os.environ.get("EDEN_WORKSPACE_ID", ""),
+                        help="Workspace scope override.")
+    parser.add_argument("--experiment-id", default=DEFAULT_EXPERIMENT_ID,
+                        help="Experiment identifier to record in aggregates.")
+    parser.add_argument("--token-ratio", type=float, default=DEFAULT_TOKEN_RATIO,
+                        help="Bytes-per-token ratio for fallback estimation.")
+    parser.add_argument("--prices", default=os.environ.get("ATP_METRICS_PRICE_TABLE", ""),
+                        help="JSON file path or inline JSON price table (USD per 1M tokens).")
+    parser.add_argument("--no-summary", action="store_true",
+                        help="Skip printing the summary table.")
+
+    subparsers = parser.add_subparsers(dest="command", help="Subcommands")
+    cost_parser = subparsers.add_parser(
+        "cost",
+        help="Print a per-goal and per-role cost breakdown from existing aggregates.",
+    )
+    cost_parser.add_argument("--goal-id", help="Filter to a single goal_id.")
+    cost_parser.add_argument("--metrics-db",
+                              default=_resolve_env_path("ATP_METRICS_DB_PATH", DEFAULT_METRICS_DB),
+                              help="Path to the aggregate metrics SQLite database.")
+
+    args = parser.parse_args(argv)
+
+    org_id = args.org_id
+    workspace_id = args.workspace_id
+    if not org_id or not workspace_id:
+        org_id, workspace_id = _resolve_identity()
+
+    if not org_id or not workspace_id:
+        print(
+            "Error: EDEN_ORG_ID and EDEN_WORKSPACE_ID must be set in the environment, "
+            ".env, or passed via --org-id / --workspace-id.",
+            file=sys.stderr,
+        )
+        return 1
+
+    try:
+        prices = _load_prices(args.prices)
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    os.makedirs(os.path.dirname(args.metrics_db) or ".", exist_ok=True)
+
+    dest_conn = sqlite3.connect(args.metrics_db)
+    dest_conn.row_factory = sqlite3.Row
+    _init_aggregate_db(dest_conn)
+
+    if args.command == "cost":
+        _print_cost_breakdown(dest_conn, args.goal_id)
+        dest_conn.close()
+        return 0
+
+    source_label = os.path.abspath(args.db)
+    try:
+        ingested = _ingest_run_logs(
+            source_db=args.db,
+            dest_conn=dest_conn,
+            org_id=org_id,
+            workspace_id=workspace_id,
+            since=args.since,
+            until=args.until,
+            goal_id=args.goal_id,
+            mode=args.mode,
+            token_ratio=args.token_ratio,
+            source_label=source_label,
+            prices=prices,
+        )
+    except FileNotFoundError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    modes = _read_goal_modes(args.db, org_id, workspace_id, args.goal_id)
+    verdicts = _read_verdicts(args.db, org_id, workspace_id, args.goal_id)
+    goals, role_totals, stage_totals = _compute_aggregates(dest_conn, args.experiment_id, modes)
+    _write_aggregates(dest_conn, goals, role_totals, stage_totals, verdicts)
+
+    missing_metrics = 0
+    if ingested:
+        cur = dest_conn.cursor()
+        cur.execute(
+            "SELECT COUNT(*) FROM run_log_metrics WHERE metrics_json IS NULL"
+        )
+        missing_metrics = cur.fetchone()[0]
+
+    if args.output == "jsonl":
+        if args.output_file:
+            _export_jsonl(dest_conn, args.output_file)
+            print(f"Wrote JSONL aggregates to {args.output_file}")
+        else:
+            # Stream to stdout.
+            cur = dest_conn.cursor()
+            cur.execute(
+                """
+                SELECT goal_id, mode, experiment_id, first_record_at, last_record_at,
+                       duration_seconds, total_input_tokens_est, total_output_tokens_est,
+                       total_tokens_est, transition_count, role_count, green_count, red_count,
+                       blocked_count, rework_count, reopen_count, human_intervention_count,
+                       cost_estimate_usd, final_verdict, recorded_at
+                FROM goal_summary
+                ORDER BY first_record_at ASC
+                """
+            )
+            for row in cur.fetchall():
+                print(json.dumps(dict(row), default=str))
+    elif args.output == "none":
+        pass
+    else:
+        # sqlite is the default; nothing extra to do besides the schema already written.
+        pass
+
+    if not args.no_summary:
+        _print_summary(dest_conn, missing_metrics, ingested)
+
+    dest_conn.close()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

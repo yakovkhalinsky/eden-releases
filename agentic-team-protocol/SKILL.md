@@ -324,6 +324,19 @@ Required record types:
 
 Every goal record should include `mode: lite | full` in its metadata. The router and `/team-continue` use this to choose the correct lifecycle table. If `mode` is absent on an older goal, default to `full` to avoid breaking in-flight full-protocol goals.
 
+### Token-efficiency metrics experiment (optional)
+
+When `ATP_METRICS_ENABLED=1` is set in the project `.env`, every end-of-turn
+`run_log` must include a `metrics` object in its JSON metadata. The schema is
+defined in `agentic-team-protocol/runbooks/atp-metrics-collection.md`. The
+object contains per-turn estimated token usage, role, stage, model,
+lifecycle-transition flags, and verdict/rework/reopen signals. It requires no
+Eden-memory binary schema change; the helper script `bin/atp-metrics` reads the
+embedded metadata and writes local aggregates.
+
+When `ATP_METRICS_ENABLED` is unset or `0`, the `metrics` object is optional.
+Roles must still write `run_log` records so continuation and audit work as usual.
+
 ## Memory-first rules
 
 - Immediately after receiving a task, call `eden_recall` with the task summary. Every `eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment or `agentic-team-config.yaml`.

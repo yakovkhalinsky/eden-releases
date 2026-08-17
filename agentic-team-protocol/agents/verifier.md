@@ -50,6 +50,10 @@ Before finishing and returning the required durable record:
 
 ## Required outputs
 
+When `ATP_METRICS_ENABLED=1`, the final `run_log` of the verifier turn must
+include a `metrics` object with `verdict` set to the same value as the verdict
+record, per `runbooks/atp-metrics-collection.md`.
+
 1. A `verdict` record with status:
    - `green` — meets success criteria, residual risks documented.
    - `red` — does not meet criteria; requires rework.

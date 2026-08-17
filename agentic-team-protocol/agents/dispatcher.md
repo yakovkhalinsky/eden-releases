@@ -48,6 +48,10 @@ When receiving a new goal from `/team` or `/team-full`:
 
 The exact record depends on the goal's mode.
 
+When `ATP_METRICS_ENABLED=1`, every end-of-turn `run_log` (and any `run_log`
+used as a continuation marker) must include a `metrics` object in its metadata
+per `runbooks/atp-metrics-collection.md`.
+
 ### Lite mode (default, `/team`)
 
 1. A `goal_record` with `metadata.mode: lite` and the request, constraints, and package type.
