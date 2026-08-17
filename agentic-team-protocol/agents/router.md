@@ -27,7 +27,9 @@ Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edi
 
 When `ATP_METRICS_ENABLED=1`, every continuation `run_log` and `hand_off_record`
 must include a `metrics` object in its metadata per
-`runbooks/atp-metrics-collection.md`.
+`runbooks/atp-metrics-collection.md`. The `metrics` object must include
+`device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
+`agentic-team-protocol/lib/device_id.sh` / `agentic-team-protocol/lib/device_id.py`.
 
 1. A `run_log` record marking the continuation attempt:
    - `goal_id`, `stage: routing_and_assignment` or the inferred next stage, `owner_role: router`, `agent_id: "router"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.

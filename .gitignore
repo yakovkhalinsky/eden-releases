@@ -57,3 +57,8 @@ docs-site/public/agentic-team-protocol/
 
 # Claude Code skill hook installed locally per session.
 .github/hooks/impeccable.json
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class

@@ -29,7 +29,7 @@ Operate live systems safely. Every runtime action must be reversible and observa
 1. At the start of the turn, extract `claude_task_id` from the hand-off payload or latest goal record.
 2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Running <goal_id>".
 3. When the action record and hand-off are written, update the task to `completed`.
-4. If task tools are unavailable, record the skip in a `run_log` and continue. When `ATP_METRICS_ENABLED=1`, the final `run_log` of the runtime turn must include a `metrics` object in its metadata per `runbooks/atp-metrics-collection.md`.
+4. If task tools are unavailable, record the skip in a `run_log` and continue. When `ATP_METRICS_ENABLED=1`, the final `run_log` of the runtime turn must include a `metrics` object in its metadata per `runbooks/atp-metrics-collection.md`. The `metrics` object must include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper at `agentic-team-protocol/lib/device_id.sh` / `agentic-team-protocol/lib/device_id.py`.
 
 ## Cleanup obligations
 
