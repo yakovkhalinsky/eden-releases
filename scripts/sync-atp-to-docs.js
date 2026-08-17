@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Sync agentic-team-protocol primitives into the docs-site public tree.
+ * Sync agentic_team_protocol primitives into the docs-site public tree.
  *
- * Copies the canonical agentic-team-protocol/ directory into
+ * Copies the canonical agentic_team_protocol/ directory into
  * docs-site/public/agentic-team-protocol/ so the live site serves the
  * install script, SKILL.md, agents, commands, templates, and charter at
  * URLs the installer expects.
@@ -19,11 +19,11 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..');
-const sourceDir = path.join(repoRoot, 'agentic-team-protocol');
+const sourceDir = path.join(repoRoot, 'agentic_team_protocol');
 const targetDir = path.join(repoRoot, 'docs-site', 'public', 'agentic-team-protocol');
 const tarballName = 'agentic-team-protocol.tar.gz';
 
-// The version lives in agentic-team-protocol/VERSION. Sync it into every
+// The version lives in agentic_team_protocol/VERSION. Sync it into every
 // SKILL.md before publishing so the live installer reports the same number as
 // the source tree.
 execFileSync('node', [path.join(__dirname, 'set-atp-version.js')], {

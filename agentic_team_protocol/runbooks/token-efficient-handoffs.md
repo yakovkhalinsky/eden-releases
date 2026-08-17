@@ -88,7 +88,7 @@ context_envelope:
   next_role: verifier
   mode: full
   decision_summary:
-    - Wrote /home/yakov/git/eden-releases/agentic-team-protocol/runbooks/token-efficient-handoffs.md.
+    - Wrote /home/yakov/git/eden-releases/agentic_team_protocol/runbooks/token-efficient-handoffs.md.
     - Defined 4 KB context_envelope schema and router confidence pre-gate.
     - Provided example template, decision table, and .env recommendations.
     - No binary or skill-schema changes; no worktree used (docs-only runbook).
@@ -207,7 +207,7 @@ ATP_BUILDER_FALLBACK_EFFORT=medium
 ### 4.3 How to apply
 
 1. Edit `/home/yakov/git/eden-releases/.env` with the verifier change and the new feature flags.
-2. Update `/home/yakov/git/eden-releases/agentic-team-protocol/agents/router.md` to add the pre-gate checklist (§3.2).
+2. Update `/home/yakov/git/eden-releases/agentic_team_protocol/agents/router.md` to add the pre-gate checklist (§3.2).
 3. Update each role prompt (`builder.md`, `researcher.md`, `verifier.md`, etc.) to emit a `context_envelope` block at the end of every hand-off.
 4. Run the measurement plan in §5 before promoting the runbook to `SKILL.md`.
 
@@ -232,9 +232,9 @@ ATP_BUILDER_FALLBACK_EFFORT=medium
 
 ### 6.1 Rollback
 
-- Delete this runbook file: `rm /home/yakov/git/eden-releases/agentic-team-protocol/runbooks/token-efficient-handoffs.md`.
+- Delete this runbook file: `rm /home/yakov/git/eden-releases/agentic_team_protocol/runbooks/token-efficient-handoffs.md`.
 - Revert any `.env` changes with `git checkout -- .env`.
-- Revert any role-prompt edits with `git checkout -- agentic-team-protocol/agents/*.md`.
+- Revert any role-prompt edits with `git checkout -- agentic_team_protocol/agents/*.md`.
 - Disable the experiment: set `ATP_CONTEXT_ENVELOPE_ENABLED=0` and `ATP_ROUTER_CONFIDENCE_GATE_ENABLED=0`.
 
 ### 6.2 Risks

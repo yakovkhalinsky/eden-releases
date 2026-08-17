@@ -183,5 +183,5 @@ To disable worktree isolation for a run, pass `--no-worktree` or set `ATP_WORKTR
 
 - Read the [agent prompts reference](/agentic-team-protocol/reference/agent-prompts/) to decide which subagent the supervisor should spawn.
 - Learn the [slash command reference](/agentic-team-protocol/reference/slash-commands/) for `/team`, `/team-status`, and `/team-continue`.
-- See the [continuation runbook](https://github.com/yakovkhalinsky/eden-releases/blob/main/agentic-team-protocol/runbooks/continuation.md) for handling interrupted headless goals.
+- See the [continuation runbook](https://github.com/yakovkhalinsky/eden-releases/blob/main/agentic_team_protocol/runbooks/continuation.md) for handling interrupted headless goals.
 - Inspect the `eden-team` source and runbook in `/home/yakov/git/eden-memory/cmd/eden-team/`.

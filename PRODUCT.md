@@ -41,7 +41,7 @@ Meaningful difference: the docs are generated from the same skill/charter/comman
 - Binary releases are published as GitHub Release assets in `yakovkhalinsky/eden-releases`; `binaries/manifest.json` is the source of truth for platform metadata.
 - `eden-memory` CI normally auto-cuts releases, updates the manifest, and regenerates `docs-site/src/data/downloads.json`.
 - Skill pages are generated from `skills/*/SKILL.md` into `docs-site/src/content/docs/eden-memory/skills/` via `scripts/generate-skills-site.py`.
-- ATP charter and concepts are synced from `agentic-team-protocol/` into `docs-site/src/content/docs/agentic-team-protocol/` via `scripts/sync-atp-to-docs.js`.
+- ATP charter and concepts are synced from `agentic_team_protocol/` into `docs-site/src/content/docs/agentic-team-protocol/` via `scripts/sync-atp-to-docs.js`.
 - A typical user journey: curl-install ATP → run `eden-memory setup claude` → restart Claude Code → ratify charter with `/team-charter` → dispatch a goal with `/team`.
 - License: MIT (repo root).
 
@@ -80,7 +80,7 @@ Explicitly undecided / inferred only:
 ## Evidence on Hand
 
 - `/home/yakov/git/eden-releases/README.md` — repo purpose, release flow, regeneration commands.
-- `/home/yakov/git/eden-releases/agentic-team-protocol/README.md` and `CHARTER.md` — ATP install steps and default global charter.
+- `/home/yakov/git/eden-releases/agentic_team_protocol/README.md` and `CHARTER.md` — ATP install steps and default global charter.
 - `/home/yakov/git/eden-releases/docs-site/package.json` — Astro + Starlight stack and build pipeline.
 - `/home/yakov/git/eden-releases/docs-site/src/content/docs/` — existing docs structure for eden-memory and ATP.
 - `/home/yakov/git/eden-releases/skills/README.md` and `skills/*/SKILL.md` — skill registry source.

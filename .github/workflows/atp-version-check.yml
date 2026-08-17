@@ -3,7 +3,7 @@ name: ATP version check
 on:
   pull_request:
     paths:
-      - 'agentic-team-protocol/**'
+      - 'agentic_team_protocol/**'
       - 'scripts/set-atp-version.js'
   workflow_dispatch:
 

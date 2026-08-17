@@ -40,7 +40,7 @@ curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 
 The installers are designed to be piped to `sh`. If you run a script from a local
 clone instead, the file is tracked with executable permissions; otherwise run
-`sh ./agentic-team-protocol/install.sh`.
+`sh ./agentic_team_protocol/install.sh`.
 
 Check for ATP updates without modifying files:
 
@@ -131,14 +131,14 @@ Run `eden-memory setup claude` in a project to generate or update the project `.
 Every ATP host that participates in the token-efficiency metrics experiment must
 have a stable, privacy-safe `device_id`. The identifier is used in the `metrics`
 object of end-of-turn `run_log` records (see
-`agentic-team-protocol/runbooks/atp-metrics-collection.md`).
+`agentic_team_protocol/runbooks/atp-metrics-collection.md`).
 
 Derive it deterministically from the hostname:
 
 ```bash
-export EDEN_DEVICE_ID=$(sh ./agentic-team-protocol/lib/device_id.sh)
+export EDEN_DEVICE_ID=$(sh ./agentic_team_protocol/lib/device_id.sh)
 # or
-export EDEN_DEVICE_ID=$(python3 ./agentic-team-protocol/lib/device_id.py)
+export EDEN_DEVICE_ID=$(python3 ./agentic_team_protocol/lib/device_id.py)
 ```
 
 Format: `<project-slug>-<sha256(hostname)[0:16]>`. For example, with the default
@@ -157,8 +157,8 @@ Requirements:
 
 The shared helpers live in:
 
-- `agentic-team-protocol/lib/device_id.sh` (shell)
-- `agentic-team-protocol/lib/device_id.py` (Python)
+- `agentic_team_protocol/lib/device_id.sh` (shell)
+- `agentic_team_protocol/lib/device_id.py` (Python)
 
 Python import (from the project root):
 
@@ -167,11 +167,9 @@ from agentic_team_protocol.lib.device_id import derive_device_id
 print(derive_device_id())
 ```
 
-The `agentic_team_protocol` package alias is provided by a top-level symlink so
-that Python can import helpers from the hyphenated directory
-`agentic-team-protocol` using an underscore name. The symlink and the
-`lib/__init__.py` file make the import deterministic and stable without any
-Eden-memory binary or schema change.
+The source directory is `agentic_team_protocol/`, which is a valid Python
+package name. The `lib/__init__.py` file makes the import deterministic and stable
+without any Eden-memory binary or schema change.
 
 ### Ollama Cloud wiring
 
@@ -377,7 +375,7 @@ Every goal record should include `mode: lite | full` in its metadata. The router
 
 When `ATP_METRICS_ENABLED=1` is set in the project `.env`, every end-of-turn
 `run_log` must include a `metrics` object in its JSON metadata. The schema is
-defined in `agentic-team-protocol/runbooks/atp-metrics-collection.md`. The
+defined in `agentic_team_protocol/runbooks/atp-metrics-collection.md`. The
 object contains per-turn estimated token usage, role, stage, model,
 lifecycle-transition flags, and verdict/rework/reopen signals. It requires no
 Eden-memory binary schema change; the helper script `bin/atp-metrics` reads the
@@ -547,7 +545,7 @@ If a new `action_record` is stored after an `archival_record` for the same `goal
 
 For automated or scheduled goals, use the `eden-team` binary from the `eden-memory` monorepo instead of an interactive Claude Code session. `eden-team` defaults to Lite mode (`--mode lite`) for everyday goals; use `--mode full` for the complete 6-role lifecycle. It writes the ATP lifecycle records to Eden-memory and spawns Claude Code CLI subagent processes for each role.
 
-> **Scope propagation note:** `eden-team` is implemented in the `eden-memory` monorepo, not under `agentic-team-protocol/deployable/`. Its propagation of `org_id`/`workspace_id` to child `claude` processes and to the records it writes should be audited separately; ensure it follows the same ordered identity sources and empty-scope prohibition as interactive ATP commands.
+> **Scope propagation note:** `eden-team` is implemented in the `eden-memory` monorepo. Its propagation of `org_id`/`workspace_id` to child `claude` processes and to the records it writes should be audited separately; ensure it follows the same ordered identity sources and empty-scope prohibition as interactive ATP commands.
 
 Example (Lite mode):
 
@@ -680,7 +678,7 @@ eden-memory search \
   --user-id "${USER_ID}" \
   --org-id "${EDEN_ORG_ID}" \
   --workspace-id "${EDEN_WORKSPACE_ID}" \
-  --keywords "agentic-team-protocol goal_record" \
+  --keywords "agentic_team_protocol goal_record" \
   --limit 50
 ```
 
