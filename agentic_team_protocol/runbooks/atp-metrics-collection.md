@@ -426,7 +426,6 @@ the metrics experiment cleanly:
    rm -f agentic_team_protocol/lib/device_id.sh
    rm -f agentic_team_protocol/lib/device_id.py
    rm -f agentic_team_protocol/lib/__init__.py
-   rm -f agentic_team_protocol  # top-level symlink alias, if it exists
    ```
 5. **Revert environment wiring**:
    - Remove or comment the `EDEN_DEVICE_ID` line in
