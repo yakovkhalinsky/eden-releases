@@ -28,7 +28,7 @@ The same headless ATP functionality now lives in the `eden-team` binary in
 `/home/yakov/git/eden-memory`. Build it with `make build-team` from the
 `eden-memory` repository; the binary is produced as `eden-team` in the repository
 root. Update any local runbook paths and MCP configs from
-`agentic-team-protocol/deployable/` to `cmd/eden-team/` inside `eden-memory`.
+`agentic_team_protocol/` to `cmd/eden-team/` inside `eden-memory`.
 
 ## Orchestration script
 

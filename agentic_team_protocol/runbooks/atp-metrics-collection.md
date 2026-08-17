@@ -175,10 +175,10 @@ Every role must set `metrics.device_id` to a stable identifier for the device or
 host that produced the `run_log`. Use this precedence:
 
 1. `EDEN_DEVICE_ID` environment variable, if set. The project `.env.example`
-   derives this automatically with `./agentic-team-protocol/lib/device_id.sh`.
+   derives this automatically with `./agentic_team_protocol/lib/device_id.sh`.
 2. A deterministic, privacy-safe derived ID from the hostname using the shared
-   helper: `./agentic-team-protocol/lib/device_id.sh` (shell) or
-   `agentic-team-protocol/lib/device_id.py` (Python, importable as
+   helper: `./agentic_team_protocol/lib/device_id.sh` (shell) or
+   `agentic_team_protocol/lib/device_id.py` (Python, importable as
    `from agentic_team_protocol.lib.device_id import derive_device_id`). The
    helper produces `<project-slug>-<sha256(hostname)[0:16]>` and contains no PII.
 3. A persistent per-install identifier written to `~/.eden-memory/device_id`.
@@ -261,7 +261,7 @@ It also accepts a `--token-ratio` flag to change the bytes-per-token ratio.
 
 ## 5. Helper script: `atp-metrics`
 
-Location: `agentic-team-protocol/bin/atp-metrics`
+Location: `agentic_team_protocol/bin/atp-metrics`
 
 A Python 3 script that reads `run_log` records from the Eden-memory SQLite
 database, extracts embedded `metrics` metadata, and writes aggregated results to a
@@ -271,26 +271,26 @@ local SQLite database (default `~/.eden-memory/atp-metrics.db`) or a JSONL file.
 
 ```bash
 # Aggregate a single goal.
-./agentic-team-protocol/bin/atp-metrics --goal-id 50598512-4eb0-4e0b-b0a1-f2ccbe1f0f7d
+./agentic_team_protocol/bin/atp-metrics --goal-id 50598512-4eb0-4e0b-b0a1-f2ccbe1f0f7d
 
 # Aggregate all full-protocol goals in a date window.
-./agentic-team-protocol/bin/atp-metrics --since 2026-08-01 --until 2026-08-31 --mode full
+./agentic_team_protocol/bin/atp-metrics --since 2026-08-01 --until 2026-08-31 --mode full
 
 # Write aggregates to a JSONL file instead of the default SQLite DB.
-./agentic-team-protocol/bin/atp-metrics --goal-id <goal-id> --output jsonl --output-file ./atp-metrics.jsonl
+./agentic_team_protocol/bin/atp-metrics --goal-id <goal-id> --output jsonl --output-file ./atp-metrics.jsonl
 
 # Override paths.
-ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic-team-protocol/bin/atp-metrics --db /home/yakov/.eden-memory/default.db --goal-id <goal-id>
+ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic_team_protocol/bin/atp-metrics --db /home/yakov/.eden-memory/default.db --goal-id <goal-id>
 
 # Override the model price table (JSON file or inline JSON).
-./agentic-team-protocol/bin/atp-metrics --goal-id <goal-id> \
+./agentic_team_protocol/bin/atp-metrics --goal-id <goal-id> \
   --prices '{"claude-sonnet":{"input":3,"output":15},"claude-haiku":{"input":0.25,"output":1.25}}'
 
 # Print a per-goal and per-role cost breakdown from existing aggregates.
-./agentic-team-protocol/bin/atp-metrics cost --goal-id <goal-id>
+./agentic_team_protocol/bin/atp-metrics cost --goal-id <goal-id>
 
 # Rebuild cross-device aggregates for an experiment (see runbooks/cross-device-atp-metrics.md).
-./agentic-team-protocol/bin/atp-metrics rebuild \
+./agentic_team_protocol/bin/atp-metrics rebuild \
   --org-id 0d3sa --workspace-id yakovkhalinsky/eden-releases \
   --experiment atp-metrics-20-goal-2026-08
 ```
@@ -407,13 +407,13 @@ the metrics experiment cleanly:
    ATP_METRICS_ENABLED=0
    ```
 2. **Stop requiring the `metrics` object in role prompts**:
-   - Revert the edits in `agentic-team-protocol/agents/builder.md`,
-     `agentic-team-protocol/agents/dispatcher.md`,
-     `agentic-team-protocol/agents/researcher.md`,
-     `agentic-team-protocol/agents/router.md`,
-     `agentic-team-protocol/agents/runtime.md`,
-     `agentic-team-protocol/agents/verifier.md`, and
-     `agentic-team-protocol/agents/archivist.md`.
+   - Revert the edits in `agentic_team_protocol/agents/builder.md`,
+     `agentic_team_protocol/agents/dispatcher.md`,
+     `agentic_team_protocol/agents/researcher.md`,
+     `agentic_team_protocol/agents/router.md`,
+     `agentic_team_protocol/agents/runtime.md`,
+     `agentic_team_protocol/agents/verifier.md`, and
+     `agentic_team_protocol/agents/archivist.md`.
    - Remove any lines that require `metrics.device_id`, `metrics.experiment_id`,
      or the full `metrics` object.
 3. **Stop using `atp-metrics` for automatic aggregation**:
@@ -423,14 +423,14 @@ the metrics experiment cleanly:
      part of the default ATP lifecycle.
 4. **Delete the shared device-id helpers** (if they are no longer needed):
    ```bash
-   rm -f agentic-team-protocol/lib/device_id.sh
-   rm -f agentic-team-protocol/lib/device_id.py
-   rm -f agentic-team-protocol/lib/__init__.py
+   rm -f agentic_team_protocol/lib/device_id.sh
+   rm -f agentic_team_protocol/lib/device_id.py
+   rm -f agentic_team_protocol/lib/__init__.py
    rm -f agentic_team_protocol  # top-level symlink alias, if it exists
    ```
 5. **Revert environment wiring**:
    - Remove or comment the `EDEN_DEVICE_ID` line in
-     `agentic-team-protocol/.env.example`.
+     `agentic_team_protocol/.env.example`.
 6. **File a follow-up research goal** to understand the failure mode and decide
    whether to redesign the experiment.
 
@@ -479,6 +479,6 @@ Promote this runbook into `SKILL.md` and retire the experimental flag only when:
 
 ## 10. Files
 
-- Runbook: `/home/yakov/git/eden-releases/agentic-team-protocol/runbooks/atp-metrics-collection.md`
-- Helper script: `/home/yakov/git/eden-releases/agentic-team-protocol/bin/atp-metrics`
-- Env template: `/home/yakov/git/eden-releases/agentic-team-protocol/.env.example`
+- Runbook: `/home/yakov/git/eden-releases/agentic_team_protocol/runbooks/atp-metrics-collection.md`
+- Helper script: `/home/yakov/git/eden-releases/agentic_team_protocol/bin/atp-metrics`
+- Env template: `/home/yakov/git/eden-releases/agentic_team_protocol/.env.example`

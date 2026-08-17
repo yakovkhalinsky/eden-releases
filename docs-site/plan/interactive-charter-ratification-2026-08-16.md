@@ -118,10 +118,10 @@ The user can choose:
 
 | File | Change |
 |------|--------|
-| `agentic-team-protocol/commands/team-charter.md` | Rewrite steps to three-phase interactive flow; add `AskUserQuestion` to frontmatter; add helper functions; add non-interactive bypass. |
-| `agentic-team-protocol/templates/agentic-team-charter.md` | Keep placeholders machine-detectable; add deferral comment block. |
-| `agentic-team-protocol/SKILL.md` | Update `/team-charter` description and setup instructions to mention interactive review and `--non-interactive`. |
-| `agentic-team-protocol/README.md` | Update branch/charter section if needed to match interactive flow. |
+| `agentic_team_protocol/commands/team-charter.md` | Rewrite steps to three-phase interactive flow; add `AskUserQuestion` to frontmatter; add helper functions; add non-interactive bypass. |
+| `agentic_team_protocol/templates/agentic-team-charter.md` | Keep placeholders machine-detectable; add deferral comment block. |
+| `agentic_team_protocol/SKILL.md` | Update `/team-charter` description and setup instructions to mention interactive review and `--non-interactive`. |
+| `agentic_team_protocol/README.md` | Update branch/charter section if needed to match interactive flow. |
 | `docs-site/src/content/docs/agentic-team-protocol/tutorials/ratify-charter.md` | Rewrite tutorial to show the checklist flow. |
 | `docs-site/src/content/docs/agentic-team-protocol/reference/slash-commands.md` | Update `/team-charter` reference with new output and flags. |
 | `docs-site/src/content/docs/agentic-team-protocol/charter-anatomy.mdx` | Optional: mention interactive ratification in the ratification section. |

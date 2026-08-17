@@ -44,7 +44,7 @@ The `eden-releases` workspace contains **502 non-deleted eden-memory records** w
 
 
 > **Note:** The `atp-run` agent ID is legacy. The headless ATP supervisor
-> previously lived in `eden-releases/agentic-team-protocol/deployable/` and was
+> previously lived in `eden-releases/agentic_team_protocol/` and was
 > removed on 2026-08-05. The same functionality is now provided by `eden-team`
 > in `/home/yakov/git/eden-memory`. New records should use agent ID `eden-team`.
 

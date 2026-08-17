@@ -54,7 +54,7 @@ When `ATP_METRICS_ENABLED=1`, the final `run_log` of the verifier turn must
 include a `metrics` object with `verdict` set to the same value as the verdict
 record, per `runbooks/atp-metrics-collection.md`. The `metrics` object must
 include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
-`agentic-team-protocol/lib/device_id.sh` / `agentic-team-protocol/lib/device_id.py`.
+`agentic_team_protocol/lib/device_id.sh` / `agentic_team_protocol/lib/device_id.py`.
 
 1. A `verdict` record with status:
    - `green` — meets success criteria, residual risks documented.

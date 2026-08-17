@@ -54,10 +54,10 @@ with the shared helper:
 
 ```bash
 # Shell usage
-export EDEN_DEVICE_ID=$(sh ./agentic-team-protocol/lib/device_id.sh)
+export EDEN_DEVICE_ID=$(sh ./agentic_team_protocol/lib/device_id.sh)
 
 # Python script usage
-export EDEN_DEVICE_ID=$(python3 ./agentic-team-protocol/lib/device_id.py)
+export EDEN_DEVICE_ID=$(python3 ./agentic_team_protocol/lib/device_id.py)
 
 # Python import usage (from the project root)
 python3 -c 'from agentic_team_protocol.lib.device_id import derive_device_id; print(derive_device_id())'
@@ -67,14 +67,12 @@ The helper produces `<project-slug>-<sha256(hostname)[0:16]>` and contains no
 personal identifiers. Do **not** use usernames, full MAC addresses, serial
 numbers, or any other personal identifier.
 
-The `agentic_team_protocol` import alias is provided by a top-level symlink to
-the `agentic-team-protocol` directory plus `lib/__init__.py`, so Python can import
-the helper with an underscore package name while the canonical directory name
-keeps its hyphen.
+The source directory is `agentic_team_protocol/` and contains `lib/__init__.py`,
+so Python can import the helper as `agentic_team_protocol.lib.device_id`.
 
 Each ATP role prompt now requires the final `run_log` `metrics` object to
 include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper. See
-the role prompts under `.claude/agents/` (or `agentic-team-protocol/agents/`).
+the role prompts under `.claude/agents/` (or `agentic_team_protocol/agents/`).
 
 ---
 
@@ -84,7 +82,7 @@ The `rebuild` subcommand rebuilds the local aggregate database from all
 `run_log` records that match an org/workspace/experiment scope.
 
 ```bash
-./agentic-team-protocol/bin/atp-metrics rebuild \
+./agentic_team_protocol/bin/atp-metrics rebuild \
   --org-id 0d3sa \
   --workspace-id yakovkhalinsky/eden-releases \
   --experiment atp-metrics-20-goal-2026-08
@@ -94,7 +92,7 @@ If some run_log records do not yet carry `metrics.experiment_id`, use a wildcard
 scan to aggregate them all:
 
 ```bash
-./agentic-team-protocol/bin/atp-metrics rebuild \
+./agentic_team_protocol/bin/atp-metrics rebuild \
   --org-id 0d3sa \
   --workspace-id yakovkhalinsky/eden-releases \
   --experiment '*'
@@ -257,26 +255,26 @@ ATP lifecycle:
    ```
 2. **Stop the aggregate helper**:
    - Remove any scripts, aliases, or cron jobs that run
-     `./agentic-team-protocol/bin/atp-metrics rebuild` automatically.
+     `./agentic_team_protocol/bin/atp-metrics rebuild` automatically.
    - You may keep `bin/atp-metrics` for manual analysis, but it must not be
      required by role prompts.
 3. **Revert the role-prompt edits**:
-   - In every file under `agentic-team-protocol/agents/`, remove the requirement
+   - In every file under `agentic_team_protocol/agents/`, remove the requirement
      that end-of-turn `run_log` records include a `metrics` object with
      `device_id`, `experiment_id`, and the other metrics fields.
 4. **Delete the shared device-id helpers**:
    ```bash
-   rm -f agentic-team-protocol/lib/device_id.sh
-   rm -f agentic-team-protocol/lib/device_id.py
-   rm -f agentic-team-protocol/lib/__init__.py
+   rm -f agentic_team_protocol/lib/device_id.sh
+   rm -f agentic_team_protocol/lib/device_id.py
+   rm -f agentic_team_protocol/lib/__init__.py
    rm -f agentic_team_protocol  # top-level symlink alias, if it exists
    ```
 5. **Revert environment wiring**:
    - Remove or comment the `EDEN_DEVICE_ID` line in
-     `agentic-team-protocol/.env.example`.
+     `agentic_team_protocol/.env.example`.
 6. **Remove this runbook** (optional):
    ```bash
-   rm -f agentic-team-protocol/runbooks/cross-device-atp-metrics.md
+   rm -f agentic_team_protocol/runbooks/cross-device-atp-metrics.md
    ```
 
 After rollback, the only durable trace of the experiment should be archived
@@ -287,7 +285,7 @@ state.
 
 ## 8. Files
 
-- Runbook: `/home/yakov/git/eden-releases/agentic-team-protocol/runbooks/cross-device-atp-metrics.md`
-- Metrics schema runbook: `/home/yakov/git/eden-releases/agentic-team-protocol/runbooks/atp-metrics-collection.md`
-- Helper script: `/home/yakov/git/eden-releases/agentic-team-protocol/bin/atp-metrics`
-- Role prompts: `/home/yakov/git/eden-releases/agentic-team-protocol/agents/*.md`
+- Runbook: `/home/yakov/git/eden-releases/agentic_team_protocol/runbooks/cross-device-atp-metrics.md`
+- Metrics schema runbook: `/home/yakov/git/eden-releases/agentic_team_protocol/runbooks/atp-metrics-collection.md`
+- Helper script: `/home/yakov/git/eden-releases/agentic_team_protocol/bin/atp-metrics`
+- Role prompts: `/home/yakov/git/eden-releases/agentic_team_protocol/agents/*.md`

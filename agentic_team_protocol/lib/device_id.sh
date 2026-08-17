@@ -2,7 +2,7 @@
 # device_id.sh — derive a stable, privacy-safe device identifier from the hostname.
 #
 # Usage:
-#   export EDEN_DEVICE_ID=$(./agentic-team-protocol/lib/device_id.sh)
+#   export EDEN_DEVICE_ID=$(./agentic_team_protocol/lib/device_id.sh)
 #
 # The identifier is deterministic for the same hostname, stable across restarts,
 # and contains no personal identifiers (usernames, MAC addresses, serials, IPs).

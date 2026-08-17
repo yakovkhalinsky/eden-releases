@@ -108,7 +108,7 @@ List active goals, current stage, owner role, and latest record IDs. Optionally 
      --user-id "${USER_ID}" \
      --org-id "${EDEN_ORG_ID}" \
      --workspace-id "${EDEN_WORKSPACE_ID}" \
-     --keywords "agentic-team-protocol goal_record stage run_log hand_off_record pending_authorisation blocked cleanup_record" \
+     --keywords "agentic_team_protocol goal_record stage run_log hand_off_record pending_authorisation blocked cleanup_record" \
      --limit 100
    ```
 4. Group results by `goal_id` and find the latest stage per goal.

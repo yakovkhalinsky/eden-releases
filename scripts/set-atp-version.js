@@ -2,7 +2,7 @@
 /**
  * Keep the Agentic Team Protocol version in sync across all SKILL.md files.
  *
- * The single source of truth is agentic-team-protocol/VERSION.
+ * The single source of truth is agentic_team_protocol/VERSION.
  * This script reads that file and rewrites the `version:` frontmatter key in
  * every ATP SKILL.md so the installer, the live site, and local clones all report
  * the same number.
@@ -16,12 +16,12 @@ const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..');
-const versionFile = path.join(repoRoot, 'agentic-team-protocol', 'VERSION');
+const versionFile = path.join(repoRoot, 'agentic_team_protocol', 'VERSION');
 const skillFiles = [
-  path.join(repoRoot, 'agentic-team-protocol', 'SKILL.md'),
+  path.join(repoRoot, 'agentic_team_protocol', 'SKILL.md'),
   path.join(
     repoRoot,
-    'agentic-team-protocol',
+    'agentic_team_protocol',
     'templates',
     'skills',
     'agentic-team-protocol',
