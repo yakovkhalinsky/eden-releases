@@ -46,6 +46,7 @@ analysts consume it.
 |-------|------|----------|-------------|
 | `enabled` | boolean | yes | Must be `true` when `ATP_METRICS_ENABLED=1`. Lets the helper distinguish experimental records from baseline records. |
 | `experiment_id` | string | yes | Stable experiment identifier. Default: `atp-metrics-20-goal-2026-08`. |
+| `device_id` | string | yes | Stable identifier for the originating device/host where this `run_log` was produced. Prefer the value of the `EDEN_DEVICE_ID` environment variable; otherwise derive a deterministic ID from the hostname (e.g., a hash or sanitized hostname) or use a persistent per-install identifier. Must not include PII such as a username or full MAC address. |
 | `role` | string | yes | Role that produced the `run_log`: `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`, `router`. |
 | `stage` | string | yes | Lifecycle stage at turn end, e.g. `goal_receipt`, `routing_and_assignment`, `context_gathering`, `action`, `verification`, `recording_and_archival`, `hand_off_or_closure`. |
 | `turn_start` | RFC3339 | yes | ISO timestamp when the role turn started. |
@@ -72,7 +73,8 @@ when serialized. Keep `notes` under 200 bytes.
 
 ### 2.3 Where it lives
 
-Embed `metrics` inside the `run_log` metadata JSON blob:
+Embed `metrics` inside the `run_log` metadata JSON blob (the trailing JSON block
+in the record content, which `atp-metrics` also parses as a fallback):
 
 ```json
 {
@@ -90,6 +92,7 @@ Embed `metrics` inside the `run_log` metadata JSON blob:
   "metrics": {
     "enabled": true,
     "experiment_id": "atp-metrics-20-goal-2026-08",
+    "device_id": "device-abc123",
     "role": "builder",
     "stage": "action",
     "turn_start": "2026-08-17T10:00:00Z",
@@ -112,9 +115,10 @@ Embed `metrics` inside the `run_log` metadata JSON blob:
 }
 ```
 
-The `run_log` content still begins with the searchable identity line and may
-include the same metadata block as before. The `metrics` object does not appear
-in the free-text content; it lives only in the JSON metadata.
+The `run_log` content begins with the searchable identity line, may include
+free text, and ends with the JSON metadata block. The `atp-metrics` helper
+merges the `metadata` column with the trailing JSON block so the `metrics`
+object is found regardless of which store wrote the record.
 
 ### 2.4 Example `run_log` content block
 
@@ -123,7 +127,7 @@ Goal: 50598512-4eb0-4e0b-b0a1-f2ccbe1f0f7d | Record ID: <this_record_id> | Stage
 
 RUN LOG — builder turn complete; handing off to verifier.
 
-{"record_type":"run_log","goal_id":"50598512-4eb0-4e0b-b0a1-f2ccbe1f0f7d","stage":"action","owner_role":"builder","agent_id":"builder","status":"completed","input_record_ids":["<parent>"],"output_record_ids":["<this>"],"recalled_memory_ids":["<memory>"],"org_id":"0d3sa","workspace_id":"yakovkhalinsky/eden-releases","metrics":{"enabled":true,"experiment_id":"atp-metrics-20-goal-2026-08","role":"builder","stage":"action","turn_start":"2026-08-17T10:00:00Z","turn_end":"2026-08-17T10:05:00Z","input_tokens_est":15000,"output_tokens_est":3000,"total_tokens_est":18000,"cost_estimate_usd":0.054,"context_size":54000,"model":"ollama:kimi-k2.7-code:cloud","backend":"ollama","effort":"medium","lifecycle_transition":true,"verdict":null,"rework":false,"reopen":false,"human_intervention":false,"notes":null}}
+{"record_type":"run_log","goal_id":"50598512-4eb0-4e0b-b0a1-f2ccbe1f0f7d","stage":"action","owner_role":"builder","agent_id":"builder","status":"completed","input_record_ids":["<parent>"],"output_record_ids":["<this>"],"recalled_memory_ids":["<memory>"],"org_id":"0d3sa","workspace_id":"yakovkhalinsky/eden-releases","metrics":{"enabled":true,"experiment_id":"atp-metrics-20-goal-2026-08","device_id":"device-abc123","role":"builder","stage":"action","turn_start":"2026-08-17T10:00:00Z","turn_end":"2026-08-17T10:05:00Z","input_tokens_est":15000,"output_tokens_est":3000,"total_tokens_est":18000,"cost_estimate_usd":0.054,"context_size":54000,"model":"ollama:kimi-k2.7-code:cloud","backend":"ollama","effort":"medium","lifecycle_transition":true,"verdict":null,"rework":false,"reopen":false,"human_intervention":false,"notes":null}}
 ```
 
 ### 2.5 Default model price table
@@ -164,6 +168,24 @@ environment variable.
 
 Roles write a `run_log` at the **start** and **end** of each turn. Only the
 **end-of-turn** `run_log` must include the `metrics` object.
+
+### `device_id`
+
+Every role must set `metrics.device_id` to a stable identifier for the device or
+host that produced the `run_log`. Use this precedence:
+
+1. `EDEN_DEVICE_ID` environment variable, if set. The project `.env.example`
+   derives this automatically with `./agentic-team-protocol/lib/device_id.sh`.
+2. A deterministic, privacy-safe derived ID from the hostname using the shared
+   helper: `./agentic-team-protocol/lib/device_id.sh` (shell) or
+   `agentic-team-protocol/lib/device_id.py` (Python, importable as
+   `from agentic_team_protocol.lib.device_id import derive_device_id`). The
+   helper produces `<project-slug>-<sha256(hostname)[0:16]>` and contains no PII.
+3. A persistent per-install identifier written to `~/.eden-memory/device_id`.
+
+Do not include usernames, full MAC addresses, serial numbers, or other personal
+identifiers in `device_id`. If a deterministic identifier cannot be derived, use
+the literal `unknown`.
 
 ### Dispatcher
 
@@ -266,6 +288,11 @@ ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic-team-protocol/bin/atp-metrics --db
 
 # Print a per-goal and per-role cost breakdown from existing aggregates.
 ./agentic-team-protocol/bin/atp-metrics cost --goal-id <goal-id>
+
+# Rebuild cross-device aggregates for an experiment (see runbooks/cross-device-atp-metrics.md).
+./agentic-team-protocol/bin/atp-metrics rebuild \
+  --org-id 0d3sa --workspace-id yakovkhalinsky/eden-releases \
+  --experiment atp-metrics-20-goal-2026-08
 ```
 
 ### 5.2 Environment variables
@@ -278,6 +305,7 @@ ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic-team-protocol/bin/atp-metrics --db
 | `EDEN_DB_PATH` | `${HOME}/.eden-memory/default.db` | Source Eden-memory database path. |
 | `EDEN_ORG_ID` | resolved from `.env` / config | Organization scope for queries. |
 | `EDEN_WORKSPACE_ID` | resolved from `.env` / config | Workspace scope for queries. |
+| `EDEN_DEVICE_ID` | `unknown` | Stable identifier for the host producing `run_log` metrics. Must be privacy-safe. |
 
 ### 5.3 Aggregate database schema
 
@@ -298,10 +326,16 @@ The helper creates the following tables in `ATP_METRICS_DB_PATH`:
     `total_output_tokens_est`, `total_tokens_est`, `cost_estimate_usd`,
     `first_turn_at`, `last_turn_at`.
 - `run_log_metrics` — one row per source `run_log`:
-  - `id`, `goal_id`, `role`, `stage`, `stored_at`, `metrics_json`,
+  - `id`, `goal_id`, `role`, `stage`, `device_id`, `stored_at`, `metrics_json`,
     `input_tokens_est`, `output_tokens_est`, `total_tokens_est`,
     `cost_estimate_usd`, `lifecycle_transition`, `verdict`, `rework`, `reopen`,
     `human_intervention`, `source_db`, `ingested_at`.
+- Cross-device aggregate views (created by `atp-metrics rebuild`):
+  - `per_goal` — totals and averages per goal.
+  - `per_role` — totals and averages per role.
+  - `per_device` — totals and averages per originating device.
+  - `quality_correlation` — per-goal metrics joined with final verdict status.
+  See `runbooks/cross-device-atp-metrics.md` for query examples.
 
 ### 5.4 Summary table output
 
@@ -364,12 +398,41 @@ For each goal:
 
 ### 6.5 Rollback
 
-If the experiment fails the primary threshold or breaches a guardrail:
+If the experiment fails the primary threshold or breaches a guardrail, roll back
+the metrics experiment cleanly:
 
-1. Set `ATP_METRICS_ENABLED=0`.
-2. Stop requiring the `metrics` object in role prompts.
-3. Keep `atp-metrics` available for ad-hoc analysis.
-4. File a follow-up research goal to understand the failure mode.
+1. **Disable the experiment flag**:
+   ```bash
+   # In your project .env or shell environment
+   ATP_METRICS_ENABLED=0
+   ```
+2. **Stop requiring the `metrics` object in role prompts**:
+   - Revert the edits in `agentic-team-protocol/agents/builder.md`,
+     `agentic-team-protocol/agents/dispatcher.md`,
+     `agentic-team-protocol/agents/researcher.md`,
+     `agentic-team-protocol/agents/router.md`,
+     `agentic-team-protocol/agents/runtime.md`,
+     `agentic-team-protocol/agents/verifier.md`, and
+     `agentic-team-protocol/agents/archivist.md`.
+   - Remove any lines that require `metrics.device_id`, `metrics.experiment_id`,
+     or the full `metrics` object.
+3. **Stop using `atp-metrics` for automatic aggregation**:
+   - Remove any cron jobs, CI steps, or wrapper scripts that run
+     `atp-metrics rebuild` automatically.
+   - The helper can remain in `bin/` for ad-hoc analysis, but it should not be
+     part of the default ATP lifecycle.
+4. **Delete the shared device-id helpers** (if they are no longer needed):
+   ```bash
+   rm -f agentic-team-protocol/lib/device_id.sh
+   rm -f agentic-team-protocol/lib/device_id.py
+   rm -f agentic-team-protocol/lib/__init__.py
+   rm -f agentic_team_protocol  # top-level symlink alias, if it exists
+   ```
+5. **Revert environment wiring**:
+   - Remove or comment the `EDEN_DEVICE_ID` line in
+     `agentic-team-protocol/.env.example`.
+6. **File a follow-up research goal** to understand the failure mode and decide
+   whether to redesign the experiment.
 
 ---
 

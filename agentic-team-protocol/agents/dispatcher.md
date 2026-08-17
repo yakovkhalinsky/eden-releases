@@ -50,7 +50,9 @@ The exact record depends on the goal's mode.
 
 When `ATP_METRICS_ENABLED=1`, every end-of-turn `run_log` (and any `run_log`
 used as a continuation marker) must include a `metrics` object in its metadata
-per `runbooks/atp-metrics-collection.md`.
+per `runbooks/atp-metrics-collection.md`. The `metrics` object must include
+`device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
+`agentic-team-protocol/lib/device_id.sh` / `agentic-team-protocol/lib/device_id.py`.
 
 ### Lite mode (default, `/team`)
 

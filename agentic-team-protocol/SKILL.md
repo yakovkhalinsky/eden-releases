@@ -124,6 +124,55 @@ Use `backend:model` form for cross-backend values, e.g. `anthropic:sonnet`, `oll
 
 Run `eden-memory setup claude` in a project to generate or update the project `.env` with seed keys and per-role model comments.
 
+## Environment and identity
+
+### Stable device identifier (`EDEN_DEVICE_ID`)
+
+Every ATP host that participates in the token-efficiency metrics experiment must
+have a stable, privacy-safe `device_id`. The identifier is used in the `metrics`
+object of end-of-turn `run_log` records (see
+`agentic-team-protocol/runbooks/atp-metrics-collection.md`).
+
+Derive it deterministically from the hostname:
+
+```bash
+export EDEN_DEVICE_ID=$(sh ./agentic-team-protocol/lib/device_id.sh)
+# or
+export EDEN_DEVICE_ID=$(python3 ./agentic-team-protocol/lib/device_id.py)
+```
+
+Format: `<project-slug>-<sha256(hostname)[0:16]>`. For example, with the default
+project slug `eden` and hostname `yakov-laptop`, the helper produces
+`eden-77aabdbeb2fbdb27`.
+
+Requirements:
+
+- **Privacy-safe**: must not include usernames, full MAC addresses, serial
+  numbers, IP addresses, or any other personal identifier.
+- **Stable**: the same hostname must always produce the same `device_id`.
+- **Restart-safe**: the value must not change across reboots or process
+  restarts.
+- **Set via `EDEN_DEVICE_ID`**: role prompts read `device_id` from the
+  `EDEN_DEVICE_ID` environment variable. If it is unset, use the shared helper.
+
+The shared helpers live in:
+
+- `agentic-team-protocol/lib/device_id.sh` (shell)
+- `agentic-team-protocol/lib/device_id.py` (Python)
+
+Python import (from the project root):
+
+```python
+from agentic_team_protocol.lib.device_id import derive_device_id
+print(derive_device_id())
+```
+
+The `agentic_team_protocol` package alias is provided by a top-level symlink so
+that Python can import helpers from the hyphenated directory
+`agentic-team-protocol` using an underscore name. The symlink and the
+`lib/__init__.py` file make the import deterministic and stable without any
+Eden-memory binary or schema change.
+
 ### Ollama Cloud wiring
 
 To target Ollama Cloud, set the Anthropic-compatible endpoint and authenticate with your Ollama API key:

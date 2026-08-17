@@ -3,8 +3,9 @@
 
 Reads run_log records from the Eden-memory SQLite database, extracts the
 embedded `metrics` metadata object defined by the ATP metrics runbook, and
-writes per-goal / per-stage / per-role aggregates to a local SQLite database or
-a JSONL file. Computes cost_estimate_usd from per-model input/output prices.
+writes per-goal / per-stage / per-role / per-device aggregates to a local
+SQLite database or a JSONL file. Computes cost_estimate_usd from per-model
+input/output prices.
 
 No Eden-memory binary schema change is required; the script queries the
 existing `memories` table directly and parses the JSON `metadata` column.
@@ -163,6 +164,72 @@ def _extract_metrics(metadata):
     return metrics
 
 
+def _extract_content_json(content):
+    """Parse the first top-level JSON object from a record content block.
+
+    ATP records store a searchable identity line, optional free text, and a
+    JSON metadata block at the end of the content. Some stores (e.g. the MCP
+    `eden_remember` tool) populate the `metadata` column with only basic
+    identity fields, so the canonical record fields must be read from content.
+    """
+    if not content:
+        return {}
+    text = str(content)
+    start = text.find("{")
+    if start == -1:
+        return {}
+
+    depth = 0
+    in_string = False
+    escape = False
+    for i, ch in enumerate(text[start:], start):
+        if escape:
+            escape = False
+            continue
+        if ch == "\\":
+            escape = True
+            continue
+        if ch == '"' and not escape:
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                try:
+                    return json.loads(text[start : i + 1])
+                except json.JSONDecodeError:
+                    return {}
+    return {}
+
+
+def _merge_metadata(metadata, content):
+    """Return metadata merged with the trailing JSON block from content.
+
+    Content JSON is treated as canonical for agent-written fields. System
+    identity fields (agent_id, org_id, etc.) are preserved from the metadata
+    column because the store sets them authoritatively.
+    """
+    content_json = _extract_content_json(content)
+    merged = dict(metadata) if isinstance(metadata, dict) else {}
+    system_fields = {
+        "agent_id",
+        "org_id",
+        "user_id",
+        "workspace_id",
+        "stored_at",
+        "ttl_ms",
+        "created_at",
+    }
+    for key, value in content_json.items():
+        if key not in system_fields:
+            merged[key] = value
+    return merged
+
+
 def _extract_goal_id(content):
     """Parse the searchable identity line for a goal_id fallback."""
     if not content:
@@ -258,6 +325,7 @@ def _init_aggregate_db(conn):
             goal_id TEXT NOT NULL,
             role TEXT,
             stage TEXT,
+            device_id TEXT DEFAULT 'unknown',
             stored_at TEXT,
             metrics_json TEXT,
             input_tokens_est INTEGER DEFAULT 0,
@@ -277,6 +345,8 @@ def _init_aggregate_db(conn):
         CREATE INDEX IF NOT EXISTS idx_rlm_goal ON run_log_metrics(goal_id);
         CREATE INDEX IF NOT EXISTS idx_rlm_role ON run_log_metrics(role);
         CREATE INDEX IF NOT EXISTS idx_rlm_stage ON run_log_metrics(stage);
+        CREATE INDEX IF NOT EXISTS idx_rlm_device ON run_log_metrics(device_id);
+        CREATE INDEX IF NOT EXISTS idx_rlm_experiment ON run_log_metrics(metrics_json);
 
         CREATE TABLE IF NOT EXISTS goal_summary (
             goal_id TEXT PRIMARY KEY,
@@ -333,10 +403,105 @@ def _init_aggregate_db(conn):
         );
 
         CREATE INDEX IF NOT EXISTS idx_ss_goal ON stage_summary(goal_id);
+
+        -- Aggregate views required for cross-device analysis.
+        -- per_goal: totals and averages per goal.
+        CREATE VIEW IF NOT EXISTS per_goal AS
+        SELECT
+            goal_id,
+            mode,
+            experiment_id,
+            first_record_at,
+            last_record_at,
+            duration_seconds,
+            total_input_tokens_est,
+            total_output_tokens_est,
+            total_tokens_est,
+            CAST(total_input_tokens_est AS REAL) / NULLIF(transition_count, 0) AS avg_input_tokens_per_transition,
+            CAST(total_output_tokens_est AS REAL) / NULLIF(transition_count, 0) AS avg_output_tokens_per_transition,
+            CAST(total_tokens_est AS REAL) / NULLIF(transition_count, 0) AS avg_total_tokens_per_transition,
+            transition_count,
+            role_count,
+            green_count,
+            red_count,
+            blocked_count,
+            rework_count,
+            reopen_count,
+            human_intervention_count,
+            cost_estimate_usd,
+            final_verdict,
+            recorded_at
+        FROM goal_summary;
+
+        -- per_role: totals and averages per role across all goals.
+        CREATE VIEW IF NOT EXISTS per_role AS
+        SELECT
+            role,
+            COUNT(DISTINCT goal_id) AS goals,
+            SUM(turns) AS turns,
+            SUM(total_input_tokens_est) AS total_input_tokens_est,
+            SUM(total_output_tokens_est) AS total_output_tokens_est,
+            SUM(total_tokens_est) AS total_tokens_est,
+            CAST(SUM(total_input_tokens_est) AS REAL) / NULLIF(SUM(turns), 0) AS avg_input_tokens_per_turn,
+            CAST(SUM(total_output_tokens_est) AS REAL) / NULLIF(SUM(turns), 0) AS avg_output_tokens_per_turn,
+            CAST(SUM(total_tokens_est) AS REAL) / NULLIF(SUM(turns), 0) AS avg_total_tokens_per_turn,
+            SUM(lifecycle_transitions) AS lifecycle_transitions,
+            SUM(cost_estimate_usd) AS cost_estimate_usd,
+            MIN(first_turn_at) AS first_turn_at,
+            MAX(last_turn_at) AS last_turn_at
+        FROM role_summary
+        GROUP BY role;
+
+        -- per_device: totals and averages per originating device.
+        CREATE VIEW IF NOT EXISTS per_device AS
+        SELECT
+            COALESCE(device_id, 'unknown') AS device_id,
+            COUNT(*) AS turns,
+            COUNT(DISTINCT goal_id) AS goals,
+            SUM(input_tokens_est) AS total_input_tokens_est,
+            SUM(output_tokens_est) AS total_output_tokens_est,
+            SUM(total_tokens_est) AS total_tokens_est,
+            CAST(SUM(input_tokens_est) AS REAL) / NULLIF(COUNT(*), 0) AS avg_input_tokens_per_turn,
+            CAST(SUM(output_tokens_est) AS REAL) / NULLIF(COUNT(*), 0) AS avg_output_tokens_per_turn,
+            CAST(SUM(total_tokens_est) AS REAL) / NULLIF(COUNT(*), 0) AS avg_total_tokens_per_turn,
+            SUM(cost_estimate_usd) AS cost_estimate_usd,
+            SUM(lifecycle_transition) AS lifecycle_transitions,
+            SUM(rework) AS rework_count,
+            SUM(reopen) AS reopen_count,
+            SUM(human_intervention) AS human_intervention_count,
+            MIN(stored_at) AS first_turn_at,
+            MAX(stored_at) AS last_turn_at
+        FROM run_log_metrics
+        GROUP BY device_id;
+
+        -- quality_correlation: join per-goal totals with final verdict status.
+        CREATE VIEW IF NOT EXISTS quality_correlation AS
+        SELECT
+            gs.goal_id,
+            gs.mode,
+            gs.final_verdict,
+            CASE gs.final_verdict
+                WHEN 'green' THEN 1
+                WHEN 'red' THEN -1
+                WHEN 'blocked' THEN 0
+                ELSE NULL
+            END AS verdict_quality,
+            gs.total_tokens_est,
+            gs.total_input_tokens_est,
+            gs.total_output_tokens_est,
+            gs.cost_estimate_usd,
+            gs.duration_seconds,
+            gs.transition_count,
+            gs.rework_count,
+            gs.reopen_count,
+            gs.human_intervention_count,
+            gs.recorded_at
+        FROM goal_summary gs;
         """
     )
-    # Backward-compatible column additions for databases created before cost support.
+    # Backward-compatible column additions for databases created before newer fields.
     _add_column_if_missing(cur, "run_log_metrics", "cost_estimate_usd", "REAL DEFAULT 0.0")
+    _add_column_if_missing(cur, "run_log_metrics", "device_id", "TEXT DEFAULT 'unknown'")
     _add_column_if_missing(cur, "goal_summary", "cost_estimate_usd", "REAL DEFAULT 0.0")
     _add_column_if_missing(cur, "role_summary", "cost_estimate_usd", "REAL DEFAULT 0.0")
     _add_column_if_missing(cur, "stage_summary", "cost_estimate_usd", "REAL DEFAULT 0.0")
@@ -356,8 +521,18 @@ def _estimate_tokens_from_fallback(record, token_ratio):
     return input_tokens, output_tokens
 
 
+def _resolve_device_id(metrics):
+    """Return a stable device_id from metrics, or 'unknown'."""
+    if not isinstance(metrics, dict):
+        return "unknown"
+    device_id = _coerce_str(metrics.get("device_id"))
+    if device_id:
+        return device_id
+    return "unknown"
+
+
 def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
-                     goal_id, mode, token_ratio, source_label, prices):
+                     goal_id, mode, experiment_id, token_ratio, source_label, prices):
     """Read matching run_log records from source_db and write to dest_conn."""
     if not os.path.exists(source_db):
         raise FileNotFoundError(f"Eden-memory database not found: {source_db}")
@@ -369,6 +544,7 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
     filters = [
         "m.org_id = ?",
         "m.workspace_id = ?",
+        "m.deleted_at = 0",
         "(json_extract(m.metadata, '$.record_type') = 'run_log' OR json_extract(m.metadata, '$.record_type') IS NULL)",
     ]
 
@@ -395,6 +571,9 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
         )
         params.extend([org_id, workspace_id, mode])
 
+    # Experiment filter is applied after parsing content JSON (some stores keep
+    # metrics only in the content block, not in the metadata column).
+
     sql = (
         "SELECT m.id, m.content, m.created_at, m.metadata "
         "FROM memories m "
@@ -410,11 +589,27 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
     ingested = 0
     for row in rows:
         try:
-            metadata = json.loads(row["metadata"] or "{}")
+            raw_metadata = json.loads(row["metadata"] or "{}")
         except json.JSONDecodeError:
-            metadata = {}
+            raw_metadata = {}
+
+        metadata = _merge_metadata(raw_metadata, row["content"])
+
+        # The rebuild targets run_log records. If the record explicitly claims
+        # another record_type (e.g. action_record or hand_off_record), skip it.
+        record_type = _coerce_str(metadata.get("record_type"))
+        if record_type and record_type != "run_log":
+            continue
 
         metrics = _extract_metrics(metadata)
+
+        # Apply experiment filter after content/metadata merge so records whose
+        # metrics live only in the content JSON are still matched.
+        if experiment_id and experiment_id != "*":
+            metrics_experiment = _coerce_str(metrics.get("experiment_id")) if metrics else None
+            if metrics_experiment != experiment_id:
+                continue
+
         if metrics:
             input_tokens = _coerce_int(metrics.get("input_tokens_est"))
             output_tokens = _coerce_int(metrics.get("output_tokens_est"))
@@ -423,6 +618,7 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
             )
             context_size = _coerce_int(metrics.get("context_size"))
             model = _coerce_str(metrics.get("model"))
+            device_id = _resolve_device_id(metrics)
         else:
             input_tokens, output_tokens = _estimate_tokens_from_fallback(
                 dict(row), token_ratio
@@ -430,6 +626,7 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
             total_tokens = input_tokens + output_tokens
             context_size = 0
             model = None
+            device_id = "unknown"
 
         if not model:
             model = _coerce_str(metadata.get("model"))
@@ -462,14 +659,15 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
         dest_cur.execute(
             """
             INSERT INTO run_log_metrics (
-                id, goal_id, role, stage, stored_at, metrics_json,
+                id, goal_id, role, stage, device_id, stored_at, metrics_json,
                 input_tokens_est, output_tokens_est, total_tokens_est, context_size,
                 cost_estimate_usd, lifecycle_transition, verdict, rework, reopen,
                 human_intervention, source_db, ingested_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 role = excluded.role,
                 stage = excluded.stage,
+                device_id = excluded.device_id,
                 stored_at = excluded.stored_at,
                 metrics_json = excluded.metrics_json,
                 input_tokens_est = excluded.input_tokens_est,
@@ -490,6 +688,7 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
                 goal_id,
                 role,
                 stage,
+                device_id,
                 stored_at,
                 json.dumps(metrics) if metrics else None,
                 input_tokens,
@@ -526,6 +725,7 @@ def _read_goal_modes(source_db, org_id, workspace_id, goal_id):
     filters = [
         "m.org_id = ?",
         "m.workspace_id = ?",
+        "m.deleted_at = 0",
         "json_extract(m.metadata, '$.record_type') = 'goal_record'",
     ]
     if goal_id:
@@ -563,6 +763,7 @@ def _read_verdicts(source_db, org_id, workspace_id, goal_id):
     filters = [
         "m.org_id = ?",
         "m.workspace_id = ?",
+        "m.deleted_at = 0",
         "json_extract(m.metadata, '$.record_type') = 'verdict'",
     ]
     if goal_id:
@@ -589,6 +790,26 @@ def _read_verdicts(source_db, org_id, workspace_id, goal_id):
 
 def _compute_aggregates(dest_conn, experiment_id, modes):
     cur = dest_conn.cursor()
+
+    # When scanning all experiments, resolve the most common experiment_id per goal
+    # from the ingested metrics_json so per_goal rows remain meaningful.
+    goal_experiments = {}
+    if experiment_id == "*":
+        cur.execute(
+            """
+            SELECT goal_id, json_extract(metrics_json, '$.experiment_id') AS exp,
+                   COUNT(*) AS n
+            FROM run_log_metrics
+            WHERE metrics_json IS NOT NULL
+              AND json_extract(metrics_json, '$.experiment_id') IS NOT NULL
+            GROUP BY goal_id, exp
+            ORDER BY goal_id, n DESC
+            """
+        )
+        for row in cur.fetchall():
+            gid = row["goal_id"]
+            if gid not in goal_experiments:
+                goal_experiments[gid] = row["exp"]
 
     # Per-goal and per-role working data.
     cur.execute(
@@ -628,7 +849,7 @@ def _compute_aggregates(dest_conn, experiment_id, modes):
                 "rework": 0,
                 "reopen": 0,
                 "human": 0,
-                "experiment_id": experiment_id,
+                "experiment_id": goal_experiments.get(gid, experiment_id),
                 "mode": modes.get(gid),
             }
         g = goals[gid]
@@ -866,6 +1087,41 @@ def _export_jsonl(dest_conn, output_file):
             f.write(json.dumps(dict(row), default=str) + "\n")
 
 
+def _clear_aggregates(dest_conn):
+    """Delete existing aggregate rows so a rebuild starts from a clean state."""
+    cur = dest_conn.cursor()
+    cur.execute("DELETE FROM run_log_metrics")
+    cur.execute("DELETE FROM goal_summary")
+    cur.execute("DELETE FROM role_summary")
+    cur.execute("DELETE FROM stage_summary")
+    dest_conn.commit()
+
+
+def _rebuild(dest_conn, source_db, org_id, workspace_id, experiment_id, token_ratio, prices):
+    """Rebuild the aggregate database from source Eden-memory run_log records."""
+    _clear_aggregates(dest_conn)
+    source_label = os.path.abspath(source_db)
+    ingested = _ingest_run_logs(
+        source_db=source_db,
+        dest_conn=dest_conn,
+        org_id=org_id,
+        workspace_id=workspace_id,
+        since=None,
+        until=None,
+        goal_id=None,
+        mode=None,
+        experiment_id=experiment_id,
+        token_ratio=token_ratio,
+        source_label=source_label,
+        prices=prices,
+    )
+    modes = _read_goal_modes(source_db, org_id, workspace_id, None)
+    verdicts = _read_verdicts(source_db, org_id, workspace_id, None)
+    goals, role_totals, stage_totals = _compute_aggregates(dest_conn, experiment_id, modes)
+    _write_aggregates(dest_conn, goals, role_totals, stage_totals, verdicts)
+    return ingested
+
+
 def _print_summary(dest_conn, missing_metrics_count, ingested):
     cur = dest_conn.cursor()
     cur.execute(
@@ -937,6 +1193,24 @@ def _print_summary(dest_conn, missing_metrics_count, ingested):
         )
 
 
+def _print_views(dest_conn):
+    """Print a quick summary of the cross-device aggregate views."""
+    cur = dest_conn.cursor()
+    print("\nCross-device aggregate views")
+
+    cur.execute("SELECT COUNT(*) FROM per_goal")
+    print(f"  per_goal rows: {cur.fetchone()[0]}")
+
+    cur.execute("SELECT COUNT(*) FROM per_role")
+    print(f"  per_role rows: {cur.fetchone()[0]}")
+
+    cur.execute("SELECT COUNT(*) FROM per_device")
+    print(f"  per_device rows: {cur.fetchone()[0]}")
+
+    cur.execute("SELECT COUNT(*) FROM quality_correlation")
+    print(f"  quality_correlation rows: {cur.fetchone()[0]}")
+
+
 def _print_cost_breakdown(dest_conn, goal_id=None):
     """Print a Markdown table of per-goal and per-role cost estimates."""
     cur = dest_conn.cursor()
@@ -1001,6 +1275,8 @@ def main(argv=None):
               atp-metrics --goal-id <id> --output jsonl --output-file ./metrics.jsonl
               atp-metrics --prices '{"claude-sonnet":{"input":3,"output":15}}' --goal-id <id>
               atp-metrics cost --goal-id <id>
+              atp-metrics rebuild --org-id 0d3sa --workspace-id yakovkhalinsky/eden-releases --experiment atp-metrics-20-goal-2026-08
+              atp-metrics rebuild --org-id 0d3sa --workspace-id yakovkhalinsky/eden-releases --experiment '*'
             """
         ),
     )
@@ -1039,6 +1315,28 @@ def main(argv=None):
                               default=_resolve_env_path("ATP_METRICS_DB_PATH", DEFAULT_METRICS_DB),
                               help="Path to the aggregate metrics SQLite database.")
 
+    rebuild_parser = subparsers.add_parser(
+        "rebuild",
+        help="Rebuild the aggregate database for an org/workspace/experiment scope.",
+    )
+    rebuild_parser.add_argument("--org-id", default=os.environ.get("EDEN_ORG_ID", ""),
+                                help="Organization scope override.")
+    rebuild_parser.add_argument("--workspace-id", default=os.environ.get("EDEN_WORKSPACE_ID", ""),
+                                help="Workspace scope override.")
+    rebuild_parser.add_argument("--experiment", default=DEFAULT_EXPERIMENT_ID,
+                                help="Experiment identifier to rebuild (matches metrics.experiment_id). Use '*' to scan all run_log records regardless of experiment_id.")
+    rebuild_parser.add_argument("--metrics-db",
+                                 default=_resolve_env_path("ATP_METRICS_DB_PATH", DEFAULT_METRICS_DB),
+                                 help="Path to the aggregate metrics SQLite database.")
+    rebuild_parser.add_argument("--db", default=_resolve_env_path("EDEN_DB_PATH", DEFAULT_EDEN_DB),
+                                help="Path to the Eden-memory SQLite database.")
+    rebuild_parser.add_argument("--token-ratio", type=float, default=DEFAULT_TOKEN_RATIO,
+                                help="Bytes-per-token ratio for fallback estimation.")
+    rebuild_parser.add_argument("--prices", default=os.environ.get("ATP_METRICS_PRICE_TABLE", ""),
+                                help="JSON file path or inline JSON price table (USD per 1M tokens).")
+    rebuild_parser.add_argument("--no-summary", action="store_true",
+                                help="Skip printing the summary table.")
+
     args = parser.parse_args(argv)
 
     org_id = args.org_id
@@ -1071,6 +1369,35 @@ def main(argv=None):
         dest_conn.close()
         return 0
 
+    if args.command == "rebuild":
+        experiment_id = args.experiment or args.experiment_id
+        try:
+            ingested = _rebuild(
+                dest_conn=dest_conn,
+                source_db=args.db,
+                org_id=org_id,
+                workspace_id=workspace_id,
+                experiment_id=experiment_id,
+                token_ratio=args.token_ratio,
+                prices=prices,
+            )
+        except FileNotFoundError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 1
+
+        if not args.no_summary:
+            missing_metrics = 0
+            if ingested:
+                cur = dest_conn.cursor()
+                cur.execute(
+                    "SELECT COUNT(*) FROM run_log_metrics WHERE metrics_json IS NULL"
+                )
+                missing_metrics = cur.fetchone()[0]
+            _print_summary(dest_conn, missing_metrics, ingested)
+            _print_views(dest_conn)
+        dest_conn.close()
+        return 0
+
     source_label = os.path.abspath(args.db)
     try:
         ingested = _ingest_run_logs(
@@ -1082,6 +1409,7 @@ def main(argv=None):
             until=args.until,
             goal_id=args.goal_id,
             mode=args.mode,
+            experiment_id=None,
             token_ratio=args.token_ratio,
             source_label=source_label,
             prices=prices,
