@@ -61,7 +61,8 @@ const components = [
       </a>
       <nav class="nav-links" aria-label="Primary">
         <a href="/">Home</a>
-        <a href="https://github.com/yakovkhalinsky/eden-releases" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="/eden-memory/getting-started/" class="nav-link">Quick start</a>
+        <a href="https://github.com/yakovkhalinsky/eden-releases" target="_blank" rel="noreferrer" class="nav-link">GitHub</a>
         <a href="/eden-memory/reference/downloads/" class="btn btn-sm">Downloads</a>
       </nav>
     </div>
@@ -652,5 +653,7 @@ const components = [
     .component-grid { grid-template-columns: 1fr; }
     .path-head { flex-direction: column; }
     .path-head .btn { width: 100%; justify-content: center; }
+    .nav-links { gap: 14px; }
+    .nav-link { display: none; }
   }
 </style>
