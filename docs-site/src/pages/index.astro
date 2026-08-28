@@ -158,7 +158,7 @@ const skills = [
             <div class="install-title-group">
               <span class="eyebrow">Get started</span>
               <h2 id="install-title">Install in moments</h2>
-              <p class="install-subtitle">Install the binary, wire your project, restart your agent, then store your first memory.</p>
+              <p class="install-subtitle">Install the binary, wire your project, optionally add a skill, then store your first memory.</p>
             </div>
             <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Five minutes</span>
           </div>
@@ -185,11 +185,18 @@ const skills = [
               <p class="install-hint">Prompts for an agent identity and personal-vs-team scope, then writes a project-local env file and the MCP config.</p>
             </li>
             <li class="install-block">
-              <div class="block-label">3. Restart your agent</div>
-              <p class="install-hint">Exit and reopen your MCP client (Claude Code, Cursor, …) so the MCP server loads. In Claude Code, confirm with <code>/mcp</code>.</p>
+              <div class="block-label">3. Install a skill for your agent <span class="block-optional">optional</span></div>
+              <p class="install-hint">
+                Skills add ready-made prompts and rules for your client. Grab one from the
+                <a href="/eden-memory/skills/">skills registry</a> — Claude Code, Cursor, Hermes, or any MCP client.
+              </p>
             </li>
             <li class="install-block">
-              <div class="block-label">4. Store your first memory</div>
+              <div class="block-label">4. Launch your agent</div>
+              <p class="install-hint">Open the project in your MCP client — restart it first if it was already running — so the MCP server loads. In Claude Code, confirm with <code>/mcp</code>.</p>
+            </li>
+            <li class="install-block">
+              <div class="block-label">5. Store your first memory</div>
               <div class="step-row">
                 <code class="cmd">{healthCmd}</code>
                 <button class="copy-btn" type="button" data-cmd={healthCmd} aria-label="Copy health command">
@@ -697,6 +704,19 @@ const skills = [
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--slate);
+  }
+
+  .block-optional {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--graphite);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--slate);
+    vertical-align: 1px;
   }
 
   .step-row {
