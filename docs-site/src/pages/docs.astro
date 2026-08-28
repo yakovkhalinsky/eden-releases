@@ -1,28 +1,19 @@
 ---
 // Docs landing page for 0d3sa.com/docs.
-// Navigation-focused: doc quadrants, role roster, compact component reference.
-
-const roles = [
-  { name: 'Dispatcher', duty: 'Assigns goals and routes work' },
-  { name: 'Researcher', duty: 'Investigates options and reports' },
-  { name: 'Builder', duty: 'Implements the chosen approach' },
-  { name: 'Verifier', duty: 'Reviews for correctness and charter compliance' },
-  { name: 'Archivist', duty: 'Records lifecycle and manages memory hygiene' },
-  { name: 'Runtime', duty: 'Executes operational actions (charter-gated)' },
-];
-
-const atpQuadrants = [
-  { label: 'Quick start', hint: 'Install and ratify', href: '/agentic-team-protocol/getting-started/' },
-  { label: 'Tutorial', hint: 'Run your first team goal', href: '/agentic-team-protocol/tutorials/first-team-goal/' },
-  { label: 'Concepts', hint: 'Lifecycle and roles', href: '/agentic-team-protocol/lifecycle/' },
-  { label: 'Reference', hint: 'Agent prompts and commands', href: '/agentic-team-protocol/reference/slash-commands/' },
-];
+// Navigation-focused: component quadrants and compact reference cards.
 
 const memoryQuadrants = [
   { label: 'Quick start', hint: 'Install and verify', href: '/eden-memory/getting-started/' },
   { label: 'Tutorials', hint: 'Connect clients and sync devices', href: '/eden-memory/tutorials/connect-claude-code/' },
   { label: 'Concepts', hint: 'Memory model, sync, security', href: '/eden-memory/concepts/memory-model/' },
   { label: 'Reference', hint: 'Tools, CLI, environment', href: '/eden-memory/reference/tools/' },
+];
+
+const relayQuadrants = [
+  { label: 'Overview', hint: 'What the relay does', href: '/eden-relay/' },
+  { label: 'Run a relay', hint: 'Serve sync on your network', href: '/eden-relay/how-to/run-relay-server/' },
+  { label: 'Deploy on a VPS', hint: 'TLS, systemd, hardening', href: '/eden-relay/how-to/deploy-public-vps/' },
+  { label: 'Reference', hint: 'Flags, env vars, endpoints', href: '/eden-relay/reference/' },
 ];
 
 const components = [
@@ -47,15 +38,6 @@ const components = [
     ],
     href: '/eden-relay/',
   },
-  {
-    tag: 'Headless supervisor',
-    name: 'eden-team',
-    desc: 'Headless ATP supervisor for CI, cron, or automated agent-team workflows.',
-    links: [
-      { label: 'Set up headless', href: '/eden-team/tutorials/headless-supervisor/' },
-    ],
-    href: '/eden-team/',
-  },
 ];
 ---
 
@@ -65,7 +47,7 @@ const components = [
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Docs — 0d3sa</title>
-  <meta name="description" content="Agentic Team Protocol documentation, plus component guides for eden-memory, eden-relay, and eden-team." />
+  <meta name="description" content="Documentation for eden-memory and eden-relay: local-first agent memory, MCP setup, multi-device sync, and self-hosted relay deployment." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Saira:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -91,14 +73,14 @@ const components = [
         <div class="hero-text">
           <div class="product-meta">
             <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Documentation</span>
-            <span class="call-sheet-id">Call sheet ATP-DOCS-001</span>
+            <span class="call-sheet-id">eden-memory · eden-relay</span>
           </div>
           <h1 id="hero-title">0d3sa docs</h1>
           <p class="lead">
-            Find the protocol, the roles, and the component guides. Start with the ATP path, or drop into eden-memory, eden-relay, or eden-team.
+            Guides for local-first agent memory and self-hosted sync. Start with the eden-memory quick start, or drop into the relay deployment guides.
           </p>
           <div class="hero-actions">
-            <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Install ATP</a>
+            <a href="/eden-memory/getting-started/" class="btn btn-primary">eden-memory quick start</a>
             <a href="/" class="btn btn-secondary">Back to home</a>
           </div>
         </div>
@@ -117,7 +99,7 @@ const components = [
               <path d="M0 40 L60 15 L120 40 L60 65 Z" fill="#0e1a19" stroke="#ffcd48" stroke-width="1.5" />
               <path d="M0 40 L0 85 L60 110 L60 65 Z" fill="#132322" stroke="#ffcd48" stroke-width="1.5" />
               <path d="M60 65 L60 110 L120 85 L120 40 Z" fill="#0a1615" stroke="#ffcd48" stroke-width="1.5" />
-              <text x="60" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" font-weight="700" fill="#ffcd48">ROLES</text>
+              <text x="60" y="50" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" font-weight="700" fill="#ffcd48">SYNC</text>
             </g>
 
             <g transform="translate(270, 130)">
@@ -136,33 +118,9 @@ const components = [
         <div class="path-card">
           <div class="path-head">
             <div class="path-title-group">
-              <span class="eyebrow">Start with the protocol</span>
-              <h2 id="docs-path-title">ATP doc quadrants</h2>
-              <p class="path-subtitle">The Agentic Team Protocol docs are organized by how you use them.</p>
-            </div>
-            <a href="/agentic-team-protocol/getting-started/" class="btn btn-primary">Quick start</a>
-          </div>
-
-          <div class="quadrant-grid">
-            {atpQuadrants.map(q => (
-              <a href={q.href} class="quadrant-card">
-                <span class="quadrant-label">{q.label}</span>
-                <span class="quadrant-hint">{q.hint}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section memory-section" aria-labelledby="memory-title">
-      <div class="wrap">
-        <div class="path-card">
-          <div class="path-head">
-            <div class="path-title-group">
-              <span class="eyebrow">Component deep dive</span>
-              <h2 id="memory-title">eden-memory quadrants</h2>
-              <p class="path-subtitle">Docs for the memory and sync component.</p>
+              <span class="eyebrow">Start here</span>
+              <h2 id="docs-path-title">eden-memory quadrants</h2>
+              <p class="path-subtitle">Docs for the memory and sync component, organized by how you use them.</p>
             </div>
             <a href="/eden-memory/getting-started/" class="btn btn-primary">Quick start</a>
           </div>
@@ -179,20 +137,27 @@ const components = [
       </div>
     </section>
 
-    <section class="section roles-section" aria-labelledby="roles-title">
+    <section class="section memory-section" aria-labelledby="memory-title">
       <div class="wrap">
-        <div class="section-head">
-          <span class="eyebrow">Role roster</span>
-          <h2 id="roles-title">Six roles, one lifecycle</h2>
+        <div class="path-card">
+          <div class="path-head">
+            <div class="path-title-group">
+              <span class="eyebrow">Self-hosted sync</span>
+              <h2 id="memory-title">eden-relay quadrants</h2>
+              <p class="path-subtitle">Run the relay on your network or a public VPS.</p>
+            </div>
+            <a href="/eden-relay/how-to/run-relay-server/" class="btn btn-primary">Run a relay</a>
+          </div>
+
+          <div class="quadrant-grid">
+            {relayQuadrants.map(q => (
+              <a href={q.href} class="quadrant-card">
+                <span class="quadrant-label">{q.label}</span>
+                <span class="quadrant-hint">{q.hint}</span>
+              </a>
+            ))}
+          </div>
         </div>
-        <ul class="role-grid" role="list">
-          {roles.map(role => (
-            <li class="role-card">
-              <span class="role-name">{role.name}</span>
-              <p class="role-duty">{role.duty}</p>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
 
@@ -200,7 +165,7 @@ const components = [
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">Component reference</span>
-          <h2 id="components-title">Three single-file binaries</h2>
+          <h2 id="components-title">Two single-file binaries</h2>
         </div>
         <div class="component-grid">
           {components.map(c => (
@@ -220,7 +185,7 @@ const components = [
 
   <footer class="site-footer">
     <div class="wrap footer-row">
-      <span class="footer-copy">© 2026 0d3sa. Open source under Apache-2.0.</span>
+      <span class="footer-copy">© 2026 0d3sa. Open source under MIT.</span>
       <nav class="footer-links" aria-label="Footer">
         <a href="https://github.com/yakovkhalinsky/eden-releases">GitHub</a>
         <span class="sep" aria-hidden="true">·</span>
@@ -574,51 +539,6 @@ const components = [
   /* Memory section */
   .memory-section {
     background: var(--obsidian);
-  }
-
-  /* Roles */
-  .roles-section {
-    background: var(--mint-frost);
-  }
-  .roles-section h2,
-  .roles-section .eyebrow,
-  .roles-section .role-name,
-  .roles-section .role-duty { color: var(--charcoal); }
-  .roles-section .role-card {
-    background: var(--white);
-    border-color: var(--fog);
-  }
-
-  .role-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-  }
-
-  .role-card {
-    background: var(--charcoal);
-    border: 1px solid var(--graphite);
-    border-radius: var(--radius-md);
-    padding: 20px;
-  }
-
-  .role-name {
-    font-family: var(--display);
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--white);
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  .role-duty {
-    color: var(--slate);
-    font-size: 0.88rem;
-    margin: 0;
-    line-height: 1.45;
   }
 
   /* Components */

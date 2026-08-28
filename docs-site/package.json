@@ -3,12 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "node ../scripts/sync-atp-to-docs.js && astro dev",
+    "dev": "astro dev",
     "start": "astro dev",
-    "sync-atp": "node ../scripts/sync-atp-to-docs.js",
     "sync-skills": "node ../scripts/sync-skills-to-docs.js",
     "generate-skills": "python3 ../scripts/generate-skills-site.py",
-    "build": "node ../scripts/sync-atp-to-docs.js && python3 ../scripts/generate-skills-site.py && astro build",
+    "build": "python3 ../scripts/generate-skills-site.py && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

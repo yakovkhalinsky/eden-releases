@@ -138,6 +138,18 @@ Open or preview the output:
 - Markdown: open in any text editor or paste into a chat context.
 - HTML: open in a browser. The file is self-contained and escaped.
 
+## 8. Publish it for later
+
+If the packet is worth keeping, publish it instead of only printing it. Published packets are durable records you can list and re-export later:
+
+```bash
+eden-memory packet --template compact --format md --title "Week 34 brief" --publish
+eden-memory packet list
+eden-memory packet export <packet-id> --format md > brief.md
+```
+
+Publishing does not change the packet's contents or scope. See [Publishing packets](/eden-memory/concepts/knowledge-packets/#publishing-packets) for the details.
+
 ## Tips
 
 - Use `compact` for chat context windows where size matters.
@@ -150,4 +162,5 @@ Open or preview the output:
 - [Knowledge packets concept](/eden-memory/concepts/knowledge-packets/)
 - [CLI reference: `eden-memory packet`](/eden-memory/reference/cli/#packet)
 - [Tools reference: `eden_packet`](/eden-memory/reference/tools/#eden_packet)
+- [Tools reference: packet publishing tools](/eden-memory/reference/tools/#eden_packet_publish)
 - [Scopes and identity](/eden-memory/concepts/scopes-identity/)

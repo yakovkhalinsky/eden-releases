@@ -35,24 +35,17 @@ Both devices should return a version string and a `status: ok` health report.
 
 ## 2. Set up or locate a relay
 
-If you are running your own relay, start it on a reachable host:
+If you are running your own relay, install and start the dedicated `eden-relay` binary on an always-on host:
 
 ```bash
-eden-memory relay-server \
-  --relay-db /var/lib/eden-relay/relay.db \
-  --addr :8787 \
-  --confirm
-```
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
 
-Or deploy the dedicated `eden-relay` binary on an always-on host or VPS. It has no MCP or memory subcommands and starts without `--confirm`:
-
-```bash
 eden-relay \
   --db /var/lib/eden-relay/relay.db \
-  --addr :8787
+  --addr 127.0.0.1:8787
 ```
 
-The relay needs a persistent SQLite database path and a listen address. Default port is `8787`. For a production relay, see [Run your own relay server](/eden-relay/how-to/run-relay-server/).
+The relay needs a persistent SQLite database path and a listen address. It binds to loopback by default; to accept connections from other devices, add `--allow-remote-bind` and a non-loopback `--addr`. Default port is `8787`. For a production relay, see [Run your own relay server](/eden-relay/how-to/run-relay-server/).
 
 If someone else is hosting the relay, write down the base URL (for example, `http://relay.example.com:8787`).
 

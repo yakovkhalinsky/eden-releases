@@ -10,15 +10,14 @@ import downloads from '../../../../data/downloads.json';
 
 The latest eden-memory monorepo release is **{downloads.version}**, released on **{downloads.released}**. Binaries are published as GitHub Release assets at `yakovkhalinsky/eden-releases`.
 
-The monorepo ships three binaries:
+The monorepo ships two binaries:
 
-- **`eden-memory`** — the full CLI with MCP server, memory tools, sync, pairing, and the legacy `relay-server` subcommand.
+- **`eden-memory`** — the full CLI with MCP server, memory tools, sync, and pairing.
 - **`eden-relay`** — a dedicated, lightweight relay server with no MCP or memory subcommands.
-- **`eden-team`** — a headless ATP supervisor that drives the Agentic Team Protocol.
 
 ## Quick install
 
-The recommended installer defaults to `eden-memory`. Pass a binary name to install `eden-relay` or `eden-team` instead:
+The recommended installer defaults to `eden-memory`. Pass a binary name to install `eden-relay` instead:
 
 ```bash
 # Default: install eden-memory
@@ -26,9 +25,6 @@ curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 
 # Install the dedicated relay binary
 curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
-
-# Install the headless ATP supervisor
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-team
 ```
 
 The installer places the binary at `~/.local/bin/<binary-name>`.
@@ -71,13 +67,9 @@ export const PlatformTable = ({ binary }) => {
 
 <PlatformTable binary="eden-relay" />
 
-## `eden-team`
-
-<PlatformTable binary="eden-team" />
-
 ## Manual install
 
-If you prefer to download and verify manually, replace `BINARY` with `eden-memory`, `eden-relay`, or `eden-team` and `PLATFORM` with your platform key from the tables above:
+If you prefer to download and verify manually, replace `BINARY` with `eden-memory` or `eden-relay` and `PLATFORM` with your platform key from the tables above:
 
 ```bash
 VERSION={downloads.version}
@@ -100,12 +92,11 @@ From the `eden-memory` repository source tree:
 
 ```bash
 make release       # eden-memory for linux-amd64/arm64, darwin-amd64/arm64
-make release-relay # eden-relay for linux-amd64/arm64, darwin-amd64/arm64, windows-amd64
-make release-team  # eden-team for linux-amd64/arm64, darwin-amd64/arm64
-make release-all   # all of the above
+make release-relay # eden-relay for linux-amd64/arm64, darwin-amd64/arm64
+make release-all   # both of the above
 ```
 
-This produces `dist/eden-memory-<platform>`, `dist/eden-relay-<platform>`, and `dist/eden-team-<platform>` for each supported platform.
+This produces `dist/eden-memory-<platform>` and `dist/eden-relay-<platform>` for each supported platform.
 
 ## Verify the binary
 
@@ -119,15 +110,8 @@ eden-memory health
 For `eden-relay`:
 
 ```bash
-eden-relay --db /var/lib/eden-relay/relay.db --addr :8787 &
+eden-relay --db /var/lib/eden-relay/relay.db --addr 127.0.0.1:8787 &
 curl http://localhost:8787/health
-```
-
-For `eden-team`:
-
-```bash
-eden-team --help
-eden-team --version
 ```
 
 ## See also
@@ -135,5 +119,4 @@ eden-team --version
 - [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
 - [Getting started](/eden-memory/getting-started/)
 - [Run your own relay server](/eden-relay/how-to/run-relay-server/)
-- [Set up a headless supervisor](/eden-team/tutorials/headless-supervisor/)
 - [GitHub Releases](https://github.com/yakovkhalinsky/eden-releases/releases/latest)

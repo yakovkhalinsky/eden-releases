@@ -39,6 +39,23 @@ Packets can be rendered in three formats:
 | `md` | Reading in a text editor, pasting into chat, or storing in a repository. |
 | `html` | Opening in a browser. Self-contained, escaped, and dark-mode aware. |
 
+## Publishing packets
+
+Packets are normally rendered to stdout and forgotten. If you want one to outlive the session, build it with `--publish` (or the `eden_packet_publish` tool). A published packet is stored in the database as a durable record, so you can list and re-export it later without rebuilding:
+
+```bash
+# Build and publish in one step
+eden-memory packet --template compact --format md --title "Week 34 brief" --version 1.0.0 --publish
+
+# List published packets
+eden-memory packet list
+
+# Re-export a published packet by ID
+eden-memory packet export <packet-id> --format md > brief.md
+```
+
+Published packets keep the same privacy model as their build: what was stored is what gets re-exported, and redaction is applied on export when requested (`--redact`, or `redact` on `eden_packet_export`). Publishing is per-workspace; a published packet never gains access to memories outside the scope it was built from.
+
 ## Templates
 
 Templates are consumer presets. They set defaults; explicit flags override them.
@@ -86,5 +103,6 @@ This makes packets safe to diff or checksum when you want to confirm that two wo
 - [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/)
 - [CLI reference](/eden-memory/reference/cli/#packet)
 - [Tools reference: `eden_packet`](/eden-memory/reference/tools/#eden_packet)
+- [Tools reference: packet publishing tools](/eden-memory/reference/tools/#eden_packet_publish)
 - [Scopes and identity](/eden-memory/concepts/scopes-identity/)
 - [Memory model and embeddings](/eden-memory/concepts/memory-model/)

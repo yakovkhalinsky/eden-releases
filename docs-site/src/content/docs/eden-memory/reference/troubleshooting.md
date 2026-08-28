@@ -44,13 +44,13 @@ This page lists common eden-memory problems, the most likely cause, and the fix.
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `connection refused` during `relay-register`, pairing, or sync | The relay is not running, or the client is pointing at the wrong relay host/port. | Confirm the relay process is up, that `--relay-url` matches the address in `--addr`, and that the client can reach the relay host and port. See the [relay-first sync topology runbook](/eden-memory/how-to/relay-first-sync-topology/) for the full topology checklist. |
+| `connection refused` during registration, pairing, or sync | The relay is not running, or the client is pointing at the wrong relay host/port. | Confirm the relay process is up, that `--relay-url` matches the address in `--addr`, and that the client can reach the relay host and port. See the [relay-first sync topology runbook](/eden-memory/how-to/relay-first-sync-topology/) for the full topology checklist. |
 
 ## Sync loop issues
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `sync loop status` shows no peers | The device is not registered with the relay, or the account ID differs. | Run `relay-register` and verify `--account-id` matches on all devices. |
+| `sync loop status` shows no peers | The device is not registered with the relay, or the account ID differs. | Run `sync loop once` (registers the device) and verify `--account-id` matches on all devices. |
 | Sync loop runs but memories do not propagate | A pending key change is blocking deltas. | List pending changes and approve them. |
 | Loop stops after network blip | The foreground loop exits on unrecoverable errors. | Restart the loop, or run it under a service manager for always-on sync. |
 | High relay CPU or bandwidth | Devices are syncing very large embeddings or a huge backlog. | Increase `--batch-size` or prune old memories before syncing. |

@@ -11,7 +11,7 @@ A relay-first topology makes the relay the fixed point of your sync network. You
 ## Prerequisites
 
 - A host that can run the relay continuously (your own machine, an always-on server, or a VPS).
-- `eden-memory` or the dedicated `eden-relay` binary installed on the relay host.
+- The dedicated `eden-relay` binary installed on the relay host.
 - `eden-memory` installed on every client device.
 - A fleet `account-id` shared by all devices.
 - A strong root-key passphrase to encrypt the sidecar files.
@@ -19,27 +19,20 @@ A relay-first topology makes the relay the fixed point of your sync network. You
 
 ## 1. Start the relay
 
-Create a persistent directory for the relay database, then start the relay.
+Install and start the dedicated `eden-relay` binary:
 
 ```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
+
 sudo mkdir -p /var/lib/eden-relay
 sudo chown $(whoami):$(whoami) /var/lib/eden-relay
 
-eden-memory relay-server \
-  --relay-db /var/lib/eden-relay/relay.db \
-  --addr :8787 \
-  --confirm
-```
-
-Or use the dedicated `eden-relay` binary:
-
-```bash
 eden-relay \
   --db /var/lib/eden-relay/relay.db \
-  --addr :8787
+  --addr 127.0.0.1:8787
 ```
 
-You can also set `EDEN_RELAY_DB` and `EDEN_RELAY_ADDR` instead of passing flags. To bind to a specific interface, use `--addr 192.168.1.10:8787`. For TLS, supply `--tls-cert` and `--tls-key` (or `EDEN_TLS_CERT` and `EDEN_TLS_KEY`).
+You can also set `EDEN_RELAY_DB` and `EDEN_RELAY_ADDR` instead of passing flags. The relay binds to loopback by default; to bind a non-loopback interface such as `--addr 192.168.1.10:8787`, add `--allow-remote-bind` (or set `EDEN_RELAY_ALLOW_REMOTE_BIND=1`). For TLS, supply `--tls-cert` and `--tls-key` (or `EDEN_TLS_CERT` and `EDEN_TLS_KEY`).
 
 ## 2. Verify relay reachability
 
@@ -53,11 +46,11 @@ A healthy relay returns a JSON status report. If you are testing locally, use `h
 
 ## 3. Register the first device
 
-On the device that already has data (or that you want to treat as the source), register it with the relay:
+On the device that already has data (or that you want to treat as the source), register it with the relay. The simplest way is a single sync round, which registers the device automatically before it pushes:
 
 ```bash
 eden-memory --db ~/.eden-memory/device.db \
-  relay-register \
+  sync loop once \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
   --root-key-passphrase "$(cat passphrase.txt)" \
@@ -68,18 +61,7 @@ If you set `EDEN_RELAY_URL`, `EDEN_ACCOUNT_ID`, and `EDEN_ROOT_KEY_PASSPHRASE` i
 
 ## 4. Register additional devices
 
-Repeat `relay-register` on every other device that will sync:
-
-```bash
-eden-memory --db ~/.eden-memory/device.db \
-  relay-register \
-  --relay-url http://relay.example.com:8787 \
-  --account-id your-account \
-  --root-key-passphrase "$(cat passphrase.txt)" \
-  --confirm
-```
-
-Each device must use the same `--account-id` and relay URL. Pairing in the next step also registers devices automatically, but explicit registration confirms that each device can talk to the relay before pairing begins.
+Repeat the `sync loop once` command on every other device that will sync. Each device must use the same `--account-id` and relay URL. Pairing in the next step also registers devices automatically, but explicit registration confirms that each device can talk to the relay before pairing begins.
 
 ## 5. Pair devices with a relay-mediated invitation
 
@@ -150,7 +132,7 @@ If both devices run continuous loops, the memory should appear within one loop i
 ## Expected outcomes
 
 - `curl http://relay.example.com:8787/health` returns a JSON OK response before any client step.
-- `relay-register` succeeds from every client device.
+- `sync loop once` succeeds from every client device without a registration error.
 - `pair create-invitation` returns an `invitation_code`.
 - `pair accept-invitation` finishes without errors and, with `--start-sync-loop`, begins syncing.
 - `eden-memory --db ~/.eden-memory/device.db health` on either device shows `peer_count` greater than zero.
@@ -158,14 +140,12 @@ If both devices run continuous loops, the memory should appear within one loop i
 
 ## When you see "connection refused"
 
-A `connection refused` error during `relay-register`, pairing, or sync is almost always a topology misconfiguration, not an authentication failure. Diagnose it in this order:
+A `connection refused` error during registration, pairing, or sync is almost always a topology misconfiguration, not an authentication failure. Diagnose it in this order:
 
 1. **Relay is not running** — confirm the relay process is up and logged no startup errors. The relay must start before any client command.
-2. **Wrong relay host or port** — check that `EDEN_RELAY_URL` or `--relay-url` points to the interface and port the relay is actually listening on. The default is `:8787` on all interfaces, but a custom `--addr` binds only that address.
+2. **Wrong relay host or port** — check that `EDEN_RELAY_URL` or `--relay-url` points to the interface and port the relay is actually listening on. The relay binds to loopback `127.0.0.1:8787` by default; a non-loopback address needs `--allow-remote-bind`.
 3. **Firewall or network path** — confirm the client can reach the relay host and port. `telnet relay.example.com 8787` or `nc -vz relay.example.com 8787` is a faster check than the eden-memory command.
 4. **Reverse proxy or TLS mismatch** — if the relay is behind a reverse proxy, use the external URL and scheme (`https://` when TLS terminates at the proxy). If the relay serves TLS directly, use `https://` and the correct port.
-
-If the health endpoint responds but eden-memory still refuses the connection, check whether `EDEN_RELAY_REQUIRE_PER_DEVICE_AUTH` is enabled and that each device registered with a per-device secret.
 
 ## See also
 

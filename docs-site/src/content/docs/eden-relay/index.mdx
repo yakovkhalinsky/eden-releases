@@ -4,7 +4,7 @@ description: Dedicated, self-hosted relay server for encrypted eden-memory multi
 content_type: concept
 template: splash
 hero:
-  tagline: Self-hosted relay for encrypted multi-device sync. Lightweight, no memory subcommands, opaque to the operator.
+  tagline: Self-hosted relay for encrypted multi-device sync. Lightweight, single binary, opaque to the operator.
   actions:
     - text: Run a relay
       link: /eden-relay/how-to/run-relay-server/
@@ -16,9 +16,22 @@ hero:
 
 ## What it is
 
-`eden-relay` is the **sync relay component** of the [Agentic Team Protocol](/agentic-team-protocol/). It is a lightweight, dedicated server that lets [eden-memory](/eden-memory/) devices discover each other and exchange encrypted delta envelopes across separate networks.
+`eden-relay` is a lightweight, self-hosted sync relay for [eden-memory](/eden-memory/). It is a single static Go binary with no MCP or memory subcommands — its only job is to let eden-memory devices discover each other and exchange encrypted delta envelopes across separate networks.
 
-The relay never sees memory contents. It only routes opaque envelopes between paired devices that share the same fleet root key.
+The relay never sees memory contents. It only routes opaque envelopes between paired devices that share the same account root key.
+
+## Quick start
+
+```bash
+# On the relay host
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
+eden-relay --db /var/lib/eden-relay/relay.db --addr 127.0.0.1:8787
+
+# Check it
+curl http://127.0.0.1:8787/health
+```
+
+The relay binds to loopback by default. To accept connections from other devices, pass `--allow-remote-bind` (or set `EDEN_RELAY_ALLOW_REMOTE_BIND=1`) and a non-loopback `--addr`. See [CLI, env vars, and endpoints](/eden-relay/reference/) for every flag and endpoint.
 
 ## When to use it
 
@@ -33,10 +46,13 @@ For one-shot sync between two databases on the same machine, use `eden-memory sy
 3. Devices exchange signed delta logs through the relay.
 4. Conflicts are resolved locally with logical clocks.
 
+Devices register with the relay through `eden-memory pair create-invitation` / `pair accept-invitation`, or through the `eden_relay_register` MCP tool. The relay itself never handles pairing passwords or passphrases.
+
 ## Guides
 
 - [Run your own relay server](/eden-relay/how-to/run-relay-server/) — stand up and secure a self-hosted relay.
 - [Deploy on a public VPS](/eden-relay/how-to/deploy-public-vps/) — full public-internet walkthrough with Let's Encrypt, systemd, and hardening.
+- [CLI, env vars, and endpoints](/eden-relay/reference/) — flags, environment variables, and the REST API.
 
 ## See also
 

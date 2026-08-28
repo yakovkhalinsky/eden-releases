@@ -27,19 +27,26 @@ server](/eden-relay/how-to/run-relay-server/).
   if you use it.
 - A DNS `A` (and `AAAA`) record pointing `relay.example.com` to the VPS IP.
 
-## 2. Install eden-memory
+## 2. Install the eden-relay binary
 
-Download the latest release binary for the VPS architecture. Replace
+The easiest path is the installer, which downloads the right binary for your
+platform:
+
+```bash
+curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
+```
+
+Alternatively, download the latest release binary manually. Replace
 `linux-amd64` with `linux-arm64` if you are on an ARM VPS.
 
 ```bash
 sudo mkdir -p /opt/eden-memory /usr/local/bin
 cd /opt/eden-memory
-curl -fsSL -o eden-memory \
-  "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-linux-amd64"
-chmod +x eden-memory
-sudo ln -sf /opt/eden-memory/eden-memory /usr/local/bin/eden-memory
-eden-memory version
+curl -fsSL -o eden-relay \
+  "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-relay-linux-amd64"
+chmod +x eden-relay
+sudo ln -sf /opt/eden-memory/eden-relay /usr/local/bin/eden-relay
+eden-relay --version
 ```
 
 The binary is a single file; no runtime or package manager is required.
@@ -149,12 +156,12 @@ User=eden-relay
 Group=eden-relay
 EnvironmentFile=-/etc/eden-relay/eden-relay.env
 WorkingDirectory=/var/lib/eden-relay
-ExecStart=/usr/local/bin/eden-memory relay-server \
-  --relay-db /var/lib/eden-relay/relay.db \
+ExecStart=/usr/local/bin/eden-relay \
+  --db /var/lib/eden-relay/relay.db \
   --addr 0.0.0.0:443 \
   --tls-cert /etc/letsencrypt/live/relay.example.com/fullchain.pem \
   --tls-key /etc/letsencrypt/live/relay.example.com/privkey.pem \
-  --confirm
+  --allow-remote-bind
 Restart=always
 RestartSec=5
 
@@ -172,7 +179,8 @@ WantedBy=multi-user.target
 To bind to a specific public interface instead of all interfaces, change
 `--addr 0.0.0.0:443` to `--addr 203.0.113.10:443` (replace with the VPS public
 IP). There is no separate `--listen` flag; binding is controlled entirely by
-`--addr`.
+`--addr`. The relay refuses to bind to a non-loopback address unless
+`--allow-remote-bind` (or `EDEN_RELAY_ALLOW_REMOTE_BIND=1`) is set.
 
 Enable and start the service:
 
@@ -235,13 +243,6 @@ step 4.
 
 ```bash
 eden-memory --db ~/.eden-memory/default.db \
-  relay-register \
-  --relay-url https://relay.example.com \
-  --account-id your-account \
-  --root-key-passphrase "$(cat /path/to/root-key-passphrase)" \
-  --confirm
-
-eden-memory --db ~/.eden-memory/default.db \
   sync loop start \
   --relay-url https://relay.example.com \
   --account-id your-account \
@@ -249,11 +250,12 @@ eden-memory --db ~/.eden-memory/default.db \
   --confirm
 ```
 
-`relay-register` is performed automatically by `sync loop start`, but running it
-explicitly is useful to verify connectivity before starting the long-running
-loop. The loop runs in the foreground until it receives `SIGINT` or `SIGTERM`;
-run it under your own service manager or terminal multiplexer for continuous
-sync.
+`sync loop start` registers the device with the relay automatically before
+pushing its first delta. The loop runs in the foreground until it receives
+`SIGINT` or `SIGTERM`; run it under your own service manager or terminal
+multiplexer for continuous sync. You can also register a device without
+starting the loop by calling the `eden_relay_register` MCP tool from an agent
+session.
 
 ## 11. Pairing additional devices
 
@@ -409,10 +411,10 @@ a private network such as Tailscale and bind it to the Tailscale interface. For
 example:
 
 ```bash
-eden-memory relay-server \
-  --relay-db /var/lib/eden-relay/relay.db \
+eden-relay \
+  --db /var/lib/eden-relay/relay.db \
   --addr 100.64.0.1:8787 \
-  --confirm
+  --allow-remote-bind
 ```
 
 Clients then use `http://100.64.0.1:8787` (plain HTTP is acceptable inside the
@@ -425,7 +427,8 @@ After completing this guide:
 - `https://relay.example.com/health` returns a JSON `ok` response.
 - The `eden-relay` service is running under systemd as the `eden-relay` user.
 - Port 443 is reachable from the internet; port 80 is open only for certbot.
-- A client device can `relay-register` with the relay and start a sync loop.
+- A client device can register with the relay via `sync loop start` and start
+  syncing.
 - Additional devices can join the fleet via `pair create-invitation` / `pair
   accept-invitation`.
 - Certificates renew automatically and restart the relay service via the

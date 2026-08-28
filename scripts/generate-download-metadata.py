@@ -40,7 +40,7 @@ BINARIES = ROOT / "binaries"
 MANIFEST = BINARIES / "manifest.json"
 OUTPUT = ROOT / "docs-site" / "src" / "data" / "downloads.json"
 REQUIRED_PLATFORM_KEYS = {"os", "arch", "filename", "downloadUrl", "checksumUrl"}
-SUPPORTED_BINARIES = {"eden-memory", "eden-relay", "eden-team"}
+SUPPORTED_BINARIES = {"eden-memory", "eden-relay"}
 
 
 def sha256_file(path: Path) -> str:

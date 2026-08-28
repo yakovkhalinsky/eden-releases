@@ -14,6 +14,7 @@ All inputs are JSON objects. Tools that read or write memories require `agent_id
 | `eden_recall` | Semantic recall | No |
 | `eden_search` | Keyword search | No |
 | `eden_search_semantic` | Semantic search with metadata filters | No |
+| `eden_lookup_cross` | Look up one memory in another workspace | No |
 | `eden_edit` | Update a memory by ID | Yes |
 | `eden_forget` | Soft-delete a memory by ID | Yes |
 | `eden_forget_expired` | Delete all expired memories | Yes |
@@ -22,6 +23,16 @@ All inputs are JSON objects. Tools that read or write memories require `agent_id
 | `eden_prune` | Bulk soft-delete or hard-delete memories | Yes |
 | `eden_migrate` | Remap `org_id`/`workspace_id` for a scope | Yes |
 | `eden_packet` | Build a deterministic knowledge packet | No |
+| `eden_packet_publish` | Publish a packet as a stable artifact | Yes |
+| `eden_packet_list` | List published packets | No |
+| `eden_packet_export` | Re-render a published packet | No |
+| `eden_report` | Build an audience-aware narrative report | No (Yes with `publish`) |
+| `eden_document` | Build a decision log, runbook, or changelog | No (Yes with `publish`) |
+| `eden_document_publish` | Publish a document as a stable artifact | Yes |
+| `eden_document_list` | List published documents | No |
+| `eden_document_export` | Re-render a published document | No |
+| `eden_dream` | Run the dreaming curator (preview) | No (Yes with `dry_run=false`) |
+| `eden_dream_apply` | Apply a persisted dream's staged actions | Yes |
 | `eden_export_snapshot` | Export an encrypted database snapshot | No |
 | `eden_import_snapshot` | Import an encrypted snapshot | Yes (replaces DB) |
 | `eden_sync` | One-shot bidirectional sync with a peer DB | Yes |
@@ -124,6 +135,21 @@ Semantic search with optional metadata filters.
 ```
 
 The first semantic call may load the bundled embedding model. Subsequent calls are fast.
+
+### `eden_lookup_cross`
+
+Look up a single memory in another workspace of the same org. In `easy` authorization mode any cross-workspace lookup is allowed; in `enterprise` mode the target workspace must appear in `EDEN_CROSS_WORKSPACE_IDS`. See [Security model](/eden-memory/concepts/security-model/).
+
+```json
+{
+  "org_id": "your-org",
+  "workspace_id": "other-project",
+  "record_id": "a1b2c3d4-...",
+  "include_metadata": true
+}
+```
+
+Optional `source_record_id` tags the referring memory for provenance.
 
 ### `eden_edit`
 
@@ -262,6 +288,118 @@ Templates and defaults:
 The canonical JSON packet uses schema version `1.1.0`. Excerpts are deterministic: most recently updated memories appear first, then ties are broken by memory ID. Clusters, when enabled, are derived from scoped vector similarity using a 0.75 cosine threshold and a cap of eight clusters. No raw embeddings are ever included.
 
 See [Knowledge packets](/eden-memory/concepts/knowledge-packets/) and [Build a knowledge packet](/eden-memory/how-to/build-knowledge-packet/) for more detail.
+
+### `eden_packet_publish`
+
+Publish an existing packet row as a stable artifact.
+
+```json
+{
+  "packet_id": "a1b2c3d4-...",
+  "title": "Week 34 brief",
+  "version": "1.0.0",
+  "audience": "human"
+}
+```
+
+Optional `expires_at` (RFC3339) and `goal_id`.
+
+### `eden_packet_list`
+
+List published packet artifacts in the workspace.
+
+```json
+{"audience": "human", "limit": 50}
+```
+
+### `eden_packet_export`
+
+Re-render a published packet artifact.
+
+```json
+{"packet_id": "a1b2c3d4-...", "format": "md", "redact": false}
+```
+
+`format` is `json`, `md` (default), or `html`; `redact: true` hashes content and strips sensitive metadata. Response mirrors `eden_packet`: `{"format": "...", "packet": "..."}`.
+
+## Reporting and document tools
+
+### `eden_report`
+
+Build an audience-aware narrative report over a time window of workspace memories. Returns the rendered text and, with `publish: true`, a `report_id`.
+
+```json
+{
+  "period": "weekly",
+  "audience": "human",
+  "format": "md",
+  "redact": true,
+  "publish": false
+}
+```
+
+Input fields: `period` (`daily`/`weekly`/`monthly`), `since` (RFC3339), `audience` (`human`/`agent`/`manager`), `format` (`json`/`md`/`html`), `include`/`exclude` (comma-separated sections), `title`, `redact`, `publish`, `goal_id`, and `limit` (maximum source memories). `agent_id`/`user_id` default to `claude`/`yakov` when omitted.
+
+### `eden_document`
+
+Build a deterministic, mode-specific narrative document. Modes: `decision-log`, `runbook`, or `changelog`. Flags mirror `eden_report`, plus `mode`, `since`/`until`, and `goal_id`.
+
+```json
+{
+  "mode": "decision-log",
+  "since": "2026-08-01T00:00:00Z",
+  "format": "md",
+  "publish": true
+}
+```
+
+### `eden_document_publish`
+
+Publish an existing document row as a stable artifact (same fields as `eden_packet_publish`, with `document_id`).
+
+### `eden_document_list`
+
+List published documents in the workspace: `{"audience": "human", "limit": 50}`.
+
+### `eden_document_export`
+
+Re-render a published document: `{"document_id": "...", "format": "md", "redact": false}`.
+
+## Dreaming tools
+
+### `eden_dream`
+
+Run the LLM-first dreaming curator over a scoped memory corpus and return a preview report. Read-only by default.
+
+```json
+{
+  "topic": "deployment friction",
+  "output_format": "md"
+}
+```
+
+- `topic` or `query` selects the corpus; `limit` caps memories considered.
+- `output_format` is `json` (default `md`), or `html`.
+- Pass `dry_run: false` to persist the result as a `dream_record` for later review by `eden_dream_apply`.
+
+Requires a reachable OpenAI-compatible endpoint (`EDEN_LLM_BASE_URL`, default `http://localhost:11434/v1`) and `EDEN_LLM_MODEL`. See [Dreaming](/eden-memory/concepts/dreaming/).
+
+### `eden_dream_apply`
+
+Apply the staged actions of a persisted `dream_record`. This is the only dreaming tool that modifies memories.
+
+```json
+{
+  "dream_id": "a1b2c3d4-...",
+  "confirm": true,
+  "approve_forget": false,
+  "apply_safe_only": false
+}
+```
+
+- `confirm: true` materializes mutations.
+- `approve_forget: true` is required for destructive actions (`merge_duplicates`, `improve`, `propose_forget`).
+- `apply_safe_only: true` skips actions that require human review.
 
 ### `eden_export_snapshot`
 

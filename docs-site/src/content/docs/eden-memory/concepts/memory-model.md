@@ -65,6 +65,8 @@ Recall is scoped by the identity fields you provide. If you pass `agent_id` and 
 - `eden_search_semantic` is a semantic search with optional metadata filters. Use it for meaning-based lookup.
 - `eden_recall` is the high-level semantic search most agents call at the start of a task.
 
+By default keyword search scores by term frequency. Set `EDEN_FTS5_BM25=1` to opt into FTS5 BM25 scoring instead. Optional feedback-aware re-ranking (opt in with `EDEN_FEEDBACK_RERANK`) nudges recall and search results using the up/down feedback history stored with each memory.
+
 ## Expiry and cleanup
 
 Set `ttl_ms` when storing a memory to make it expire after a number of milliseconds. Expired memories are not returned by recall or search, but they remain in the database until you run `eden_forget_expired` or `eden_prune`.

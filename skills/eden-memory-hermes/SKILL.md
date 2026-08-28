@@ -13,6 +13,8 @@ tools:
     - eden_recall
     - eden_search
     - eden_search_semantic
+    - eden_lookup
+    - eden_lookup_cross
     - eden_edit
     - eden_forget
     - eden_forget_expired
@@ -21,6 +23,16 @@ tools:
     - eden_prune
     - eden_migrate
     - eden_packet
+    - eden_packet_publish
+    - eden_packet_list
+    - eden_packet_export
+    - eden_report
+    - eden_document
+    - eden_document_publish
+    - eden_document_list
+    - eden_document_export
+    - eden_dream
+    - eden_dream_apply
     - eden_export_snapshot
     - eden_import_snapshot
     - eden_sync

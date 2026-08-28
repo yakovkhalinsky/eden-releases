@@ -43,83 +43,70 @@ For example, passing `--db local.db` on the command line overrides `EDEN_DB_PATH
 
 If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls back to these environment variables. This is useful for project-scoped Claude Code processes that always tag memories with the current workspace.
 
-The public installer creates or updates `~/.eden-memory/.env` with `EDEN_ORG_ID` when you enter one at the prompt (or when `EDEN_ORG_ID` is already set in the environment). `eden-memory setup claude` writes `EDEN_WORKSPACE_ID` into the per-project MCP server configuration in `~/.claude.json`.
+The public installer creates or updates `~/.eden-memory/.env` with `EDEN_ORG_ID` when you enter one at the prompt (or when `EDEN_ORG_ID` is already set in the environment). `eden-memory setup` writes the per-project values into a project-local env file and the MCP server configuration in `~/.claude.json`.
 
-## Agent identity for `setup claude`
+## Agent identity
 
-`eden-memory setup claude` decides the value it writes for `EDEN_AGENT_ID` using this precedence:
+`eden-memory setup` resolves the identity it writes using this precedence:
 
-1. Explicit `--agent-id` / `--agent` CLI flag (highest).
-2. `EDEN_ATP_ROLE` environment variable, when it is one of the supported values.
-3. `claude-code-cli` fallback (lowest).
-
-Supported `EDEN_ATP_ROLE` values: `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`.
-
-```bash
-# Run setup as the builder role
-EDEN_ATP_ROLE=builder eden-memory setup claude
-
-# Override the role with an explicit agent id
-EDEN_ATP_ROLE=builder eden-memory setup claude --agent-id my-custom-agent
-```
-
-The public `setup-claude.sh` installer uses a different order because it has no `--agent-id` flag: `EDEN_ATP_ROLE` wins over a positional argument, and the positional argument wins over the `claude-code-cli` fallback. The Go CLI, by contrast, puts an explicit `--agent-id` flag above `EDEN_ATP_ROLE`.
+1. Existing environment values (`EDEN_AGENT_ID`, `EDEN_USER_ID`) are respected and never overwritten.
+2. Interactive prompts, shown when the values are unset.
+3. Defaults: agent `claude-code-cli`, user `$USER`.
 
 | Variable | Used by | Default | Description |
 |----------|---------|---------|-------------|
-| `EDEN_ATP_ROLE` | `setup claude` | none | ATP role that becomes the agent_id when valid. |
-| `EDEN_AGENT_ID` | `setup claude`, ATP supervisor | `claude-code-cli` | Agent identity written to the project `.env` file. |
+| `EDEN_AGENT_ID` | `setup`, memory tools | `claude-code-cli` | Agent identity written to the project `.env` file. |
+| `EDEN_USER_ID` | `setup`, memory tools | `$USER` | User identity written to the project `.env` file. |
 
-## Preflight checks for `setup claude`
+## Authorization and cross-workspace access
 
-`eden-memory setup claude` now runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
+eden-memory supports two authorization modes for cross-workspace access:
+
+| Variable | Used by | Default | Description |
+|----------|---------|---------|-------------|
+| `EDEN_AUTHORIZATION_MODE` | `setup`, MCP tools, CLI | `easy` | `easy` allows cross-workspace lookups; `enterprise` is default-deny and requires an allowlist. |
+| `EDEN_CROSS_WORKSPACE_IDS` | `enterprise` mode | none | Comma-separated allowlist of workspace IDs that may be accessed cross-workspace (hard cap 50). |
+
+`setup` asks whether the project is personal or team/org and derives the mode from the answer (`personal` → `easy`, `team` → `enterprise`). In `enterprise` mode, cross-workspace lookups (`lookup-cross-workspace`, `eden_lookup_cross`) only succeed for workspaces in the allowlist.
+
+## Preflight checks for `setup`
+
+`eden-memory setup` runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
 
 1. **Health check** — executes `eden-memory --db <path> health` against the target database and aborts if the reported status is not `ok`.
 2. **MCP protocol version check** — verifies the compiled-in MCP server advertises the protocol version Claude Code expects (`2024-11-05`). If the binary advertises an incompatible version, setup aborts without writing config.
 
-If either check fails, no config files are mutated. Fix the underlying issue (update `eden-memory`, create the database directory, or repair the binary path) and re-run `eden-memory setup claude`.
-
-| Variable | Used by | Default | Description |
-|----------|---------|---------|-------------|
-| `EDEN_MEMORY_BIN` | `setup claude`, `update` | running binary or `~/.local/bin/eden-memory` | Path to the `eden-memory` binary used for the health preflight or the target of an update. |
+If either check fails, no config files are mutated. Fix the underlying issue (update `eden-memory`, create the database directory, or repair the binary path) and re-run `eden-memory setup`.
 
 ## Update variables
 
 | Variable | Used by | Default | Description |
 |----------|---------|---------|-------------|
 | `EDEN_UPDATE_PREFIX` | `update` | `https://0d3sa.com/eden-memory/` | Base URL that hosts the `VERSION` file and platform binaries for `eden-memory update`. |
-| `EDEN_MEMORY_BIN` | `update` | running binary | Path to the binary to update; also set by `setup claude`. |
+| `EDEN_MEMORY_BIN` | `update`, `setup` | running binary | Path to the binary to update; also written by `setup`. |
 
-## Relay variables (eden-relay and `eden-memory relay-server`)
+## Recall and search tuning
 
-The dedicated `eden-relay` binary and the `eden-memory relay-server` subcommand read these variables:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `EDEN_FEEDBACK_RERANK` | disabled | Opt-in feedback-aware re-ranking of recall and search results. Set to `1`/`true` for defaults, or tune it, e.g. `EDEN_FEEDBACK_RERANK=boost=0.05,window=3`. |
+| `EDEN_DREAM_FEEDBACK_SUPPRESS_THRESHOLD` | disabled | Positive integer net-feedback threshold at or below which memories are suppressed from dreaming candidates. |
+| `EDEN_FTS5_BM25` | unset | Set to `1` to score keyword search with FTS5 BM25 instead of term frequency. |
+| `EDEN_HNSW_SEED` | built-in | Deterministic seed for the HNSW vector index. |
+
+## Relay variables (eden-relay)
+
+The dedicated `eden-relay` binary reads these variables:
 
 | Variable | Maps to | Default | Description |
 |----------|---------|---------|-------------|
-| `EDEN_RELAY_DB` | `--db` (`eden-relay`) / `--relay-db` (`eden-memory relay-server`) | none | Relay SQLite database path. Required to start the relay. |
-| `EDEN_RELAY_ADDR` | `--addr` | `:8787` | Listen address for the relay HTTP server. |
-| `EDEN_RELAY_REQUIRE_PER_DEVICE_AUTH` | `--require-per-device-auth` | `0` / unset | When set to `1`, reject legacy account-derived auth tokens and require per-device auth secrets. |
+| `EDEN_RELAY_DB` | `--db` | none | Relay SQLite database path. Required to start the relay. |
+| `EDEN_RELAY_ADDR` | `--addr` | `127.0.0.1:8787` | Listen address for the relay HTTP server. |
+| `EDEN_RELAY_ALLOW_REMOTE_BIND` | `--allow-remote-bind` | `0` / unset | Set to `1`/`true` to allow binding to a non-loopback address. |
 | `EDEN_TLS_CERT` | `--tls-cert` | none | TLS certificate path. Must be supplied with `EDEN_TLS_KEY`. |
 | `EDEN_TLS_KEY` | `--tls-key` | none | TLS private-key path. Must be supplied with `EDEN_TLS_CERT`. |
 
-`EDEN_LOG_LEVEL` and `EDEN_LOG_FORMAT` also apply to the relay output.
-
-## Variables used by the eden-team ATP supervisor
-
-The headless ATP supervisor reads these additional variables when running eden-memory under the hood:
-
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `EDEN_MEMORY_DB` | Path to the eden-memory SQLite database. | `~/.eden-memory/default.db` |
-| `EDEN_AGENT_ID` | Agent identity for records. | `eden-team` |
-| `EDEN_USER_ID` | User identity for records. | `$USER` |
-| `EDEN_ORG_ID` | Organization scope for records. | none |
-| `EDEN_WORKSPACE_ID` | Workspace scope for records. | none |
-| `EDEN_MEMORY_BIN` | Path to the `eden-memory` binary. | `~/.local/bin/eden-memory` |
-| `CLAUDE_CODE_BIN` | Path to the Claude Code CLI. | `claude` |
-| `ATP_MCP_CONFIG` | Path to MCP config JSON for role processes. | none |
-| `ATP_ROLES_DIR` | Directory containing role prompt templates. | next to the ATP binary |
-| `ATP_PERMISSION_MODE` | Permission mode passed to role processes. | none |
+`EDEN_LOG_LEVEL` and `EDEN_LOG_FORMAT` also apply to the relay output. See the [eden-relay reference](/eden-relay/reference/) for the full flag and endpoint list.
 
 ## Setting variables for Claude Code MCP
 

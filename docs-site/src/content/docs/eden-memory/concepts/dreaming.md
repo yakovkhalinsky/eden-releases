@@ -30,7 +30,7 @@ There are two ways to run a dream:
 | MCP tools `eden_dream` and `eden_dream_apply` | Called by an agent or IDE integration such as Claude Code. |
 | CLI `eden-memory dream preview` and `eden-memory dream apply` | Run directly in a terminal for ad-hoc curation. |
 
-This page documents only the shipped MCP and CLI surfaces. The internal `/team-dream` slash command and `eden-team` REST dream endpoints are not covered here.
+This page documents the shipped MCP and CLI surfaces only.
 
 ## MCP tools
 
@@ -62,20 +62,22 @@ The tool returns a `report` string containing the curated synthesis. When `dry_r
 
 ### `eden_dream_apply`
 
-Persist a dream result as a `dream_record` memory.
+Apply the staged actions of a persisted `dream_record`. This is the only dreaming tool that modifies memories.
 
 ```json
 {
-  "agent_id": "builder",
-  "user_id": "yakov",
-  "topic": "refactor safety",
-  "limit": 50,
-  "output_format": "md",
-  "dry_run": false
+  "dream_id": "a1b2c3d4-...",
+  "confirm": true,
+  "approve_forget": false,
+  "apply_safe_only": false
 }
 ```
 
-Pass `dry_run: false` to store the result. The persisted record has `record_type: dream_record` in its metadata and can be recalled later like any other memory.
+- `confirm: true` materializes the mutations.
+- `approve_forget: true` is required for destructive actions (`merge_duplicates`, `improve`, `propose_forget`).
+- `apply_safe_only: true` skips actions that require human review.
+
+To create a `dream_record` to apply, run `eden_dream` with `dry_run: false`.
 
 ## CLI
 
@@ -100,6 +102,16 @@ eden-memory --db ~/.eden-memory/default.db dream preview \
 ```
 
 The `--persist` flag is the CLI equivalent of `dry_run: false`. Without it, the command is read-only.
+
+Apply a persisted dream's staged actions:
+
+```bash
+# Safe actions only
+eden-memory --db ~/.eden-memory/default.db dream apply <dream-id> --confirm
+
+# Include destructive actions
+eden-memory --db ~/.eden-memory/default.db dream apply <dream-id> --approve-forget --confirm
+```
 
 ## LLM provider configuration
 
@@ -134,7 +146,9 @@ The format can be set per request in both the MCP tool and the CLI.
 
 Dreaming defaults to **dry-run / preview mode**. Whether you call `eden_dream` with no `dry_run` field or run `eden-memory dream preview` without `--persist`, the result is returned but not written to the database. This keeps curation safe to experiment with.
 
-Persisting a result explicitly creates a `dream_record`, which is useful for turning a curated synthesis into durable team knowledge.
+Persisting a result explicitly creates a `dream_record`, which is useful for turning a curated synthesis into durable team knowledge. Applying one back into the store is always a separate, confirmed step.
+
+Memories with poor feedback history can be excluded from the candidate corpus by setting `EDEN_DREAM_FEEDBACK_SUPPRESS_THRESHOLD` (a positive net-feedback score at or below which memories are suppressed).
 
 ## Privacy and cost notes
 

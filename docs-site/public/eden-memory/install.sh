@@ -3,13 +3,12 @@
 # Usage:
 #   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 #   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-relay
-#   EDEN_INSTALL_BIN=eden-team curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 #
 # You can also pre-set EDEN_ORG_ID for a non-interactive install:
 #   export EDEN_ORG_ID=your-org
 #   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
 #
-# Defaults to installing eden-memory. Valid binaries: eden-memory, eden-relay, eden-team.
+# Defaults to installing eden-memory. Valid binaries: eden-memory, eden-relay.
 
 set -eu
 
@@ -19,8 +18,8 @@ PREFIX_DEFAULT="${HOME}/.local/bin"
 # Select binary to install
 BIN_NAME="${1:-${EDEN_INSTALL_BIN:-eden-memory}}"
 case "${BIN_NAME}" in
-    eden-memory|eden-relay|eden-team) ;;
-    *) echo "Unsupported binary: ${BIN_NAME}"; echo "Usage: $0 [eden-memory|eden-relay|eden-team]"; exit 1 ;;
+    eden-memory|eden-relay) ;;
+    *) echo "Unsupported binary: ${BIN_NAME}"; echo "Usage: $0 [eden-memory|eden-relay]"; exit 1 ;;
 esac
 
 # Detect OS
@@ -187,10 +186,7 @@ case "${BIN_NAME}" in
         echo "  eden-memory --db ~/.eden-memory/default.db"
         ;;
     eden-relay)
-        echo "  eden-relay --db /var/lib/eden-relay/relay.db --addr :8787"
-        ;;
-    eden-team)
-        echo "  eden-team --help"
+        echo "  eden-relay --db /var/lib/eden-relay/relay.db --addr 127.0.0.1:8787"
         ;;
 esac
 
@@ -216,14 +212,8 @@ EOF
         ;;
     eden-relay)
         cat <<EOF
-  ${CYAN}eden-relay --db /var/lib/eden-relay/relay.db --addr :8787${RESET}
-  ${CYAN}curl http://localhost:8787/health${RESET}
-EOF
-        ;;
-    eden-team)
-        cat <<EOF
-  ${CYAN}eden-team --help${RESET}
-  ${CYAN}eden-team start --goal "Create /tmp/atp-hello.txt containing exactly 'hello from ATP'"${RESET}
+  ${CYAN}eden-relay --db /var/lib/eden-relay/relay.db --addr 127.0.0.1:8787${RESET}
+  ${CYAN}curl http://127.0.0.1:8787/health${RESET}
 EOF
         ;;
 esac

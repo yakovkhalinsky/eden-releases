@@ -4,11 +4,8 @@
 # Usage with explicit agent_id: curl -fsSL https://0d3sa.com/eden-memory/setup-claude.sh | sh -s -- my-agent
 #
 # Agent identity precedence:
-# 1. EDEN_ATP_ROLE environment variable (if set to a supported role).
-# 2. Explicit positional argument (e.g. `sh -s -- my-agent`).
-# 3. Fallback `claude-code-cli`.
-#
-# Supported EDEN_ATP_ROLE values: dispatcher, researcher, builder, runtime, verifier, archivist.
+# 1. Explicit positional argument (e.g. `sh -s -- my-agent`).
+# 2. Fallback `claude-code-cli`.
 
 set -eu
 
@@ -21,21 +18,10 @@ DB="${HOME}/.eden-memory/default.db"
 BIN="${HOME}/.local/bin/eden-memory"
 
 # Derive the agent_id to advertise to Claude Code.
-# Precedence: EDEN_ATP_ROLE > explicit positional arg > claude-code-cli.
-AGENT_ID_FROM_ENV=""
-if [ -n "${EDEN_ATP_ROLE:-}" ]; then
-  case "${EDEN_ATP_ROLE}" in
-    dispatcher|researcher|builder|runtime|verifier|archivist)
-      AGENT_ID_FROM_ENV="${EDEN_ATP_ROLE}"
-      ;;
-  esac
-fi
-
+# Precedence: explicit positional arg > claude-code-cli.
 AGENT_ID_FROM_ARG="${1:-}"
 
-if [ -n "${AGENT_ID_FROM_ENV}" ]; then
-  AGENT_ID="${AGENT_ID_FROM_ENV}"
-elif [ -n "${AGENT_ID_FROM_ARG}" ]; then
+if [ -n "${AGENT_ID_FROM_ARG}" ]; then
   AGENT_ID="${AGENT_ID_FROM_ARG}"
 else
   AGENT_ID="claude-code-cli"

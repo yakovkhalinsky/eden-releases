@@ -1,13 +1,13 @@
 {
   "name": "0d3sa",
-  "description": "Obsidian command center design system for the Agentic Team Protocol docs and site.",
-  "north_star": "The site is a working command center for ATP. Every entry surface leads with the install/setup path, followed by roles and component reference. Dark obsidian ground, deep-abyss panels, graphite hairline borders, neon green primary actions, signal yellow illustration accents, status chips with colored dots.",
+  "description": "Obsidian command center design system for the 0d3sa docs and site.",
+  "north_star": "The site is a working command center for eden-memory and eden-relay. Every entry surface leads with the install/setup path, followed by tutorials and component reference. Dark obsidian ground, deep-abyss panels, graphite hairline borders, neon green primary actions, signal yellow illustration accents, status chips with colored dots.",
   "form": "Obsidian command center",
   "seed_key": "05d59870",
   "colors": [
     { "name": "obsidian", "hex": "#132322", "usage": "page background and header" },
     { "name": "abyss", "hex": "#0e1a19", "usage": "nested cards, sidebar, code blocks" },
-    { "name": "charcoal", "hex": "#070f0f", "usage": "overlays, role cards, max-contrast panels" },
+    { "name": "charcoal", "hex": "#070f0f", "usage": "overlays, product cards, max-contrast panels" },
     { "name": "graphite", "hex": "#424f4f", "usage": "borders, dividers, icon strokes" },
     { "name": "white", "hex": "#ffffff", "usage": "headings and primary text" },
     { "name": "slate", "hex": "#828786", "usage": "muted body, captions, secondary labels" },
@@ -130,5 +130,5 @@
     { "name": "Hairline Rule", "type": "do", "text": "All dividing lines are 1px. Increase space, not stroke weight, if separation feels weak." },
     { "name": "No Duplicate H1 Rule", "type": "do", "text": "In Starlight docs, rely on frontmatter title; do not repeat it with a markdown # heading." }
   ],
-  "narrative": "A dark command-center world for the 0d3sa docs site. The dominant element on entry surfaces is the install/setup steps panel: copyable commands, role roster badges, and component reference cards. Headings are Chakra Petch, body is Saira, commands are JetBrains Mono. Palette is obsidian (#132322), deep abyss (#0e1a19), charcoal (#070f0f), graphite borders (#424f4f), neon green primary (#3ddc91), mint hover (#97ddbc), signal yellow illustration accent (#ffcd48). User-facing copy stays direct and operational."
+  "narrative": "A dark command-center world for the 0d3sa docs site. The dominant element on entry surfaces is the install/setup steps panel: copyable commands, product cards, and reference cards. Headings are Chakra Petch, body is Saira, commands are JetBrains Mono. Palette is obsidian (#132322), deep abyss (#0e1a19), charcoal (#070f0f), graphite borders (#424f4f), neon green primary (#3ddc91), mint hover (#97ddbc), signal yellow illustration accent (#ffcd48). User-facing copy stays direct and operational."
 }

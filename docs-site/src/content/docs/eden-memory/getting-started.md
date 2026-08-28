@@ -55,7 +55,15 @@ You should see a version string and a health report with `status: ok`. If either
 
 ## 3. Connect your agent
 
-eden-memory speaks MCP over stdio. Pick the tutorial for your client:
+If you use Claude Code, the fastest path is the built-in setup helper, run from your project directory:
+
+```bash
+cd ~/my-project && eden-memory setup
+```
+
+It prompts for an agent identity and a personal-vs-team scope, then writes a project-local `.env`, registers the MCP server, and installs `/eden-*` slash commands. See [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/) for the full walkthrough.
+
+For other clients, eden-memory speaks MCP over stdio. Pick the tutorial for your client:
 
 - [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
 - [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
@@ -94,10 +102,6 @@ The agent should recall the preference from the local store.
 ## What eden-memory does
 
 eden-memory stores memories in a SQLite database at `~/.eden-memory/default.db`. Each memory gets a 256-dimensional embedding. When the agent runs `eden_recall`, eden-memory compares the query embedding to stored vectors and returns the closest matches.
-
-> [!TIP]
-> **Short answer**
-> eden-memory is the required base for every user. If you work in Claude Code and want structured role-based collaboration, add the [Agentic Team Protocol](/agentic-team-protocol/getting-started/) on top.
 
 ## Next steps
 

@@ -42,9 +42,6 @@ download-metadata.json
 binaries/eden-memory-*
 !binaries/manifest.json
 
-# Generated copy of the canonical agentic-team-protocol/ tree for the docs site.
-docs-site/public/agentic-team-protocol/
-
 # Stale local ATP hand-off artifacts; the canonical hand-off records live in Eden-memory.
 .agentic-handoff/
 
@@ -62,3 +59,7 @@ docs-site/public/agentic-team-protocol/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Local tool state and npm artifacts (repo uses pnpm)
+.pi/
+docs-site/package-lock.json

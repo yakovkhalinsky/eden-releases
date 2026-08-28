@@ -81,46 +81,6 @@
           "sizeBytes": 10446066
         }
       }
-    },
-    "eden-team": {
-      "platforms": {
-        "linux-amd64": {
-          "os": "linux",
-          "arch": "amd64",
-          "filename": "eden-team-linux-amd64",
-          "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-amd64",
-          "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-amd64.sha256",
-          "sha256": "bed67755bd21d2adc65e0069c4fa00f34cdd9e0d7e851ffcf935db02967201a8",
-          "sizeBytes": 11206840
-        },
-        "linux-arm64": {
-          "os": "linux",
-          "arch": "arm64",
-          "filename": "eden-team-linux-arm64",
-          "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-arm64",
-          "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-linux-arm64.sha256",
-          "sha256": "cf0809fa47c075dc744cf3fe452361c1bb640a57b3b3f3a9a7f868a941d1e257",
-          "sizeBytes": 10748088
-        },
-        "darwin-amd64": {
-          "os": "darwin",
-          "arch": "amd64",
-          "filename": "eden-team-darwin-amd64",
-          "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-amd64",
-          "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-amd64.sha256",
-          "sha256": "a6174b68c265e6bfbde11b0a54048c796061d298b3122110781f0d6426b44df8",
-          "sizeBytes": 11379600
-        },
-        "darwin-arm64": {
-          "os": "darwin",
-          "arch": "arm64",
-          "filename": "eden-team-darwin-arm64",
-          "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-arm64",
-          "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-team-darwin-arm64.sha256",
-          "sha256": "1999d5901b12b0398d82325d122c249184acbbb0b8f41147c8a3800a1ca724f4",
-          "sizeBytes": 10918898
-        }
-      }
     }
   }
 }

@@ -37,14 +37,17 @@ The easiest way is to run the setup helper from the project directory you launch
 
 ```bash
 cd ~/project-a
-eden-memory setup claude
+eden-memory setup
 ```
 
-This does three things:
+Setup prompts for an agent identity (`EDEN_AGENT_ID`) and a user identity (`EDEN_USER_ID`), then asks whether the project is personal or team/org — the answer sets `EDEN_AUTHORIZATION_MODE` (`easy` for personal, `enterprise` for default-deny cross-workspace access).
 
-1. Adds or updates the current project in `~/.claude.json` as a stdio MCP server.
-2. Removes any stale `eden-memory` entry from `~/.claude/settings.json`.
-3. Installs fallback slash commands in `~/.claude/commands/`.
+This does four things:
+
+1. Writes a project-local `.env` with the database path, identity, scope, and authorization mode, and adds it to `.gitignore`.
+2. Adds or updates the current project in `~/.claude.json` as a stdio MCP server.
+3. Removes any stale user-level `eden-memory` MCP entry.
+4. Installs fallback slash commands in `~/.claude/commands/`.
 
 If you prefer to edit `~/.claude.json` manually, add this under `projects["<cwd>"]["mcpServers"]`:
 

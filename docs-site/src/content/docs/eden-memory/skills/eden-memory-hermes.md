@@ -7,7 +7,7 @@ skill_name: eden-memory-hermes
 skill_version: 2.2.1
 skill_tags: mcp, eden-memory, hermes, skill, prompt, subagent
 skill_discoverable: true
-skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum, eden_prune, eden_migrate, eden_packet, eden_export_snapshot, eden_import_snapshot, eden_sync, eden_pair_device, eden_sync_loop, eden_relay_server, eden_relay_register, eden_pair_create_invitation, eden_pair_accept_invitation
+skill_tools: eden_remember, eden_recall, eden_search, eden_search_semantic, eden_lookup, eden_lookup_cross, eden_edit, eden_forget, eden_forget_expired, eden_health, eden_vacuum, eden_prune, eden_migrate, eden_packet, eden_packet_publish, eden_packet_list, eden_packet_export, eden_report, eden_document, eden_document_publish, eden_document_list, eden_document_export, eden_dream, eden_dream_apply, eden_export_snapshot, eden_import_snapshot, eden_sync, eden_pair_device, eden_sync_loop, eden_relay_server, eden_relay_register, eden_pair_create_invitation, eden_pair_accept_invitation
 skill_inherits: eden-memory-mcp-usage
 skill_install_hint: 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh'
 skill_related: eden-memory-mcp-usage

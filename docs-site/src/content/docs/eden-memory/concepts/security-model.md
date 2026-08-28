@@ -74,6 +74,15 @@ See [Approve a peer key rotation](/eden-memory/how-to/approve-peer-key-change/) 
 
 Deltas include logical clocks. Peers reject old deltas and duplicates. The relay can resend an outer envelope, but the recipient will drop it if the clock has already advanced.
 
+## Cross-workspace authorization
+
+Memories are scoped by `org_id`/`workspace_id`. eden-memory supports two authorization modes for reaching across workspaces:
+
+- **`easy`** (default) — cross-workspace lookups are allowed for any workspace in the same org.
+- **`enterprise`** (default-deny) — cross-workspace lookups only succeed for workspaces listed in `EDEN_CROSS_WORKSPACE_IDS` (hard cap 50).
+
+`eden-memory setup` asks whether the project is personal or team/org and writes the mode to the project `.env`. Cross-workspace reads go through `lookup-cross-workspace` / `eden_lookup_cross` and are auditable in the read-op audit log.
+
 ## Sidecar security
 
 Sidecar files hold private keys. Keep them:

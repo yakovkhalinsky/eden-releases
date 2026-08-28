@@ -44,8 +44,7 @@ jobs:
             --repo ${{ github.repository_owner }}/eden-memory \
             --dir public-binaries \
             --pattern 'eden-memory-*' \
-            --pattern 'eden-relay-*' \
-            --pattern 'eden-team-*'
+            --pattern 'eden-relay-*'
         env:
           GH_TOKEN: ${{ steps.token.outputs.token }}
 
@@ -60,7 +59,7 @@ jobs:
       - name: Generate SHA-256 checksums
         working-directory: public-binaries
         run: |
-          for f in eden-memory-* eden-relay-* eden-team-*; do
+          for f in eden-memory-* eden-relay-*; do
             [ -f "$f" ] || continue
             sha256sum "$f" > "$f.sha256"
           done
@@ -120,12 +119,11 @@ jobs:
           commit: ${{ steps.publish.outputs.sha }}
           name: Eden ${{ github.event.inputs.source_tag }}
           body: |
-            This release ships three binaries from the Eden project:
+            This release ships two binaries from the Eden project:
             - `eden-memory` — the full CLI with MCP server, memory tools, sync, and pairing.
             - `eden-relay` — a dedicated, lightweight relay server.
-            - `eden-team` — a headless ATP supervisor.
           generateReleaseNotes: true
-          artifacts: "public-binaries/eden-memory-*,public-binaries/eden-relay-*,public-binaries/eden-team-*,eden-memory-skills.tar.gz"
+          artifacts: "public-binaries/eden-memory-*,public-binaries/eden-relay-*,eden-memory-skills.tar.gz"
           artifactErrorsFailBuild: true
           makeLatest: true
           allowUpdates: true
