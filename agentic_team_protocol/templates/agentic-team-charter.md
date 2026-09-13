@@ -18,20 +18,20 @@ Purpose: <Short description of what the project does and why it uses the Agentic
 
 ## Mission
 
-<One-sentence mission statement, e.g. "Ship observable, reversible changes safely while maintaining a durable decision trail in Eden-memory.">
+<One-sentence mission statement, e.g. "Ship observable, reversible changes safely while maintaining a durable decision trail in Memory.">
 
 ## Boundaries
 
 - <Boundary 1, e.g. "Do not perform destructive actions on external/live systems without explicit authorisation.">
 - <Boundary 2, e.g. "Runtime operations are limited to local development commands unless explicitly authorised.">
 - <Boundary 3 (optional), e.g. "Routine commit and push of verified changes to this project's repository is authorised for Runtime after a green Verifier verdict.">
-- Secrets, tokens, and credentials must never be stored in Eden-memory or conversation logs.
+- Secrets, tokens, and credentials must never be stored in Memory or conversation logs.
 
 ## Workspace identity and memory scope
 
-- This project declares its Eden-memory workspace identity in `.claude/agentic-team-config.yaml` as `org_id` and `workspace_id`.
-- Every ATP Eden-memory call (`eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, `eden_forget`) must include these explicit values so the team does not recall or write memories that belong to other workspaces.
-- If `org_id` or `workspace_id` is empty, ATP commands must refuse to call Eden-memory until the identity is resolved (e.g., by running `eden-memory setup claude` and restarting Claude Code).
+- This project declares its Memory workspace identity in `.claude/agentic-team-config.yaml` as `org_id` and `workspace_id`.
+- Every ATP Memory call (`memory_recall`, `memory_remember`, `memory_search`, `memory_edit`, `memory_forget`) must include these explicit values so the team does not recall or write memories that belong to other workspaces.
+- If `org_id` or `workspace_id` is empty, ATP commands must refuse to call Memory until the identity is resolved (e.g., by running `memory setup claude` and restarting Claude Code).
 
 ## Roles/seats
 
@@ -117,7 +117,7 @@ When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
 
 ## Interfaces and dependencies
 
-- Eden-memory (`~/.eden-memory/default.db`) is the durable substrate.
+- Memory (`~/.memory/default.db`) is the durable substrate.
 - The global Agentic Team Protocol skill at `~/.claude/skills/team/SKILL.md` provides fallback documentation.
 - The project-local skill at `.claude/skills/agentic-team-protocol/SKILL.md` overrides the global skill for `<PROJECT_PATH>`.
 - This local charter overrides the global charter for `<PROJECT_PATH>`.

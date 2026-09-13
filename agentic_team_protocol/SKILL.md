@@ -1,40 +1,40 @@
 ---
 name: team
 title: Team Protocol
-description: Use role-based agent teams with a seven-stage task lifecycle and Eden-memory as the durable substrate.
+description: Use role-based agent teams with a seven-stage task lifecycle and Memory as the durable substrate.
 version: 1.4.1
-tags: [agents, subagents, roles, eden-memory, protocol, team]
+tags: [agents, subagents, roles, memory, protocol, team]
 tools:
   discoverable: true
   list:
-    - mcp__eden-memory__eden_remember
-    - mcp__eden-memory__eden_recall
-    - mcp__eden-memory__eden_search
-    - mcp__eden-memory__eden_search_semantic
-    - mcp__eden-memory__eden_edit
-    - mcp__eden-memory__eden_forget
-    - mcp__eden-memory__eden_forget_expired
-    - mcp__eden-memory__eden_health
-    - mcp__eden-memory__eden_vacuum
+    - mcp__memory__memory_remember
+    - mcp__memory__memory_recall
+    - mcp__memory__memory_search
+    - mcp__memory__memory_search_semantic
+    - mcp__memory__memory_edit
+    - mcp__memory__memory_forget
+    - mcp__memory__memory_forget_expired
+    - mcp__memory__memory_health
+    - mcp__memory__memory_vacuum
     - TaskCreate
     - TaskUpdate
     - TaskGet
     - TaskList
 harness: claude-code
 related_skills:
-  - eden-memory-claude
+  - memory-claude
 ---
 
 # Team Protocol
 
-The Agentic Team Protocol — team mode — is a role-based agent team protocol implemented as Claude Code primitives (skills, agents, slash commands) with Eden-memory as the single source of truth for state, ownership, and auditability.
+The Agentic Team Protocol — team mode — is a role-based agent team protocol implemented as Claude Code primitives (skills, agents, slash commands) with Memory as the single source of truth for state, ownership, and auditability.
 
 ## Setup
 
 Quick install for the global primitives:
 
 ```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+curl -fsSL https://0d3sa.com/memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
@@ -50,18 +50,18 @@ curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
 
 Detailed steps:
 
-1. Install `eden-memory` and make sure it is on your `PATH`:
+1. Install `memory` and make sure it is on your `PATH`:
    ```bash
-   curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+   curl -fsSL https://0d3sa.com/memory/install.sh | sh
    ```
 2. Install the global ATP primitives:
    ```bash
    curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
    ```
-3. In every project where you will use ATP, wire the Eden-memory MCP server:
+3. In every project where you will use ATP, wire the Memory MCP server:
    ```bash
    cd ~/your-project
-   eden-memory setup claude
+   memory setup claude
    ```
 4. Install the project-local ATP templates:
    ```bash
@@ -117,16 +117,16 @@ Use `backend:model` form for cross-backend values, e.g. `anthropic:sonnet`, `oll
 
 1. Explicit `--env-file` or `ATP_ENV_FILE`.
 2. Project-level `$PWD/.env`.
-3. Global `~/.eden-memory/.env`.
+3. Global `~/.memory/.env`.
 4. Process environment variables.
 5. CLI flags.
 6. Role prompt frontmatter.
 
-Run `eden-memory setup claude` in a project to generate or update the project `.env` with seed keys and per-role model comments.
+Run `memory setup claude` in a project to generate or update the project `.env` with seed keys and per-role model comments.
 
 ## Environment and identity
 
-### Stable device identifier (`EDEN_DEVICE_ID`)
+### Stable device identifier (`MEMORY_DEVICE_ID`)
 
 Every ATP host that participates in the token-efficiency metrics experiment must
 have a stable, privacy-safe `device_id`. The identifier is used in the `metrics`
@@ -136,14 +136,14 @@ object of end-of-turn `run_log` records (see
 Derive it deterministically from the hostname:
 
 ```bash
-export EDEN_DEVICE_ID=$(sh ./agentic_team_protocol/lib/device_id.sh)
+export MEMORY_DEVICE_ID=$(sh ./agentic_team_protocol/lib/device_id.sh)
 # or
-export EDEN_DEVICE_ID=$(python3 ./agentic_team_protocol/lib/device_id.py)
+export MEMORY_DEVICE_ID=$(python3 ./agentic_team_protocol/lib/device_id.py)
 ```
 
 Format: `<project-slug>-<sha256(hostname)[0:16]>`. For example, with the default
 project slug `eden` and hostname `yakov-laptop`, the helper produces
-`eden-77aabdbeb2fbdb27`.
+`memory-77aabdbeb2fbdb27`.
 
 Requirements:
 
@@ -152,8 +152,8 @@ Requirements:
 - **Stable**: the same hostname must always produce the same `device_id`.
 - **Restart-safe**: the value must not change across reboots or process
   restarts.
-- **Set via `EDEN_DEVICE_ID`**: role prompts read `device_id` from the
-  `EDEN_DEVICE_ID` environment variable. If it is unset, use the shared helper.
+- **Set via `MEMORY_DEVICE_ID`**: role prompts read `device_id` from the
+  `MEMORY_DEVICE_ID` environment variable. If it is unset, use the shared helper.
 
 The shared helpers live in:
 
@@ -169,7 +169,7 @@ print(derive_device_id())
 
 The source directory is `agentic_team_protocol/`, which is a valid Python
 package name. The `lib/__init__.py` file makes the import deterministic and stable
-without any Eden-memory binary or schema change.
+without any Memory binary or schema change.
 
 ### Ollama Cloud wiring
 
@@ -254,10 +254,10 @@ The full `/team-full` lifecycle is unchanged:
 
 ## Task list synchronization
 
-In Claude Code CLI interactive sessions, keep the in-app task list aligned with the durable Eden-memory trail so the user can see progress without reading every record.
+In Claude Code CLI interactive sessions, keep the in-app task list aligned with the durable Memory trail so the user can see progress without reading every record.
 
 - One task represents the whole goal. Its `subject` is the goal summary; its `description` lists the current stage, owning role, and latest record ID.
-- The `claude_task_id` is stored in Eden-memory record metadata so `/team-continue` can update the same task across sessions.
+- The `claude_task_id` is stored in Memory record metadata so `/team-continue` can update the same task across sessions.
 - Lifecycle updates:
   - New goal (`/team` or `/team-full`) → `TaskCreate` with status `in_progress`.
   - Role starts work → `TaskUpdate` to `in_progress` with `activeForm` like "Planning <goal_id>" or "Building <goal_id>".
@@ -280,12 +280,12 @@ In Claude Code CLI interactive sessions, keep the in-app task list aligned with 
   - `archive` → Archivist
 - Low confidence, missing authority, or tight deadline → escalate via `/team-escalate` (Lite goals that need research or formal runtime gating are promoted to full protocol).
 - Builder and Runtime must not start without sufficient context and a visible plan (either in `plan_record`, `context_summary`, or `action_record`); request Researcher support if needed.
-- When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Eden-memory and dispatch the correct next role using the stored `mode`.
+- When a session ends or a role is interrupted, the next session uses `/team-continue` (or the router subagent) to rehydrate the goal from Memory and dispatch the correct next role using the stored `mode`.
 - A `blocked` or `pending_authorisation` goal remains active until the recorded unblock/approval condition is satisfied; the router re-checks it on continuation.
 
 ## Automatic continuation within a session
 
-After any role subagent writes its durable stage record and `hand_off_record` and returns to the parent assistant, the parent assistant must immediately continue the goal without asking the user. The parent must spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) so the router can read the latest Eden-memory records, determine the next required stage and role, and dispatch it.
+After any role subagent writes its durable stage record and `hand_off_record` and returns to the parent assistant, the parent assistant must immediately continue the goal without asking the user. The parent must spawn the `router` subagent (or invoke `/team-continue ${GOAL_ID}`) so the router can read the latest Memory records, determine the next required stage and role, and dispatch it.
 
 The parent assistant must not ask "Shall I proceed?" or otherwise wait for user confirmation between normal lifecycle transitions.
 
@@ -297,7 +297,7 @@ Exceptions — pause and surface the situation to the user instead of auto-conti
 
 ### Parent assistant continuation checklist
 
-1. Read the latest Eden-memory record for the `goal_id`.
+1. Read the latest Memory record for the `goal_id`.
 2. If it is `blocked`, `pending_authorisation`, or an `escalation_record`, stop and surface the situation to the user.
 3. Otherwise, immediately spawn the `router` subagent or invoke `/team-continue ${GOAL_ID}`.
 4. Do not ask "Shall I proceed?" between normal lifecycle transitions.
@@ -306,7 +306,7 @@ For cross-session or cross-role transfers, the transferring role (or the Router 
 
 ## Hand-off format
 
-Every lifecycle transition must leave a durable `hand_off_record` (or an equivalent action/verdict/archival record that embeds the hand-off format) in Eden-memory before ownership changes. Chat history is not a hand-off.
+Every lifecycle transition must leave a durable `hand_off_record` (or an equivalent action/verdict/archival record that embeds the hand-off format) in Memory before ownership changes. Chat history is not a hand-off.
 
 Every hand-off must include:
 
@@ -324,9 +324,9 @@ Every hand-off must include:
 
 When the Router spawns a role, it must first write a durable hand-off record (a `hand_off_record` or a continuation `run_log` with the full hand-off payload). This record is the activation signal that lets the receiving role recall the goal without depending on conversation context. If the spawned role fails to produce its expected downstream record, the Router writes a recovery record and reports the missing hand-off to the user.
 
-## Eden-memory record schema
+## Memory record schema
 
-Store records with metadata so they can be recalled, linked, and audited. Every durable record must also begin its `content` with a searchable identity line because `eden_recall` and `eden_search` inspect `content`, not metadata:
+Store records with metadata so they can be recalled, linked, and audited. Every durable record must also begin its `content` with a searchable identity line because `memory_recall` and `memory_search` inspect `content`, not metadata:
 
 ```text
 Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>
@@ -351,7 +351,7 @@ The identity line embeds both `goal_id` and the record's own UUID in searchable 
 }
 ```
 
-Every durable record that relies on recalled Eden-memory context must include `recalled_memory_ids`: the IDs of the memories that shaped the record. This applies to `context_summary`, `action_record`, `verdict`, and any other record written after an `eden_recall` or `eden_search` call.
+Every durable record that relies on recalled Memory context must include `recalled_memory_ids`: the IDs of the memories that shaped the record. This applies to `context_summary`, `action_record`, `verdict`, and any other record written after an `memory_recall` or `memory_search` call.
 
 Use the clean role name as `agent_id` for all ATP role records (e.g., `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`, `router`).
 
@@ -378,7 +378,7 @@ When `ATP_METRICS_ENABLED=1` is set in the project `.env`, every end-of-turn
 defined in `agentic_team_protocol/runbooks/atp-metrics-collection.md`. The
 object contains per-turn estimated token usage, role, stage, model,
 lifecycle-transition flags, and verdict/rework/reopen signals. It requires no
-Eden-memory binary schema change; the helper script `bin/atp-metrics` reads the
+Memory binary schema change; the helper script `bin/atp-metrics` reads the
 embedded metadata and writes local aggregates.
 
 When `ATP_METRICS_ENABLED` is unset or `0`, the `metrics` object is optional.
@@ -386,13 +386,13 @@ Roles must still write `run_log` records so continuation and audit work as usual
 
 ## Memory-first rules
 
-- Immediately after receiving a task, call `eden_recall` with the task summary. Every `eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment or `agentic-team-config.yaml`.
-- Before any decision that touches user preferences, coding style, security, tooling, or project conventions, call `eden_recall` first.
-- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
-- After corrections, working solutions, or settled conventions, call `eden_remember`.
-- At the end of every task, batch 3–5 durable takeaways into `eden_remember` calls.
+- Immediately after receiving a task, call `memory_recall` with the task summary. Every `memory_recall`, `memory_remember`, `memory_search`, `memory_edit`, and `memory_forget` call must include explicit `org_id` and `workspace_id` from the project environment or `agentic-team-config.yaml`.
+- Before any decision that touches user preferences, coding style, security, tooling, or project conventions, call `memory_recall` first.
+- When reviewing `memory_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `memory_search` or ask the user.
+- After corrections, working solutions, or settled conventions, call `memory_remember`.
+- At the end of every task, batch 3–5 durable takeaways into `memory_remember` calls.
 - Do not remember secrets, tokens, raw command output, ephemeral reasoning, or unvalidated guesses.
-- If Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands or the `eden-memory` CLI with `--agent-id`, `--user-id`, `--org-id`, and `--workspace-id`.
+- If Memory MCP tools are unavailable, use the `/memory-*` fallback slash commands or the `memory` CLI with `--agent-id`, `--user-id`, `--org-id`, and `--workspace-id`.
 
 ## Anti-patterns to avoid
 
@@ -402,11 +402,11 @@ Roles must still write `run_log` records so continuation and audit work as usual
 - **Runtime without rollback** — Runtime must produce a rollback plan.
 - **Verifiability gap** — Verifier gate is mandatory before closure.
 - **Archivist as secretary** — Archivist owns linking and skill/runbook updates.
-- **Memory blindness** — Eden-memory is the single source of truth; do not rely on conversation context.
+- **Memory blindness** — Memory is the single source of truth; do not rely on conversation context.
 - **Dropped interrupted work** — always leave a `run_log` or durable record at the end of a turn so `/team-continue` can resume.
 - **Implicit hand-offs** — transfer ownership through a promoted `hand_off_record` (or role record that includes the hand-off format), not chat history. The Router must write this record before spawning the next role.
 - **Stale closures** — a new action record after closure supersedes it; do not assume an old `archival_record` is the final word.
-- **Ghost planning** — capturing a plan only in a local file or chat history without referencing it from an Eden-memory record. Any plan file or detailed implementation plan must be referenced from `context_summary` or `action_record`.
+- **Ghost planning** — capturing a plan only in a local file or chat history without referencing it from an Memory record. Any plan file or detailed implementation plan must be referenced from `context_summary` or `action_record`.
 - **Default-branch drift** — committing non-trivial work directly to `master`/`main` instead of using a feature branch.
 - **Fast-forward erasure** — merging feature branches with fast-forward so the branch topology and parent SHAs are lost.
 - **Force-push to default branch** — rewriting public default-branch history, which breaks the durable record chain.
@@ -420,18 +420,18 @@ Roles must still write `run_log` records so continuation and audit work as usual
 
 ## Workspace identity and isolation rules
 
-Every ATP Eden-memory tool call (`eden_recall`, `eden_remember`, `eden_search`, `eden_search_semantic`, `eden_edit`, `eden_forget`, and the `eden_health`/`eden_vacuum` helpers) must be scoped with explicit `org_id` and `workspace_id` values. ATP roles and slash commands must read these from:
+Every ATP Memory tool call (`memory_recall`, `memory_remember`, `memory_search`, `memory_search_semantic`, `memory_edit`, `memory_forget`, and the `memory_health`/`memory_vacuum` helpers) must be scoped with explicit `org_id` and `workspace_id` values. ATP roles and slash commands must read these from:
 
-1. The current process environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`).
-2. The project `.env` file generated by `eden-memory setup claude`.
+1. The current process environment (`MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`).
+2. The project `.env` file generated by `memory setup claude`.
 3. The project-local `agentic-team-config.yaml` under `org_id` and `workspace_id`.
-4. As a last resort, `~/.eden-memory/.env`.
+4. As a last resort, `~/.memory/.env`.
 
 The project-local `agentic-team-config.yaml` must declare non-empty `org_id` and `workspace_id`. If either is empty, tools that default to an empty workspace must not be called; resolve the identity first or warn the user.
 
-**Empty-scope prohibition:** If `org_id` or `workspace_id` would be empty, the command must abort with an error rather than call eden-memory with an empty scope. The eden-memory CLI currently accepts empty strings for `--org-id`/`--workspace-id` and stores or fetches unscoped records; the long-term fix requires an eden-memory binary change. Until that fix ships, ATP commands and agents must validate scope before invoking the CLI and ask the user to escalate or file an issue if validation fails.
+**Empty-scope prohibition:** If `org_id` or `workspace_id` would be empty, the command must abort with an error rather than call memory with an empty scope. The memory CLI currently accepts empty strings for `--org-id`/`--workspace-id` and stores or fetches unscoped records; the long-term fix requires an memory binary change. Until that fix ships, ATP commands and agents must validate scope before invoking the CLI and ask the user to escalate or file an issue if validation fails.
 
-`eden_recall` example:
+`memory_recall` example:
 
 ```json
 {
@@ -443,7 +443,7 @@ The project-local `agentic-team-config.yaml` must declare non-empty `org_id` and
 }
 ```
 
-`eden_remember` example (metadata carries the identity):
+`memory_remember` example (metadata carries the identity):
 
 ```json
 {
@@ -460,7 +460,7 @@ The project-local `agentic-team-config.yaml` must declare non-empty `org_id` and
 }
 ```
 
-This prevents team-mode Eden-memory calls from recalling memories that belong to other workspaces.
+This prevents team-mode Memory calls from recalling memories that belong to other workspaces.
 
 ## Branch discipline
 
@@ -488,15 +488,15 @@ This prevents team-mode Eden-memory calls from recalling memories that belong to
 
 - `/team [goal]` — start or continue a goal in **Lite mode** (default). The dispatcher acts as planner and routes directly to builder for everyday tasks.
 - `/team-full [goal]` — start or continue a goal in the **Full protocol** with the complete 6-role, 7-stage lifecycle.
-- `/team-charter` — run an interactive ratification checklist for the project's `agentic-team-charter.md`, surface placeholders and role mismatches, and store a `charter_ratification` record in Eden-memory only after explicit confirmation. Use `/team-charter --non-interactive` or set `ATP_NON_INTERACTIVE=1` to run the original one-shot deterministic flow.
+- `/team-charter` — run an interactive ratification checklist for the project's `agentic-team-charter.md`, surface placeholders and role mismatches, and store a `charter_ratification` record in Memory only after explicit confirmation. Use `/team-charter --non-interactive` or set `ATP_NON_INTERACTIVE=1` to run the original one-shot deterministic flow.
 - `/team-status` — list active goals, current stage, owner role, latest record IDs, mode (`lite`/`full`), and continueable/blocked state.
 - `/team-escalate` — collect goal, options, consulted roles, recommended default, specific question/authority requested, and risk of waiting; write an `escalation_record`. In Lite mode, escalation also promotes the goal to the full protocol.
-- `/team-continue [goal_id]` — resume an unfinished goal from Eden-memory by rehydrating its state and dispatching the next required role. Uses the goal's stored `mode` to pick the correct lifecycle table.
+- `/team-continue [goal_id]` — resume an unfinished goal from Memory by rehydrating its state and dispatching the next required role. Uses the goal's stored `mode` to pick the correct lifecycle table.
 - `/team-handoff` — transfer ownership of a goal to another role or instance in a durable `hand_off_record`.
 
 ## Using the subagents
 
-Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Eden-memory before handing off.
+Spawn the role subagent with its goal context. Each role subagent starts by recalling the latest `goal_record` for its assigned `goal_id`, then acts according to its contract, and finally writes a durable record to Memory before handing off.
 
 When a role subagent returns after writing its durable record and `hand_off_record`, the parent assistant must immediately continue the goal by spawning the `router` subagent (or invoking `/team-continue ${GOAL_ID}`). The parent must not ask the user "Shall I proceed?" between normal lifecycle transitions. For the full checklist, see [Automatic continuation within a session](#automatic-continuation-within-a-session).
 
@@ -543,14 +543,14 @@ If a new `action_record` is stored after an `archival_record` for the same `goal
 
 ## Headless supervisor
 
-For automated or scheduled goals, use the `eden-team` binary from the `eden-memory` monorepo instead of an interactive Claude Code session. `eden-team` defaults to Lite mode (`--mode lite`) for everyday goals; use `--mode full` for the complete 6-role lifecycle. It writes the ATP lifecycle records to Eden-memory and spawns Claude Code CLI subagent processes for each role.
+For automated or scheduled goals, use the `eden-team` binary from the `memory` monorepo instead of an interactive Claude Code session. `eden-team` defaults to Lite mode (`--mode lite`) for everyday goals; use `--mode full` for the complete 6-role lifecycle. It writes the ATP lifecycle records to Memory and spawns Claude Code CLI subagent processes for each role.
 
-> **Scope propagation note:** `eden-team` is implemented in the `eden-memory` monorepo. Its propagation of `org_id`/`workspace_id` to child `claude` processes and to the records it writes should be audited separately; ensure it follows the same ordered identity sources and empty-scope prohibition as interactive ATP commands.
+> **Scope propagation note:** `eden-team` is implemented in the `memory` monorepo. Its propagation of `org_id`/`workspace_id` to child `claude` processes and to the records it writes should be audited separately; ensure it follows the same ordered identity sources and empty-scope prohibition as interactive ATP commands.
 
 Example (Lite mode):
 
 ```bash
-cd /home/yakov/git/eden-memory
+cd /home/yakov/git/memory
 make build-team
 ./eden-team start \
   --goal "Refactor the login handler to use table-driven tests" \
@@ -575,11 +575,11 @@ Resume an interrupted goal with `eden-team continue --goal-id <goal-id> --mcp-co
 
 ## Fallback if MCP is unavailable
 
-If the Eden-memory MCP tools are unavailable, use the `/eden-*` fallback slash commands or invoke `eden-memory` directly from Bash. Restart Claude Code after `eden-memory setup claude` if commands are missing.
+If the Memory MCP tools are unavailable, use the `/memory-*` fallback slash commands or invoke `memory` directly from Bash. Restart Claude Code after `memory setup claude` if commands are missing.
 
 ### Scope guard for direct CLI calls
 
-Before any direct `eden-memory` call, verify that `org_id` and `workspace_id` are non-empty. Abort with an error instead of calling the CLI with empty scope values.
+Before any direct `memory` call, verify that `org_id` and `workspace_id` are non-empty. Abort with an error instead of calling the CLI with empty scope values.
 
 ```bash
 # Resolve identity from project config first, then .env files in subshells.
@@ -587,7 +587,7 @@ Before any direct `eden-memory` call, verify that `org_id` and `workspace_id` ar
 _resolve_identity_from_config_or_env() {
   _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
   _project_env="${PWD:-.}/.env"
-  _global_env="${HOME}/.eden-memory/.env"
+  _global_env="${HOME}/.memory/.env"
 
   _yaml_value() {
     _file="$1"
@@ -619,13 +619,13 @@ _resolve_identity_from_config_or_env() {
     _cfg_org="$(_yaml_value "$_project_config" org_id)"
     _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
     if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
-      EDEN_ORG_ID="$_cfg_org"
-      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      MEMORY_ORG_ID="$_cfg_org"
+      MEMORY_WORKSPACE_ID="$_cfg_workspace"
       return
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_project_env" ]; then
       eval "$(
         (
@@ -633,14 +633,14 @@ _resolve_identity_from_config_or_env() {
         set -a
         . "$_project_env"
         set +a
-        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+        printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+        printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+        printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
       ))"
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_global_env" ]; then
       eval "$(
         (
@@ -648,9 +648,9 @@ _resolve_identity_from_config_or_env() {
         set -a
         . "$_global_env"
         set +a
-        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+        printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+        printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+        printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
       ))"
     fi
   fi
@@ -658,12 +658,12 @@ _resolve_identity_from_config_or_env() {
 _resolve_identity_from_config_or_env
 
 USER_ID="${USER:-$(id -un)}"
-EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
-EDEN_ORG_ID="${EDEN_ORG_ID:-}"
-EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
-if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ] || [ -z "${EDEN_AGENT_ID}" ]; then
-  echo "Error: EDEN_ORG_ID, EDEN_WORKSPACE_ID, and EDEN_AGENT_ID must be non-empty." >&2
-  echo "Run 'eden-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
+MEMORY_ORG_ID="${MEMORY_ORG_ID:-}"
+MEMORY_WORKSPACE_ID="${MEMORY_WORKSPACE_ID:-}"
+if [ -z "${MEMORY_ORG_ID}" ] || [ -z "${MEMORY_WORKSPACE_ID}" ] || [ -z "${MEMORY_AGENT_ID}" ]; then
+  echo "Error: MEMORY_ORG_ID, MEMORY_WORKSPACE_ID, and MEMORY_AGENT_ID must be non-empty." >&2
+  echo "Run 'memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
   exit 1
 fi
 ```
@@ -673,11 +673,11 @@ fi
 Search fallback:
 
 ```bash
-eden-memory search \
-  --agent-id "${EDEN_AGENT_ID}" \
+memory search \
+  --agent-id "${MEMORY_AGENT_ID}" \
   --user-id "${USER_ID}" \
-  --org-id "${EDEN_ORG_ID}" \
-  --workspace-id "${EDEN_WORKSPACE_ID}" \
+  --org-id "${MEMORY_ORG_ID}" \
+  --workspace-id "${MEMORY_WORKSPACE_ID}" \
   --keywords "agentic_team_protocol goal_record" \
   --limit 50
 ```
@@ -685,13 +685,13 @@ eden-memory search \
 Remember fallback:
 
 ```bash
-eden-memory remember \
-  --agent-id "${EDEN_AGENT_ID}" \
+memory remember \
+  --agent-id "${MEMORY_AGENT_ID}" \
   --user-id "${USER_ID}" \
-  --org-id "${EDEN_ORG_ID}" \
-  --workspace-id "${EDEN_WORKSPACE_ID}" \
+  --org-id "${MEMORY_ORG_ID}" \
+  --workspace-id "${MEMORY_WORKSPACE_ID}" \
   --content "Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>" \
-  --metadata '{"kind":"run_log","goal_id":"<goal_id>","stage":"<stage>","owner_role":"<owner_role>","org_id":"'"${EDEN_ORG_ID}"'","workspace_id":"'"${EDEN_WORKSPACE_ID}"'"}'
+  --metadata '{"kind":"run_log","goal_id":"<goal_id>","stage":"<stage>","owner_role":"<owner_role>","org_id":"'"${MEMORY_ORG_ID}"'","workspace_id":"'"${MEMORY_WORKSPACE_ID}"'"}'
 ```
 
-> The eden-memory CLI rejects empty `--org-id`/`--workspace-id` values (merged to eden-memory `master`). ATP never calls the CLI with empty scope; if you see unscoped records, check that `eden-memory` is up to date and that identity was resolved before the call.
+> The memory CLI rejects empty `--org-id`/`--workspace-id` values (merged to memory `master`). ATP never calls the CLI with empty scope; if you see unscoped records, check that `memory` is up to date and that identity was resolved before the call.

@@ -1,13 +1,13 @@
 ---
 title: Continuation and recovery runbook
-description: Recover when a role or session does not continue, using durable Eden-memory hand-off records.
+description: Recover when a role or session does not continue, using durable Memory hand-off records.
 ---
 
 # Continuation and recovery runbook
 
 This runbook covers the practical recovery pattern when an Agentic Team Protocol goal stalls because a role did not continue, a session ended, or a hand-off record was never written.
 
-It applies after the durable hand-off mechanics added in P0: every role transition must leave a `hand_off_record` (or equivalent continuation `run_log` with full payload) in Eden-memory before the next role is spawned.
+It applies after the durable hand-off mechanics added in P0: every role transition must leave a `hand_off_record` (or equivalent continuation `run_log` with full payload) in Memory before the next role is spawned.
 
 ## When to use this runbook
 
@@ -16,7 +16,7 @@ It applies after the durable hand-off mechanics added in P0: every role transiti
 - A session ended between a hand-off and the receiving role's action record.
 - You need to decide between `/team-continue`, `/team-handoff`, and a manual `router` spawn.
 
-## What to check in Eden-memory
+## What to check in Memory
 
 Search for the `goal_id` first to see the full timeline:
 
@@ -25,7 +25,7 @@ Search for the `goal_id` first to see the full timeline:
 _resolve_identity() {
   _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
   _project_env="${PWD:-.}/.env"
-  _global_env="${HOME}/.eden-memory/.env"
+  _global_env="${HOME}/.memory/.env"
 
   _yaml_value() {
     _file="$1"
@@ -57,13 +57,13 @@ _resolve_identity() {
     _cfg_org="$(_yaml_value "$_project_config" org_id)"
     _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
     if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
-      EDEN_ORG_ID="$_cfg_org"
-      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      MEMORY_ORG_ID="$_cfg_org"
+      MEMORY_WORKSPACE_ID="$_cfg_workspace"
       return
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_project_env" ]; then
       eval "$(
         (
@@ -71,14 +71,14 @@ _resolve_identity() {
         set -a
         . "$_project_env"
         set +a
-        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+        printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+        printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+        printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
       ))"
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_global_env" ]; then
       eval "$(
         (
@@ -86,30 +86,30 @@ _resolve_identity() {
         set -a
         . "$_global_env"
         set +a
-        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+        printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+        printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+        printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
       ))"
     fi
   fi
 }
 
 USER_ID="${USER:-$(id -un)}"
-EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
+MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
 _resolve_identity
 
-if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ] || [ -z "${EDEN_AGENT_ID:-}" ]; then
-  echo "Error: EDEN_ORG_ID, EDEN_WORKSPACE_ID, and EDEN_AGENT_ID must be non-empty." >&2
-  echo "Run 'eden-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ] || [ -z "${MEMORY_AGENT_ID:-}" ]; then
+  echo "Error: MEMORY_ORG_ID, MEMORY_WORKSPACE_ID, and MEMORY_AGENT_ID must be non-empty." >&2
+  echo "Run 'memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
   exit 1
 fi
 
-EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
-"${EDEN_MEMORY_BIN}" search \
-  --agent-id "${EDEN_AGENT_ID}" \
+MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+"${MEMORY_BIN}" search \
+  --agent-id "${MEMORY_AGENT_ID}" \
   --user-id "${USER_ID}" \
-  --org-id "${EDEN_ORG_ID}" \
-  --workspace-id "${EDEN_WORKSPACE_ID}" \
+  --org-id "${MEMORY_ORG_ID}" \
+  --workspace-id "${MEMORY_WORKSPACE_ID}" \
   --keywords "${GOAL_ID}" \
   --limit 50
 ```
@@ -155,14 +155,14 @@ Use the right tool for the recovery situation:
 |---|---|---|
 | The latest record is a normal lifecycle record and the next role has not yet acted, but there is no active blocker. | `/team-continue ${GOAL_ID}` | The router rehydrates the goal, writes a durable continuation record, and spawns the correct next role. |
 | You need to transfer ownership deliberately (e.g., session end, skill mismatch, user request). | `/team-handoff ${GOAL_ID}: ${TO_ROLE} ${REASON}` | Creates an explicit `hand_off_record` with full payload before spawning the target role. |
-| `/team-continue` cannot determine the next role, the lifecycle state is ambiguous, or you need a human-in-the-loop decision before routing. | Manual `router` subagent spawn | Lets a human inspect Eden-memory and instruct the router directly. |
+| `/team-continue` cannot determine the next role, the lifecycle state is ambiguous, or you need a human-in-the-loop decision before routing. | Manual `router` subagent spawn | Lets a human inspect Memory and instruct the router directly. |
 
 The Router must always write a durable hand-off record before spawning the next role. If you spawn a role manually without going through `/team-continue` or `/team-handoff`, ensure the receiving role first recalls the latest records and that a `hand_off_record` or continuation `run_log` is written as the activation signal.
 
 ## Recovery checklist
 
 1. **Confirm the goal state with `/team-status ${GOAL_ID}`**.
-2. **Search Eden-memory for the `goal_id`** and list records by timestamp.
+2. **Search Memory for the `goal_id`** and list records by timestamp.
 3. **Identify the latest non-terminal record** and the expected next role from the lifecycle table in `SKILL.md`.
 4. **Check for a `blocked` or `pending_authorisation` record**. If found, stop and surface it to the user.
 5. **If the latest record is a `cleanup_record`**, route to Verifier so the claimed resource releases are verified before the goal proceeds.
@@ -171,7 +171,7 @@ The Router must always write a durable hand-off record before spawning the next 
 7. **Check for `plan_file_path` in `context_summary` or `action_record` metadata** to locate the latest plan file, and verify the file still exists before continuing.
 8. **If the next role was already spawned but produced no record**, the router (or you) should write a recovery `hand_off_record` or `run_log` noting the missing downstream record, then re-invoke `/team-continue` or `/team-escalate`.
 9. **If ownership must change**, use `/team-handoff` with a clear reason and the full goal context.
-10. **After recovery, verify the next record appears in Eden-memory** before ending the session.
+10. **After recovery, verify the next record appears in Memory** before ending the session.
 
 ## Escalation path
 

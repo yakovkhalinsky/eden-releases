@@ -1,5 +1,5 @@
 ---
-description: Resume an unfinished team goal from Eden-memory
+description: Resume an unfinished team goal from Memory
 argument-hint: "[goal_id]"
 allowed-tools:
   - Bash
@@ -12,20 +12,20 @@ allowed-tools:
 
 # /team-continue
 
-Continue a team goal by rehydrating its state from Eden-memory and dispatching the correct next role. This is the canonical automatic continuation path: after any role subagent writes its durable record and returns to the parent assistant, the parent invokes `/team-continue ${GOAL_ID}` (or spawns the `router` subagent directly) to route to the next role without asking the user. It also works for resuming goals across sessions. If no `goal_id` is given, list active continueable goals first.
+Continue a team goal by rehydrating its state from Memory and dispatching the correct next role. This is the canonical automatic continuation path: after any role subagent writes its durable record and returns to the parent assistant, the parent invokes `/team-continue ${GOAL_ID}` (or spawns the `router` subagent directly) to route to the next role without asking the user. It also works for resuming goals across sessions. If no `goal_id` is given, list active continueable goals first.
 
 The router selects the **Lite** or **Full** lifecycle table based on the goal's `mode` metadata (`mode: lite | full`). If no `mode` is present, default to `full` to avoid breaking in-flight full-protocol goals.
 
 ## Steps
 
 1. Parse `$ARGUMENTS`. If it looks like a UUID or contains a `-', treat it as a `goal_id`. Otherwise list active goals via `/team-status` and ask the user to pick one.
-2. Resolve the Eden-memory workspace identity from the project `agentic-team-config.yaml`, then `.env`, then `~/.eden-memory/.env` before any call. Abort if `EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`, or `EDEN_AGENT_ID` would be empty.
+2. Resolve the Memory workspace identity from the project `agentic-team-config.yaml`, then `.env`, then `~/.memory/.env` before any call. Abort if `MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`, or `MEMORY_AGENT_ID` would be empty.
    ```bash
    # Resolve identity from project config first, then .env files in subshells.
    _resolve_identity_from_config_or_env() {
      _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
      _project_env="${PWD:-.}/.env"
-     _global_env="${HOME}/.eden-memory/.env"
+     _global_env="${HOME}/.memory/.env"
 
      _yaml_value() {
        _file="$1"
@@ -57,13 +57,13 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
        _cfg_org="$(_yaml_value "$_project_config" org_id)"
        _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
        if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
-         EDEN_ORG_ID="$_cfg_org"
-         EDEN_WORKSPACE_ID="$_cfg_workspace"
+         MEMORY_ORG_ID="$_cfg_org"
+         MEMORY_WORKSPACE_ID="$_cfg_workspace"
          return
        fi
      fi
 
-     if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+     if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
        if [ -f "$_project_env" ]; then
          eval "$(
            (
@@ -71,14 +71,14 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
            set -a
            . "$_project_env"
            set +a
-           printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-           printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-           printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+           printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+           printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+           printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
          ))"
        fi
      fi
 
-     if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+     if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
        if [ -f "$_global_env" ]; then
          eval "$(
            (
@@ -86,34 +86,34 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
            set -a
            . "$_global_env"
            set +a
-           printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-           printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-           printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+           printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+           printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+           printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
          ))"
        fi
      fi
    }
    _resolve_identity_from_config_or_env
 
-   EDEN_ORG_ID="${EDEN_ORG_ID:-}"
-   EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
-   EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
-   if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ] || [ -z "${EDEN_AGENT_ID}" ]; then
-     echo "Error: EDEN_ORG_ID, EDEN_WORKSPACE_ID, and EDEN_AGENT_ID must be non-empty." >&2
-     echo "Run 'eden-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+   MEMORY_ORG_ID="${MEMORY_ORG_ID:-}"
+   MEMORY_WORKSPACE_ID="${MEMORY_WORKSPACE_ID:-}"
+   MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
+   if [ -z "${MEMORY_ORG_ID}" ] || [ -z "${MEMORY_WORKSPACE_ID}" ] || [ -z "${MEMORY_AGENT_ID}" ]; then
+     echo "Error: MEMORY_ORG_ID, MEMORY_WORKSPACE_ID, and MEMORY_AGENT_ID must be non-empty." >&2
+     echo "Run 'memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
      exit 1
    fi
    ```
-3. Search Eden-memory for the latest records of that `goal_id`:
+3. Search Memory for the latest records of that `goal_id`:
    ```bash
    USER_ID="${USER:-$(id -un)}"
-   EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"
-   EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
-   "${EDEN_MEMORY_BIN}" search \
-     --agent-id "${EDEN_AGENT_ID}" \
+   MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   "${MEMORY_BIN}" search \
+     --agent-id "${MEMORY_AGENT_ID}" \
      --user-id "${USER_ID}" \
-     --org-id "${EDEN_ORG_ID}" \
-     --workspace-id "${EDEN_WORKSPACE_ID}" \
+     --org-id "${MEMORY_ORG_ID}" \
+     --workspace-id "${MEMORY_WORKSPACE_ID}" \
      --keywords "${GOAL_ID}" \
      --limit 50
    ```
@@ -130,16 +130,16 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
 11. Write a continuation `run_log` that references the latest stage record as its input, not the `goal_id`, and capture the new record ID:
    ```bash
    USER_ID="${USER:-$(id -un)}"
-   EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
-   ROUTER_LOG_ID=$("${EDEN_MEMORY_BIN}" remember \
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   ROUTER_LOG_ID=$("${MEMORY_BIN}" remember \
      --agent-id router \
      --user-id "${USER_ID}" \
-     --org-id "${EDEN_ORG_ID}" \
-     --workspace-id "${EDEN_WORKSPACE_ID}" \
+     --org-id "${MEMORY_ORG_ID}" \
+     --workspace-id "${MEMORY_WORKSPACE_ID}" \
      --content "{\"kind\":\"run_log\",\"goal_id\":\"${GOAL_ID}\",\"stage\":\"routing_and_assignment\",\"owner_role\":\"router\",\"status\":\"in_progress\",\"input_record_ids\":[\"${LATEST_RECORD_ID}\"],\"output_record_ids\":[],\"claude_task_id\":\"${GOAL_TASK_ID}\",\"note\":\"Continued via /team-continue; router will write hand_off_record before spawning next role\"}" \
-     --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router","claude_task_id":"'"${GOAL_TASK_ID}"'","org_id":"'"${EDEN_ORG_ID}"'","workspace_id":"'"${EDEN_WORKSPACE_ID}"'"}')
+     --metadata '{"kind":"run_log","stage":"routing_and_assignment","goal_id":"'"${GOAL_ID}"'","owner_role":"router","claude_task_id":"'"${GOAL_TASK_ID}"'","org_id":"'"${MEMORY_ORG_ID}"'","workspace_id":"'"${MEMORY_WORKSPACE_ID}"'"}')
    ```
-12. Spawn the `router` subagent with the goal context, `LATEST_RECORD_ID`, `ROUTER_LOG_ID`, `GOAL_TASK_ID`, the detected `mode`, and the worktree context from the latest action record. The router reads Eden-memory, writes a durable `hand_off_record` (or equivalent continuation `run_log`) with the full hand-off payload **before** spawning the next role, then spawns that role directly. When `/team-continue` is invoked by the parent assistant immediately after a role subagent returns, the user must not be asked "Shall I proceed?" unless the goal is `blocked`, `pending_authorisation`, or requires escalation.
+12. Spawn the `router` subagent with the goal context, `LATEST_RECORD_ID`, `ROUTER_LOG_ID`, `GOAL_TASK_ID`, the detected `mode`, and the worktree context from the latest action record. The router reads Memory, writes a durable `hand_off_record` (or equivalent continuation `run_log`) with the full hand-off payload **before** spawning the next role, then spawns that role directly. When `/team-continue` is invoked by the parent assistant immediately after a role subagent returns, the user must not be asked "Shall I proceed?" unless the goal is `blocked`, `pending_authorisation`, or requires escalation.
 
 ## Behaviour by goal state
 

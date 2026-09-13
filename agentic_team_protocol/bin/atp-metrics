@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""atp-metrics — aggregate token-efficiency metrics from Eden-memory run_logs.
+"""atp-metrics — aggregate token-efficiency metrics from Memory run_logs.
 
-Reads run_log records from the Eden-memory SQLite database, extracts the
+Reads run_log records from the Memory SQLite database, extracts the
 embedded `metrics` metadata object defined by the ATP metrics runbook, and
 writes per-goal / per-stage / per-role / per-device aggregates to a local
 SQLite database or a JSONL file. Computes cost_estimate_usd from per-model
 input/output prices.
 
-No Eden-memory binary schema change is required; the script queries the
+No Memory binary schema change is required; the script queries the
 existing `memories` table directly and parses the JSON `metadata` column.
 """
 
@@ -20,8 +20,8 @@ import textwrap
 from datetime import datetime, timezone
 from pathlib import Path
 
-DEFAULT_EDEN_DB = os.path.expanduser("~/.eden-memory/default.db")
-DEFAULT_METRICS_DB = os.path.expanduser("~/.eden-memory/atp-metrics.db")
+DEFAULT_MEMORY_DB = os.path.expanduser("~/.memory/default.db")
+DEFAULT_METRICS_DB = os.path.expanduser("~/.memory/atp-metrics.db")
 DEFAULT_EXPERIMENT_ID = "atp-metrics-20-goal-2026-08"
 DEFAULT_TOKEN_RATIO = 4.0
 
@@ -61,8 +61,8 @@ def _resolve_env_path(var, default):
 
 def _resolve_identity():
     """Resolve org_id/workspace_id from env or project config (best-effort)."""
-    org_id = os.environ.get("EDEN_ORG_ID", "")
-    workspace_id = os.environ.get("EDEN_WORKSPACE_ID", "")
+    org_id = os.environ.get("MEMORY_ORG_ID", "")
+    workspace_id = os.environ.get("MEMORY_WORKSPACE_ID", "")
     if org_id and workspace_id:
         return org_id, workspace_id
 
@@ -79,9 +79,9 @@ def _resolve_identity():
                         key, val = line.split("=", 1)
                         key = key.strip()
                         val = val.strip().strip('"').strip("'")
-                        if key == "EDEN_ORG_ID" and not org_id:
+                        if key == "MEMORY_ORG_ID" and not org_id:
                             org_id = val
-                        elif key == "EDEN_WORKSPACE_ID" and not workspace_id:
+                        elif key == "MEMORY_WORKSPACE_ID" and not workspace_id:
                             workspace_id = val
         except OSError:
             pass
@@ -169,7 +169,7 @@ def _extract_content_json(content):
 
     ATP records store a searchable identity line, optional free text, and a
     JSON metadata block at the end of the content. Some stores (e.g. the MCP
-    `eden_remember` tool) populate the `metadata` column with only basic
+    `memory_remember` tool) populate the `metadata` column with only basic
     identity fields, so the canonical record fields must be read from content.
     """
     if not content:
@@ -535,7 +535,7 @@ def _ingest_run_logs(source_db, dest_conn, org_id, workspace_id, since, until,
                      goal_id, mode, experiment_id, token_ratio, source_label, prices):
     """Read matching run_log records from source_db and write to dest_conn."""
     if not os.path.exists(source_db):
-        raise FileNotFoundError(f"Eden-memory database not found: {source_db}")
+        raise FileNotFoundError(f"Memory database not found: {source_db}")
 
     source_conn = sqlite3.connect(source_db)
     source_conn.row_factory = sqlite3.Row
@@ -1098,7 +1098,7 @@ def _clear_aggregates(dest_conn):
 
 
 def _rebuild(dest_conn, source_db, org_id, workspace_id, experiment_id, token_ratio, prices):
-    """Rebuild the aggregate database from source Eden-memory run_log records."""
+    """Rebuild the aggregate database from source Memory run_log records."""
     _clear_aggregates(dest_conn)
     source_label = os.path.abspath(source_db)
     ingested = _ingest_run_logs(
@@ -1265,7 +1265,7 @@ def _print_cost_breakdown(dest_conn, goal_id=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description="Aggregate ATP token-efficiency metrics from Eden-memory run_log records.",
+        description="Aggregate ATP token-efficiency metrics from Memory run_log records.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent(
             """
@@ -1280,8 +1280,8 @@ def main(argv=None):
             """
         ),
     )
-    parser.add_argument("--db", default=_resolve_env_path("EDEN_DB_PATH", DEFAULT_EDEN_DB),
-                        help="Path to the Eden-memory SQLite database.")
+    parser.add_argument("--db", default=_resolve_env_path("MEMORY_DB_PATH", DEFAULT_MEMORY_DB),
+                        help="Path to the Memory SQLite database.")
     parser.add_argument("--metrics-db", default=_resolve_env_path("ATP_METRICS_DB_PATH", DEFAULT_METRICS_DB),
                         help="Path to the aggregate metrics SQLite database.")
     parser.add_argument("--goal-id", help="Filter to a single goal_id.")
@@ -1292,9 +1292,9 @@ def main(argv=None):
     parser.add_argument("--output", choices=["sqlite", "jsonl", "none"], default="sqlite",
                         help="Output format for aggregates. Default: sqlite.")
     parser.add_argument("--output-file", help="Destination for --output jsonl (defaults to stdout).")
-    parser.add_argument("--org-id", default=os.environ.get("EDEN_ORG_ID", ""),
+    parser.add_argument("--org-id", default=os.environ.get("MEMORY_ORG_ID", ""),
                         help="Organization scope override.")
-    parser.add_argument("--workspace-id", default=os.environ.get("EDEN_WORKSPACE_ID", ""),
+    parser.add_argument("--workspace-id", default=os.environ.get("MEMORY_WORKSPACE_ID", ""),
                         help="Workspace scope override.")
     parser.add_argument("--experiment-id", default=DEFAULT_EXPERIMENT_ID,
                         help="Experiment identifier to record in aggregates.")
@@ -1319,17 +1319,17 @@ def main(argv=None):
         "rebuild",
         help="Rebuild the aggregate database for an org/workspace/experiment scope.",
     )
-    rebuild_parser.add_argument("--org-id", default=os.environ.get("EDEN_ORG_ID", ""),
+    rebuild_parser.add_argument("--org-id", default=os.environ.get("MEMORY_ORG_ID", ""),
                                 help="Organization scope override.")
-    rebuild_parser.add_argument("--workspace-id", default=os.environ.get("EDEN_WORKSPACE_ID", ""),
+    rebuild_parser.add_argument("--workspace-id", default=os.environ.get("MEMORY_WORKSPACE_ID", ""),
                                 help="Workspace scope override.")
     rebuild_parser.add_argument("--experiment", default=DEFAULT_EXPERIMENT_ID,
                                 help="Experiment identifier to rebuild (matches metrics.experiment_id). Use '*' to scan all run_log records regardless of experiment_id.")
     rebuild_parser.add_argument("--metrics-db",
                                  default=_resolve_env_path("ATP_METRICS_DB_PATH", DEFAULT_METRICS_DB),
                                  help="Path to the aggregate metrics SQLite database.")
-    rebuild_parser.add_argument("--db", default=_resolve_env_path("EDEN_DB_PATH", DEFAULT_EDEN_DB),
-                                help="Path to the Eden-memory SQLite database.")
+    rebuild_parser.add_argument("--db", default=_resolve_env_path("MEMORY_DB_PATH", DEFAULT_MEMORY_DB),
+                                help="Path to the Memory SQLite database.")
     rebuild_parser.add_argument("--token-ratio", type=float, default=DEFAULT_TOKEN_RATIO,
                                 help="Bytes-per-token ratio for fallback estimation.")
     rebuild_parser.add_argument("--prices", default=os.environ.get("ATP_METRICS_PRICE_TABLE", ""),
@@ -1346,7 +1346,7 @@ def main(argv=None):
 
     if not org_id or not workspace_id:
         print(
-            "Error: EDEN_ORG_ID and EDEN_WORKSPACE_ID must be set in the environment, "
+            "Error: MEMORY_ORG_ID and MEMORY_WORKSPACE_ID must be set in the environment, "
             ".env, or passed via --org-id / --workspace-id.",
             file=sys.stderr,
         )

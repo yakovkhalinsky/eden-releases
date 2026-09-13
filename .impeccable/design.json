@@ -1,7 +1,7 @@
 {
   "name": "0d3sa",
   "description": "Obsidian command center design system for the 0d3sa docs and site.",
-  "north_star": "The site is a working command center for eden-memory and eden-relay. Every entry surface leads with the install/setup path, followed by tutorials and component reference. Dark obsidian ground, deep-abyss panels, graphite hairline borders, neon green primary actions, signal yellow illustration accents, status chips with colored dots.",
+  "north_star": "The site is a working command center for memory and relay. Every entry surface leads with the install/setup path, followed by tutorials and component reference. Dark obsidian ground, deep-abyss panels, graphite hairline borders, neon green primary actions, signal yellow illustration accents, status chips with colored dots.",
   "form": "Obsidian command center",
   "seed_key": "05d59870",
   "colors": [

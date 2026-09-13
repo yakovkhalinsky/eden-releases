@@ -4,8 +4,8 @@ Goal: `2a0c59a6-6cf9-4d38-a31a-28e7eecc088f`
 Status: Experimental runbook — companion to `atp-metrics-collection.md`.
 
 This runbook explains how to collect and aggregate ATP token-efficiency
-metrics across multiple devices using the existing Eden-memory relay sync
-transport. It does **not** change the Eden-memory binary schema or the relay
+metrics across multiple devices using the existing Memory relay sync
+transport. It does **not** change the Memory binary schema or the relay
 protocol; it only adds a cross-device aggregation lens on top of the metrics
 already defined in `atp-metrics-collection.md`.
 
@@ -16,26 +16,26 @@ already defined in `atp-metrics-collection.md`.
 ATP role agents emit a `metrics` object inside every end-of-turn `run_log`
 metadata (see `runbooks/atp-metrics-collection.md`). One of those fields is
 `device_id`, a stable identifier for the originating host. When a role agent
-on device A writes a `run_log`, the record is stored in the local Eden-memory
-SQLite database. When Eden-memory relay sync runs, the record is replicated to
+on device A writes a `run_log`, the record is stored in the local Memory
+SQLite database. When Memory relay sync runs, the record is replicated to
 paired devices.
 
-The transport is the existing Eden-memory relay stack:
+The transport is the existing Memory relay stack:
 
-- `eden-memory sync` — one-shot sync with a paired device or relay.
-- `eden-memory sync loop` — continuous background sync.
-- `eden_pair_device` — pair a new device so its memories can be exchanged.
+- `memory sync` — one-shot sync with a paired device or relay.
+- `memory sync loop` — continuous background sync.
+- `memory_pair_device` — pair a new device so its memories can be exchanged.
 
 After sync, every device that is paired with device A contains the same
 `run_log` records (including the `metrics.device_id` field). The aggregate
-helper, `atp-metrics rebuild`, can then scan the local Eden-memory database
+helper, `atp-metrics rebuild`, can then scan the local Memory database
 and produce per-device, per-role, per-goal, and quality-correlation summaries.
 
 ### Why this works without protocol changes
 
-The `metrics` object is opaque to the Eden-memory binary. It lives in the JSON
+The `metrics` object is opaque to the Memory binary. It lives in the JSON
 `metadata` column of the `memories` table, which is already replicated by
-`eden-memory sync`. Adding `device_id` is a convention inside the existing
+`memory sync`. Adding `device_id` is a convention inside the existing
 metadata payload, not a schema change.
 
 ---
@@ -46,18 +46,18 @@ Set a stable, privacy-safe device identifier in the environment of every host
 that runs ATP roles:
 
 ```bash
-export EDEN_DEVICE_ID="alice-laptop-7a3f"
+export MEMORY_DEVICE_ID="alice-laptop-7a3f"
 ```
 
-If `EDEN_DEVICE_ID` is not set, derive it deterministically from the hostname
+If `MEMORY_DEVICE_ID` is not set, derive it deterministically from the hostname
 with the shared helper:
 
 ```bash
 # Shell usage
-export EDEN_DEVICE_ID=$(sh ./agentic_team_protocol/lib/device_id.sh)
+export MEMORY_DEVICE_ID=$(sh ./agentic_team_protocol/lib/device_id.sh)
 
 # Python script usage
-export EDEN_DEVICE_ID=$(python3 ./agentic_team_protocol/lib/device_id.py)
+export MEMORY_DEVICE_ID=$(python3 ./agentic_team_protocol/lib/device_id.py)
 
 # Python import usage (from the project root)
 python3 -c 'from agentic_team_protocol.lib.device_id import derive_device_id; print(derive_device_id())'
@@ -71,7 +71,7 @@ The source directory is `agentic_team_protocol/` and contains `lib/__init__.py`,
 so Python can import the helper as `agentic_team_protocol.lib.device_id`.
 
 Each ATP role prompt now requires the final `run_log` `metrics` object to
-include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper. See
+include `device_id` populated from `MEMORY_DEVICE_ID` or the shared helper. See
 the role prompts under `.claude/agents/` (or `agentic_team_protocol/agents/`).
 
 ---
@@ -102,18 +102,18 @@ scan to aggregate them all:
 
 | Flag | Required | Default | Description |
 |------|----------|---------|-------------|
-| `--org-id` | yes if not in env | `EDEN_ORG_ID` | Organization scope for the scan. |
-| `--workspace-id` | yes if not in env | `EDEN_WORKSPACE_ID` | Workspace scope for the scan. |
+| `--org-id` | yes if not in env | `MEMORY_ORG_ID` | Organization scope for the scan. |
+| `--workspace-id` | yes if not in env | `MEMORY_WORKSPACE_ID` | Workspace scope for the scan. |
 | `--experiment` | no | `atp-metrics-20-goal-2026-08` | Experiment identifier; matches `metrics.experiment_id`. Use `'*'` to scan all run_log records regardless of experiment_id. |
-| `--db` | no | `~/.eden-memory/default.db` or `EDEN_DB_PATH` | Source Eden-memory database. |
-| `--metrics-db` | no | `~/.eden-memory/atp-metrics.db` or `ATP_METRICS_DB_PATH` | Destination aggregate database. |
+| `--db` | no | `~/.memory/default.db` or `MEMORY_DB_PATH` | Source Memory database. |
+| `--metrics-db` | no | `~/.memory/atp-metrics.db` or `ATP_METRICS_DB_PATH` | Destination aggregate database. |
 | `--prices` | no | built-in `DEFAULT_PRICE_TABLE` | Per-model price table (USD per 1M tokens). |
 | `--token-ratio` | no | `4.0` | Bytes-per-token ratio for fallback estimation. |
 | `--no-summary` | no | false | Skip printing the summary table. |
 
 ### What it does
 
-1. Connects to the source Eden-memory SQLite database.
+1. Connects to the source Memory SQLite database.
 2. Selects `memories` rows where `record_type` is `run_log` (or absent), the
    `org_id`/`workspace_id` match, and `metrics.experiment_id` equals the
    requested experiment.
@@ -126,7 +126,7 @@ scan to aggregate them all:
 ### Dedup
 
 Because the same `run_log` may have been synced from multiple devices, the
-rebuild uses the Eden-memory record ID as the primary key in
+rebuild uses the Memory record ID as the primary key in
 `run_log_metrics`. The `ON CONFLICT(id) DO UPDATE` clause keeps the last
 ingested copy; when all source databases are the same synced set, the IDs are
 identical and only one row is retained.
@@ -219,10 +219,10 @@ quality.
 `device_id` is designed to be a stable but non-identifying label.
 
 - **Do** use a project-specific slug plus a short hash of the hostname, or a
-  per-install identifier written to `~/.eden-memory/device_id`.
+  per-install identifier written to `~/.memory/device_id`.
 - **Do not** include usernames, full MAC addresses, serial numbers, IP
   addresses, or anything that can be tied back to a person without consent.
-- The aggregate database is local by default (`~/.eden-memory/atp-metrics.db`).
+- The aggregate database is local by default (`~/.memory/atp-metrics.db`).
   If you export it, scrub or hash `device_id` first if the export leaves the
   originating trust boundary.
 - If a deterministic identifier cannot be derived, use `unknown`. Missing
@@ -236,7 +236,7 @@ If a role cannot include the full `metrics` object in a `run_log` (for example,
 because the record type is not a `run_log`), it may write a separate
 `metric_record` with the same schema. `atp-metrics rebuild` currently consumes
 `run_log` records only; a future extension can add `metric_record` support
-without changing the Eden-memory binary schema.
+without changing the Memory binary schema.
 
 Until that extension is needed, do **not** implement the fallback. Keep the
 convention simple: one `metrics` object per end-of-turn `run_log`.
@@ -269,7 +269,7 @@ ATP lifecycle:
    rm -f agentic_team_protocol/lib/__init__.py
    ```
 5. **Revert environment wiring**:
-   - Remove or comment the `EDEN_DEVICE_ID` line in
+   - Remove or comment the `MEMORY_DEVICE_ID` line in
      `agentic_team_protocol/.env.example`.
 6. **Remove this runbook** (optional):
    ```bash
@@ -277,7 +277,7 @@ ATP lifecycle:
    ```
 
 After rollback, the only durable trace of the experiment should be archived
-Eden-memory records; the working tree should be back to the pre-experiment ATP
+Memory records; the working tree should be back to the pre-experiment ATP
 state.
 
 ---

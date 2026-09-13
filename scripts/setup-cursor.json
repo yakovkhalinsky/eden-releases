@@ -1,9 +1,9 @@
 {
-  "eden-memory": {
-    "command": "/home/yourname/.local/bin/eden-memory",
+  "memory": {
+    "command": "/home/yourname/.local/bin/memory",
     "args": [
       "--db",
-      "/home/yourname/.eden-memory/default.db",
+      "/home/yourname/.memory/default.db",
       "--mcp-stdio"
     ]
   }

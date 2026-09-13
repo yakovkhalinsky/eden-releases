@@ -4,57 +4,57 @@
 
 const memoryCard = {
   tag: 'Memory & sync',
-  name: 'eden-memory',
+  name: 'memory',
   desc: 'Local-first SQLite memory with vector embeddings, an MCP server, knowledge packets, dreaming, and encrypted multi-device sync.',
-  href: '/eden-memory/',
+  href: '/memory/',
   links: [
-    { label: 'Quick start', href: '/eden-memory/getting-started/' },
-    { label: 'Tools', href: '/eden-memory/reference/tools/' },
-    { label: 'Dreaming', href: '/eden-memory/concepts/dreaming/' },
+    { label: 'Quick start', href: '/memory/getting-started/' },
+    { label: 'Tools', href: '/memory/reference/tools/' },
+    { label: 'Dreaming', href: '/memory/concepts/dreaming/' },
   ],
 };
 
 const relayCard = {
   tag: 'Self-hosted relay',
-  name: 'eden-relay',
+  name: 'relay',
   desc: 'A lightweight, single-binary sync relay for always-on hosts. Opaque to the operator: it stores directory data and encrypted envelopes, nothing else.',
-  href: '/eden-relay/',
+  href: '/relay/',
   links: [
-    { label: 'Overview', href: '/eden-relay/' },
-    { label: 'Run a relay server', href: '/eden-relay/how-to/run-relay-server/' },
-    { label: 'Deploy on a VPS', href: '/eden-relay/how-to/deploy-public-vps/' },
+    { label: 'Overview', href: '/relay/' },
+    { label: 'Run a relay server', href: '/relay/how-to/run-relay-server/' },
+    { label: 'Deploy on a VPS', href: '/relay/how-to/deploy-public-vps/' },
   ],
 };
 
 const binaries = [
-  { name: 'eden-memory', role: 'Memory, MCP server, sync, and device pairing', href: '/eden-memory/', size: '~66–107 MB' },
-  { name: 'eden-relay', role: 'Self-hosted relay for encrypted multi-device sync', href: '/eden-relay/', size: '~10–11 MB' },
+  { name: 'memory', role: 'Memory, MCP server, sync, and device pairing', href: '/memory/', size: '~66–107 MB' },
+  { name: 'relay', role: 'Self-hosted relay for encrypted multi-device sync', href: '/relay/', size: '~10–11 MB' },
 ];
 
-const memoryInstall = 'curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh';
-const setupCmd = 'cd ~/my-project && eden-memory setup';
-const healthCmd = 'eden-memory health';
+const memoryInstall = 'curl -fsSL https://0d3sa.com/memory/install.sh | sh';
+const setupCmd = 'cd ~/my-project && memory setup';
+const healthCmd = 'memory health';
 
 const skills = [
   {
     name: 'Claude Code CLI',
-    desc: 'Slash commands and rules that make Claude Code use eden-memory as its persistent memory layer.',
-    href: '/eden-memory/skills/eden-memory-claude/',
+    desc: 'Slash commands and rules that make Claude Code use memory as its persistent memory layer.',
+    href: '/memory/skills/memory-claude/',
   },
   {
     name: 'Cursor',
-    desc: 'Agent rules for wiring eden-memory into Cursor as a persistent skill.',
-    href: '/eden-memory/skills/eden-memory-cursor/',
+    desc: 'Agent rules for wiring memory into Cursor as a persistent skill.',
+    href: '/memory/skills/memory-cursor/',
   },
   {
     name: 'Hermes Agent',
     desc: 'Skill file that gives the Hermes agent persistent recall across sessions.',
-    href: '/eden-memory/skills/eden-memory-hermes/',
+    href: '/memory/skills/memory-hermes/',
   },
   {
     name: 'Any MCP client',
     desc: 'Tool-usage guidance for any stdio MCP client — the base skill the others build on.',
-    href: '/eden-memory/skills/eden-memory-mcp-usage/',
+    href: '/memory/skills/memory-mcp-usage/',
   },
 ];
 ---
@@ -65,7 +65,7 @@ const skills = [
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>0d3sa — Local-first agent memory</title>
-  <meta name="description" content="eden-memory: local-first SQLite memory for coding agents, with an MCP server, knowledge packets, dreaming, and encrypted multi-device sync through a self-hosted relay." />
+  <meta name="description" content="memory: local-first SQLite memory for coding agents, with an MCP server, knowledge packets, dreaming, and encrypted multi-device sync through a self-hosted relay." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Saira:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -79,9 +79,9 @@ const skills = [
       </a>
       <nav class="nav-links" aria-label="Primary">
         <a href="/docs/" class="btn btn-sm btn-sm-primary">Docs</a>
-        <a href="/eden-memory/getting-started/" class="nav-link">Quick start</a>
+        <a href="/memory/getting-started/" class="nav-link">Quick start</a>
         <a href="https://github.com/yakovkhalinsky/eden-releases" target="_blank" rel="noreferrer" class="nav-link">GitHub</a>
-        <a href="/eden-memory/reference/downloads/" class="btn btn-sm">Downloads</a>
+        <a href="/memory/reference/downloads/" class="btn btn-sm">Downloads</a>
       </nav>
     </div>
   </header>
@@ -94,7 +94,7 @@ const skills = [
             <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Production ready</span>
             <span class="call-sheet-id">Local-first · no cloud account</span>
           </div>
-          <h1 id="hero-title">Eden Memory</h1>
+          <h1 id="hero-title">Memory</h1>
           <p class="lead">
             Local-first memory for coding agents. Semantic recall, keyword search, knowledge packets, and dreaming — all in one SQLite file on your machine, with encrypted sync between your devices.
           </p>
@@ -165,10 +165,10 @@ const skills = [
 
           <ol class="install-list" role="list">
             <li class="install-block">
-              <div class="block-label">1. Install eden-memory</div>
+              <div class="block-label">1. Install memory</div>
               <div class="step-row">
                 <code class="cmd">{memoryInstall}</code>
-                <button class="copy-btn" type="button" data-cmd={memoryInstall} aria-label="Copy eden-memory install command">
+                <button class="copy-btn" type="button" data-cmd={memoryInstall} aria-label="Copy memory install command">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </button>
               </div>
@@ -187,7 +187,7 @@ const skills = [
             <li class="install-block">
               <div class="block-label">3. Install a skill for your agent <span class="block-optional">optional</span></div>
               <p class="install-hint">
-                Skills add ready-made prompts and rules for your client. Grab one from the <a href="/eden-memory/skills/">skills registry</a> — Claude Code, Cursor, Hermes, or any MCP client.
+                Skills add ready-made prompts and rules for your client. Grab one from the <a href="/memory/skills/">skills registry</a> — Claude Code, Cursor, Hermes, or any MCP client.
               </p>
             </li>
             <li class="install-block">
@@ -203,7 +203,7 @@ const skills = [
                 </button>
               </div>
               <p class="install-hint">
-                Then ask your agent to remember something — or follow the <a href="/eden-memory/getting-started/">quick start</a>.
+                Then ask your agent to remember something — or follow the <a href="/memory/getting-started/">quick start</a>.
               </p>
             </li>
           </ol>
@@ -254,7 +254,7 @@ const skills = [
           ))}
         </div>
         <div class="skills-foot">
-          <a href="/eden-memory/skills/" class="reminder-link">Browse the full skills registry →</a>
+          <a href="/memory/skills/" class="reminder-link">Browse the full skills registry →</a>
         </div>
       </div>
     </section>
@@ -277,7 +277,7 @@ const skills = [
           ))}
         </ul>
         <div class="binaries-foot">
-          <a href="/eden-memory/reference/downloads/" class="reminder-link">Browse downloads and checksums →</a>
+          <a href="/memory/reference/downloads/" class="reminder-link">Browse downloads and checksums →</a>
         </div>
       </div>
     </section>
@@ -292,25 +292,25 @@ const skills = [
           <div class="decision-card">
             <h3 class="decision-question">I want memory in Claude Code or Cursor</h3>
             <p class="decision-answer">
-              Install <a href="/eden-memory/getting-started/">eden-memory</a>, then run <code>eden-memory setup</code> in the project directory.
+              Install <a href="/memory/getting-started/">memory</a>, then run <code>memory setup</code> in the project directory.
             </p>
           </div>
           <div class="decision-card">
             <h3 class="decision-question">I use another MCP client</h3>
             <p class="decision-answer">
-              eden-memory speaks stdio MCP. See <a href="/eden-memory/mcp-clients/">connecting other MCP clients</a>.
+              memory speaks stdio MCP. See <a href="/memory/mcp-clients/">connecting other MCP clients</a>.
             </p>
           </div>
           <div class="decision-card">
             <h3 class="decision-question">I need multi-device sync</h3>
             <p class="decision-answer">
-              Follow <a href="/eden-memory/tutorials/sync-two-devices-relay/">syncing two devices through a relay</a>. Contents are encrypted end-to-end.
+              Follow <a href="/memory/tutorials/sync-two-devices-relay/">syncing two devices through a relay</a>. Contents are encrypted end-to-end.
             </p>
           </div>
           <div class="decision-card">
             <h3 class="decision-question">I want to run my own relay</h3>
             <p class="decision-answer">
-              Deploy the <a href="/eden-relay/how-to/run-relay-server/">eden-relay</a> binary on any always-on host — or on a <a href="/eden-relay/how-to/deploy-public-vps/">public VPS</a>.
+              Deploy the <a href="/relay/how-to/run-relay-server/">relay</a> binary on any always-on host — or on a <a href="/relay/how-to/deploy-public-vps/">public VPS</a>.
             </p>
           </div>
         </div>
@@ -326,7 +326,7 @@ const skills = [
         <span class="sep" aria-hidden="true">·</span>
         <a href="/docs/">Docs</a>
         <span class="sep" aria-hidden="true">·</span>
-        <a href="/eden-memory/reference/downloads/">Downloads</a>
+        <a href="/memory/reference/downloads/">Downloads</a>
         <span class="sep" aria-hidden="true">·</span>
         <a href="https://github.com/yakovkhalinsky/eden-releases/releases">Release notes</a>
       </nav>

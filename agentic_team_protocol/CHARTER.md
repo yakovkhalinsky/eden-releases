@@ -7,7 +7,7 @@ can be overridden by a project-local charter in `.claude/agentic-team-charter.md
 ## Scope
 
 This charter governs agentic teams using the Agentic Team Protocol with
-eden-memory as the durable memory substrate.
+memory as the durable memory substrate.
 
 ## Roles
 
@@ -47,14 +47,14 @@ Circle.
 
 ## Guardrails
 
-- Secrets must never be stored in eden-memory.
+- Secrets must never be stored in memory.
 - Runtime may not touch production systems without explicit charter authorisation.
 - Every goal must end in either a hand-off/closure record or an escalation record.
 - Charter changes require re-ratification.
 - Non-trivial changes require a feature branch; direct commits to the default branch are allowed only for trivial one-line fixes.
 - Merges into the default branch must be non-fast-forward merge commits that preserve both parent SHAs.
 - Force-pushing the default branch is prohibited.
-- Durable records must embed their `goal_id` and own `record_id` in searchable `content` (e.g., `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>`) so `eden_recall` and `eden_search` can locate them by UUID; metadata alone is not searchable.
+- Durable records must embed their `goal_id` and own `record_id` in searchable `content` (e.g., `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: <owner_role>`) so `memory_recall` and `memory_search` can locate them by UUID; metadata alone is not searchable.
 
 ## Branch discipline
 
@@ -113,7 +113,7 @@ When `worktree_policy.enabled` is true in `.claude/agentic-team-config.yaml`:
 ## Ratification
 
 This charter is ratified when `/team-charter` records a
-`charter_ratification` entry in eden-memory. The first ratification may be done
+`charter_ratification` entry in memory. The first ratification may be done
 by the project owner. Fleet-wide charters require Founders' Circle sign-off.
 
 ## Version and amendments
@@ -126,5 +126,5 @@ by the project owner. Fleet-wide charters require Founders' Circle sign-off.
 
 A team retires by:
 1. Archiving the ratification record.
-2. Marking eden-memory team records as `team_retired`.
+2. Marking memory team records as `team_retired`.
 3. Removing local agent/command files only after archival is verified.

@@ -6,7 +6,7 @@ Status: Experimental runbook — implement, measure, and ratify before promoting
 
 This runbook defines a minimal, schema-compatible token-efficiency metrics
 collection setup for the Agentic Team Protocol (ATP). It embeds a `metrics`
-object in `run_log` metadata (no Eden-memory binary schema change) and provides a
+object in `run_log` metadata (no Memory binary schema change) and provides a
 local SQLite aggregation helper, `atp-metrics`, to compute per-goal, per-stage,
 and per-role aggregates.
 
@@ -25,7 +25,7 @@ Set in the project `.env` or `agentic-team-config.yaml`:
 ATP_METRICS_ENABLED=1
 
 # Optional: override the aggregate database path.
-ATP_METRICS_DB_PATH=${HOME}/.eden-memory/atp-metrics.db
+ATP_METRICS_DB_PATH=${HOME}/.memory/atp-metrics.db
 ```
 
 When `ATP_METRICS_ENABLED=1`, every ATP role must append a `metrics` object to
@@ -37,7 +37,7 @@ records when the flag is disabled, but may omit the `metrics` object.
 ## 2. `metrics` JSON schema for `run_log` metadata
 
 The `metrics` object is a sibling of other `run_log` metadata fields. It is
-optional and ignored by the Eden-memory binary; only `atp-metrics` and downstream
+optional and ignored by the Memory binary; only `atp-metrics` and downstream
 analysts consume it.
 
 ### 2.1 Field definitions
@@ -46,7 +46,7 @@ analysts consume it.
 |-------|------|----------|-------------|
 | `enabled` | boolean | yes | Must be `true` when `ATP_METRICS_ENABLED=1`. Lets the helper distinguish experimental records from baseline records. |
 | `experiment_id` | string | yes | Stable experiment identifier. Default: `atp-metrics-20-goal-2026-08`. |
-| `device_id` | string | yes | Stable identifier for the originating device/host where this `run_log` was produced. Prefer the value of the `EDEN_DEVICE_ID` environment variable; otherwise derive a deterministic ID from the hostname (e.g., a hash or sanitized hostname) or use a persistent per-install identifier. Must not include PII such as a username or full MAC address. |
+| `device_id` | string | yes | Stable identifier for the originating device/host where this `run_log` was produced. Prefer the value of the `MEMORY_DEVICE_ID` environment variable; otherwise derive a deterministic ID from the hostname (e.g., a hash or sanitized hostname) or use a persistent per-install identifier. Must not include PII such as a username or full MAC address. |
 | `role` | string | yes | Role that produced the `run_log`: `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`, `router`. |
 | `stage` | string | yes | Lifecycle stage at turn end, e.g. `goal_receipt`, `routing_and_assignment`, `context_gathering`, `action`, `verification`, `recording_and_archival`, `hand_off_or_closure`. |
 | `turn_start` | RFC3339 | yes | ISO timestamp when the role turn started. |
@@ -174,14 +174,14 @@ Roles write a `run_log` at the **start** and **end** of each turn. Only the
 Every role must set `metrics.device_id` to a stable identifier for the device or
 host that produced the `run_log`. Use this precedence:
 
-1. `EDEN_DEVICE_ID` environment variable, if set. The project `.env.example`
+1. `MEMORY_DEVICE_ID` environment variable, if set. The project `.env.example`
    derives this automatically with `./agentic_team_protocol/lib/device_id.sh`.
 2. A deterministic, privacy-safe derived ID from the hostname using the shared
    helper: `./agentic_team_protocol/lib/device_id.sh` (shell) or
    `agentic_team_protocol/lib/device_id.py` (Python, importable as
    `from agentic_team_protocol.lib.device_id import derive_device_id`). The
    helper produces `<project-slug>-<sha256(hostname)[0:16]>` and contains no PII.
-3. A persistent per-install identifier written to `~/.eden-memory/device_id`.
+3. A persistent per-install identifier written to `~/.memory/device_id`.
 
 Do not include usernames, full MAC addresses, serial numbers, or other personal
 identifiers in `device_id`. If a deterministic identifier cannot be derived, use
@@ -240,7 +240,7 @@ the literal `unknown`.
 
 ## 4. Token estimation rules
 
-The current Eden-memory / Claude Code CLI integration does not expose exact
+The current Memory / Claude Code CLI integration does not expose exact
 token counts per role turn. Until it does, estimate tokens as follows:
 
 1. **Input tokens** ≈ `context_size / 4` bytes-per-token ratio, rounded up, plus
@@ -263,9 +263,9 @@ It also accepts a `--token-ratio` flag to change the bytes-per-token ratio.
 
 Location: `agentic_team_protocol/bin/atp-metrics`
 
-A Python 3 script that reads `run_log` records from the Eden-memory SQLite
+A Python 3 script that reads `run_log` records from the Memory SQLite
 database, extracts embedded `metrics` metadata, and writes aggregated results to a
-local SQLite database (default `~/.eden-memory/atp-metrics.db`) or a JSONL file.
+local SQLite database (default `~/.memory/atp-metrics.db`) or a JSONL file.
 
 ### 5.1 Usage
 
@@ -280,7 +280,7 @@ local SQLite database (default `~/.eden-memory/atp-metrics.db`) or a JSONL file.
 ./agentic_team_protocol/bin/atp-metrics --goal-id <goal-id> --output jsonl --output-file ./atp-metrics.jsonl
 
 # Override paths.
-ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic_team_protocol/bin/atp-metrics --db /home/yakov/.eden-memory/default.db --goal-id <goal-id>
+ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic_team_protocol/bin/atp-metrics --db /home/yakov/.memory/default.db --goal-id <goal-id>
 
 # Override the model price table (JSON file or inline JSON).
 ./agentic_team_protocol/bin/atp-metrics --goal-id <goal-id> \
@@ -300,12 +300,12 @@ ATP_METRICS_DB_PATH=/tmp/metrics.db ./agentic_team_protocol/bin/atp-metrics --db
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `ATP_METRICS_ENABLED` | `0` | Set to `1` to tell roles to emit the `metrics` object. The helper script runs regardless of this flag. |
-| `ATP_METRICS_DB_PATH` | `${HOME}/.eden-memory/atp-metrics.db` | Aggregate database path. |
+| `ATP_METRICS_DB_PATH` | `${HOME}/.memory/atp-metrics.db` | Aggregate database path. |
 | `ATP_METRICS_PRICE_TABLE` | built-in `DEFAULT_PRICE_TABLE` | JSON file path or inline JSON with per-model input/output prices (USD per 1M tokens). |
-| `EDEN_DB_PATH` | `${HOME}/.eden-memory/default.db` | Source Eden-memory database path. |
-| `EDEN_ORG_ID` | resolved from `.env` / config | Organization scope for queries. |
-| `EDEN_WORKSPACE_ID` | resolved from `.env` / config | Workspace scope for queries. |
-| `EDEN_DEVICE_ID` | `unknown` | Stable identifier for the host producing `run_log` metrics. Must be privacy-safe. |
+| `MEMORY_DB_PATH` | `${HOME}/.memory/default.db` | Source Memory database path. |
+| `MEMORY_ORG_ID` | resolved from `.env` / config | Organization scope for queries. |
+| `MEMORY_WORKSPACE_ID` | resolved from `.env` / config | Workspace scope for queries. |
+| `MEMORY_DEVICE_ID` | `unknown` | Stable identifier for the host producing `run_log` metrics. Must be privacy-safe. |
 
 ### 5.3 Aggregate database schema
 
@@ -428,7 +428,7 @@ the metrics experiment cleanly:
    rm -f agentic_team_protocol/lib/__init__.py
    ```
 5. **Revert environment wiring**:
-   - Remove or comment the `EDEN_DEVICE_ID` line in
+   - Remove or comment the `MEMORY_DEVICE_ID` line in
      `agentic_team_protocol/.env.example`.
 6. **File a follow-up research goal** to understand the failure mode and decide
    whether to redesign the experiment.
@@ -457,7 +457,7 @@ prompts should reference this runbook rather than duplicating the schema.
 |------|--------|------------|
 | Token estimates are noisy. | Threatens the 15% threshold. | Use consistent estimation rules (§4); report confidence intervals, not point differences. |
 | Roles forget to populate `metrics`. | Missing data in the cohort. | Add the obligation to role prompts and `SKILL.md`; `atp-metrics` warns on records with `ATP_METRICS_ENABLED=1` but missing `metrics`. |
-| Metrics object bloats metadata. | Larger Eden-memory rows. | Cap at 2 KB; store only scalar estimates and booleans. |
+| Metrics object bloats metadata. | Larger Memory rows. | Cap at 2 KB; store only scalar estimates and booleans. |
 | Verdict outcomes come from `verdict` records, not only `run_log`. | Summary final_verdict may be wrong. | The helper reads both `run_log` and `verdict` records and prefers the latest `verdict` record for `final_verdict`. |
 | Date-range queries rely on `stored_at` metadata. | Records without `stored_at` are skipped. | Require `stored_at` on all ATP records per `SKILL.md`; the helper falls back to `created_at` only as a last resort. |
 

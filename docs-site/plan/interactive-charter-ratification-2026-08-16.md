@@ -12,7 +12,7 @@
 ## 1. Goal summary and success criteria
 
 ### Goal
-Redesign the `/team-charter` slash command so charter ratification is an interactive, staged checklist + confirmation flow instead of a single-shot validation + store. The command should guide the user through missing placeholders, config/charter mismatches, and guardrails before writing a durable `charter_ratification` record to eden-memory.
+Redesign the `/team-charter` slash command so charter ratification is an interactive, staged checklist + confirmation flow instead of a single-shot validation + store. The command should guide the user through missing placeholders, config/charter mismatches, and guardrails before writing a durable `charter_ratification` record to memory.
 
 ### Why now
 The current `/team-charter` command reads the charter, computes a hash, checks placeholders, and stores a record in one pass. Users report it is opaque: they only discover placeholder or role-mismatch failures after the fact, and they never get a chance to review what will be ratified. This undermines trust in the charter as a binding contract.
@@ -22,7 +22,7 @@ The current `/team-charter` command reads the charter, computes a hash, checks p
 2. Placeholders and template example text are detected and surfaced with file/line hints.
 3. Active-role mismatches between `.claude/agentic-team-config.yaml` and the charter are shown as a delta.
 4. The user can ratify, defer specific items, edit the charter, or abort without side effects.
-5. A durable eden-memory record is written only after explicit final confirmation.
+5. A durable memory record is written only after explicit final confirmation.
 6. The ratification record stores the full SHA-256 hash, charter path, rater, timestamp, deferrals, and proceed/no-proceed reason.
 7. Re-ratification shows the previous version hash and any changes since the last ratification.
 8. Expert/non-interactive usage is preserved via a flag or environment variable.
@@ -78,7 +78,7 @@ This pattern was chosen because it keeps the user in control, avoids the complex
 2. Compute `CHARTER_VERSION` = full SHA-256 of the file.
 3. Scan for placeholders and template example text.
 4. Read `.claude/agentic-team-config.yaml` and compute role delta vs charter.
-5. Resolve `org_id`, `workspace_id`, `agent_id`; if missing, explain and offer to run `eden-memory setup claude`.
+5. Resolve `org_id`, `workspace_id`, `agent_id`; if missing, explain and offer to run `memory setup claude`.
 6. Fetch the latest `charter_ratification` record for `goal_id: charter-ratification` to detect re-ratification.
 
 ### Phase B — Checklist
@@ -104,7 +104,7 @@ The user can choose:
 ### Phase C — Ratification
 1. Show final summary: path, full hash, active roles, Runtime status, default branch, deferrals, previous version (if re-ratifying).
 2. Ask final confirmation: "Store charter ratification record and set status to proceed/no-proceed?"
-3. If confirmed, call `eden-memory remember` (or `eden_remember` when MCP is available) with:
+3. If confirmed, call `memory remember` (or `memory_remember` when MCP is available) with:
    - `agent_id`: `archivist`
    - `user_id`: `$USER`
    - `content`: searchable identity line + summary
@@ -155,7 +155,7 @@ The user can choose:
 
 ## 7. Dependencies and blockers
 
-- No new binary dependencies; relies on existing `eden-memory` CLI and `sha256sum`.
+- No new binary dependencies; relies on existing `memory` CLI and `sha256sum`.
 - Requires `AskUserQuestion` availability in Claude Code slash-command execution.
 - Docs sync script (`scripts/sync-atp-to-docs.js`) must be run after ATP source files change.
 

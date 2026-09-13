@@ -2,7 +2,7 @@
 /**
  * Sync skills from the repo root into the docs-site content tree.
  *
- * Reads skills/<name>/SKILL.md and writes docs-site/src/content/docs/eden-memory/skills/<name>.md
+ * Reads skills/<name>/SKILL.md and writes docs-site/src/content/docs/memory/skills/<name>.md
  * so Starlight serves them as docs pages.
  *
  * Run manually:
@@ -16,7 +16,7 @@ const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..');
 const sourceDir = path.join(repoRoot, 'skills');
-const targetDir = path.join(repoRoot, 'docs-site', 'src', 'content', 'docs', 'eden-memory', 'skills');
+const targetDir = path.join(repoRoot, 'docs-site', 'src', 'content', 'docs', 'memory', 'skills');
 
 const frontmatterPattern = /^---\n[\s\S]*?\n---\n/;
 
@@ -45,7 +45,7 @@ function syncSkill(name) {
     content = content.slice(fmMatch[0].length).trimStart();
   }
 
-  const targetContent = `---\ntitle: ${title}\ndescription: Agent skill for working with eden-memory.\n---\n\n${content}`;
+  const targetContent = `---\ntitle: ${title}\ndescription: Agent skill for working with memory.\n---\n\n${content}`;
 
   fs.mkdirSync(targetDir, { recursive: true });
   fs.writeFileSync(targetPath, targetContent);
@@ -56,7 +56,7 @@ function syncSkill(name) {
 const skillNames = fs.readdirSync(sourceDir, { withFileTypes: true })
   .filter(entry => entry.isDirectory())
   .map(entry => entry.name)
-  .filter(name => name.startsWith('eden-memory-'));
+  .filter(name => name.startsWith('memory-'));
 
 let synced = 0;
 for (const name of skillNames) {

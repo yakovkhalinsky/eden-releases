@@ -2,17 +2,17 @@
 # device_id.sh — derive a stable, privacy-safe device identifier from the hostname.
 #
 # Usage:
-#   export EDEN_DEVICE_ID=$(./agentic_team_protocol/lib/device_id.sh)
+#   export MEMORY_DEVICE_ID=$(./agentic_team_protocol/lib/device_id.sh)
 #
 # The identifier is deterministic for the same hostname, stable across restarts,
 # and contains no personal identifiers (usernames, MAC addresses, serials, IPs).
 #
 # Output format: <project-slug>-<sha256(hostname)[0:16]>
-# Override the project slug with EDEN_DEVICE_ID_PROJECT_SLUG (default: "eden").
+# Override the project slug with MEMORY_DEVICE_ID_PROJECT_SLUG (default: "eden").
 
 set -eu
 
-_project_slug="${EDEN_DEVICE_ID_PROJECT_SLUG:-eden}"
+_project_slug="${MEMORY_DEVICE_ID_PROJECT_SLUG:-eden}"
 
 # Prefer HOSTNAME if already set, otherwise ask the OS.
 if [ -n "${HOSTNAME:-}" ]; then

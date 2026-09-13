@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # package-release.sh
 #
-# Takes downloaded eden-memory binaries and staged agent-harness skills,
+# Takes downloaded memory binaries and staged agent-harness skills,
 # packages per-platform archives, computes SHA-256 checksums, and writes a
 # manifest file suitable for the GitHub Release.
 #
@@ -50,7 +50,7 @@ mkdir -p "$OUT_DIR"
 PLATFORMS="${PLATFORMS//,/ }"
 
 for platform in $PLATFORMS; do
-  binary_name="eden-memory-${platform}"
+  binary_name="memory-${platform}"
   binary_path="${SOURCE_DIR}/${binary_name}"
 
   if [ ! -f "$binary_path" ]; then
@@ -59,13 +59,13 @@ for platform in $PLATFORMS; do
   fi
 
   # Build a per-platform staging directory.
-  stage_name="eden-memory-${VERSION}-${platform}"
+  stage_name="memory-${VERSION}-${platform}"
   stage_dir="${OUT_DIR}/${stage_name}"
   rm -rf "$stage_dir"
   mkdir -p "$stage_dir"
 
-  cp "$binary_path" "${stage_dir}/eden-memory"
-  chmod +x "${stage_dir}/eden-memory"
+  cp "$binary_path" "${stage_dir}/memory"
+  chmod +x "${stage_dir}/memory"
 
   if [ -d "$SKILLS_DIR" ] && [ "$(find "$SKILLS_DIR" -mindepth 1 -print -quit 2>/dev/null)" ]; then
     cp -r "$SKILLS_DIR" "${stage_dir}/agent-harness-skills"
@@ -73,11 +73,11 @@ for platform in $PLATFORMS; do
 
   # Add a small README inside the archive.
   cat > "${stage_dir}/README.txt" <<EOF
-eden-memory ${RELEASE_TAG}
+memory ${RELEASE_TAG}
 Platform: ${platform}
-Source: yakovkhalinsky/eden-memory ${VERSION}
+Source: yakovkhalinsky/0d3sa ${VERSION}
 
-This archive contains the eden-memory static binary plus bundled
+This archive contains the memory static binary plus bundled
 agent-harness skills. Place the binary on your PATH and import the skills
 into your Hermes skill directory.
 EOF

@@ -5,9 +5,9 @@ model: opus
 # model: ollama:minimax-m3:cloud
 effort: high
 tools:
-  - mcp__eden-memory__eden_remember
-  - mcp__eden-memory__eden_recall
-  - mcp__eden-memory__eden_search
+  - mcp__memory__memory_remember
+  - mcp__memory__memory_recall
+  - mcp__memory__memory_search
   - Read
   - Bash
   - TaskUpdate
@@ -18,8 +18,8 @@ tools:
 
 ## Memory-first rules
 
-- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
-- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
+- When reviewing `memory_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `memory_search` or ask the user.
+- Every `mcp__memory__memory_recall`, `memory_remember`, `memory_search`, `memory_edit`, and `memory_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -53,7 +53,7 @@ Before finishing and returning the required durable record:
 When `ATP_METRICS_ENABLED=1`, the final `run_log` of the verifier turn must
 include a `metrics` object with `verdict` set to the same value as the verdict
 record, per `runbooks/atp-metrics-collection.md`. The `metrics` object must
-include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
+include `device_id` populated from `MEMORY_DEVICE_ID` or the shared helper at
 `agentic_team_protocol/lib/device_id.sh` / `agentic_team_protocol/lib/device_id.py`.
 
 1. A `verdict` record with status:
@@ -63,17 +63,17 @@ include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
 2. Evidence supporting the verdict.
 3. Scope of the check — what was and was not verified.
 4. Residual risks and recommended mitigations, including any `pending_authorisation` or follow-up steps.
-5. Eden-memory record metadata:
+5. Memory record metadata:
    - `goal_id`, `stage: verification`, `owner_role: verifier`, `agent_id: "verifier"`, `input_record_ids`, `output_record_ids: [verdict_id]`.
-   - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this verdict.
+   - `recalled_memory_ids` — IDs of Memory memories recalled and used to inform this verdict.
    - `claude_task_id` — the Claude Code task ID for this goal, if available.
-   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: verifier`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: verifier`. Because `memory_recall` and `memory_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
-   Example `eden_remember` content:
+   Example `memory_remember` content:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: verification | Owner: verifier
-   {"record_type":"verdict","goal_id":"<goal_id>","stage":"verification","owner_role":"verifier","agent_id":"verifier","status":"green","input_record_ids":["<action_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
+   {"record_type":"verdict","goal_id":"<goal_id>","stage":"verification","owner_role":"verifier","agent_id":"verifier","status":"green","input_record_ids":["<action_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${MEMORY_ORG_ID}","workspace_id":"${MEMORY_WORKSPACE_ID}"}
    ```
 6. For `blocked` verdicts, record the unblock condition clearly so `/team-continue` can resume automatically when it is satisfied.
 
@@ -105,4 +105,4 @@ include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
 
 ## Parent assistant continuation cue
 
-After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

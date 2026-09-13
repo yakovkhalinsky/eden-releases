@@ -22,11 +22,11 @@ For everyday implementation tasks, use `/team` (Lite mode) instead.
    - If empty or only contains help-like words (`help`, `?`, `status`), run `/team-status` and ask what the user wants to do next.
    - If it contains a `goal_id`, run `/team-continue ${GOAL_ID}` (the stored `mode` determines Lite or Full routing).
    - Otherwise, treat the text as a new **Full** goal request and spawn the `dispatcher` subagent with `mode: full`.
-2. When starting a new goal, pass the full user request to the Dispatcher. The Dispatcher records a `goal_record` (with `metadata.mode: full`) and a `dispatch_instruction` in Eden-memory.
+2. When starting a new goal, pass the full user request to the Dispatcher. The Dispatcher records a `goal_record` (with `metadata.mode: full`) and a `dispatch_instruction` in Memory.
    - Before spawning the Dispatcher, create a Claude Code task for this goal via `TaskCreate` with status `in_progress`. Pass the task ID to the Dispatcher so it can store `metadata.claude_task_id` in the `goal_record`.
-   - Resolve `EDEN_ORG_ID` and `EDEN_WORKSPACE_ID` from the project `.env`, `agentic-team-config.yaml`, or `~/.eden-memory/.env`, and pass them in the agent context so every Eden-memory call is scoped to this workspace.
+   - Resolve `MEMORY_ORG_ID` and `MEMORY_WORKSPACE_ID` from the project `.env`, `agentic-team-config.yaml`, or `~/.memory/.env`, and pass them in the agent context so every Memory call is scoped to this workspace.
    - On every subsequent hand-off, update the task via `TaskUpdate` to reflect the current stage and role.
-3. When continuing an existing goal, let `/team-continue` or the `router` subagent rehydrate the goal from Eden-memory and dispatch the correct next role.
+3. When continuing an existing goal, let `/team-continue` or the `router` subagent rehydrate the goal from Memory and dispatch the correct next role.
 
 ## Behaviour
 
@@ -49,6 +49,6 @@ For non-trivial `build` or `run` goals, the assigned role may create a dedicated
 ## Anti-patterns
 
 - Do not perform role work directly in `/team-full`; always hand off to the Dispatcher, Router, or a lifecycle command.
-- Do not invent new goals without recording a `goal_record` in Eden-memory.
+- Do not invent new goals without recording a `goal_record` in Memory.
 - Do not rely on conversation context when continuing; use `/team-continue` or the `router` subagent.
 - Do not use `/team-full` for trivial one-file edits when `/team` (Lite) is sufficient.

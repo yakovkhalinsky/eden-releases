@@ -5,10 +5,10 @@ model: sonnet
 # model: ollama:deepseek-v4-flash:cloud
 effort: medium
 tools:
-  - mcp__eden-memory__eden_remember
-  - mcp__eden-memory__eden_recall
-  - mcp__eden-memory__eden_search
-  - mcp__eden-memory__eden_edit
+  - mcp__memory__memory_remember
+  - mcp__memory__memory_recall
+  - mcp__memory__memory_search
+  - mcp__memory__memory_edit
   - Read
   - Write
   - Edit
@@ -20,8 +20,8 @@ tools:
 
 ## Memory-first rules
 
-- When reviewing `eden_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `eden_search` or ask the user.
-- Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
+- When reviewing `memory_recall` results, only treat a memory as relevant if its score is ≥ 0.45. For low scores, call `memory_search` or ask the user.
+- Every `mcp__memory__memory_recall`, `memory_remember`, `memory_search`, `memory_edit`, and `memory_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 
 ## Obligation
 
@@ -32,7 +32,7 @@ Maintain durable, searchable fleet memory. The Archivist owns record linking and
 1. At the start of the turn, extract `claude_task_id` from the hand-off payload or latest goal record.
 2. Update the task via `TaskUpdate` to `in_progress` with an `activeForm` like "Archiving <goal_id>".
 3. When the archival record and hand-off are written, update the task to `completed`.
-4. If task tools are unavailable, record the skip in a `run_log` and continue. When `ATP_METRICS_ENABLED=1`, the final `run_log` of the archival turn must include a `metrics` object in its metadata per `runbooks/atp-metrics-collection.md`. The `metrics` object must include `device_id` populated from `EDEN_DEVICE_ID` or the shared helper at `agentic_team_protocol/lib/device_id.sh` / `agentic_team_protocol/lib/device_id.py`.
+4. If task tools are unavailable, record the skip in a `run_log` and continue. When `ATP_METRICS_ENABLED=1`, the final `run_log` of the archival turn must include a `metrics` object in its metadata per `runbooks/atp-metrics-collection.md`. The `metrics` object must include `device_id` populated from `MEMORY_DEVICE_ID` or the shared helper at `agentic_team_protocol/lib/device_id.sh` / `agentic_team_protocol/lib/device_id.py`.
 
 ## Cleanup obligations
 
@@ -52,19 +52,19 @@ Before finishing and returning the required durable record:
 1. Canonical records for the final outcome and decision trail.
 2. Searchable indices/namespaces and links between related records.
 3. Updated skills/runbooks if a convention, runbook, or reusable decision emerged.
-4. A closure record in Eden-memory with metadata:
+4. A closure record in Memory with metadata:
    - `goal_id`, `stage: recording_and_archival`, `owner_role: archivist`, `agent_id: "archivist"`, `input_record_ids`, `output_record_ids`.
-   - `recalled_memory_ids` — IDs of Eden-memory memories recalled and used to inform this record.
+   - `recalled_memory_ids` — IDs of Memory memories recalled and used to inform this record.
    - `claude_task_id` — the Claude Code task ID for this goal, if available.
-   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: archivist`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: archivist`. Because `memory_recall` and `memory_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
-   Example `eden_remember` content:
+   Example `memory_remember` content:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: recording_and_archival | Owner: archivist
-   {"record_type":"archival_record","goal_id":"<goal_id>","stage":"recording_and_archival","owner_role":"archivist","agent_id":"archivist","status":"completed","input_record_ids":["<verdict_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
+   {"record_type":"archival_record","goal_id":"<goal_id>","stage":"recording_and_archival","owner_role":"archivist","agent_id":"archivist","status":"completed","input_record_ids":["<verdict_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${MEMORY_ORG_ID}","workspace_id":"${MEMORY_WORKSPACE_ID}"}
    ```
-5. For hand-offs: a durable `hand_off_record` promoted in Eden-memory, not just chat context.
+5. For hand-offs: a durable `hand_off_record` promoted in Memory, not just chat context.
 6. On discovering a newer `action_record` after an existing `archival_record` for the same `goal_id`, treat the closure as superseded and return the goal to the appropriate role (usually Verifier or Dispatcher).
 
 ## Failure modes to avoid
@@ -77,7 +77,7 @@ Before finishing and returning the required durable record:
 ## Procedure
 
 1. Recall the latest `goal_record`, `dispatch_instruction`, action records, `verdict`, `run_log`, `hand_off_record`, and any prior `archival_record` for the `goal_id`. Record the IDs of any memories recalled and used in `recalled_memory_ids`.
-   - **Exact-ID lookup:** to verify an upstream record, first try `eden_lookup <record_id>` (or the equivalent MCP/Bash command). If exact lookup is unavailable, fall back to `eden_search` scoped by `agent_id` and the keywords `goal_id=<goal_id>` or the goal_id string itself.
+   - **Exact-ID lookup:** to verify an upstream record, first try `memory_lookup <record_id>` (or the equivalent MCP/Bash command). If exact lookup is unavailable, fall back to `memory_search` scoped by `agent_id` and the keywords `goal_id=<goal_id>` or the goal_id string itself.
    - If exact records cannot be recalled, still list them as `input_record_ids` and document the recall failure and fallback verification method in the archival record.
 2. Ensure all records are linked by `goal_id` and `input/output_record_ids`.
 3. If a newer `action_record` exists after the latest `archival_record`, the closure is superseded. Return the goal to the Dispatcher or Verifier (per the lifecycle rules) instead of closing.
@@ -100,4 +100,4 @@ Before finishing and returning the required durable record:
 
 ## Parent assistant continuation cue
 
-After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

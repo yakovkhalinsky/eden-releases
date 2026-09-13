@@ -12,7 +12,7 @@
 
 ## Executive summary
 
-The `eden-releases` workspace contains **502 non-deleted eden-memory records** written by a single user (`yakov`) across nine distinct agent IDs. The corpus is dominated by ATP (Agentic Team Protocol) execution artifacts: dispatch instructions, hand-off records, verdicts, and action/run logs. Durable takeaways, conventions, and context summaries are a small minority. A semantic-recall spot-check shows that topically focused queries return highly relevant results with scores above 0.60, but broad or process-oriented queries surface a long tail of low-relevance execution records with scores below 0.30. To improve signal-to-noise ratio, agents should record high-signal summaries instead of raw execution logs, always tag `record_type`, and adopt a relevance-score threshold of **≥ 0.45** when deciding which recalled memories to keep in context.
+The `eden-releases` workspace contains **502 non-deleted memory records** written by a single user (`yakov`) across nine distinct agent IDs. The corpus is dominated by ATP (Agentic Team Protocol) execution artifacts: dispatch instructions, hand-off records, verdicts, and action/run logs. Durable takeaways, conventions, and context summaries are a small minority. A semantic-recall spot-check shows that topically focused queries return highly relevant results with scores above 0.60, but broad or process-oriented queries surface a long tail of low-relevance execution records with scores below 0.30. To improve signal-to-noise ratio, agents should record high-signal summaries instead of raw execution logs, always tag `record_type`, and adopt a relevance-score threshold of **≥ 0.45** when deciding which recalled memories to keep in context.
 
 ---
 
@@ -46,7 +46,7 @@ The `eden-releases` workspace contains **502 non-deleted eden-memory records** w
 > **Note:** The `atp-run` agent ID is legacy. The headless ATP supervisor
 > previously lived in `eden-releases/agentic_team_protocol/` and was
 > removed on 2026-08-05. The same functionality is now provided by `eden-team`
-> in `/home/yakov/git/eden-memory`. New records should use agent ID `eden-team`.
+> in `/home/yakov/git/memory`. New records should use agent ID `eden-team`.
 
 ### By `record_type`
 
@@ -145,7 +145,7 @@ This threshold aligns with the parent goal’s success criteria and can be adjus
 5. **Prune or archive low-signal execution records.** `output_record_ids_correction`, duplicated hand-offs, and one-off `branch`/`commit` notes can be consolidated into context summaries or archival records.
 6. **Set `ttl_ms` for transient records.** Execution logs and pending-authorisation entries should expire automatically when no longer actionable.
 7. **Standardise agent IDs.** Consolidate the overlapping `dispatcher` / `claude-code-cli-dispatcher` and `claude-code-cli-*` role labels so distribution analytics are cleaner.
-8. **Schedule a weekly hygiene review.** Use `eden_packet` (analytical template) to re-check type distribution and recall-score distributions until the noise ratio stabilises.
+8. **Schedule a weekly hygiene review.** Use `memory_packet` (analytical template) to re-check type distribution and recall-score distributions until the noise ratio stabilises.
 
 ---
 

@@ -27,7 +27,7 @@ The `context_envelope` is a **lossy, structured summary** that travels inside ev
 | `next_role` | yes | 20 chars | Role that should act next: `dispatcher`, `researcher`, `builder`, `runtime`, `verifier`, `archivist`, `router`. |
 | `mode` | yes | 10 chars | `lite` or `full`. |
 | `decision_summary` | yes | ≤ 500 tokens / ~2 KB | What was decided, what changed, and why. Use bullet fragments, not prose. |
-| `evidence_ids` | yes | list of ≤ 10 IDs | Eden-memory record IDs the next role must be able to recall. Always include the latest action/context/verdict records, not the goal ID. |
+| `evidence_ids` | yes | list of ≤ 10 IDs | Memory record IDs the next role must be able to recall. Always include the latest action/context/verdict records, not the goal ID. |
 | `success_criteria` | yes | ≤ 200 tokens / ~800 B | Copy or paraphrase the success criteria from the dispatch instruction. |
 | `residual_risks` | yes | ≤ 150 tokens / ~600 B | Unclosed risks that the next role must evaluate. |
 | `confidence` | yes | enum | `high`, `medium`, `low`. Set by the producing role based on the checklist in §3. |

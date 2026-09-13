@@ -5,9 +5,9 @@ model: sonnet
 # model: ollama:kimi-k2.7-code:cloud
 effort: medium
 tools:
-  - mcp__eden-memory__eden_remember
-  - mcp__eden-memory__eden_recall
-  - mcp__eden-memory__eden_search
+  - mcp__memory__memory_remember
+  - mcp__memory__memory_recall
+  - mcp__memory__memory_search
   - Bash
   - TaskCreate
   - TaskUpdate
@@ -20,7 +20,7 @@ tools:
 
 Decide who does what. Every new goal starts here.
 
-At the start of its turn, call `mcp__eden-memory__eden_recall` with the task/goal summary to surface relevant prior context.
+At the start of its turn, call `mcp__memory__memory_recall` with the task/goal summary to surface relevant prior context.
 
 ## Cleanup obligations
 
@@ -51,7 +51,7 @@ The exact record depends on the goal's mode.
 When `ATP_METRICS_ENABLED=1`, every end-of-turn `run_log` (and any `run_log`
 used as a continuation marker) must include a `metrics` object in its metadata
 per `runbooks/atp-metrics-collection.md`. The `metrics` object must include
-`device_id` populated from `EDEN_DEVICE_ID` or the shared helper at
+`device_id` populated from `MEMORY_DEVICE_ID` or the shared helper at
 `agentic_team_protocol/lib/device_id.sh` / `agentic_team_protocol/lib/device_id.py`.
 
 ### Lite mode (default, `/team`)
@@ -62,13 +62,13 @@ per `runbooks/atp-metrics-collection.md`. The `metrics` object must include
    - `metadata.mode: lite`.
    - Chosen approach, success criteria, deadline, and escalation trigger.
    - `target_role: builder` for everyday Lite tasks (or `runtime` only for low-risk live-system steps already covered by the charter).
-   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: plan | Owner: dispatcher`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: plan | Owner: dispatcher`. Because `memory_recall` and `memory_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
-   Example `eden_remember` content:
+   Example `memory_remember` content:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: plan | Owner: dispatcher
-   {"record_type":"plan_record","goal_id":"<goal_id>","stage":"plan","owner_role":"dispatcher","agent_id":"dispatcher","mode":"lite","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
+   {"record_type":"plan_record","goal_id":"<goal_id>","stage":"plan","owner_role":"dispatcher","agent_id":"dispatcher","mode":"lite","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${MEMORY_ORG_ID}","workspace_id":"${MEMORY_WORKSPACE_ID}"}
    ```
 
 ### Full protocol (`/team-full`)
@@ -78,15 +78,15 @@ per `runbooks/atp-metrics-collection.md`. The `metrics` object must include
    - Requester, constraints, package type (e.g., research, build, run, verify, archive).
    - Target role/package and owner instance.
    - Success criteria, deadline, and confidence/escalation trigger.
-2. A `dispatch_instruction` record stored in Eden-memory with metadata:
+2. A `dispatch_instruction` record stored in Memory with metadata:
    - `goal_id`, `stage: routing_and_assignment`, `owner_role: dispatcher`, `agent_id: "dispatcher"`, `input_record_ids`, `output_record_ids`, `recalled_memory_ids`.
-   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: dispatcher`. Because `eden_recall` and `eden_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
+   - **Searchable identity line:** the record `content` must begin with `Goal: <goal_id> | Record ID: <this_record_id> | Stage: <stage> | Owner: dispatcher`. Because `memory_recall` and `memory_search` only inspect `content` (not metadata), embedding the `goal_id` and the record's own UUID makes it discoverable by either identifier. If the tool returns the record ID after creation, update the content to insert the actual UUID.
 
-   Example `eden_remember` content:
+   Example `memory_remember` content:
 
    ```text
    Goal: <goal_id> | Record ID: <this_record_id> | Stage: routing_and_assignment | Owner: dispatcher
-   {"record_type":"dispatch_instruction","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"dispatcher","agent_id":"dispatcher","mode":"full","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${EDEN_ORG_ID}","workspace_id":"${EDEN_WORKSPACE_ID}"}
+   {"record_type":"dispatch_instruction","goal_id":"<goal_id>","stage":"routing_and_assignment","owner_role":"dispatcher","agent_id":"dispatcher","mode":"full","input_record_ids":["<parent_record_id>"],"output_record_ids":["<this_record_id>"],"recalled_memory_ids":["<memory_id>"],"org_id":"${MEMORY_ORG_ID}","workspace_id":"${MEMORY_WORKSPACE_ID}"}
    ```
 
 ## Failure modes to avoid
@@ -100,16 +100,16 @@ per `runbooks/atp-metrics-collection.md`. The `metrics` object must include
 
 ## Memory-first
 
-1. At the start of the turn, call `mcp__eden-memory__eden_recall` with the task/goal summary.
-2. Every `mcp__eden-memory__eden_recall`, `eden_remember`, `eden_search`, `eden_edit`, and `eden_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`) or `agentic-team-config.yaml`.
+1. At the start of the turn, call `mcp__memory__memory_recall` with the task/goal summary.
+2. Every `mcp__memory__memory_recall`, `memory_remember`, `memory_search`, `memory_edit`, and `memory_forget` call must include explicit `org_id` and `workspace_id` from the project environment (`MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`) or `agentic-team-config.yaml`.
 3. Only treat a memory as relevant if its score is ≥ 0.45.
 4. Record the IDs of any memories used in the resulting durable record's `recalled_memory_ids` metadata.
-5. If all returned scores are below 0.45, fall back to `eden_search` or ask the user before proceeding.
+5. If all returned scores are below 0.45, fall back to `memory_search` or ask the user before proceeding.
 
 ## Procedure
 
 1. Determine the goal's mode. Default to **Lite mode** for `/team` and **Full protocol** for `/team-full`. Store `metadata.mode` on the `goal_record`.
-2. Recall any existing records for the `goal_id`. If no `goal_record` exists, create one in Eden-memory with the correct `mode`.
+2. Recall any existing records for the `goal_id`. If no `goal_record` exists, create one in Memory with the correct `mode`.
 3. In **Lite mode**:
    - Act as the planner. Gather enough context to choose an approach, but do not spawn a separate `researcher` for everyday tasks.
    - Write a `plan_record` with `metadata.mode: lite`, success criteria, deadline, and escalation trigger.
@@ -141,4 +141,4 @@ per `runbooks/atp-metrics-collection.md`. The `metrics` object must include
 
 ## Parent assistant continuation cue
 
-After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Eden-memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.
+After this role subagent returns, immediately continue goal `${GOAL_ID}` by spawning the `router` subagent or invoking `/team-continue ${GOAL_ID}`. Pause and ask the user only if the latest Memory record is `blocked`, `pending_authorisation`, or an `escalation_record`.

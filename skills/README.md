@@ -1,22 +1,22 @@
 ---
-name: eden-memory-skills-registry
-description: Discoverable registry of eden-memory agent skills and harness integrations.
+name: memory-skills-registry
+description: Discoverable registry of memory agent skills and harness integrations.
 version: 1.0.0
-tags: [eden-memory, skills, registry, mcp]
+tags: [memory, skills, registry, mcp]
 ---
 
-# eden-memory skills registry
+# memory skills registry
 
-This directory contains agent skills for the eden-memory MCP server.
+This directory contains agent skills for the memory MCP server.
 
 ## Skills
 
 | Skill | Purpose |
 |-------|---------|
-| `eden-memory-mcp-usage` | Core usage loop and tool reference for any stdio MCP client |
-| `eden-memory-claude` | Wiring for Claude Code CLI |
-| `eden-memory-cursor` | Wiring for Cursor |
-| `eden-memory-hermes` | Wiring for Hermes Agent |
+| `memory-mcp-usage` | Core usage loop and tool reference for any stdio MCP client |
+| `memory-claude` | Wiring for Claude Code CLI |
+| `memory-cursor` | Wiring for Cursor |
+| `memory-hermes` | Wiring for Hermes Agent |
 
 Each harness-specific `SKILL.md` includes an install/setup section for its agent.
 
@@ -34,4 +34,4 @@ Each `SKILL.md` declares:
 - `related_skills`: related skills in the registry
 
 A compatible agent can read these files and surface the right tools and setup
-instructions when the user asks about eden-memory.
+instructions when the user asks about memory.

@@ -1,6 +1,6 @@
 # eden-releases
 
-Public releases and documentation for eden-memory.
+Public releases and documentation for memory.
 
 Live docs: <https://0d3sa.com>
 
@@ -10,7 +10,7 @@ Latest release: <https://github.com/yakovkhalinsky/eden-releases/releases/latest
 
 - `binaries/manifest.json` — platform metadata for the published binaries.
 - `docs-site/` — Astro Starlight site that becomes <https://0d3sa.com>.
-- `skills/` — agent skills for eden-memory; generated into the site via `scripts/generate-skills-site.py`.
+- `skills/` — agent skills for memory; generated into the site via `scripts/generate-skills-site.py`.
 - `.github/workflows/` — CI that deploys the site to GitHub Pages and cuts releases.
 - `scripts/` — helpers for metadata and skill-page generation.
 
@@ -22,15 +22,15 @@ After editing skills under `skills/`, run:
 python3 scripts/generate-skills-site.py
 ```
 
-This updates `docs-site/src/content/docs/eden-memory/skills/` from the SKILL.md
+This updates `docs-site/src/content/docs/memory/skills/` from the SKILL.md
 source files. Commit the generated pages so Pages builds them.
 
 ## Publish a new binary set
 
-This is normally handled automatically by the `eden-memory` CI workflow. On
+This is normally handled automatically by the `memory` CI workflow. On
 every green build on `master`, that workflow:
 
-1. Creates a release in `yakovkhalinsky/eden-memory`.
+1. Creates a release in `yakovkhalinsky/0d3sa`.
 2. Downloads the per-platform binaries.
 3. Updates `binaries/manifest.json`.
 4. Regenerates `docs-site/src/data/downloads.json`.
@@ -38,8 +38,8 @@ every green build on `master`, that workflow:
 6. Creates or updates the GitHub Release here with the binaries and `.sha256` files.
 
 To do it manually (for example, to promote an older release), use the
-**eden-memory Public Release (manual fallback)** workflow in this repository
-and provide the source tag from `eden-memory`.
+**memory Public Release (manual fallback)** workflow in this repository
+and provide the source tag from `memory`.
 
 Binaries are stored as GitHub Release assets only — they are not committed to git.
 

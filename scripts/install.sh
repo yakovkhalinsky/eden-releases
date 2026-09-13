@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-# Installer for eden-memory.
-# Usage (recommended): curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+# Installer for memory.
+# Usage (recommended): curl -fsSL https://0d3sa.com/memory/install.sh | sh
 # Local usage from a clone: ./scripts/install.sh
 
 set -eu
@@ -26,7 +26,7 @@ case "$(uname -m)" in
     *)       echo "Unsupported architecture: $(uname -m)"; exit 1 ;;
 esac
 
-BIN="eden-memory-${OS}-${ARCH}"
+BIN="memory-${OS}-${ARCH}"
 URL="https://github.com/${REPO}/releases/latest/download/${BIN}"
 CHECKSUM_URL="${URL}.sha256"
 
@@ -37,7 +37,7 @@ else
     PREFIX="/usr/local/bin"
 fi
 
-TARGET="${PREFIX}/eden-memory"
+TARGET="${PREFIX}/memory"
 
 # Capture previous version if the target already exists.
 PREVIOUS_VERSION="none"
@@ -58,7 +58,7 @@ fi
 TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
-echo "Downloading eden-memory ${OS}/${ARCH}..."
+echo "Downloading memory ${OS}/${ARCH}..."
 
 # Use a progress bar if curl supports it; otherwise stay silent.
 CURL_PROGRESS="--progress-bar"
@@ -87,9 +87,9 @@ TMP_BIN="${TARGET}.tmp.$$"
 cp "${TMPDIR}/${BIN}" "${TMP_BIN}"
 mv -f "${TMP_BIN}" "${TARGET}"
 
-if ! command -v eden-memory >/dev/null 2>&1; then
+if ! command -v memory >/dev/null 2>&1; then
     echo ""
-    echo "eden-memory was installed to ${TARGET}, but it is not on your PATH."
+    echo "memory was installed to ${TARGET}, but it is not on your PATH."
     echo "Add the following to your shell profile:"
     echo "  export PATH=\"${PREFIX}:\$PATH\""
 fi
@@ -97,10 +97,10 @@ fi
 # Show before/after versions.
 UPDATED_VERSION=$("${TARGET}" version 2>/dev/null || echo "unknown")
 echo ""
-echo "eden-memory updated: ${PREVIOUS_VERSION} → ${UPDATED_VERSION}"
+echo "memory updated: ${PREVIOUS_VERSION} → ${UPDATED_VERSION}"
 echo ""
 echo "Run:"
-echo "  eden-memory --db ~/.eden-memory/default.db"
+echo "  memory --db ~/.memory/default.db"
 
 # ANSI color helpers via printf, gated by TTY and NO_COLOR for portability.
 NO_COLOR="${NO_COLOR:-}"
@@ -123,15 +123,15 @@ cat <<EOF
 
 ${GREEN}Your memory garden is ready:${RESET}
 
-    ${CYAN}eden-memory${RESET}
-    +-- ${YELLOW}~/.local/bin/eden-memory${RESET}
-    +-- ${YELLOW}~/.eden-memory/default.db${RESET}
-    +-- ${YELLOW}~/.cache/eden-memory/${RESET}
+    ${CYAN}memory${RESET}
+    +-- ${YELLOW}~/.local/bin/memory${RESET}
+    +-- ${YELLOW}~/.memory/default.db${RESET}
+    +-- ${YELLOW}~/.cache/memory/${RESET}
     +-- ${DIM}~/.claude.json   (after setup claude)${RESET}
 
 ${GREEN}Quick start:${RESET}
-  ${CYAN}eden-memory --db ~/.eden-memory/default.db${RESET}
-  ${CYAN}eden-memory health${RESET}
-  ${CYAN}eden-memory remember --agent-id eve --user-id yakov --content "hello world"${RESET}
-  ${CYAN}eden-memory tree${RESET}
+  ${CYAN}memory --db ~/.memory/default.db${RESET}
+  ${CYAN}memory health${RESET}
+  ${CYAN}memory remember --agent-id eve --user-id yakov --content "hello world"${RESET}
+  ${CYAN}memory tree${RESET}
 EOF

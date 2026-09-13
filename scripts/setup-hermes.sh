@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Append the eden-memory MCP server block to the active Hermes profile config.yaml.
+# Append the memory MCP server block to the active Hermes profile config.yaml.
 # Run this script, then restart Hermes or reload the profile.
 
 set -eu
@@ -18,20 +18,20 @@ fi
 
 CONFIG_DIR="${HOME}/.hermes/profiles/${PROFILE}"
 CONFIG_FILE="${CONFIG_DIR}/config.yaml"
-DB="${HOME}/.eden-memory/default.db"
-BIN="${HOME}/.local/bin/eden-memory"
+DB="${HOME}/.memory/default.db"
+BIN="${HOME}/.local/bin/memory"
 
 # Prefer absolute path if the binary is not on PATH.
-if command -v eden-memory >/dev/null 2>&1; then
-  COMMAND="eden-memory"
+if command -v memory >/dev/null 2>&1; then
+  COMMAND="memory"
 else
   COMMAND="${BIN}"
 fi
 
 mkdir -p "${CONFIG_DIR}"
 
-if [ -f "${CONFIG_FILE}" ] && grep -q '^\s*eden:\s*$' "${CONFIG_FILE}"; then
-  echo "MCP server 'eden' already present in ${CONFIG_FILE}; skipping."
+if [ -f "${CONFIG_FILE}" ] && grep -q '^\s*memory:\s*$' "${CONFIG_FILE}"; then
+  echo "MCP server 'memory' already present in ${CONFIG_FILE}; skipping."
   echo "Restart Hermes or reload the profile to apply changes."
   exit 0
 fi
@@ -49,7 +49,7 @@ fi
 cat >> "${CONFIG_FILE}" <<EOF
 mcp:
   servers:
-    eden:
+    memory:
       command: ${COMMAND}
       args:
         - --db
@@ -57,6 +57,6 @@ mcp:
         - --mcp-stdio
 EOF
 
-echo "Appended MCP server 'eden' to ${CONFIG_FILE} with command: ${COMMAND}"
+echo "Appended MCP server 'memory' to ${CONFIG_FILE} with command: ${COMMAND}"
 echo "Database: ${DB}"
 echo "Restart Hermes or reload the profile to apply changes."

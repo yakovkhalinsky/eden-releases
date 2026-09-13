@@ -3,40 +3,40 @@
 // Navigation-focused: component quadrants and compact reference cards.
 
 const memoryQuadrants = [
-  { label: 'Quick start', hint: 'Install and verify', href: '/eden-memory/getting-started/' },
-  { label: 'Tutorials', hint: 'Connect clients and sync devices', href: '/eden-memory/tutorials/connect-claude-code/' },
-  { label: 'Concepts', hint: 'Memory model, sync, security', href: '/eden-memory/concepts/memory-model/' },
-  { label: 'Reference', hint: 'Tools, CLI, environment', href: '/eden-memory/reference/tools/' },
+  { label: 'Quick start', hint: 'Install and verify', href: '/memory/getting-started/' },
+  { label: 'Tutorials', hint: 'Connect clients and sync devices', href: '/memory/tutorials/connect-claude-code/' },
+  { label: 'Concepts', hint: 'Memory model, sync, security', href: '/memory/concepts/memory-model/' },
+  { label: 'Reference', hint: 'Tools, CLI, environment', href: '/memory/reference/tools/' },
 ];
 
 const relayQuadrants = [
-  { label: 'Overview', hint: 'What the relay does', href: '/eden-relay/' },
-  { label: 'Run a relay', hint: 'Serve sync on your network', href: '/eden-relay/how-to/run-relay-server/' },
-  { label: 'Deploy on a VPS', hint: 'TLS, systemd, hardening', href: '/eden-relay/how-to/deploy-public-vps/' },
-  { label: 'Reference', hint: 'Flags, env vars, endpoints', href: '/eden-relay/reference/' },
+  { label: 'Overview', hint: 'What the relay does', href: '/relay/' },
+  { label: 'Run a relay', hint: 'Serve sync on your network', href: '/relay/how-to/run-relay-server/' },
+  { label: 'Deploy on a VPS', hint: 'TLS, systemd, hardening', href: '/relay/how-to/deploy-public-vps/' },
+  { label: 'Reference', hint: 'Flags, env vars, endpoints', href: '/relay/reference/' },
 ];
 
 const components = [
   {
     tag: 'Memory & sync',
-    name: 'eden-memory',
+    name: 'memory',
     desc: 'Local-first SQLite memory with vector embeddings, MCP server, and encrypted multi-device sync.',
     links: [
-      { label: 'Quick start', href: '/eden-memory/getting-started/' },
-      { label: 'Tools', href: '/eden-memory/reference/tools/' },
-      { label: 'Sync', href: '/eden-memory/multi-device-sync/' },
+      { label: 'Quick start', href: '/memory/getting-started/' },
+      { label: 'Tools', href: '/memory/reference/tools/' },
+      { label: 'Sync', href: '/memory/multi-device-sync/' },
     ],
-    href: '/eden-memory/',
+    href: '/memory/',
   },
   {
     tag: 'Relay server',
-    name: 'eden-relay',
+    name: 'relay',
     desc: 'Self-hosted relay for multi-device sync. TLS, systemd, and VPS hardening guides.',
     links: [
-      { label: 'Run a relay', href: '/eden-relay/how-to/run-relay-server/' },
-      { label: 'Deploy on VPS', href: '/eden-relay/how-to/deploy-public-vps/' },
+      { label: 'Run a relay', href: '/relay/how-to/run-relay-server/' },
+      { label: 'Deploy on VPS', href: '/relay/how-to/deploy-public-vps/' },
     ],
-    href: '/eden-relay/',
+    href: '/relay/',
   },
 ];
 ---
@@ -47,7 +47,7 @@ const components = [
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Docs — 0d3sa</title>
-  <meta name="description" content="Documentation for eden-memory and eden-relay: local-first agent memory, MCP setup, multi-device sync, and self-hosted relay deployment." />
+  <meta name="description" content="Documentation for memory and relay: local-first agent memory, MCP setup, multi-device sync, and self-hosted relay deployment." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Saira:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -61,9 +61,9 @@ const components = [
       </a>
       <nav class="nav-links" aria-label="Primary">
         <a href="/">Home</a>
-        <a href="/eden-memory/getting-started/" class="nav-link">Quick start</a>
+        <a href="/memory/getting-started/" class="nav-link">Quick start</a>
         <a href="https://github.com/yakovkhalinsky/eden-releases" target="_blank" rel="noreferrer" class="nav-link">GitHub</a>
-        <a href="/eden-memory/reference/downloads/" class="btn btn-sm">Downloads</a>
+        <a href="/memory/reference/downloads/" class="btn btn-sm">Downloads</a>
       </nav>
     </div>
   </header>
@@ -74,14 +74,14 @@ const components = [
         <div class="hero-text">
           <div class="product-meta">
             <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Documentation</span>
-            <span class="call-sheet-id">eden-memory · eden-relay</span>
+            <span class="call-sheet-id">memory · relay</span>
           </div>
           <h1 id="hero-title">0d3sa docs</h1>
           <p class="lead">
-            Guides for local-first agent memory and self-hosted sync. Start with the eden-memory quick start, or drop into the relay deployment guides.
+            Guides for local-first agent memory and self-hosted sync. Start with the memory quick start, or drop into the relay deployment guides.
           </p>
           <div class="hero-actions">
-            <a href="/eden-memory/getting-started/" class="btn btn-primary">eden-memory quick start</a>
+            <a href="/memory/getting-started/" class="btn btn-primary">memory quick start</a>
             <a href="/" class="btn btn-secondary">Back to home</a>
           </div>
         </div>
@@ -120,10 +120,10 @@ const components = [
           <div class="path-head">
             <div class="path-title-group">
               <span class="eyebrow">Start here</span>
-              <h2 id="docs-path-title">eden-memory quadrants</h2>
+              <h2 id="docs-path-title">memory quadrants</h2>
               <p class="path-subtitle">Docs for the memory and sync component, organized by how you use them.</p>
             </div>
-            <a href="/eden-memory/getting-started/" class="btn btn-primary">Quick start</a>
+            <a href="/memory/getting-started/" class="btn btn-primary">Quick start</a>
           </div>
 
           <div class="quadrant-grid">
@@ -144,10 +144,10 @@ const components = [
           <div class="path-head">
             <div class="path-title-group">
               <span class="eyebrow">Self-hosted sync</span>
-              <h2 id="memory-title">eden-relay quadrants</h2>
+              <h2 id="memory-title">relay quadrants</h2>
               <p class="path-subtitle">Run the relay on your network or a public VPS.</p>
             </div>
-            <a href="/eden-relay/how-to/run-relay-server/" class="btn btn-primary">Run a relay</a>
+            <a href="/relay/how-to/run-relay-server/" class="btn btn-primary">Run a relay</a>
           </div>
 
           <div class="quadrant-grid">
@@ -192,7 +192,7 @@ const components = [
         <span class="sep" aria-hidden="true">·</span>
         <a href="/docs/">Docs</a>
         <span class="sep" aria-hidden="true">·</span>
-        <a href="/eden-memory/reference/downloads/">Downloads</a>
+        <a href="/memory/reference/downloads/">Downloads</a>
         <span class="sep" aria-hidden="true">·</span>
         <a href="https://github.com/yakovkhalinsky/eden-releases/releases">Release notes</a>
       </nav>

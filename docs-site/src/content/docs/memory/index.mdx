@@ -1,0 +1,60 @@
+---
+title: memory
+description: Local-first SQLite memory for coding agents. Vector embeddings, MCP server, knowledge packets, optional multi-device sync, and LLM-first dreaming curation.
+content_type: concept
+template: splash
+keywords:
+  - memory
+  - MCP
+  - memory
+  - sync
+  - dreaming
+  - memory_dream
+  - vector embeddings
+  - SQLite
+hero:
+  tagline: Local-first SQLite memory with vector embeddings, an MCP server, optional multi-device sync, and LLM-first dreaming curation.
+  actions:
+    - text: Get started
+      link: /memory/getting-started/
+      icon: download
+    - text: Tools reference
+      link: /memory/reference/tools/
+      icon: open-book
+---
+
+## What it is
+
+`memory` gives your coding agents persistent, local-first memory: facts, preferences, context, and records stored in a SQLite database on your machine.
+
+It also provides **dreaming**, an LLM-first curation pass over a scoped memory corpus via the `memory_dream` and `memory_dream_apply` MCP tools or the `memory dream` CLI.
+
+It works with any stdio MCP client — Claude Code, Cursor, or anything else that speaks MCP.
+
+## How it works
+
+1. **Remember** — your agent stores a fact or context via `memory_remember`.
+2. **Embed** — the binary embeds the content as a 256-dim vector.
+3. **Store** — the memory and vector go into `~/.memory/default.db`.
+4. **Recall** — later, your agent asks `memory_recall`; memory returns the closest matches by cosine similarity.
+
+## Common tasks
+
+- [Install and verify](/memory/getting-started/)
+- [Connect your client](/memory/mcp-clients/)
+- [Read the tools reference](/memory/reference/tools/)
+- [Build a knowledge packet](/memory/how-to/build-knowledge-packet/)
+- [Set up multi-device sync](/memory/multi-device-sync/)
+- [Browse skills](/memory/skills/)
+- [Curate memories with dreaming](/memory/concepts/dreaming/)
+
+## Data stays local
+
+There is no cloud account, no external API, and no network call for recall. First run extracts the embedded runtime and model weights to your platform cache; the SQLite database stays under `~/.memory/`. Optional encrypted multi-device sync runs through a [self-hosted relay](/relay/) so the contents stay opaque to the relay operator.
+
+## Release binaries
+
+Each 0d3sa release ships two related single-file Go binaries:
+
+- **`memory`** — this component: memory, MCP server, sync, and pairing.
+- **`relay`** — dedicated relay server for multi-device sync. See [relay docs](/relay/).

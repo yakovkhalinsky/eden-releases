@@ -7,12 +7,12 @@ The manifest uses a per-binary schema:
       "version": "0.3.70",
       "released": "2026-08-05",
       "binaries": {
-        "eden-memory": {
+        "memory": {
           "platforms": {
             "linux-amd64": {
               "os": "linux",
               "arch": "amd64",
-              "filename": "eden-memory-linux-amd64",
+              "filename": "memory-linux-amd64",
               "downloadUrl": "...",
               "checksumUrl": "...",
               "sha256": "...",
@@ -40,7 +40,23 @@ BINARIES = ROOT / "binaries"
 MANIFEST = BINARIES / "manifest.json"
 OUTPUT = ROOT / "docs-site" / "src" / "data" / "downloads.json"
 REQUIRED_PLATFORM_KEYS = {"os", "arch", "filename", "downloadUrl", "checksumUrl"}
-SUPPORTED_BINARIES = {"eden-memory", "eden-relay"}
+SUPPORTED_BINARIES = {"memory", "relay"}
+
+
+def tag_to_version(tag: str) -> str:
+    """Reduce a release tag to the bare semver the manifest and updater expect.
+
+    Tags are namespaced `memory-v<semver>` inside the 0d3sa monorepo; the
+    historical standalone repo used bare `v<semver>`. Note this must be a
+    prefix strip, not str.lstrip("v") — lstrip removes leading *characters*
+    from the set, so it would mangle "memory-v0.4.0" into the literal
+    "memory-v0.4.0" (it does not start with 'v') while also happily eating
+    multiple leading v's.
+    """
+    for prefix in ("memory-v", "v"):
+        if tag.startswith(prefix):
+            return tag[len(prefix):]
+    return tag
 
 
 def sha256_file(path: Path) -> str:
@@ -117,7 +133,7 @@ def main() -> int:
         "--tag",
         type=str,
         default=None,
-        help="Release tag (e.g. v0.3.70). Strips a leading 'v' for the manifest version and sets released to today (UTC).",
+        help="Release tag (e.g. memory-v0.4.0, or historical v0.3.70). The 'memory-v'/'v' prefix is stripped for the manifest version, and released is set to today (UTC).",
     )
     parser.add_argument(
         "--assets-dir",
@@ -143,7 +159,7 @@ def main() -> int:
 
     # Optional version/date bump from tag.
     if args.tag:
-        version = args.tag.lstrip("v")
+        version = tag_to_version(args.tag)
         released = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         manifest["version"] = version
         manifest["released"] = released

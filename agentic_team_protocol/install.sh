@@ -62,19 +62,19 @@ _extract_yaml_value() {
 _resolve_identity() {
   _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
   _project_env="${PWD:-.}/.env"
-  _global_env="${HOME}/.eden-memory/.env"
+  _global_env="${HOME}/.memory/.env"
 
   if [ -f "$_project_config" ]; then
     _cfg_org="$(_extract_yaml_value "$_project_config" org_id)"
     _cfg_workspace="$(_extract_yaml_value "$_project_config" workspace_id)"
     if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
-      EDEN_ORG_ID="$_cfg_org"
-      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      MEMORY_ORG_ID="$_cfg_org"
+      MEMORY_WORKSPACE_ID="$_cfg_workspace"
       return
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ "$LOCAL_INSTALL" = true ] && [ -n "${PWD:-}" ] && [ -f "$_project_env" ]; then
       eval "$(
         (
@@ -82,14 +82,14 @@ _resolve_identity() {
           set -a
           . "$_project_env"
           set +a
-          printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-          printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+          printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+          printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
         )
       )"
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_global_env" ]; then
       eval "$(
         (
@@ -97,8 +97,8 @@ _resolve_identity() {
           set -a
           . "$_global_env"
           set +a
-          printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-          printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
+          printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+          printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
         )
       )"
     fi
@@ -140,28 +140,28 @@ fi
 
 # Resolve the identity and binary path dynamically.
 USER_ID="${USER:-${LOGNAME:-$(id -un)}}"
-EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || true)}"
-if [ -z "${EDEN_MEMORY_BIN}" ]; then
-  EDEN_MEMORY_BIN="${HOME}/.local/bin/eden-memory"
+MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || true)}"
+if [ -z "${MEMORY_BIN}" ]; then
+  MEMORY_BIN="${HOME}/.local/bin/memory"
 fi
 
-# Resolve Eden-memory workspace identity before installing.
+# Resolve Memory workspace identity before installing.
 # Prefer project-local agentic-team-config.yaml, then .env files, then the global env.
-if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
   _resolve_identity
 fi
-EDEN_ORG_ID="${EDEN_ORG_ID:-}"
-EDEN_WORKSPACE_ID="${EDEN_WORKSPACE_ID:-}"
-echo "Eden-memory identity: org_id='${EDEN_ORG_ID}' workspace_id='${EDEN_WORKSPACE_ID}'"
+MEMORY_ORG_ID="${MEMORY_ORG_ID:-}"
+MEMORY_WORKSPACE_ID="${MEMORY_WORKSPACE_ID:-}"
+echo "Memory identity: org_id='${MEMORY_ORG_ID}' workspace_id='${MEMORY_WORKSPACE_ID}'"
 
-# The eden-memory CLI currently accepts empty --org-id/--workspace-id values and
+# The memory CLI currently accepts empty --org-id/--workspace-id values and
 # reads/writes unscoped records. ATP refuses to proceed with empty scope for a
-# project-local install; the permanent fix requires an eden-memory binary update.
+# project-local install; the permanent fix requires an memory binary update.
 if [ "$LOCAL_INSTALL" = true ]; then
-  if [ -z "${EDEN_ORG_ID}" ] || [ -z "${EDEN_WORKSPACE_ID}" ]; then
-    echo "Error: EDEN_ORG_ID and EDEN_WORKSPACE_ID must be non-empty for a project-local install." >&2
-    echo "Run 'eden-memory setup claude' in this project first, or set them in .claude/agentic-team-config.yaml / .env." >&2
-    echo "If the values are set but empty, escalate or file an issue against eden-memory; the CLI should reject empty scope." >&2
+  if [ -z "${MEMORY_ORG_ID}" ] || [ -z "${MEMORY_WORKSPACE_ID}" ]; then
+    echo "Error: MEMORY_ORG_ID and MEMORY_WORKSPACE_ID must be non-empty for a project-local install." >&2
+    echo "Run 'memory setup claude' in this project first, or set them in .claude/agentic-team-config.yaml / .env." >&2
+    echo "If the values are set but empty, escalate or file an issue against memory; the CLI should reject empty scope." >&2
     exit 1
   fi
 fi
@@ -357,6 +357,6 @@ fi
 echo ""
 echo "To enable team mode in a project, run:"
 echo "  cd ~/your-project"
-echo "  eden-memory setup claude"
+echo "  memory setup claude"
 echo ""
 echo "Restart Claude Code to load the new agents and commands."

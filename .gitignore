@@ -39,10 +39,10 @@ dist/
 download-metadata.json
 
 # Built binaries are published as GitHub Release assets only
-binaries/eden-memory-*
+binaries/memory-*
 !binaries/manifest.json
 
-# Stale local ATP hand-off artifacts; the canonical hand-off records live in Eden-memory.
+# Stale local ATP hand-off artifacts; the canonical hand-off records live in Memory.
 .agentic-handoff/
 
 # Impeccable skill local artifacts that are regenerated during design work.

@@ -1,0 +1,62 @@
+---
+title: relay
+description: Dedicated, self-hosted relay server for encrypted memory multi-device sync.
+content_type: concept
+template: splash
+hero:
+  tagline: Self-hosted relay for encrypted multi-device sync. Lightweight, single binary, opaque to the operator.
+  actions:
+    - text: Run a relay
+      link: /relay/how-to/run-relay-server/
+      icon: rocket
+    - text: Deploy on VPS
+      link: /relay/how-to/deploy-public-vps/
+      icon: setting
+---
+
+## What it is
+
+`relay` is a lightweight, self-hosted sync relay for [memory](/memory/). It is a single static Go binary with no MCP or memory subcommands — its only job is to let memory devices discover each other and exchange encrypted delta envelopes across separate networks.
+
+The relay never sees memory contents. It only routes opaque envelopes between paired devices that share the same account root key.
+
+## Quick start
+
+```bash
+# On the relay host
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
+
+# Check it
+curl http://127.0.0.1:8787/health
+```
+
+The relay binds to loopback by default. To accept connections from other devices, pass `--allow-remote-bind` (or set `MEMORY_RELAY_ALLOW_REMOTE_BIND=1`) and a non-loopback `--addr`. See [CLI, env vars, and endpoints](/relay/reference/) for every flag and endpoint.
+
+## When to use it
+
+Use `relay` when you want continuous sync between memory devices on different networks — for example, a laptop and a desktop, or a CI runner and a workstation.
+
+For one-shot sync between two databases on the same machine, use `memory sync` directly. See [Sync two databases locally](/memory/tutorials/sync-local-databases/).
+
+## How it fits together
+
+1. Devices pair via PAKE and share an account root key.
+2. Each device registers with the relay using the same `account-id`.
+3. Devices exchange signed delta logs through the relay.
+4. Conflicts are resolved locally with logical clocks.
+
+Devices register with the relay through `memory pair create-invitation` / `pair accept-invitation`, or through the `memory_relay_register` MCP tool. The relay itself never handles pairing passwords or passphrases.
+
+## Guides
+
+- [Run your own relay server](/relay/how-to/run-relay-server/) — stand up and secure a self-hosted relay.
+- [Deploy on a public VPS](/relay/how-to/deploy-public-vps/) — full public-internet walkthrough with Let's Encrypt, systemd, and hardening.
+- [CLI, env vars, and endpoints](/relay/reference/) — flags, environment variables, and the REST API.
+
+## See also
+
+- [memory multi-device sync overview](/memory/multi-device-sync/)
+- [How sync works](/memory/concepts/how-sync-works/)
+- [Security model](/memory/concepts/security-model/)
+- [CLI reference](/memory/reference/cli/)

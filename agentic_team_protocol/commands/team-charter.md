@@ -11,7 +11,7 @@ allowed-tools:
 
 # /team-charter
 
-Read the project's `agentic-team-charter.md` (project-local first, then deliberate global fallback), walk the user through a staged ratification checklist, and store a `charter_ratification` record in Eden-memory only after explicit confirmation.
+Read the project's `agentic-team-charter.md` (project-local first, then deliberate global fallback), walk the user through a staged ratification checklist, and store a `charter_ratification` record in Memory only after explicit confirmation.
 
 ## Non-interactive bypass
 
@@ -77,46 +77,46 @@ _yaml_value() {
   fi
 }
 
-# Resolve Eden-memory identity from project config first, then .env files.
+# Resolve Memory identity from project config first, then .env files.
 _resolve_identity_from_config_or_env() {
   _project_config="${PWD:-.}/.claude/agentic-team-config.yaml"
   _project_env="${PWD:-.}/.env"
-  _global_env="${HOME}/.eden-memory/.env"
+  _global_env="${HOME}/.memory/.env"
 
   if [ -f "$_project_config" ]; then
     _cfg_org="$(_yaml_value "$_project_config" org_id)"
     _cfg_workspace="$(_yaml_value "$_project_config" workspace_id)"
     if [ -n "$_cfg_org" ] && [ -n "$_cfg_workspace" ]; then
-      EDEN_ORG_ID="$_cfg_org"
-      EDEN_WORKSPACE_ID="$_cfg_workspace"
+      MEMORY_ORG_ID="$_cfg_org"
+      MEMORY_WORKSPACE_ID="$_cfg_workspace"
       return
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_project_env" ]; then
       eval "$((
         set +u
         set -a
         . "$_project_env"
         set +a
-        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+        printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+        printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+        printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
       ))"
     fi
   fi
 
-  if [ -z "${EDEN_ORG_ID:-}" ] || [ -z "${EDEN_WORKSPACE_ID:-}" ]; then
+  if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ]; then
     if [ -f "$_global_env" ]; then
       eval "$((
         set +u
         set -a
         . "$_global_env"
         set +a
-        printf 'EDEN_ORG_ID=%s\n' "${EDEN_ORG_ID:-}"
-        printf 'EDEN_WORKSPACE_ID=%s\n' "${EDEN_WORKSPACE_ID:-}"
-        printf 'EDEN_AGENT_ID=%s\n' "${EDEN_AGENT_ID:-}"
+        printf 'MEMORY_ORG_ID=%s\n' "${MEMORY_ORG_ID:-}"
+        printf 'MEMORY_WORKSPACE_ID=%s\n' "${MEMORY_WORKSPACE_ID:-}"
+        printf 'MEMORY_AGENT_ID=%s\n' "${MEMORY_AGENT_ID:-}"
       ))"
     fi
   fi
@@ -154,14 +154,14 @@ _active_roles_from_config() {
 
 4. Scan for placeholders with `_scan_placeholders`. Capture each line number and marker.
 
-5. Resolve identity with `_resolve_identity_from_config_or_env`. Set `EDEN_AGENT_ID="${EDEN_AGENT_ID:-claude-code-cli}"`.
-   - If `org_id` or `workspace_id` is empty, ask the user to run `eden-memory setup claude` and restart, or to set them in `.claude/agentic-team-config.yaml`. Abort if still unresolved.
+5. Resolve identity with `_resolve_identity_from_config_or_env`. Set `MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"`.
+   - If `org_id` or `workspace_id` is empty, ask the user to run `memory setup claude` and restart, or to set them in `.claude/agentic-team-config.yaml`. Abort if still unresolved.
 
 6. Read active roles from `.claude/agentic-team-config.yaml` with `_active_roles_from_config`. Best-effort infer active roles from the charter (look for "Active roles", "Roles/seats", or the role list in the template). Compute the delta:
    - In config but not charter → charter incomplete.
    - In charter but not config → config incomplete.
 
-7. Search Eden-memory for the most recent `charter_ratification` record for this workspace with `goal_id:charter-ratification`. If one exists, note its `charter_version` and `record_id` for the re-ratification diff.
+7. Search Memory for the most recent `charter_ratification` record for this workspace with `goal_id:charter-ratification`. If one exists, note its `charter_version` and `record_id` for the re-ratification diff.
 
 ## Phase B — Interactive checklist
 
@@ -176,7 +176,7 @@ Checklist items:
 5. **Active-role match** — show config roles vs charter roles; blocked on mismatch unless deferred.
 6. **Runtime gating** — warn if Runtime is active in config but the charter does not explicitly authorise live operations, or vice versa.
 7. **Default branch stated** — check that the charter/Branch discipline mentions a concrete default branch name rather than only `<DEFAULT_BRANCH>`.
-8. **Eden-memory identity** — `org_id`, `workspace_id`, `agent_id` resolved.
+8. **Memory identity** — `org_id`, `workspace_id`, `agent_id` resolved.
 9. **Re-ratification diff** — if a prior ratification exists, show old version hash and old vs new short hash. Ask the user to confirm they want to re-ratify.
 
 Use `AskUserQuestion` with a multi-select or single-select question to let the user choose the next action:
@@ -205,20 +205,20 @@ Use `AskUserQuestion` with a multi-select or single-select question to let the u
 
 4. If the user does not confirm, abort with no durable writes.
 
-5. Store the ratification record in Eden-memory:
+5. Store the ratification record in Memory:
    ```bash
    USER_ID="${USER:-$(id -un)}"
    RATER="${RATER:-${USER_ID}}"
-   EDEN_MEMORY_BIN="${EDEN_MEMORY_BIN:-$(command -v eden-memory || echo "${HOME}/.local/bin/eden-memory")}"
-   "${EDEN_MEMORY_BIN}" remember \
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   "${MEMORY_BIN}" remember \
      --agent-id archivist \
      --user-id "${USER_ID}" \
-     --org-id "${EDEN_ORG_ID}" \
-     --workspace-id "${EDEN_WORKSPACE_ID}" \
+     --org-id "${MEMORY_ORG_ID}" \
+     --workspace-id "${MEMORY_WORKSPACE_ID}" \
      --content "Goal: charter-ratification | Record ID: <this_record_id> | Stage: charter_ratification | Owner: archivist | Charter: ${CHARTER_PATH} | Version: ${CHARTER_VERSION} | Short: ${SHORT_VERSION} | Rater: ${RATER} | Date: $(date -u +%Y-%m-%dT%H:%M:%SZ) | Mechanism: /team-charter | Proceed: ${PROCEED} | Deferrals: ${DEFERRALS} | Previous record: ${PREVIOUS_RECORD_ID:-none}" \
-     --metadata "{\"kind\":\"charter_ratification\",\"stage\":\"charter_ratification\",\"goal_id\":\"charter-ratification\",\"owner_role\":\"archivist\",\"charter_path\":\"${CHARTER_PATH}\",\"charter_version\":\"${CHARTER_VERSION}\",\"proceed\":${PROCEED},\"deferrals\":${DEFERRALS},\"previous_record_id\":\"${PREVIOUS_RECORD_ID:-}\",\"org_id\":\"${EDEN_ORG_ID}\",\"workspace_id\":\"${EDEN_WORKSPACE_ID}\"}"
+     --metadata "{\"kind\":\"charter_ratification\",\"stage\":\"charter_ratification\",\"goal_id\":\"charter-ratification\",\"owner_role\":\"archivist\",\"charter_path\":\"${CHARTER_PATH}\",\"charter_version\":\"${CHARTER_VERSION}\",\"proceed\":${PROCEED},\"deferrals\":${DEFERRALS},\"previous_record_id\":\"${PREVIOUS_RECORD_ID:-}\",\"org_id\":\"${MEMORY_ORG_ID}\",\"workspace_id\":\"${MEMORY_WORKSPACE_ID}\"}"
    ```
-   If the MCP tools are available, use `mcp__eden-memory__eden_remember` with the same payload and explicit `org_id`/`workspace_id`.
+   If the MCP tools are available, use `mcp__memory__memory_remember` with the same payload and explicit `org_id`/`workspace_id`.
 
 6. If `claude_task_id` is available, update the associated task via `TaskUpdate` to `completed` with a note about the ratification outcome.
 
@@ -239,6 +239,6 @@ When non-interactive mode is triggered, run the original deterministic flow:
 2. Read the charter.
 3. Compute the version hash: `sha256sum "${CHARTER_PATH}" | cut -d' ' -f1`.
 4. Verify the charter file exists, roles match, and no placeholders remain.
-5. Resolve identity and abort if `EDEN_ORG_ID`, `EDEN_WORKSPACE_ID`, or `EDEN_AGENT_ID` is empty.
-6. Store a ratification record in Eden-memory with the same metadata shape as Phase C.
+5. Resolve identity and abort if `MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`, or `MEMORY_AGENT_ID` is empty.
+6. Store a ratification record in Memory with the same metadata shape as Phase C.
 7. Summarise path, version, record ID, and proceed/no-proceed status.

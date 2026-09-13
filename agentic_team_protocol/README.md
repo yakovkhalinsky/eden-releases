@@ -1,9 +1,9 @@
 # Agentic Team Protocol for Claude Code
 
-Role-based agent teams with a durable Eden-memory trail. **Lite mode** is now the default for everyday tasks; the full seven-stage lifecycle remains available via `/team-full`.
+Role-based agent teams with a durable Memory trail. **Lite mode** is now the default for everyday tasks; the full seven-stage lifecycle remains available via `/team-full`.
 
 - **Source paper:** *A Protocol for Role-Based Agent Teams* — https://yakov.khalinsky.com/agentic-team-protocol/
-- **Requires:** [eden-memory](https://0d3sa.com/eden-memory/) (`~/.local/bin/eden-memory`) and Claude Code CLI.
+- **Requires:** [memory](https://0d3sa.com/memory/) (`~/.local/bin/memory`) and Claude Code CLI.
 
 ## What's included
 
@@ -34,10 +34,10 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 
 ## Quick install
 
-Install eden-memory first, then the ATP global primitives:
+Install memory first, then the ATP global primitives:
 
 ```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+curl -fsSL https://0d3sa.com/memory/install.sh | sh
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
@@ -51,11 +51,11 @@ Check for updates without modifying any files:
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
 ```
 
-In each project where you will use ATP, wire the Eden-memory MCP server:
+In each project where you will use ATP, wire the Memory MCP server:
 
 ```bash
 cd ~/my-project
-eden-memory setup claude
+memory setup claude
 ```
 
 Restart Claude Code after installing (`/exit`, then reopen).
@@ -72,7 +72,7 @@ To install the global primitives *and* opt a project in with a `CLAUDE.md` file 
 
 ```bash
 cd ~/my-project
-eden-memory setup claude
+memory setup claude
 curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local --claude-md
 ```
 
@@ -95,8 +95,8 @@ cp SKILL.md ~/.claude/skills/team/SKILL.md
 cp agents/*.md ~/.claude/agents/
 cp commands/*.md ~/.claude/commands/
 
-# 3. In a project that wants to opt in, wire the Eden-memory MCP server:
-eden-memory setup claude
+# 3. In a project that wants to opt in, wire the Memory MCP server:
+memory setup claude
 
 # 4. Copy the project-local templates:
 mkdir -p .claude/skills/agentic-team-protocol
@@ -169,18 +169,18 @@ Once those files exist, project-local definitions override the global ones.
 After restart:
 
 - `/team` — invoke the Agentic Team Protocol skill to kick off a goal or ask for help with the lifecycle.
-- `/team-charter` — run an interactive ratification checklist for the project charter and store a ratification record in Eden-memory. Use `--non-interactive` to skip the checklist.
+- `/team-charter` — run an interactive ratification checklist for the project charter and store a ratification record in Memory. Use `--non-interactive` to skip the checklist.
 - `/team-status` — list active goals, stage, owner role, latest record IDs, and continueable/blocked state.
 - `/team-escalate` — write a structured escalation record and route by level.
-- `/team-continue` — resume an unfinished goal by rehydrating it from Eden-memory and dispatching the next role.
+- `/team-continue` — resume an unfinished goal by rehydrating it from Memory and dispatching the next role.
 - `/team-handoff` — transfer ownership of a goal to another role in a durable record.
 
 ## Headless supervisor
 
-For non-interactive goals (CI, scheduled tasks, or controllers), use the `eden-team` binary from the [`eden-memory`](https://github.com/yakovkhalinsky/eden-memory) monorepo. It is the headless ATP supervisor: it records the goal in Eden-memory, spawns the dispatcher, runs the lifecycle, and writes a verdict without requiring an interactive Claude Code session.
+For non-interactive goals (CI, scheduled tasks, or controllers), use the `eden-team` binary from the [`memory`](https://github.com/yakovkhalinsky/0d3sa) monorepo. It is the headless ATP supervisor: it records the goal in Memory, spawns the dispatcher, runs the lifecycle, and writes a verdict without requiring an interactive Claude Code session.
 
 ```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh -s eden-team
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s eden-team
 
 eden-team start \
   --goal "Create /tmp/atp-hello.txt containing exactly 'hello from ATP'" \

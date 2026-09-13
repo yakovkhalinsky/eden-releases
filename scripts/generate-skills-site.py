@@ -26,14 +26,14 @@ OUT_DIR = (
     / "src"
     / "content"
     / "docs"
-    / "eden-memory"
+    / "memory"
     / "skills"
 )
 PUBLIC_DIR = (
     Path(__file__).resolve().parent.parent
     / "docs-site"
     / "public"
-    / "eden-memory"
+    / "memory"
     / "skills"
 )
 
@@ -63,27 +63,27 @@ def title_from_name(name: str) -> str:
 
 
 def download_url(slug: str) -> str:
-    return f"/eden-memory/skills/{slug}/SKILL.md"
+    return f"/memory/skills/{slug}/SKILL.md"
 
 
 def install_section(fm: dict, slug: str, name: str) -> str:
     harness = fm.get("harness", "")
     if harness == "claude-code":
-        primary_tutorial = "[Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)"
+        primary_tutorial = "[Connect Claude Code](/memory/tutorials/connect-claude-code/)"
     elif harness == "cursor":
-        primary_tutorial = "[Connect Cursor](/eden-memory/tutorials/connect-cursor/)"
+        primary_tutorial = "[Connect Cursor](/memory/tutorials/connect-cursor/)"
     else:
-        primary_tutorial = "[Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)"
+        primary_tutorial = "[Connect another MCP client](/memory/tutorials/connect-mcp-client/)"
 
     return f"""## Install the binary
 
 ```bash
-curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh
+curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
 ## Verify
 
-Call `eden_health` through your MCP client. If the call fails, re-run the install or check your MCP server configuration.
+Call `memory_health` through your MCP client. If the call fails, re-run the install or check your MCP server configuration.
 
 ## Setup walkthrough
 
@@ -91,19 +91,19 @@ For step-by-step client wiring, see {primary_tutorial}.
 
 Other client tutorials:
 
-- [Connect Claude Code](/eden-memory/tutorials/connect-claude-code/)
-- [Connect Cursor](/eden-memory/tutorials/connect-cursor/)
-- [Connect another MCP client](/eden-memory/tutorials/connect-mcp-client/)
+- [Connect Claude Code](/memory/tutorials/connect-claude-code/)
+- [Connect Cursor](/memory/tutorials/connect-cursor/)
+- [Connect another MCP client](/memory/tutorials/connect-mcp-client/)
 """
 
 def enforce_section(fm: dict) -> str:
     return """## What this skill enforces
 
-- **Health check first.** Call `eden_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
-- **Recall before acting.** Use `eden_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
-- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `eden_remember`.
+- **Health check first.** Call `memory_health` at the start of every session. Do not proceed with memory-dependent work until it succeeds.
+- **Recall before acting.** Use `memory_recall` at task start and before decisions that touch preferences, conventions, security, or tooling.
+- **Remember after learning.** After corrections, working solutions, or settled conventions, store durable takeaways with `memory_remember`.
 - **Memory checkpoint.** Before finishing a task, confirm at least one recall happened at the start and at least one remember happened at the end.
-- **Stop if tools are missing.** If the eden-memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
+- **Stop if tools are missing.** If the memory tools are unavailable, tell the user to install and wire the MCP server, then stop.
 - **Do not remember secrets.** Never store tokens, passwords, raw command output, ephemeral reasoning, or unvalidated guesses.
 """
 
@@ -198,9 +198,9 @@ The installable artifact is the raw `SKILL.md` file:
 {enforce_section(fm)}
 ## Next steps
 
-- Browse the [skills registry](/eden-memory/skills/)
-- Read the [MCP clients guide](/eden-memory/mcp-clients/)
-- See the [tools reference](/eden-memory/reference/tools/)
+- Browse the [skills registry](/memory/skills/)
+- Read the [MCP clients guide](/memory/mcp-clients/)
+- See the [tools reference](/memory/reference/tools/)
 """
 
         out_path = OUT_DIR / f"{slug}.md"
@@ -236,45 +236,45 @@ The installable artifact is the raw `SKILL.md` file:
     lines = [
         "---",
         "title: Skills registry",
-        "description: Install eden-memory skills for your agent or editor.",
+        "description: Install memory skills for your agent or editor.",
         "content_type: reference",
         "template: doc",
         "---",
         "",
-        "# Install an eden-memory skill for your agent",
+        "# Install an memory skill for your agent",
         "",
         "The skill files below are installable prompts and rules. Download the raw `SKILL.md` for your harness and load it into your agent.",
         "",
         "## I use…",
         "",
-        "- [Install for Claude Code CLI](/eden-memory/skills/eden-memory-claude/)",
-        "- [Install for Cursor](/eden-memory/skills/eden-memory-cursor/)",
-        "- [Install for Hermes Agent](/eden-memory/skills/eden-memory-hermes/)",
-        "- [Install for another MCP client](/eden-memory/skills/eden-memory-mcp-usage/)",
+        "- [Install for Claude Code CLI](/memory/skills/memory-claude/)",
+        "- [Install for Cursor](/memory/skills/memory-cursor/)",
+        "- [Install for Hermes Agent](/memory/skills/memory-hermes/)",
+        "- [Install for another MCP client](/memory/skills/memory-mcp-usage/)",
         "",
         "## Download all skills",
         "",
         "Fetch every skill as a tarball from the latest GitHub release:",
         "",
         "```bash",
-        "curl -fsSL https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/eden-memory-skills.tar.gz | tar -xz",
+        "curl -fsSL https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/memory-skills.tar.gz | tar -xz",
         "```",
         "",
         "| Skill | Description |",
         "|-------|-------------|",
     ]
-    # Keep eden-memory-mcp-usage first, then harness-specific skills, then anything else.
+    # Keep memory-mcp-usage first, then harness-specific skills, then anything else.
     registry_sorted = sorted(
         registry,
         key=lambda e: (
-            e["name"] != "eden-memory-mcp-usage",
+            e["name"] != "memory-mcp-usage",
             e.get("harness", ""),
             e["name"],
         ),
     )
     for entry in registry_sorted:
         lines.append(
-            f"| [{entry['title']}](/eden-memory/skills/{entry['slug']}/) | {entry['description']} |"
+            f"| [{entry['title']}](/memory/skills/{entry['slug']}/) | {entry['description']} |"
         )
 
     lines.extend(
@@ -289,7 +289,7 @@ The installable artifact is the raw `SKILL.md` file:
             "## Install hint",
             "",
             "```bash",
-            "curl -fsSL https://0d3sa.com/eden-memory/install.sh | sh",
+            "curl -fsSL https://0d3sa.com/memory/install.sh | sh",
             "```",
         ]
     )
@@ -300,7 +300,7 @@ The installable artifact is the raw `SKILL.md` file:
 
     manifest = {
         "schema_version": "1.0.0",
-        "package": "eden-memory-skills",
+        "package": "memory-skills",
         "skills": registry,
     }
     with open(skills_manifest_path, "w", encoding="utf-8") as f:
@@ -309,7 +309,7 @@ The installable artifact is the raw `SKILL.md` file:
     print(f"Generated {skills_manifest_path}")
 
     # Copy the canonical skills.json to the public deploy directory so it is
-    # served at /eden-memory/skills.json on the live site.
+    # served at /memory/skills.json on the live site.
     shutil.copy2(skills_manifest_path, public_skills_json_path)
     print(f"Copied {public_skills_json_path}")
 
