@@ -21,14 +21,14 @@ def derive_device_id(project_slug: str | None = None, hostname: str | None = Non
 
     Args:
         project_slug: Prefix for the identifier. Defaults to the
-            MEMORY_DEVICE_ID_PROJECT_SLUG environment variable or "eden".
+            MEMORY_DEVICE_ID_PROJECT_SLUG environment variable or "memory".
         hostname: Hostname to hash. Defaults to platform.node() or "unknown".
 
     Returns:
         A string like "memory-a1b2c3d4e5f67890".
     """
     if project_slug is None:
-        project_slug = os.environ.get("MEMORY_DEVICE_ID_PROJECT_SLUG", "eden")
+        project_slug = os.environ.get("MEMORY_DEVICE_ID_PROJECT_SLUG", "memory")
     if hostname is None:
         hostname = platform.node() or "unknown"
     digest = hashlib.sha256(hostname.encode("utf-8")).hexdigest()[:16]
@@ -47,8 +47,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--project-slug",
-        default=os.environ.get("MEMORY_DEVICE_ID_PROJECT_SLUG", "eden"),
-        help="Project slug prefix (default: eden, or MEMORY_DEVICE_ID_PROJECT_SLUG).",
+        default=os.environ.get("MEMORY_DEVICE_ID_PROJECT_SLUG", "memory"),
+        help="Project slug prefix (default: memory, or MEMORY_DEVICE_ID_PROJECT_SLUG).",
     )
     args = parser.parse_args(argv)
     print(derive_device_id(project_slug=args.project_slug, hostname=args.hostname))

@@ -84,7 +84,7 @@ Runtime requires explicit charter authorisation before acting on anything beyond
   and any skip reason in the action record.
 - Protected/long-lived branches must never be deleted (`<DEFAULT_BRANCH>`,
   `release/*`, `hotfix/*`, etc.).
-- In headless/eden-team workflows, skip local deletion if the working copy is
+- In headless workflows, skip local deletion if the working copy is
   not on the feature branch (e.g., detached or shallow checkout) and record
   `headless_skip_local: true`.
 - Runtime is the only role that may create merge commits and push to

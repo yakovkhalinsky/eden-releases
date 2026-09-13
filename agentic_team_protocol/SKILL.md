@@ -100,27 +100,15 @@ For the default interactive agents, the recommended defaults are:
 | Verifier | `opus` | `high` |
 | Archivist | `sonnet` | `medium` |
 
-### Headless `eden-team` supervisor
-
-The `eden-team` binary resolves the effective model per role in this order:
-
-1. `ATP_<ROLE>_MODEL`, `ATP_<ROLE>_BACKEND`, `ATP_<ROLE>_EFFORT` environment variables.
-2. `--role-model role=backend:model` CLI flag.
-3. `ATP_DEFAULT_MODEL` / `ATP_DEFAULT_BACKEND`.
-4. Role prompt frontmatter.
-
-Use `backend:model` form for cross-backend values, e.g. `anthropic:sonnet`, `ollama:kimi-k2.7-code:cloud`.
-
 ### Env-file precedence
 
-`eden-team` loads environment files without polluting the parent process:
+Environment files are loaded without polluting the parent process:
 
-1. Explicit `--env-file` or `ATP_ENV_FILE`.
-2. Project-level `$PWD/.env`.
-3. Global `~/.memory/.env`.
-4. Process environment variables.
-5. CLI flags.
-6. Role prompt frontmatter.
+1. Project-level `$PWD/.env`.
+2. Global `~/.memory/.env`.
+3. Process environment variables.
+4. CLI flags.
+5. Role prompt frontmatter.
 
 Run `memory setup claude` in a project to generate or update the project `.env` with seed keys and per-role model comments.
 
@@ -180,8 +168,6 @@ export ANTHROPIC_BASE_URL=https://ollama.com
 export ANTHROPIC_AUTH_TOKEN=$OLLAMA_API_KEY
 export ANTHROPIC_API_KEY=
 ```
-
-`eden-team` ensures these variables are forwarded to every child `claude` process and validates that `ANTHROPIC_AUTH_TOKEN` is set for any role using the `ollama` backend.
 
 ## Core idea
 
@@ -266,7 +252,7 @@ In Claude Code CLI interactive sessions, keep the in-app task list aligned with 
   - Verifier returns `red` → update task to `in_progress` with a rework note.
   - Verifier returns `blocked` or the goal is `pending_authorisation` → update task to `in_progress` with the blocker/approval note; do not proceed until resolved.
   - Archivist closes the goal → mark the goal task `completed`.
-- In headless environments (e.g. `eden-team`), task tools may be unavailable. If a task update fails, record the failure in a `run_log` and continue; do not block the lifecycle.
+- In headless environments, task tools may be unavailable. If a task update fails, record the failure in a `run_log` and continue; do not block the lifecycle.
 
 ## Routing rules and dispatcher defaults
 
@@ -479,7 +465,7 @@ This prevents team-mode Memory calls from recalling memories that belong to othe
   the action record.
 - Protected/long-lived branches must never be deleted (default branch,
   `release/*`, `hotfix/*`, etc.).
-- In headless/eden-team workflows, skip local deletion if the working copy is
+- In headless workflows, skip local deletion if the working copy is
   not on the feature branch (e.g., detached or shallow checkout) and record
   `headless_skip_local: true`.
 - Never force-push the default branch.
@@ -540,38 +526,6 @@ The router first reads the goal's `mode` metadata. If `mode` is `lite` (or the g
 | `archival_record` | hand_off_or_closure | none — goal is closed; report only |
 
 If a new `action_record` is stored after an `archival_record` for the same `goal_id`, the archival record is superseded and the goal returns to Action.
-
-## Headless supervisor
-
-For automated or scheduled goals, use the `eden-team` binary from the `memory` monorepo instead of an interactive Claude Code session. `eden-team` defaults to Lite mode (`--mode lite`) for everyday goals; use `--mode full` for the complete 6-role lifecycle. It writes the ATP lifecycle records to Memory and spawns Claude Code CLI subagent processes for each role.
-
-> **Scope propagation note:** `eden-team` is implemented in the `memory` monorepo. Its propagation of `org_id`/`workspace_id` to child `claude` processes and to the records it writes should be audited separately; ensure it follows the same ordered identity sources and empty-scope prohibition as interactive ATP commands.
-
-Example (Lite mode):
-
-```bash
-cd /home/yakov/git/memory
-make build-team
-./eden-team start \
-  --goal "Refactor the login handler to use table-driven tests" \
-  --mode lite \
-  --mcp-config ./mcp.json \
-  --dangerously-skip-permissions \
-  --verbose
-```
-
-Example (Full protocol):
-
-```bash
-./eden-team start \
-  --goal "Audit production certificate rotation process" \
-  --mode full \
-  --mcp-config ./mcp.json \
-  --dangerously-skip-permissions \
-  --verbose
-```
-
-Resume an interrupted goal with `eden-team continue --goal-id <goal-id> --mcp-config ./mcp.json` (the mode is read from the goal record).
 
 ## Fallback if MCP is unavailable
 

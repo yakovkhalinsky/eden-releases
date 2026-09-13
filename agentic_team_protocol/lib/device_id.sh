@@ -8,11 +8,11 @@
 # and contains no personal identifiers (usernames, MAC addresses, serials, IPs).
 #
 # Output format: <project-slug>-<sha256(hostname)[0:16]>
-# Override the project slug with MEMORY_DEVICE_ID_PROJECT_SLUG (default: "eden").
+# Override the project slug with MEMORY_DEVICE_ID_PROJECT_SLUG (default: "memory").
 
 set -eu
 
-_project_slug="${MEMORY_DEVICE_ID_PROJECT_SLUG:-eden}"
+_project_slug="${MEMORY_DEVICE_ID_PROJECT_SLUG:-memory}"
 
 # Prefer HOSTNAME if already set, otherwise ask the OS.
 if [ -n "${HOSTNAME:-}" ]; then

@@ -160,7 +160,7 @@ Once those files exist, project-local definitions override the global ones.
   the action record.
 - Protected/long-lived branches must never be deleted (default branch,
   `release/*`, `hotfix/*`, etc.).
-- In headless/eden-team workflows, skip local deletion if the working copy is
+- In headless workflows, skip local deletion if the working copy is
   not on the feature branch (e.g., detached or shallow checkout) and record
   `headless_skip_local: true`.
 
@@ -174,21 +174,6 @@ After restart:
 - `/team-escalate` — write a structured escalation record and route by level.
 - `/team-continue` — resume an unfinished goal by rehydrating it from Memory and dispatching the next role.
 - `/team-handoff` — transfer ownership of a goal to another role in a durable record.
-
-## Headless supervisor
-
-For non-interactive goals (CI, scheduled tasks, or controllers), use the `eden-team` binary from the [`memory`](https://github.com/yakovkhalinsky/0d3sa) monorepo. It is the headless ATP supervisor: it records the goal in Memory, spawns the dispatcher, runs the lifecycle, and writes a verdict without requiring an interactive Claude Code session.
-
-```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s eden-team
-
-eden-team start \
-  --goal "Create /tmp/atp-hello.txt containing exactly 'hello from ATP'" \
-  --mcp-config ./mcp.json \
-  --dangerously-skip-permissions
-```
-
-See the [headless supervisor tutorial](https://0d3sa.com/agentic-team-protocol/tutorials/headless-supervisor/) for the full setup.
 
 ## License
 

@@ -28,7 +28,7 @@ Secondary audiences:
 
 Success means a developer can land on the site, install `memory`, wire their client with `memory setup`, and be remembering and recalling facts across sessions without hunting across READMEs, GitHub releases, or multiple repos.
 
-The Agentic Team Protocol (ATP) and its `eden-team` binary are **intentionally unpublished for now**; their source remains in `agentic_team_protocol/` in this repo but no site content, releases, or docs ship for them.
+The Agentic Team Protocol (ATP) is **intentionally unpublished**; its source remains in `agentic_team_protocol/` in this repo but no site content, releases, or docs ship for it. ATP's former headless supervisor binary has been removed from the project.
 
 ## Positioning
 

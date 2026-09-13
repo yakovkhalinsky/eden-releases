@@ -68,7 +68,7 @@ context_envelope:
 {"record_type":"hand_off_record",...}
 ```
 
-The JSON metadata blob remains unchanged so existing `eden-team` tooling can parse it.
+The JSON metadata blob remains unchanged so existing tooling can parse it.
 
 ---
 
@@ -244,7 +244,7 @@ ATP_BUILDER_FALLBACK_EFFORT=medium
 | 4 KB envelope drops evidence the verifier needs. | Verifier returns `blocked` or false `green`. | Require `evidence_ids`; verifier must recall them. |
 | Router incorrectly routes a `medium` confidence goal back to dispatcher, wasting a turn. | Extra latency, not extra verifier cost. | Log every pre-gate routing decision; tune thresholds after measurement. |
 | Verifier model change from MiniMax M3 to DeepSeek V4 Pro affects verdict quality. | Possible regression in issue detection. | Run side-by-side comparison on sample goals before switching. |
-| Schema change breaks `/team-continue` or `eden-team` parsing. | Continuation failures. | Add envelope as optional field; keep JSON metadata blob unchanged. |
+| Schema change breaks `/team-continue` or parsing. | Continuation failures. | Add envelope as optional field; keep JSON metadata blob unchanged. |
 
 ---
 

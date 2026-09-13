@@ -58,7 +58,7 @@ the project charter in `.claude/agentic-team-charter.md`. Run `/team-charter` to
    origin --delete <branch>`). Record deleted branch names, the post-merge
    `<DEFAULT_BRANCH>` SHA, and any skip reason (e.g., protected branch, headless
    skip) in the action record. Never delete protected or long-lived branches
-   (`<DEFAULT_BRANCH>`, `release/*`, `hotfix/*`, etc.). In headless/eden-team
+   (`<DEFAULT_BRANCH>`, `release/*`, `hotfix/*`, etc.). In headless
    workflows, skip local deletion if the working copy is not on the feature branch
    and record `headless_skip_local: true`.
 6. Archivist records the closure, linking the action record, verdict, merge
