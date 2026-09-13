@@ -46,12 +46,11 @@ SUPPORTED_BINARIES = {"memory", "relay"}
 def tag_to_version(tag: str) -> str:
     """Reduce a release tag to the bare semver the manifest and updater expect.
 
-    Tags are namespaced `memory-v<semver>` inside the 0d3sa monorepo; the
-    historical standalone repo used bare `v<semver>`. Note this must be a
+    Current tags are plain `v<semver>`. The `memory-v<semver>` prefix is still
+    accepted because v0.4.0 was briefly tagged that way. Note this must be a
     prefix strip, not str.lstrip("v") — lstrip removes leading *characters*
-    from the set, so it would mangle "memory-v0.4.0" into the literal
-    "memory-v0.4.0" (it does not start with 'v') while also happily eating
-    multiple leading v's.
+    from the set, so it silently left "memory-v0.4.0" untouched (it does not
+    start with 'v') while also happily eating multiple leading v's.
     """
     for prefix in ("memory-v", "v"):
         if tag.startswith(prefix):
