@@ -38,6 +38,12 @@ dist/
 *.sha256
 download-metadata.json
 
+# Except the checksums under the served path: those are published artifacts and
+# must be tracked, or `git add` in the publish job fails on them. The blanket
+# *.sha256 above never bit before because the historical eden-memory-*.sha256
+# files were already tracked and so bypassed it; the renamed paths are new.
+!docs-site/public/memory/*.sha256
+
 # Built binaries are published as GitHub Release assets only
 binaries/memory-*
 !binaries/manifest.json
