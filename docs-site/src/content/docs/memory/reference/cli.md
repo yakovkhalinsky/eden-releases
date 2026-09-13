@@ -473,7 +473,7 @@ it also starts the foreground relay sync loop in the same process.
 
 ## `relay`
 
-The dedicated `relay` binary is a lightweight relay-only build from the `memory` monorepo. It is useful on VPS or always-on hosts where you only need the relay and do not want the full `memory` CLI or MCP server.
+The dedicated `relay` binary is a lightweight relay-only build from the 0d3sa monorepo. It is useful on VPS or always-on hosts where you only need the relay and do not want the full `memory` CLI or MCP server.
 
 ```bash
 relay \
