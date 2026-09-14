@@ -101,14 +101,14 @@ In **Lite mode**, escalation typically means the goal needs to be promoted to th
    MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
    if [ -z "${MEMORY_ORG_ID}" ] || [ -z "${MEMORY_WORKSPACE_ID}" ] || [ -z "${MEMORY_AGENT_ID}" ]; then
      echo "Error: MEMORY_ORG_ID, MEMORY_WORKSPACE_ID, and MEMORY_AGENT_ID must be non-empty." >&2
-     echo "Run 'memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+     echo "Run 'od3sa-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
      exit 1
    fi
    ```
 6. Write an `escalation_record`:
    ```bash
    USER_ID="${USER:-$(id -un)}"
-   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v od3sa-memory || echo "${HOME}/.local/bin/od3sa-memory")}"
    "${MEMORY_BIN}" remember \
      --agent-id dispatcher \
      --user-id "${USER_ID}" \

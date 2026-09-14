@@ -42,10 +42,19 @@ download-metadata.json
 # must be tracked, or `git add` in the publish job fails on them. The blanket
 # *.sha256 above never bit before because the historical eden-memory-*.sha256
 # files were already tracked and so bypassed it; the renamed paths are new.
+#
+# This pattern is coupled to the /memory/ DIRECTORY, which keeps its name because
+# it is the served route — not to the artifact basenames. The publish job writes
+# od3sa-memory-<os>-<arch>.sha256 here; do not "fix" this path when the asset
+# basenames change.
 !docs-site/public/memory/*.sha256
 
-# Built binaries are published as GitHub Release assets only
-binaries/memory-*
+# Built binaries are published as GitHub Release assets only. Staging happens in
+# binaries/ during a local or CI packaging run, so both binaries' artifact globs
+# must be ignored; an uncovered glob leaves a 100 MB binary untracked-but-visible
+# and one `git add binaries/` away from being committed.
+binaries/od3sa-memory-*
+binaries/od3sa-relay-*
 !binaries/manifest.json
 
 # Stale local ATP hand-off artifacts; the canonical hand-off records live in Memory.

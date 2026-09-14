@@ -12,7 +12,7 @@ This tutorial walks through installing memory and wiring it to Claude Code CLI s
 
 - A Linux or macOS machine.
 - Claude Code CLI installed and able to run `/mcp` or `/memory`.
-- Shell access to run `curl` and `memory`.
+- Shell access to run `curl` and `od3sa-memory`.
 
 ## 1. Install the binary
 
@@ -22,7 +22,7 @@ Run the installer:
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/memory`. If your terminal is interactive, the installer prompts for `MEMORY_ORG_ID` and writes it to `~/.memory/.env`. Leave it empty to configure later, or pre-set it for non-interactive installs:
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. If your terminal is interactive, the installer prompts for `MEMORY_ORG_ID` and writes it to `~/.memory/.env`. Leave it empty to configure later, or pre-set it for non-interactive installs:
 
 ```bash
 export MEMORY_ORG_ID=your-org
@@ -37,7 +37,7 @@ The easiest way is to run the setup helper from the project directory you launch
 
 ```bash
 cd ~/project-a
-memory setup
+od3sa-memory setup
 ```
 
 Setup prompts for an agent identity (`MEMORY_AGENT_ID`) and a user identity (`MEMORY_USER_ID`), then asks whether the project is personal or team/org — the answer sets `MEMORY_AUTHORIZATION_MODE` (`easy` for personal, `enterprise` for default-deny cross-workspace access).
@@ -54,7 +54,7 @@ If you prefer to edit `~/.claude.json` manually, add this under `projects["<cwd>
 ```json
 {
   "memory": {
-    "command": "/home/yourname/.local/bin/memory",
+    "command": "/home/yourname/.local/bin/od3sa-memory",
     "args": [
       "--db",
       "/home/yourname/.memory/default.db"
@@ -112,7 +112,7 @@ Claude should recall the preference from the local store.
 
 ## Expected output
 
-- `memory version` prints a version string.
+- `od3sa-memory version` prints a version string.
 - `memory_health` returns `status: ok`.
 - A remembered fact is returned when you ask about it in a new session.
 

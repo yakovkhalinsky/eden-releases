@@ -1,6 +1,6 @@
 ---
 title: CLI, env vars, and endpoints
-description: Reference for the relay binary — flags, environment variables, REST endpoints, and authentication.
+description: Reference for the `od3sa-relay` binary — flags, environment variables, REST endpoints, and authentication.
 content_type: reference
 ---
 
@@ -11,7 +11,7 @@ content_type: reference
 Run it with `--db` pointing at a persistent SQLite path:
 
 ```bash
-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
+od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
 ```
 
 ## CLI flags

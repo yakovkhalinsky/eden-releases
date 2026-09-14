@@ -12,11 +12,11 @@ This page lists common memory problems, the most likely cause, and the fix. If a
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `memory` exits immediately with a database error | The database directory does not exist, or `--db` is a relative path. | Create `~/.memory/` or use an absolute `--db` path. |
-| MCP server exits in Claude Code | The MCP config uses a relative path or a missing binary. | Use absolute paths for `command` and `--db`. Re-run `memory setup claude`. |
-| `memory setup claude` aborts with a health error | The database cannot be opened or `--db` points to a missing directory. | Run `memory --db <path> health` manually, fix the path, then re-run setup. |
-| `memory setup claude` aborts with a protocol-version error | The `memory` binary advertises an MCP protocol version incompatible with Claude Code. | Update to a release that supports `2024-11-05` and re-run setup. |
-| `ModuleNotFoundError: No module named 'memory_memory'` | A stale Python wrapper is installed at `~/.local/bin/memory`. | Remove the wrapper and reinstall: `rm -f ~/.local/bin/memory; curl -fsSL https://0d3sa.com/memory/install.sh \| sh`. |
+| `od3sa-memory` exits immediately with a database error | The database directory does not exist, or `--db` is a relative path. | Create `~/.memory/` or use an absolute `--db` path. |
+| MCP server exits in Claude Code | The MCP config uses a relative path or a missing binary. | Use absolute paths for `command` and `--db`. Re-run `od3sa-memory setup claude`. |
+| `od3sa-memory setup claude` aborts with a health error | The database cannot be opened or `--db` points to a missing directory. | Run `od3sa-memory --db <path> health` manually, fix the path, then re-run setup. |
+| `od3sa-memory setup claude` aborts with a protocol-version error | The `od3sa-memory` binary advertises an MCP protocol version incompatible with Claude Code. | Update to a release that supports `2024-11-05` and re-run setup. |
+| `ModuleNotFoundError: No module named 'memory_memory'` | A stale Python wrapper is installed at `~/.local/bin/od3sa-memory`. | Remove the wrapper and reinstall: `rm -f ~/.local/bin/od3sa-memory; curl -fsSL https://0d3sa.com/memory/install.sh \| sh`. |
 
 ## Slow first recall
 
@@ -59,9 +59,9 @@ This page lists common memory problems, the most likely cause, and the fix. If a
 
 Run these first when something is wrong:
 
-1. `memory --db ~/.memory/default.db health` — confirms the database and sidecars are healthy.
-2. `memory --db ~/.memory/default.db sync loop status` — confirms the relay loop state and peer count.
-3. `memory --db ~/.memory/default.db sync list-pending-key-changes` — rules out blocked key rotations.
+1. `od3sa-memory --db ~/.memory/default.db health` — confirms the database and sidecars are healthy.
+2. `od3sa-memory --db ~/.memory/default.db sync loop status` — confirms the relay loop state and peer count.
+3. `od3sa-memory --db ~/.memory/default.db sync list-pending-key-changes` — rules out blocked key rotations.
 4. `curl http://relay.example.com:8787/health` — confirms the relay is reachable.
 
 ## Getting more help

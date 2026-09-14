@@ -20,7 +20,7 @@ Follow the tutorial for your harness:
 If your client lets you enter a server command directly, use:
 
 ```bash
-/home/yourname/.local/bin/memory --db /home/yourname/.memory/default.db
+/home/yourname/.local/bin/od3sa-memory --db /home/yourname/.memory/default.db
 ```
 
 Replace `/home/yourname` with your actual home path. The `--db` path must be absolute, and the parent directory must exist.
@@ -33,7 +33,7 @@ If your client uses a `mcpServers` JSON config, add this:
 {
   "mcpServers": {
     "memory": {
-      "command": "/home/yourname/.local/bin/memory",
+      "command": "/home/yourname/.local/bin/od3sa-memory",
       "args": [
         "--db",
         "/home/yourname/.memory/default.db"

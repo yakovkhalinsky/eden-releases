@@ -52,7 +52,7 @@ related_skills:
 
 ## Overview
 
-`memory` is a self-contained Go binary that exposes the Model Context Protocol (MCP) over stdio. It stores memories in a local SQLite database with 256-dimensional embeddings.
+`od3sa-memory` is a self-contained Go binary that exposes the Model Context Protocol (MCP) over stdio. It stores memories in a local SQLite database with 256-dimensional embeddings.
 
 This skill describes the memory-first loop. Load a child skill for your specific harness to get wiring instructions.
 

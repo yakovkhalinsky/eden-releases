@@ -47,7 +47,7 @@ harness: cursor
 mcp_config:
   server_name: memory
   transport: stdio
-  command: "${HOME}/.local/bin/memory"
+  command: "${HOME}/.local/bin/od3sa-memory"
   args:
     - --db
     - "${HOME}/.memory/default.db"
@@ -63,7 +63,7 @@ related_skills:
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This installs the `memory` Go binary to `~/.local/bin/memory`.
+This installs the `od3sa-memory` Go binary to `~/.local/bin/od3sa-memory`.
 
 ## Wire the MCP server
 
@@ -72,15 +72,15 @@ In Cursor, open **Settings** → **MCP** and add a new stdio server:
 | Field | Value |
 |-------|-------|
 | Name | `memory` |
-| Command | `/home/yourname/.local/bin/memory` |
+| Command | `/home/yourname/.local/bin/od3sa-memory` |
 | Arguments | `--db /home/yourname/.memory/default.db` |
 
 Use your real username and start a new chat.
 
-If `memory` is not on the PATH that Cursor sees, use the absolute path:
+If `od3sa-memory` is not on the PATH that Cursor sees, use the absolute path:
 
 ```text
-/home/yourname/.local/bin/memory
+/home/yourname/.local/bin/od3sa-memory
 ```
 
 ## Verify the server
@@ -141,9 +141,9 @@ Context: Alice prefers small components. Use memory_recall if you need more conv
 - **Server exits**: ensure `--db` uses an absolute path and the parent directory exists.
 - **Command not found**: add `~/.local/bin` to your PATH, or use the absolute binary path in the MCP config.
 - **Config not picked up**: start a new Cursor chat after changing the MCP config.
-- **Stale Python wrapper from an old install**: if `memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
+- **Stale Python wrapper from an old install**: if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
-  rm -f ~/.local/bin/memory
+  rm -f ~/.local/bin/od3sa-memory
   curl -fsSL https://0d3sa.com/memory/install.sh | sh
   ```
-- **Still not connecting**: run `memory --db ~/.memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Cursor MCP config or PATH.
+- **Still not connecting**: run `od3sa-memory --db ~/.memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Cursor MCP config or PATH.

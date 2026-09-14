@@ -10,7 +10,7 @@ This guide walks through creating an encrypted snapshot of an memory database wi
 
 ## Prerequisites
 
-- memory installed and running as an MCP server.
+- `od3sa-memory` installed and running as an MCP server.
 - The database path (default `~/.memory/default.db`).
 - A strong, unique passphrase for the snapshot.
 - A secure place to store the sidecar files and passphrase separately.

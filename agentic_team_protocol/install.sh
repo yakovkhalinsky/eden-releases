@@ -140,9 +140,9 @@ fi
 
 # Resolve the identity and binary path dynamically.
 USER_ID="${USER:-${LOGNAME:-$(id -un)}}"
-MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || true)}"
+MEMORY_BIN="${MEMORY_BIN:-$(command -v od3sa-memory || true)}"
 if [ -z "${MEMORY_BIN}" ]; then
-  MEMORY_BIN="${HOME}/.local/bin/memory"
+  MEMORY_BIN="${HOME}/.local/bin/od3sa-memory"
 fi
 
 # Resolve Memory workspace identity before installing.
@@ -160,7 +160,7 @@ echo "Memory identity: org_id='${MEMORY_ORG_ID}' workspace_id='${MEMORY_WORKSPAC
 if [ "$LOCAL_INSTALL" = true ]; then
   if [ -z "${MEMORY_ORG_ID}" ] || [ -z "${MEMORY_WORKSPACE_ID}" ]; then
     echo "Error: MEMORY_ORG_ID and MEMORY_WORKSPACE_ID must be non-empty for a project-local install." >&2
-    echo "Run 'memory setup claude' in this project first, or set them in .claude/agentic-team-config.yaml / .env." >&2
+    echo "Run 'od3sa-memory setup claude' in this project first, or set them in .claude/agentic-team-config.yaml / .env." >&2
     echo "If the values are set but empty, escalate or file an issue against memory; the CLI should reject empty scope." >&2
     exit 1
   fi
@@ -357,6 +357,6 @@ fi
 echo ""
 echo "To enable team mode in a project, run:"
 echo "  cd ~/your-project"
-echo "  memory setup claude"
+echo "  od3sa-memory setup claude"
 echo ""
 echo "Restart Claude Code to load the new agents and commands."

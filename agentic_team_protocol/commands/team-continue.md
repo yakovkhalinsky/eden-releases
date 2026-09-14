@@ -100,7 +100,7 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
    MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
    if [ -z "${MEMORY_ORG_ID}" ] || [ -z "${MEMORY_WORKSPACE_ID}" ] || [ -z "${MEMORY_AGENT_ID}" ]; then
      echo "Error: MEMORY_ORG_ID, MEMORY_WORKSPACE_ID, and MEMORY_AGENT_ID must be non-empty." >&2
-     echo "Run 'memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+     echo "Run 'od3sa-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
      exit 1
    fi
    ```
@@ -108,7 +108,7 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
    ```bash
    USER_ID="${USER:-$(id -un)}"
    MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"
-   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v od3sa-memory || echo "${HOME}/.local/bin/od3sa-memory")}"
    "${MEMORY_BIN}" search \
      --agent-id "${MEMORY_AGENT_ID}" \
      --user-id "${USER_ID}" \
@@ -130,7 +130,7 @@ The router selects the **Lite** or **Full** lifecycle table based on the goal's 
 11. Write a continuation `run_log` that references the latest stage record as its input, not the `goal_id`, and capture the new record ID:
    ```bash
    USER_ID="${USER:-$(id -un)}"
-   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v od3sa-memory || echo "${HOME}/.local/bin/od3sa-memory")}"
    ROUTER_LOG_ID=$("${MEMORY_BIN}" remember \
      --agent-id router \
      --user-id "${USER_ID}" \

@@ -10,7 +10,7 @@ Over time an memory database accumulates expired, duplicated, or out-of-scope me
 
 ## Prerequisites
 
-- memory running as an MCP server.
+- `od3sa-memory` running as an MCP server.
 - The scope fields of the memories you want to remove.
 - A clear idea of whether you need soft-delete (recoverable until vacuum/purge) or hard-delete (permanent).
 

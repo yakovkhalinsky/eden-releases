@@ -24,8 +24,8 @@ The relay never sees memory contents. It only routes opaque envelopes between pa
 
 ```bash
 # On the relay host
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
+od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
 
 # Check it
 curl http://127.0.0.1:8787/health
@@ -35,9 +35,9 @@ The relay binds to loopback by default. To accept connections from other devices
 
 ## When to use it
 
-Use `relay` when you want continuous sync between memory devices on different networks — for example, a laptop and a desktop, or a CI runner and a workstation.
+Use `od3sa-relay` when you want continuous sync between memory devices on different networks — for example, a laptop and a desktop, or a CI runner and a workstation.
 
-For one-shot sync between two databases on the same machine, use `memory sync` directly. See [Sync two databases locally](/memory/tutorials/sync-local-databases/).
+For one-shot sync between two databases on the same machine, use `od3sa-memory sync` directly. See [Sync two databases locally](/memory/tutorials/sync-local-databases/).
 
 ## How it fits together
 
@@ -46,7 +46,7 @@ For one-shot sync between two databases on the same machine, use `memory sync` d
 3. Devices exchange signed delta logs through the relay.
 4. Conflicts are resolved locally with logical clocks.
 
-Devices register with the relay through `memory pair create-invitation` / `pair accept-invitation`, or through the `memory_relay_register` MCP tool. The relay itself never handles pairing passwords or passphrases.
+Devices register with the relay through `od3sa-memory pair create-invitation` / `pair accept-invitation`, or through the `memory_relay_register` MCP tool. The relay itself never handles pairing passwords or passphrases.
 
 ## Guides
 

@@ -19,11 +19,11 @@ fi
 CONFIG_DIR="${HOME}/.hermes/profiles/${PROFILE}"
 CONFIG_FILE="${CONFIG_DIR}/config.yaml"
 DB="${HOME}/.memory/default.db"
-BIN="${HOME}/.local/bin/memory"
+BIN="${HOME}/.local/bin/od3sa-memory"
 
 # Prefer absolute path if the binary is not on PATH.
-if command -v memory >/dev/null 2>&1; then
-  COMMAND="memory"
+if command -v od3sa-memory >/dev/null 2>&1; then
+  COMMAND="od3sa-memory"
 else
   COMMAND="${BIN}"
 fi

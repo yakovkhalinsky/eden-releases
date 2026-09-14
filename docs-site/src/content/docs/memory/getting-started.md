@@ -20,7 +20,7 @@ Run the installer:
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/memory`. If your terminal is interactive, the installer will prompt you for an `MEMORY_ORG_ID` and write it to `~/.memory/.env`. You can leave it empty and configure it later.
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. If your terminal is interactive, the installer will prompt you for an `MEMORY_ORG_ID` and write it to `~/.memory/.env`. You can leave it empty and configure it later.
 
 For non-interactive installs, set the organization ID ahead of time:
 
@@ -36,19 +36,19 @@ If you prefer a manual install, see [Downloads and checksums](/memory/reference/
 Check the binary:
 
 ```bash
-memory version
+od3sa-memory version
 ```
 
 Check for updates without installing:
 
 ```bash
-memory update --check
+od3sa-memory update --check
 ```
 
 Then confirm it can open its database:
 
 ```bash
-memory health
+od3sa-memory health
 ```
 
 You should see a version string and a health report with `status: ok`. If either command fails, make sure `~/.local/bin` is on your PATH, or use the full binary path.
@@ -58,7 +58,7 @@ You should see a version string and a health report with `status: ok`. If either
 If you use Claude Code, the fastest path is the built-in setup helper, run from your project directory:
 
 ```bash
-cd ~/my-project && memory setup
+cd ~/my-project && od3sa-memory setup
 ```
 
 It prompts for an agent identity and a personal-vs-team scope, then writes a project-local `.env`, registers the MCP server, and installs `/memory-*` slash commands. See [Connect Claude Code](/memory/tutorials/connect-claude-code/) for the full walkthrough.
@@ -72,7 +72,7 @@ For other clients, memory speaks MCP over stdio. Pick the tutorial for your clie
 If you already know your client's `mcpServers` JSON, the server command is:
 
 ```bash
-/home/yourname/.local/bin/memory --db /home/yourname/.memory/default.db
+/home/yourname/.local/bin/od3sa-memory --db /home/yourname/.memory/default.db
 ```
 
 Replace `/home/yourname` with your actual home path and use absolute paths. Then restart your client.
@@ -95,8 +95,8 @@ The agent should recall the preference from the local store.
 
 ## Expected output
 
-- `memory version` prints a version string.
-- `memory health` returns `status: ok`.
+- `od3sa-memory version` prints a version string.
+- `od3sa-memory health` returns `status: ok`.
 - A remembered fact is returned when asked in a new session.
 
 ## What memory does

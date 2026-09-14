@@ -15,7 +15,7 @@ if [ -z "${HOME:-}" ]; then
 fi
 
 DB="${HOME}/.memory/default.db"
-BIN="${HOME}/.local/bin/memory"
+BIN="${HOME}/.local/bin/od3sa-memory"
 
 # Derive the agent_id to advertise to Claude Code.
 # Precedence: explicit positional arg > claude-code-cli.
@@ -28,8 +28,8 @@ else
 fi
 
 # If the binary is not on PATH, fall back to a direct absolute-path config.
-if command -v memory >/dev/null 2>&1; then
-  COMMAND="memory"
+if command -v od3sa-memory >/dev/null 2>&1; then
+  COMMAND="od3sa-memory"
 else
   COMMAND="${BIN}"
 fi

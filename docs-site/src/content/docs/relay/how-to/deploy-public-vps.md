@@ -33,7 +33,7 @@ The easiest path is the installer, which downloads the right binary for your
 platform:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
 ```
 
 Alternatively, download the latest release binary manually. Replace
@@ -42,11 +42,11 @@ Alternatively, download the latest release binary manually. Replace
 ```bash
 sudo mkdir -p /opt/memory /usr/local/bin
 cd /opt/memory
-curl -fsSL -o relay \
-  "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/relay-linux-amd64"
-chmod +x relay
-sudo ln -sf /opt/memory/relay /usr/local/bin/relay
-relay --version
+curl -fsSL -o od3sa-relay \
+  "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-linux-amd64"
+chmod +x od3sa-relay
+sudo ln -sf /opt/memory/od3sa-relay /usr/local/bin/od3sa-relay
+od3sa-relay --version
 ```
 
 The binary is a single file; no runtime or package manager is required.
@@ -156,7 +156,7 @@ User=relay
 Group=relay
 EnvironmentFile=-/etc/relay/relay.env
 WorkingDirectory=/var/lib/relay
-ExecStart=/usr/local/bin/relay \
+ExecStart=/usr/local/bin/od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 0.0.0.0:443 \
   --tls-cert /etc/letsencrypt/live/relay.example.com/fullchain.pem \
@@ -242,7 +242,7 @@ loop. The client needs the same fleet root-key passphrase that was generated in
 step 4.
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync loop start \
   --relay-url https://relay.example.com \
   --account-id your-account \
@@ -265,7 +265,7 @@ registered.
 On a device already in the fleet:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   pair create-invitation \
   --relay-url https://relay.example.com \
   --account-id your-account \
@@ -281,7 +281,7 @@ secure channels.
 On the new device:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   pair accept-invitation --code <code> \
   --start-sync-loop \
   --root-key-passphrase "$(cat /path/to/root-key-passphrase)" \
@@ -293,7 +293,7 @@ with the relay, and (with `--start-sync-loop`) begins syncing immediately.
 
 ## 12. Cert renewal hook
 
-memory loads TLS certificates at startup and does not hot-reload them.
+The relay service loads TLS certificates at startup and does not hot-reload them.
 certbot must restart the `relay` service after renewing the certificate.
 
 Create `/etc/relay/certbot-deploy-hook.sh`:
@@ -411,7 +411,7 @@ a private network such as Tailscale and bind it to the Tailscale interface. For
 example:
 
 ```bash
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 100.64.0.1:8787 \
   --allow-remote-bind

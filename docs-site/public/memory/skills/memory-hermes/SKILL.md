@@ -47,7 +47,7 @@ harness: hermes
 mcp_config:
   server_name: memory
   transport: stdio
-  command: "${HOME}/.local/bin/memory"
+  command: "${HOME}/.local/bin/od3sa-memory"
   args:
     - --db
     - "${HOME}/.memory/default.db"
@@ -63,7 +63,7 @@ related_skills:
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This installs the `memory` Go binary to `~/.local/bin/memory`.
+This installs the `od3sa-memory` Go binary to `~/.local/bin/od3sa-memory`.
 
 ## Wire the MCP server
 
@@ -73,7 +73,7 @@ Add to your Hermes profile `config.yaml` under `mcp.servers`:
 mcp:
   servers:
     memory:
-      command: /home/yourname/.local/bin/memory
+      command: /home/yourname/.local/bin/od3sa-memory
       args:
         - --db
         - /home/yourname/.memory/default.db
@@ -81,13 +81,13 @@ mcp:
 
 Replace `yourname` with your actual username and restart Hermes or reload the profile.
 
-If `memory` is on your PATH, you can use the bare command name:
+If `od3sa-memory` is on your PATH, you can use the bare command name:
 
 ```yaml
 mcp:
   servers:
     memory:
-      command: memory
+      command: od3sa-memory
       args:
         - --db
         - /home/yourname/.memory/default.db
@@ -154,9 +154,9 @@ delegate_task:
 - **Tools not appearing:** Restart Hermes. MCP servers are loaded at profile startup.
 - **Server exits:** Ensure `--db` uses an absolute path and the parent directory exists.
 - **Command not found:** Use the absolute path to the binary, or add its directory to the Hermes environment PATH.
-- **Stale Python wrapper from an old install**: if `memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
+- **Stale Python wrapper from an old install**: if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
-  rm -f ~/.local/bin/memory
+  rm -f ~/.local/bin/od3sa-memory
   curl -fsSL https://0d3sa.com/memory/install.sh | sh
   ```
-- **Still not connecting**: run `memory --db ~/.memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Hermes MCP config or PATH.
+- **Still not connecting**: run `od3sa-memory --db ~/.memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Hermes MCP config or PATH.

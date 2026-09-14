@@ -49,14 +49,14 @@ New to multi-device sync? Read the step-by-step tutorial:
 Direct sync between two local databases:
 
 ```bash
-memory --db ~/.memory/local.db \
+od3sa-memory --db ~/.memory/local.db \
   sync --peer-db /mnt/shared/peer.db --confirm
 ```
 
 Start a foreground relay sync loop:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   sync loop start \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \

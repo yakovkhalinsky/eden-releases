@@ -3,7 +3,7 @@
 project: <PROJECT_PATH>
 
 # Workspace identity for Memory. These must be non-empty and must match the
-# values used by `memory setup claude` (stored in the project .env).
+# values used by `od3sa-memory setup claude` (stored in the project .env).
 org_id: <ORG_ID>
 workspace_id: <WORKSPACE_ID>
 

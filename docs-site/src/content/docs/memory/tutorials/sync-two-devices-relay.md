@@ -11,7 +11,7 @@ This tutorial keeps the same memory database in sync across two devices through 
 ## Prerequisites
 
 - Two devices running Linux or macOS.
-- memory installed on both (or the ability to run the install script).
+- `od3sa-memory` installed on both (or the ability to run the install script).
 - A relay URL. You can run your own relay or use one provided by your team.
 - A fleet `account-id` shared by both devices.
 - A strong root-key passphrase to encrypt the sidecar files.
@@ -27,20 +27,20 @@ curl -fsSL https://0d3sa.com/memory/install.sh | sh
 Confirm the install:
 
 ```bash
-memory version
-memory health
+od3sa-memory version
+od3sa-memory health
 ```
 
 Both devices should return a version string and a `status: ok` health report.
 
 ## 2. Set up or locate a relay
 
-If you are running your own relay, install and start the dedicated `relay` binary on an always-on host:
+If you are running your own relay, install and start the dedicated `od3sa-relay` binary on an always-on host:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
 
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 127.0.0.1:8787
 ```
@@ -54,7 +54,7 @@ If someone else is hosting the relay, write down the base URL (for example, `htt
 On the device that already has data (or that you want to treat as the source), run:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   pair create-invitation \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
@@ -71,7 +71,7 @@ The command prints an invitation code and a short rendezvous code. The pairing p
 On the joining device, run:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   pair accept-invitation \
   --code INVITATION_CODE \
   --root-key-passphrase "$(cat passphrase.txt)" \
@@ -92,7 +92,7 @@ Accepting the invitation does three things:
 If you did not use `--start-sync-loop` on the source device, start the loop there:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   sync loop start \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
@@ -105,7 +105,7 @@ This runs in the foreground until you press Ctrl+C or send SIGTERM. For a backgr
 Check the loop status at any time:
 
 ```bash
-memory --db ~/.memory/device.db sync loop status
+od3sa-memory --db ~/.memory/device.db sync loop status
 ```
 
 ## 6. Verify sync
@@ -113,7 +113,7 @@ memory --db ~/.memory/device.db sync loop status
 1. Store a memory on the first device through your MCP client or the CLI fallback.
 2. On the second device, force a single sync round:
    ```bash
-   memory --db ~/.memory/device.db \
+   od3sa-memory --db ~/.memory/device.db \
      sync loop once \
      --relay-url http://relay.example.com:8787 \
      --account-id your-account \
@@ -124,7 +124,7 @@ memory --db ~/.memory/device.db sync loop status
 If both devices run continuous loops, the memory should appear within one loop interval (default 30 seconds). You can also check health on either device:
 
 ```bash
-memory --db ~/.memory/device.db health
+od3sa-memory --db ~/.memory/device.db health
 ```
 
 A `peer_count` greater than zero means the relay has registered peers.

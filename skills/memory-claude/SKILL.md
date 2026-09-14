@@ -47,7 +47,7 @@ harness: claude-code
 mcp_config:
   server_name: memory
   transport: stdio
-  command: "${HOME}/.local/bin/memory"
+  command: "${HOME}/.local/bin/od3sa-memory"
   args:
     - --db
     - "${HOME}/.memory/default.db"
@@ -95,7 +95,7 @@ memory redundant for project work.
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This installs the `memory` Go binary to `~/.local/bin/memory`.
+This installs the `od3sa-memory` Go binary to `~/.local/bin/od3sa-memory`.
 
 ## Wire the MCP server
 
@@ -103,7 +103,7 @@ Run the setup helper from each project directory you launch Claude Code in:
 
 ```bash
 cd ~/project-a
-memory setup claude
+od3sa-memory setup claude
 ```
 
 This does three things:
@@ -120,7 +120,7 @@ If you prefer to edit `~/.claude.json` manually, add this under
 ```json
 {
   "memory": {
-    "command": "/home/yourname/.local/bin/memory",
+    "command": "/home/yourname/.local/bin/od3sa-memory",
     "args": [
       "--db",
       "/home/yourname/.memory/default.db"
@@ -241,7 +241,7 @@ The subagent can use the inherited MCP tools to recall and remember while it wor
 
 ## Fallback slash commands
 
-If the MCP server is not connecting, `memory setup claude` installs these
+If the MCP server is not connecting, `od3sa-memory setup claude` installs these
 personal slash commands in `~/.claude/commands/`:
 
 - `/memory-remember <content>`
@@ -251,7 +251,7 @@ personal slash commands in `~/.claude/commands/`:
 - `/memory-vacuum`
 - `/memory-health`
 
-They call the `memory` CLI directly and bypass MCP entirely. Restart Claude
+They call the `od3sa-memory` CLI directly and bypass MCP entirely. Restart Claude
 Code after running `setup claude` for them to appear.
 
 ## If tools are missing
@@ -267,7 +267,7 @@ If you cannot call the memory tools:
 Run this first whenever memory feels broken:
 
 ```bash
-memory --db ~/.memory/default.db health
+od3sa-memory --db ~/.memory/default.db health
 ```
 
 A healthy install prints a JSON report with `"status":"ok"`. If this fails, fix the path or reinstall before debugging MCP or sync issues.
@@ -275,16 +275,16 @@ A healthy install prints a JSON report with `"status":"ok"`. If this fails, fix 
 - **Server exits**: ensure `--db` uses an absolute path and the parent directory exists.
 - **Command not found**: add `~/.local/bin` to your PATH, or use the absolute binary path in the MCP config.
 - **Config not picked up**: restart Claude Code after changing the config. The `mcpServers` key lives in `~/.claude.json` per project directory.
-- **Conflicting scopes**: if `/mcp` reports a conflict between `user` and `local`, remove the stale user-scope entry. `memory setup claude` does this automatically, or run:
+- **Conflicting scopes**: if `/mcp` reports a conflict between `user` and `local`, remove the stale user-scope entry. `od3sa-memory setup claude` does this automatically, or run:
   ```bash
   claude mcp remove memory -s user
   ```
-- **Stale Python wrapper from an old install**: if `memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
+- **Stale Python wrapper from an old install**: if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
-  rm -f ~/.local/bin/memory
+  rm -f ~/.local/bin/od3sa-memory
   curl -fsSL https://0d3sa.com/memory/install.sh | sh
   ```
-- **Still not connecting**: run `memory health`. If it prints a JSON health report, the binary is healthy and the issue is Claude Code config or PATH.
+- **Still not connecting**: run `od3sa-memory health`. If it prints a JSON health report, the binary is healthy and the issue is Claude Code config or PATH.
 - **Tools missing after `/mcp` connects:** fully exit Claude Code (`/exit`) and reopen it; agents often only load tools at startup.
 - **Claude Code times out even though the binary works from your shell:**
   - On v0.3.28 and earlier the server expected `Content-Length` framing while

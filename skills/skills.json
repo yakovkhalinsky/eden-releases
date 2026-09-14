@@ -62,7 +62,7 @@
       "mcp_config": {
         "server_name": "memory",
         "transport": "stdio",
-        "command": "${HOME}/.local/bin/memory",
+        "command": "${HOME}/.local/bin/od3sa-memory",
         "args": [
           "--db",
           "${HOME}/.memory/default.db"
@@ -135,7 +135,7 @@
       "mcp_config": {
         "server_name": "memory",
         "transport": "stdio",
-        "command": "${HOME}/.local/bin/memory",
+        "command": "${HOME}/.local/bin/od3sa-memory",
         "args": [
           "--db",
           "${HOME}/.memory/default.db"
@@ -205,7 +205,7 @@
       "mcp_config": {
         "server_name": "memory",
         "transport": "stdio",
-        "command": "${HOME}/.local/bin/memory",
+        "command": "${HOME}/.local/bin/od3sa-memory",
         "args": [
           "--db",
           "${HOME}/.memory/default.db"

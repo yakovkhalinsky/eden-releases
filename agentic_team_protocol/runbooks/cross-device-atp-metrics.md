@@ -22,8 +22,8 @@ paired devices.
 
 The transport is the existing Memory relay stack:
 
-- `memory sync` — one-shot sync with a paired device or relay.
-- `memory sync loop` — continuous background sync.
+- `od3sa-memory sync` — one-shot sync with a paired device or relay.
+- `od3sa-memory sync loop` — continuous background sync.
 - `memory_pair_device` — pair a new device so its memories can be exchanged.
 
 After sync, every device that is paired with device A contains the same
@@ -35,7 +35,7 @@ and produce per-device, per-role, per-goal, and quality-correlation summaries.
 
 The `metrics` object is opaque to the Memory binary. It lives in the JSON
 `metadata` column of the `memories` table, which is already replicated by
-`memory sync`. Adding `device_id` is a convention inside the existing
+`od3sa-memory sync`. Adding `device_id` is a convention inside the existing
 metadata payload, not a schema change.
 
 ---

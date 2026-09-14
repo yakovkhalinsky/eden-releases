@@ -1,12 +1,12 @@
 ---
 title: Fallback slash commands
-description: Memory slash commands installed by memory setup claude, used when MCP tools are unavailable.
+description: Memory slash commands installed by od3sa-memory setup claude, used when MCP tools are unavailable.
 content_type: reference
 ---
 
 # Fallback slash commands
 
-When the MCP connection to memory is not working, `memory setup claude` installs a set of slash commands in `~/.claude/commands/`. These commands call the `memory` CLI directly and bypass the MCP layer.
+When the MCP connection to memory is not working, `od3sa-memory setup claude` installs a set of slash commands in `~/.claude/commands/`. These commands call the `od3sa-memory` CLI directly and bypass the MCP layer.
 
 ## Installation
 
@@ -14,7 +14,7 @@ The setup helper installs the fallback commands automatically:
 
 ```bash
 cd ~/project-a
-memory setup claude
+od3sa-memory setup claude
 ```
 
 Restart Claude Code after running the helper so the commands appear.
@@ -58,7 +58,7 @@ Restart Claude Code after running the helper so the commands appear.
 
 ## Scope and identity
 
-Fallback commands use the default database path and the scopes configured in the MCP server environment. If you need different scopes, use the MCP tools or call the `memory` CLI directly.
+Fallback commands use the default database path and the scopes configured in the MCP server environment. If you need different scopes, use the MCP tools or call the `od3sa-memory` CLI directly.
 
 ## When MCP is working
 
@@ -66,7 +66,7 @@ Prefer the MCP tools (`memory_remember`, `memory_recall`, `memory_search`, etc.)
 
 ## Knowledge packets
 
-Knowledge packets are available through the CLI (`memory packet`) and the `memory_packet` MCP tool. There is no fallback slash command for packets; use the CLI or MCP when you want to build or export a workspace snapshot.
+Knowledge packets are available through the CLI (`od3sa-memory packet`) and the `memory_packet` MCP tool. There is no fallback slash command for packets; use the CLI or MCP when you want to build or export a workspace snapshot.
 
 ## See also
 

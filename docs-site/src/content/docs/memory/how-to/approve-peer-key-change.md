@@ -10,7 +10,7 @@ When a peer device replaces its identity sidecar, memory stages the new public k
 
 ## Prerequisites
 
-- memory running as an MCP server or available via CLI.
+- `od3sa-memory` running as an MCP server or available via CLI.
 - The peer device has regenerated its keys (for example, after a reinstall or sidecar restore).
 - You have a trusted channel to verify the new public-key fingerprint.
 
@@ -19,7 +19,7 @@ When a peer device replaces its identity sidecar, memory stages the new public k
 Use the CLI or the equivalent MCP tool:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync list-pending-key-changes
 ```
 
@@ -32,7 +32,7 @@ Contact the peer owner through a trusted channel (in person, video call, or team
 You can view their current public key with:
 
 ```bash
-memory --db ~/.memory/default.db health
+od3sa-memory --db ~/.memory/default.db health
 ```
 
 If the relay shows a different fingerprint than the one you received directly, do not approve the change.
@@ -42,7 +42,7 @@ If the relay shows a different fingerprint than the one you received directly, d
 If the fingerprints match, approve the pending change:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync approve-key-change \
   --peer-id <device-id> \
   --confirm
@@ -55,7 +55,7 @@ After approval, deltas signed with the new key are accepted. Sync resumes on the
 If the fingerprint does not match or you do not recognize the device, reject it:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync reject-key-change \
   --peer-id <device-id> \
   --confirm
@@ -68,7 +68,7 @@ Rejected changes are discarded. The peer must fix its identity or re-pair before
 After approval, verify sync works:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync loop once \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \

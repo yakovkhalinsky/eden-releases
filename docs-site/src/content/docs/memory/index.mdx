@@ -27,7 +27,7 @@ hero:
 
 `memory` gives your coding agents persistent, local-first memory: facts, preferences, context, and records stored in a SQLite database on your machine.
 
-It also provides **dreaming**, an LLM-first curation pass over a scoped memory corpus via the `memory_dream` and `memory_dream_apply` MCP tools or the `memory dream` CLI.
+It also provides **dreaming**, an LLM-first curation pass over a scoped memory corpus via the `memory_dream` and `memory_dream_apply` MCP tools or the `od3sa-memory dream` CLI.
 
 It works with any stdio MCP client — Claude Code, Cursor, or anything else that speaks MCP.
 
@@ -56,5 +56,5 @@ There is no cloud account, no external API, and no network call for recall. Firs
 
 Each 0d3sa release ships two related single-file Go binaries:
 
-- **`memory`** — this component: memory, MCP server, sync, and pairing.
-- **`relay`** — dedicated relay server for multi-device sync. See [relay docs](/relay/).
+- **`od3sa-memory`** — this component: memory, MCP server, sync, and pairing.
+- **`od3sa-relay`** — dedicated relay server for multi-device sync. See [relay docs](/relay/).

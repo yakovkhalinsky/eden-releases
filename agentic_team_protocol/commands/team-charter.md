@@ -155,7 +155,7 @@ _active_roles_from_config() {
 4. Scan for placeholders with `_scan_placeholders`. Capture each line number and marker.
 
 5. Resolve identity with `_resolve_identity_from_config_or_env`. Set `MEMORY_AGENT_ID="${MEMORY_AGENT_ID:-claude-code-cli}"`.
-   - If `org_id` or `workspace_id` is empty, ask the user to run `memory setup claude` and restart, or to set them in `.claude/agentic-team-config.yaml`. Abort if still unresolved.
+   - If `org_id` or `workspace_id` is empty, ask the user to run `od3sa-memory setup claude` and restart, or to set them in `.claude/agentic-team-config.yaml`. Abort if still unresolved.
 
 6. Read active roles from `.claude/agentic-team-config.yaml` with `_active_roles_from_config`. Best-effort infer active roles from the charter (look for "Active roles", "Roles/seats", or the role list in the template). Compute the delta:
    - In config but not charter → charter incomplete.
@@ -209,7 +209,7 @@ Use `AskUserQuestion` with a multi-select or single-select question to let the u
    ```bash
    USER_ID="${USER:-$(id -un)}"
    RATER="${RATER:-${USER_ID}}"
-   MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+   MEMORY_BIN="${MEMORY_BIN:-$(command -v od3sa-memory || echo "${HOME}/.local/bin/od3sa-memory")}"
    "${MEMORY_BIN}" remember \
      --agent-id archivist \
      --user-id "${USER_ID}" \

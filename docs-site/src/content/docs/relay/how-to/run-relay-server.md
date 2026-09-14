@@ -6,16 +6,16 @@ content_type: how-to
 
 # Run your own relay server
 
-A self-hosted relay lets you sync memory devices across separate networks without relying on a third-party service. This guide sets up the dedicated `relay` binary as a long-running process, verifies it, and connects a device.
+A self-hosted relay lets you sync memory devices across separate networks without relying on a third-party service. This guide sets up the dedicated `od3sa-relay` binary as a long-running process, verifies it, and connects a device.
 
 For a full public-internet VPS deployment with Let's Encrypt, systemd, firewall rules, and hardening, see [Deploy on a public VPS](/relay/how-to/deploy-public-vps/). For a private mesh deployment (for example, Tailscale) without exposing ports to the internet, bind the relay to the mesh interface and use plain HTTP inside the mesh.
 
 ## Prerequisites
 
-- The `relay` binary installed on the relay host:
+- The `od3sa-relay` binary installed on the relay host:
 
   ```bash
-  curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+  curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
   ```
 
 - A reachable host and port (default `8787`).
@@ -34,7 +34,7 @@ sudo chown $(whoami):$(whoami) /var/lib/relay
 The `--db` flag (or `MEMORY_RELAY_DB`) is required:
 
 ```bash
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 127.0.0.1:8787
 ```
@@ -42,7 +42,7 @@ relay \
 The relay binds to **loopback** by default (`127.0.0.1:8787`). To accept connections from other devices, opt in with `--allow-remote-bind` and pass a non-loopback address:
 
 ```bash
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 192.168.1.10:8787 \
   --allow-remote-bind
@@ -72,13 +72,13 @@ There is no `relay-register` CLI subcommand. Devices register with the relay in 
 
   ```bash
   # On a device already in the fleet
-  memory --db ~/.memory/default.db pair create-invitation \
+  od3sa-memory --db ~/.memory/default.db pair create-invitation \
     --relay-url http://relay.example.com:8787 \
     --account-id your-account \
     --password "correct-horse-battery-staple"
 
   # On the new device
-  memory --db ~/.memory/default.db pair accept-invitation \
+  od3sa-memory --db ~/.memory/default.db pair accept-invitation \
     --code <invitation-code> \
     --relay-url http://relay.example.com:8787 \
     --account-id your-account \
@@ -87,7 +87,7 @@ There is no `relay-register` CLI subcommand. Devices register with the relay in 
 
 - **The `memory_relay_register` MCP tool.** From an agent session, call `memory_relay_register` with the relay URL and account ID. The `memory_relay_server` MCP tool can also embed a relay inside an memory process.
 
-Once registered, start the foreground sync loop with `memory sync loop start --relay-url ... --account-id ... --confirm`. See [Sync two devices with a relay](/memory/tutorials/sync-two-devices-relay/).
+Once registered, start the foreground sync loop with `od3sa-memory sync loop start --relay-url ... --account-id ... --confirm`. See [Sync two devices with a relay](/memory/tutorials/sync-two-devices-relay/).
 
 ## 5. Run the relay as a service
 

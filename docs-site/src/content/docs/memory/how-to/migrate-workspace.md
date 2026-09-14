@@ -10,7 +10,7 @@ When a project is renamed or moved to a new organization, you can update the `or
 
 ## Prerequisites
 
-- memory running as an MCP server.
+- `od3sa-memory` running as an MCP server.
 - The current `org_id` and `workspace_id` values.
 - The new `org_id` and `workspace_id` values.
 - Optional: enough disk space for a backup copy if you set `backup: true`.

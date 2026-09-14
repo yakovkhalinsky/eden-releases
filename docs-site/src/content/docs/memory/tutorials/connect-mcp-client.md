@@ -22,14 +22,14 @@ Run the installer:
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/memory`. Make sure the directory is on the PATH your client sees, or use the absolute binary path in the server config.
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. Make sure the directory is on the PATH your client sees, or use the absolute binary path in the server config.
 
 ## 2. Add the server config
 
 The server command is:
 
 ```bash
-memory --db /home/yourname/.memory/default.db
+od3sa-memory --db /home/yourname/.memory/default.db
 ```
 
 Use your real username. The `--db` path must be absolute, and the parent directory must exist.
@@ -40,7 +40,7 @@ If your client uses a `mcpServers` JSON config, add this:
 {
   "mcpServers": {
     "memory": {
-      "command": "/home/yourname/.local/bin/memory",
+      "command": "/home/yourname/.local/bin/od3sa-memory",
       "args": [
         "--db",
         "/home/yourname/.memory/default.db"
@@ -53,7 +53,7 @@ If your client uses a `mcpServers` JSON config, add this:
 }
 ```
 
-Replace `/home/yourname` with your actual home path. If `memory` is on the client's PATH, you can use the bare command name.
+Replace `/home/yourname` with your actual home path. If `od3sa-memory` is on the client's PATH, you can use the bare command name.
 
 ## 3. Restart your client
 
@@ -89,7 +89,7 @@ The agent should recall the fact from the local store.
 
 ## Expected output
 
-- `memory version` prints a version string.
+- `od3sa-memory version` prints a version string.
 - `memory_health` returns `status: ok`.
 - A stored fact is returned when asked in a new session.
 

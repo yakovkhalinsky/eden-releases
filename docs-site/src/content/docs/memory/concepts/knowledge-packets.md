@@ -45,13 +45,13 @@ Packets are normally rendered to stdout and forgotten. If you want one to outliv
 
 ```bash
 # Build and publish in one step
-memory packet --template compact --format md --title "Week 34 brief" --version 1.0.0 --publish
+od3sa-memory packet --template compact --format md --title "Week 34 brief" --version 1.0.0 --publish
 
 # List published packets
-memory packet list
+od3sa-memory packet list
 
 # Re-export a published packet by ID
-memory packet export <packet-id> --format md > brief.md
+od3sa-memory packet export <packet-id> --format md > brief.md
 ```
 
 Published packets keep the same privacy model as their build: what was stored is what gets re-exported, and redaction is applied on export when requested (`--redact`, or `redact` on `memory_packet_export`). Publishing is per-workspace; a published packet never gains access to memories outside the scope it was built from.

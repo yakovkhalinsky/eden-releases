@@ -4,7 +4,7 @@ description: memory command-line reference for sync, pairing, relay, and related
 content_type: reference
 ---
 
-memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the setup, sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the [fallback slash commands](/memory/reference/fallback-slash-commands/) installed by `memory setup`.
+memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the setup, sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the [fallback slash commands](/memory/reference/fallback-slash-commands/) installed by `od3sa-memory setup`.
 
 ## `setup`
 
@@ -12,7 +12,7 @@ Wire the current project directory to Claude Code CLI. The helper prompts for an
 
 ```bash
 cd ~/project-a
-memory setup
+od3sa-memory setup
 ```
 
 `setup claude` is accepted as an alias for the same behavior.
@@ -39,7 +39,7 @@ The project `.env` file (default `./.env`) receives `MEMORY_DB_PATH`, `MEMORY_AG
 Use `--dry-run` to validate preflight checks and inspect what `setup` would configure before it writes anything:
 
 ```bash
-memory setup --db ~/.memory/default.db --org-id your-org --dry-run
+od3sa-memory setup --db ~/.memory/default.db --org-id your-org --dry-run
 ```
 
 In dry-run mode the command:
@@ -77,19 +77,19 @@ Check for, download, and install a newer memory binary. The command fetches the 
 
 ```bash
 # Check whether a newer release exists
-memory update --check
+od3sa-memory update --check
 
 # Download and install if newer (explicit)
-memory update
+od3sa-memory update
 
 # Preview what would happen
-memory update --dry-run
+od3sa-memory update --dry-run
 
 # Restore the most recent backup
-memory update --rollback
+od3sa-memory update --rollback
 
 # Use a different distribution URL
-memory update --prefix https://example.com/memory/
+od3sa-memory update --prefix https://example.com/memory/
 ```
 
 | Flag | Env var | Description |
@@ -105,7 +105,7 @@ memory update --prefix https://example.com/memory/
 Build a deterministic, scope-bound knowledge packet for the current workspace and print it to stdout. A packet is a self-contained snapshot of memories, stats, and optional semantic clusters. It is useful for exporting context, hand-offs between agents, or offline review.
 
 ```bash
-memory packet --format json --template default --limit 50
+od3sa-memory packet --format json --template default --limit 50
 ```
 
 The packet is scope-bound to a single `org_id`/`workspace_id` pair. Pass identity explicitly, set `MEMORY_ORG_ID` and `MEMORY_WORKSPACE_ID`, or let `setup claude` persist them in the project config. See [Scopes and identity](/memory/concepts/scopes-identity/) for precedence rules.
@@ -132,13 +132,13 @@ Published packets are stored as durable records so you can re-export them later:
 
 ```bash
 # Build and publish in one step
-memory packet --template compact --format md --title "Week 34 brief" --publish
+od3sa-memory packet --template compact --format md --title "Week 34 brief" --publish
 
 # List published packets
-memory packet list
+od3sa-memory packet list
 
 # Export a published packet by ID
-memory packet export <packet-id> --format md > brief.md
+od3sa-memory packet export <packet-id> --format md > brief.md
 ```
 
 ### Templates and defaults
@@ -157,31 +157,31 @@ Templates are additive: they set defaults, and explicit flags win where they are
 Default JSON packet:
 
 ```bash
-memory packet --org-id your-org --workspace-id eden-releases
+od3sa-memory packet --org-id your-org --workspace-id eden-releases
 ```
 
 Compact Markdown brief:
 
 ```bash
-memory packet --template compact --format md --limit 10
+od3sa-memory packet --template compact --format md --limit 10
 ```
 
 Analytical packet with semantic clusters:
 
 ```bash
-memory packet --template analytical --format html --enrich cluster
+od3sa-memory packet --template analytical --format html --enrich cluster
 ```
 
 Full-content packet (includes a privacy warning in the output):
 
 ```bash
-memory packet --template full --format md --include-content
+od3sa-memory packet --template full --format md --include-content
 ```
 
 Only memories updated in the last 24 hours:
 
 ```bash
-memory packet --since "$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)" --format md
+od3sa-memory packet --since "$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)" --format md
 ```
 
 ### Privacy note
@@ -193,8 +193,8 @@ By default, packets contain excerpts truncated to 120 runes and never include ra
 Generate an audience-aware narrative report over a time window of memories in the current scope.
 
 ```bash
-memory report --period weekly --audience human --format md
-memory report --since 2026-08-01T00:00:00Z --template weekly-manager --redact --output report.md
+od3sa-memory report --period weekly --audience human --format md
+od3sa-memory report --since 2026-08-01T00:00:00Z --template weekly-manager --redact --output report.md
 ```
 
 | Flag | Default | Description |
@@ -216,10 +216,10 @@ memory report --since 2026-08-01T00:00:00Z --template weekly-manager --redact --
 Generate a structured document (decision log, runbook, or changelog) from a window of memories. Flags mirror `report`, plus:
 
 ```bash
-memory document --mode decision-log --since 2026-08-01T00:00:00Z --format md
-memory document list
-memory document publish <document-id>
-memory document export <document-id> --format md > runbook.md
+od3sa-memory document --mode decision-log --since 2026-08-01T00:00:00Z --format md
+od3sa-memory document list
+od3sa-memory document publish <document-id>
+od3sa-memory document export <document-id> --format md > runbook.md
 ```
 
 | Flag | Default | Description |
@@ -244,9 +244,9 @@ Run the LLM-first dreaming curator over a scoped memory corpus. Requires a reach
 Read-only by default:
 
 ```bash
-memory dream preview --topic "deployment friction" --output-format md
-memory dream preview --query "Tailscale" --limit 30 --output-format json
-memory dream preview --persist --ttl-ms 604800000   # store the dream_record
+od3sa-memory dream preview --topic "deployment friction" --output-format md
+od3sa-memory dream preview --query "Tailscale" --limit 30 --output-format json
+od3sa-memory dream preview --persist --ttl-ms 604800000   # store the dream_record
 ```
 
 ### `dream apply`
@@ -255,13 +255,13 @@ Apply a previous dream's staged actions to the store. This is the only dreaming 
 
 ```bash
 # Safe actions only
-memory dream apply <dream-id> --confirm
+od3sa-memory dream apply <dream-id> --confirm
 
 # Include destructive actions (merge_duplicates, improve, propose_forget)
-memory dream apply <dream-id> --approve-forget --confirm
+od3sa-memory dream apply <dream-id> --approve-forget --confirm
 
 # Preview what would change
-memory dream apply <dream-id> --dry-run
+od3sa-memory dream apply <dream-id> --dry-run
 ```
 
 | Flag | Required | Description |
@@ -279,7 +279,7 @@ See [Dreaming](/memory/concepts/dreaming/) for the full lifecycle and safety mod
 Look up a single memory in another workspace of the same org. Behavior depends on the authorization mode: in `easy` mode any cross-workspace lookup is allowed; in `enterprise` mode the target workspace must appear in `MEMORY_CROSS_WORKSPACE_IDS`.
 
 ```bash
-memory lookup-cross-workspace \
+od3sa-memory lookup-cross-workspace \
   --org-id your-org \
   --workspace-id other-project \
   --record-id <uuid> \
@@ -302,7 +302,7 @@ memory lookup-cross-workspace \
 One-shot bidirectional sync with a local peer database.
 
 ```bash
-memory --db local.db sync --peer-db peer.db --confirm
+od3sa-memory --db local.db sync --peer-db peer.db --confirm
 ```
 
 | Flag | Required | Description |
@@ -321,21 +321,21 @@ Start, run once, stop, or check status of the background relay sync loop.
 
 ```bash
 # Start a foreground loop
-memory --db local.db sync loop start \
+od3sa-memory --db local.db sync loop start \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
   --root-key-passphrase "$(cat passphrase.txt)" \
   --confirm
 
 # Single round
-memory --db local.db sync loop once \
+od3sa-memory --db local.db sync loop once \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
   --root-key-passphrase "$(cat passphrase.txt)"
 
 # Status / stop
-memory --db local.db sync loop status
-memory --db local.db sync loop stop
+od3sa-memory --db local.db sync loop status
+od3sa-memory --db local.db sync loop stop
 ```
 
 | Flag | Required | Description |
@@ -353,7 +353,7 @@ memory --db local.db sync loop stop
 List staged pending Ed25519/X25519 key changes from peers.
 
 ```bash
-memory --db local.db sync list-pending-key-changes
+od3sa-memory --db local.db sync list-pending-key-changes
 ```
 
 ### `sync approve-key-change`
@@ -361,7 +361,7 @@ memory --db local.db sync list-pending-key-changes
 Apply a staged pending key change after previewing fingerprints and public-key hex.
 
 ```bash
-memory --db local.db \
+od3sa-memory --db local.db \
   sync approve-key-change --peer-id <device-id> --confirm
 ```
 
@@ -370,7 +370,7 @@ memory --db local.db \
 Discard a staged pending key change.
 
 ```bash
-memory --db local.db \
+od3sa-memory --db local.db \
   sync reject-key-change --peer-id <device-id> --confirm
 ```
 
@@ -380,7 +380,7 @@ Set (or clear) a local-only display-name override for a peer. The signed name
 from pairing is preserved.
 
 ```bash
-memory --db local.db \
+od3sa-memory --db local.db \
   sync set-peer-name --peer-id <device-id> --local-name "Work Laptop"
 ```
 
@@ -389,7 +389,7 @@ memory --db local.db \
 Pair the local database with a peer database in the same process using SPAKE2.
 
 ```bash
-memory --db local.db pair-device \
+od3sa-memory --db local.db pair-device \
   --peer-db peer.db \
   --account-id your-account \
   --password "shared-secret" \
@@ -414,7 +414,7 @@ Relay-mediated PAKE pairing for devices on different hosts.
 ### `pair create-invitation`
 
 ```bash
-memory --db local.db pair create-invitation \
+od3sa-memory --db local.db pair create-invitation \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
   --password "correct-horse-battery-staple" \
@@ -441,7 +441,7 @@ long with at least 40 bits estimated entropy.
 ### `pair accept-invitation`
 
 ```bash
-memory --db local.db pair accept-invitation <code> \
+od3sa-memory --db local.db pair accept-invitation <code> \
   --root-key-passphrase "$(cat passphrase.txt)" \
   --confirm
 ```
@@ -450,7 +450,7 @@ Or pass the code with `--code` and auto-start the foreground sync loop after
 pairing completes:
 
 ```bash
-memory --db local.db pair accept-invitation \
+od3sa-memory --db local.db pair accept-invitation \
   --code <code> \
   --start-sync-loop \
   --root-key-passphrase "$(cat passphrase.txt)" \
@@ -471,12 +471,12 @@ it also starts the foreground relay sync loop in the same process.
 | `--confirm` | Yes* | Confirm accepting the invitation. |
 | `--dry-run` | No | Preview without mutating the store. |
 
-## `relay`
+## `od3sa-relay`
 
-The dedicated `relay` binary is a lightweight relay-only build from the 0d3sa monorepo. It is useful on VPS or always-on hosts where you only need the relay and do not want the full `memory` CLI or MCP server.
+The dedicated `od3sa-relay` binary is a lightweight relay-only build from the 0d3sa monorepo. It is useful on VPS or always-on hosts where you only need the relay and do not want the full `od3sa-memory` CLI or MCP server.
 
 ```bash
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 127.0.0.1:8787
 ```
@@ -484,7 +484,7 @@ relay \
 The relay binds to loopback by default; add `--allow-remote-bind` with a non-loopback `--addr` to accept off-host connections. With TLS:
 
 ```bash
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 127.0.0.1:443 \
   --tls-cert /path/to/cert.pem \

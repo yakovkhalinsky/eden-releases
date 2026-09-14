@@ -12,19 +12,19 @@ The latest 0d3sa release is **{downloads.version}**, released on **{downloads.re
 
 Each release ships two binaries:
 
-- **`memory`** — the full CLI with MCP server, memory tools, sync, and pairing.
-- **`relay`** — a dedicated, lightweight relay server with no MCP or memory subcommands.
+- **`od3sa-memory`** — the full CLI with MCP server, memory tools, sync, and pairing.
+- **`od3sa-relay`** — a dedicated, lightweight relay server with no MCP or memory subcommands.
 
 ## Quick install
 
-The recommended installer defaults to `memory`. Pass a binary name to install `relay` instead:
+The recommended installer defaults to `od3sa-memory`. Pass a binary name to install `od3sa-relay` instead:
 
 ```bash
-# Default: install memory
+# Default: install od3sa-memory
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 
 # Install the dedicated relay binary
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
 ```
 
 The installer places the binary at `~/.local/bin/<binary-name>`.
@@ -59,21 +59,21 @@ export const PlatformTable = ({ binary }) => {
   );
 };
 
-## `memory`
+## `od3sa-memory`
 
 <PlatformTable binary="memory" />
 
-## `relay`
+## `od3sa-relay`
 
 <PlatformTable binary="relay" />
 
 ## Manual install
 
-If you prefer to download and verify manually, replace `BINARY` with `memory` or `relay` and `PLATFORM` with your platform key from the tables above:
+If you prefer to download and verify manually, replace `BINARY` with `od3sa-memory` or `od3sa-relay` and `PLATFORM` with your platform key from the tables above:
 
 ```bash
 VERSION={downloads.version}
-BINARY=memory
+BINARY=od3sa-memory
 PLATFORM=linux-amd64
 FILENAME=${BINARY}-${PLATFORM}
 
@@ -91,26 +91,26 @@ chmod +x ~/.local/bin/${BINARY}
 From the `memory` repository source tree:
 
 ```bash
-make release       # memory for linux-amd64/arm64, darwin-amd64/arm64
-make release-relay # relay for linux-amd64/arm64, darwin-amd64/arm64
+make release       # od3sa-memory for linux-amd64/arm64, darwin-amd64/arm64
+make release-relay # od3sa-relay for linux-amd64/arm64, darwin-amd64/arm64
 make release-all   # both of the above
 ```
 
-This produces `dist/memory-<platform>` and `dist/relay-<platform>` for each supported platform.
+This produces `dist/od3sa-memory-<platform>` and `dist/od3sa-relay-<platform>` for each supported platform.
 
 ## Verify the binary
 
 After installing:
 
 ```bash
-memory version
-memory health
+od3sa-memory version
+od3sa-memory health
 ```
 
-For `relay`:
+For `od3sa-relay`:
 
 ```bash
-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787 &
+od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787 &
 curl http://localhost:8787/health
 ```
 

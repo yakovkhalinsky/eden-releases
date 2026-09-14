@@ -10,7 +10,7 @@ This tutorial shows how to synchronize two memory databases on the same host, or
 
 ## Prerequisites
 
-- memory installed.
+- `od3sa-memory` installed.
 - Two database paths. By default memory uses `~/.memory/default.db`.
 - Both databases are readable and writable by the user running the command.
 
@@ -32,7 +32,7 @@ mkdir -p /mnt/shared
 The `sync` command performs a bidirectional merge of delta logs between the local database and a peer database.
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync --peer-db /mnt/shared/peer.db --confirm
 ```
 
@@ -41,7 +41,7 @@ The first time you run this, memory will create the peer database if it does not
 To preview what would happen without writing anything, add `--dry-run`:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   sync --peer-db /mnt/shared/peer.db --dry-run
 ```
 
@@ -50,7 +50,7 @@ memory --db ~/.memory/default.db \
 If you plan to sync the same two databases regularly, pair them once with SPAKE2 so each store pins the other's public key:
 
 ```bash
-memory --db ~/.memory/default.db \
+od3sa-memory --db ~/.memory/default.db \
   pair-device \
   --peer-db /mnt/shared/peer.db \
   --account-id your-account \
@@ -69,18 +69,18 @@ To preview the pairing without writing peer records, add `--dry-run`.
 3. Search the peer database for the same memory:
 
    ```bash
-   memory --db /mnt/shared/peer.db search "your memory content"
+   od3sa-memory --db /mnt/shared/peer.db search "your memory content"
    ```
 
 Or check the peer count through health on either database:
 
 ```bash
-memory --db ~/.memory/default.db health
+od3sa-memory --db ~/.memory/default.db health
 ```
 
 ## Expected output
 
-- `memory sync` exits 0 and reports the number of deltas exchanged.
+- `od3sa-memory sync` exits 0 and reports the number of deltas exchanged.
 - A memory stored in the primary database is searchable in the peer database after sync.
 - `memory_health` shows a non-zero `peer_count` after pairing.
 
@@ -110,7 +110,7 @@ And `memory_pair_device` for pairing:
 
 - **Peer database is not writable** — ensure the user owns the peer database path and its parent directory.
 - **Identity mismatch** — if the peer database was previously paired with a different account, run `pair-device` again or use a fresh peer database.
-- **Deltas not propagating** — both databases must use the same sync schema version. Run `memory health` and check the `version` and `sync` fields.
+- **Deltas not propagating** — both databases must use the same sync schema version. Run `od3sa-memory health` and check the `version` and `sync` fields.
 
 ## Next steps
 

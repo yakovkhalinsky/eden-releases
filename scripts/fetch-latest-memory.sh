@@ -4,15 +4,17 @@
 # Queries the source monorepo for the most recent release whose tag matches the
 # configured pattern and whose CI checks are green.
 #
-# The project moved into the 0d3sa monorepo and its tags are namespaced
-# memory-v*, so the source repo and pattern below differ from the historical
-# standalone eden-memory repo this script was originally written against.
+# The project moved into the 0d3sa monorepo, whose releases are tagged with the
+# bare semver (`v0.4.0`) — the `memory-v<semver>` scheme was abandoned, so the
+# pattern below is a plain `v<semver>`. Note the monorepo's `v*` tag namespace is
+# shared with sibling projects, so an exact three-part semver match is what keeps
+# this from selecting an unrelated release.
 #
 # Usage:
 #   fetch-latest-memory.sh \
 #     --owner yakovkhalinsky \
 #     --repo 0d3sa \
-#     --pattern '^memory-v[0-9]+\.[0-9]+\.[0-9]+$' \
+#     --pattern '^v[0-9]+\.[0-9]+\.[0-9]+$' \
 #     --require-green \
 #     --output GITHUB_OUTPUT
 
@@ -20,7 +22,7 @@ set -euo pipefail
 
 OWNER="yakovkhalinsky"
 REPO="0d3sa"
-TAG_PATTERN='^memory-v[0-9]+\.[0-9]+\.[0-9]+$'
+TAG_PATTERN='^v[0-9]+\.[0-9]+\.[0-9]+$'
 REQUIRE_GREEN="false"
 OUTPUT_FILE=""
 

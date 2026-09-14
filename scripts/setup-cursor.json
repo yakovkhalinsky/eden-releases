@@ -1,6 +1,6 @@
 {
   "memory": {
-    "command": "/home/yourname/.local/bin/memory",
+    "command": "/home/yourname/.local/bin/od3sa-memory",
     "args": [
       "--db",
       "/home/yourname/.memory/default.db",

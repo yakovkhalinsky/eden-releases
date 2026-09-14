@@ -22,7 +22,7 @@ Run the installer:
 curl -fsSL https://0d3sa.com/memory/install.sh | sh
 ```
 
-This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/memory`. Make sure `~/.local/bin` is on the PATH Cursor sees, or use the full binary path in step 2.
+This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. Make sure `~/.local/bin` is on the PATH Cursor sees, or use the full binary path in step 2.
 
 ## 2. Add the MCP server in Cursor
 
@@ -31,10 +31,10 @@ Open **Settings** → **MCP** and add a new stdio server:
 | Field | Value |
 |-------|-------|
 | Name | `memory` |
-| Command | `/home/yourname/.local/bin/memory` |
+| Command | `/home/yourname/.local/bin/od3sa-memory` |
 | Arguments | `--db /home/yourname/.memory/default.db` |
 
-Replace `/home/yourname` with your actual home path. If `memory` is on the PATH that Cursor sees, you can use the bare command name instead of the absolute path.
+Replace `/home/yourname` with your actual home path. If `od3sa-memory` is on the PATH that Cursor sees, you can use the bare command name instead of the absolute path.
 
 ## 3. Start a fresh chat
 
@@ -74,7 +74,7 @@ Cursor should recall the fact from the local store.
 
 ## Expected output
 
-- `memory version` prints a version string.
+- `od3sa-memory version` prints a version string.
 - `memory_health` returns `status: ok`.
 - A remembered preference is returned when asked in a new chat.
 
@@ -83,9 +83,9 @@ Cursor should recall the fact from the local store.
 - **Server exits** — ensure `--db` uses an absolute path and the parent directory exists.
 - **Command not found** — add `~/.local/bin` to your PATH, or use the absolute binary path.
 - **Config not picked up** — start a new Cursor chat after changing the MCP config.
-- **Stale Python wrapper from an old install** — if `memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
+- **Stale Python wrapper from an old install** — if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
-  rm -f ~/.local/bin/memory
+  rm -f ~/.local/bin/od3sa-memory
   curl -fsSL https://0d3sa.com/memory/install.sh | sh
   ```
 

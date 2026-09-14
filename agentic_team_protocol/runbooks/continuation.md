@@ -100,11 +100,11 @@ _resolve_identity
 
 if [ -z "${MEMORY_ORG_ID:-}" ] || [ -z "${MEMORY_WORKSPACE_ID:-}" ] || [ -z "${MEMORY_AGENT_ID:-}" ]; then
   echo "Error: MEMORY_ORG_ID, MEMORY_WORKSPACE_ID, and MEMORY_AGENT_ID must be non-empty." >&2
-  echo "Run 'memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
+  echo "Run 'od3sa-memory setup claude' in this project, or set them in .claude/agentic-team-config.yaml / .env." >&2
   exit 1
 fi
 
-MEMORY_BIN="${MEMORY_BIN:-$(command -v memory || echo "${HOME}/.local/bin/memory")}"
+MEMORY_BIN="${MEMORY_BIN:-$(command -v od3sa-memory || echo "${HOME}/.local/bin/od3sa-memory")}"
 "${MEMORY_BIN}" search \
   --agent-id "${MEMORY_AGENT_ID}" \
   --user-id "${USER_ID}" \

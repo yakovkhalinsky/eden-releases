@@ -11,23 +11,23 @@ A relay-first topology makes the relay the fixed point of your sync network. You
 ## Prerequisites
 
 - A host that can run the relay continuously (your own machine, an always-on server, or a VPS).
-- The dedicated `relay` binary installed on the relay host.
-- `memory` installed on every client device.
+- The dedicated `od3sa-relay` binary installed on the relay host.
+- `od3sa-memory` installed on every client device.
 - A fleet `account-id` shared by all devices.
 - A strong root-key passphrase to encrypt the sidecar files.
 - A firewall rule allowing inbound TCP traffic on the relay port (default `8787`).
 
 ## 1. Start the relay
 
-Install and start the dedicated `relay` binary:
+Install and start the dedicated `od3sa-relay` binary:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
 
 sudo mkdir -p /var/lib/relay
 sudo chown $(whoami):$(whoami) /var/lib/relay
 
-relay \
+od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 127.0.0.1:8787
 ```
@@ -49,7 +49,7 @@ A healthy relay returns a JSON status report. If you are testing locally, use `h
 On the device that already has data (or that you want to treat as the source), register it with the relay. The simplest way is a single sync round, which registers the device automatically before it pushes:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   sync loop once \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
@@ -68,7 +68,7 @@ Repeat the `sync loop once` command on every other device that will sync. Each d
 On the source device, create an invitation:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   pair create-invitation \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
@@ -83,7 +83,7 @@ Share the printed invitation code and password with the joining device through a
 On the joining device, accept the invitation and start the loop:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   pair accept-invitation \
   --code INVITATION_CODE \
   --root-key-passphrase "$(cat passphrase.txt)" \
@@ -98,7 +98,7 @@ Accepting receives the account root key, records the initiator as a peer, and re
 If you did not already start a loop, start it on the source device:
 
 ```bash
-memory --db ~/.memory/device.db \
+od3sa-memory --db ~/.memory/device.db \
   sync loop start \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
@@ -109,7 +109,7 @@ memory --db ~/.memory/device.db \
 This runs in the foreground. For an always-on background loop, run it under a service manager such as systemd. Check status at any time:
 
 ```bash
-memory --db ~/.memory/device.db sync loop status
+od3sa-memory --db ~/.memory/device.db sync loop status
 ```
 
 You can override the default 30-second interval with `--sync-interval` or `MEMORY_SYNC_INTERVAL`.
@@ -119,7 +119,7 @@ You can override the default 30-second interval with `--sync-interval` or `MEMOR
 1. Store a memory on the source device through your MCP client or the CLI.
 2. On the joining device, force a single sync round:
    ```bash
-   memory --db ~/.memory/device.db \
+   od3sa-memory --db ~/.memory/device.db \
      sync loop once \
      --relay-url http://relay.example.com:8787 \
      --account-id your-account \
@@ -135,7 +135,7 @@ If both devices run continuous loops, the memory should appear within one loop i
 - `sync loop once` succeeds from every client device without a registration error.
 - `pair create-invitation` returns an `invitation_code`.
 - `pair accept-invitation` finishes without errors and, with `--start-sync-loop`, begins syncing.
-- `memory --db ~/.memory/device.db health` on either device shows `peer_count` greater than zero.
+- `od3sa-memory --db ~/.memory/device.db health` on either device shows `peer_count` greater than zero.
 - A memory stored on one device is recallable on the other.
 
 ## When you see "connection refused"

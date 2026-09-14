@@ -8,14 +8,14 @@ This guide shows how to build a knowledge packet for a workspace using the CLI a
 
 ## Prerequisites
 
-- `memory` installed and on your PATH.
+- `od3sa-memory` installed and on your PATH.
 - A database with at least one remembered memory in the target workspace.
 - `MEMORY_ORG_ID` and `MEMORY_WORKSPACE_ID` configured, or identity flags available.
 
 ## 1. Verify the workspace scope
 
 ```bash
-memory tree
+od3sa-memory tree
 ```
 
 Confirm the org and workspace you want to export contain the memories you expect. You can also set the environment variables explicitly:
@@ -30,7 +30,7 @@ export MEMORY_WORKSPACE_ID="eden-releases"
 The default template produces JSON with stats, 120-rune excerpts, and optional clusters:
 
 ```bash
-memory packet --format json --template default > packet.json
+od3sa-memory packet --format json --template default > packet.json
 ```
 
 Equivalent MCP tool call:
@@ -49,7 +49,7 @@ Equivalent MCP tool call:
 Use `compact` for a short Markdown brief with short excerpts and trimmed stats:
 
 ```bash
-memory packet --template compact --format md > brief.md
+od3sa-memory packet --template compact --format md > brief.md
 ```
 
 Equivalent MCP:
@@ -66,13 +66,13 @@ Equivalent MCP:
 The `analytical` template enables cluster enrichment automatically:
 
 ```bash
-memory packet --template analytical --format html > analysis.html
+od3sa-memory packet --template analytical --format html > analysis.html
 ```
 
 Or keep the default template and enable clusters explicitly:
 
 ```bash
-memory packet --enrich cluster --format md > clustered.md
+od3sa-memory packet --enrich cluster --format md > clustered.md
 ```
 
 Equivalent MCP:
@@ -92,7 +92,7 @@ Clusters group related memories by vector similarity and include only memory IDs
 Use the `full` template, or pass `--include-content`, when the consumer is trusted and needs complete memory text:
 
 ```bash
-memory packet --template full --format md > full-brief.md
+od3sa-memory packet --template full --format md > full-brief.md
 ```
 
 Equivalent MCP:
@@ -115,7 +115,7 @@ Only export full contents when you trust the consumer. The warning reminds you t
 Use `--since` to include only memories created or updated after a specific time:
 
 ```bash
-memory packet \
+od3sa-memory packet \
   --since "$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)" \
   --format md \
   > recent.md
@@ -143,9 +143,9 @@ Open or preview the output:
 If the packet is worth keeping, publish it instead of only printing it. Published packets are durable records you can list and re-export later:
 
 ```bash
-memory packet --template compact --format md --title "Week 34 brief" --publish
-memory packet list
-memory packet export <packet-id> --format md > brief.md
+od3sa-memory packet --template compact --format md --title "Week 34 brief" --publish
+od3sa-memory packet list
+od3sa-memory packet export <packet-id> --format md > brief.md
 ```
 
 Publishing does not change the packet's contents or scope. See [Publishing packets](/memory/concepts/knowledge-packets/#publishing-packets) for the details.
@@ -160,7 +160,7 @@ Publishing does not change the packet's contents or scope. See [Publishing packe
 ## See also
 
 - [Knowledge packets concept](/memory/concepts/knowledge-packets/)
-- [CLI reference: `memory packet`](/memory/reference/cli/#packet)
+- [CLI reference: `od3sa-memory packet`](/memory/reference/cli/#packet)
 - [Tools reference: `memory_packet`](/memory/reference/tools/#memory_packet)
 - [Tools reference: packet publishing tools](/memory/reference/tools/#memory_packet_publish)
 - [Scopes and identity](/memory/concepts/scopes-identity/)

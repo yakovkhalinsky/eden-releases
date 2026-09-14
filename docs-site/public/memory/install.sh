@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
-# Installer for the memory monorepo binaries.
+# Installer for the memory monorepo binaries (od3sa-memory, od3sa-relay).
 # Usage:
 #   curl -fsSL https://0d3sa.com/memory/install.sh | sh
-#   curl -fsSL https://0d3sa.com/memory/install.sh | sh -s relay
+#   curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
 #
 # You can also pre-set MEMORY_ORG_ID for a non-interactive install:
 #   export MEMORY_ORG_ID=your-org
 #   curl -fsSL https://0d3sa.com/memory/install.sh | sh
 #
-# Defaults to installing memory. Valid binaries: memory, relay.
+# Defaults to installing od3sa-memory. Valid binaries: od3sa-memory, od3sa-relay.
 
 set -eu
 
@@ -16,10 +16,10 @@ REPO="yakovkhalinsky/eden-releases"
 PREFIX_DEFAULT="${HOME}/.local/bin"
 
 # Select binary to install
-BIN_NAME="${1:-${MEMORY_INSTALL_BIN:-memory}}"
+BIN_NAME="${1:-${MEMORY_INSTALL_BIN:-od3sa-memory}}"
 case "${BIN_NAME}" in
-    memory|relay) ;;
-    *) echo "Unsupported binary: ${BIN_NAME}"; echo "Usage: $0 [memory|relay]"; exit 1 ;;
+    od3sa-memory|od3sa-relay) ;;
+    *) echo "Unsupported binary: ${BIN_NAME}"; echo "Usage: $0 [od3sa-memory|od3sa-relay]"; exit 1 ;;
 esac
 
 # Detect OS
@@ -62,7 +62,7 @@ fi
 # Remove any stale Python wrapper from an old pip/uv install so the new
 # static binary can replace it cleanly. Only the memory binary had a
 # Python wrapper historically.
-if [ "${BIN_NAME}" = "memory" ] && [ -f "${TARGET}" ]; then
+if [ "${BIN_NAME}" = "od3sa-memory" ] && [ -f "${TARGET}" ]; then
     if head -1 "${TARGET}" 2>/dev/null | grep -q "python"; then
         echo "Removing stale Python wrapper at ${TARGET}..."
         rm -f "${TARGET}"
@@ -150,7 +150,7 @@ write_memory_org_id() {
     fi
 }
 
-if [ "${BIN_NAME}" = "memory" ]; then
+if [ "${BIN_NAME}" = "od3sa-memory" ]; then
     if [ -n "${MEMORY_ORG_ID:-}" ]; then
         write_memory_org_id "${MEMORY_ORG_ID}"
         MEMORY_ORG_ID_WRITTEN="1"
@@ -175,18 +175,18 @@ if [ "${BIN_NAME}" = "memory" ]; then
         echo "      Create ${CYAN}${MEMORY_ENV_FILE}${RESET} with:"
         echo "        MEMORY_ORG_ID=your-org"
         echo ""
-        echo "      Then run ${CYAN}memory setup claude${RESET} in each project to set MEMORY_WORKSPACE_ID."
+        echo "      Then run ${CYAN}od3sa-memory setup claude${RESET} in each project to set MEMORY_WORKSPACE_ID."
     fi
 fi
 
 echo ""
 echo "Run:"
 case "${BIN_NAME}" in
-    memory)
-        echo "  memory --db ~/.memory/default.db"
+    od3sa-memory)
+        echo "  od3sa-memory --db ~/.memory/default.db"
         ;;
-    relay)
-        echo "  relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787"
+    od3sa-relay)
+        echo "  od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787"
         ;;
 esac
 
@@ -194,7 +194,7 @@ printf "\n%sYour memory garden is ready:%s\n\n" "${GREEN}" "${RESET}"
 printf "    %s%s%s\n" "${CYAN}" "${BIN_NAME}" "${RESET}"
 printf "    +-- %s%s%s\n" "${YELLOW}" "${TARGET}" "${RESET}"
 printf "    +-- %s~/.memory/default.db%s\n" "${YELLOW}" "${RESET}"
-if [ "${BIN_NAME}" = "memory" ]; then
+if [ "${BIN_NAME}" = "od3sa-memory" ]; then
     printf "    +-- %s~/.memory/.env%s\n" "${YELLOW}" "${RESET}"
 fi
 printf "    +-- %s~/.cache/memory/%s\n" "${YELLOW}" "${RESET}"
@@ -202,17 +202,17 @@ printf "    +-- %s~/.claude.json   (after setup claude)%s\n" "${DIM}" "${RESET}"
 printf "\n%sQuick start:%s\n" "${GREEN}" "${RESET}"
 
 case "${BIN_NAME}" in
-    memory)
+    od3sa-memory)
         cat <<EOF
-  ${CYAN}memory --db ~/.memory/default.db${RESET}
-  ${CYAN}memory health${RESET}
-  ${CYAN}memory remember --agent-id eve --user-id yakov --content "hello world"${RESET}
-  ${CYAN}memory tree${RESET}
+  ${CYAN}od3sa-memory --db ~/.memory/default.db${RESET}
+  ${CYAN}od3sa-memory health${RESET}
+  ${CYAN}od3sa-memory remember --agent-id eve --user-id yakov --content "hello world"${RESET}
+  ${CYAN}od3sa-memory tree${RESET}
 EOF
         ;;
-    relay)
+    od3sa-relay)
         cat <<EOF
-  ${CYAN}relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787${RESET}
+  ${CYAN}od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787${RESET}
   ${CYAN}curl http://127.0.0.1:8787/health${RESET}
 EOF
         ;;

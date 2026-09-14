@@ -26,7 +26,7 @@ case "$(uname -m)" in
     *)       echo "Unsupported architecture: $(uname -m)"; exit 1 ;;
 esac
 
-BIN="memory-${OS}-${ARCH}"
+BIN="od3sa-memory-${OS}-${ARCH}"
 URL="https://github.com/${REPO}/releases/latest/download/${BIN}"
 CHECKSUM_URL="${URL}.sha256"
 
@@ -37,7 +37,7 @@ else
     PREFIX="/usr/local/bin"
 fi
 
-TARGET="${PREFIX}/memory"
+TARGET="${PREFIX}/od3sa-memory"
 
 # Capture previous version if the target already exists.
 PREVIOUS_VERSION="none"
@@ -58,7 +58,7 @@ fi
 TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
-echo "Downloading memory ${OS}/${ARCH}..."
+echo "Downloading od3sa-memory ${OS}/${ARCH}..."
 
 # Use a progress bar if curl supports it; otherwise stay silent.
 CURL_PROGRESS="--progress-bar"
@@ -87,7 +87,7 @@ TMP_BIN="${TARGET}.tmp.$$"
 cp "${TMPDIR}/${BIN}" "${TMP_BIN}"
 mv -f "${TMP_BIN}" "${TARGET}"
 
-if ! command -v memory >/dev/null 2>&1; then
+if ! command -v od3sa-memory >/dev/null 2>&1; then
     echo ""
     echo "memory was installed to ${TARGET}, but it is not on your PATH."
     echo "Add the following to your shell profile:"
@@ -123,8 +123,8 @@ cat <<EOF
 
 ${GREEN}Your memory garden is ready:${RESET}
 
-    ${CYAN}memory${RESET}
-    +-- ${YELLOW}~/.local/bin/memory${RESET}
+    ${CYAN}od3sa-memory${RESET}
+    +-- ${YELLOW}~/.local/bin/od3sa-memory${RESET}
     +-- ${YELLOW}~/.memory/default.db${RESET}
     +-- ${YELLOW}~/.cache/memory/${RESET}
     +-- ${DIM}~/.claude.json   (after setup claude)${RESET}

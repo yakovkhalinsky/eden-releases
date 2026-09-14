@@ -43,11 +43,11 @@ For example, passing `--db local.db` on the command line overrides `MEMORY_DB_PA
 
 If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls back to these environment variables. This is useful for project-scoped Claude Code processes that always tag memories with the current workspace.
 
-The public installer creates or updates `~/.memory/.env` with `MEMORY_ORG_ID` when you enter one at the prompt (or when `MEMORY_ORG_ID` is already set in the environment). `memory setup` writes the per-project values into a project-local env file and the MCP server configuration in `~/.claude.json`.
+The public installer creates or updates `~/.memory/.env` with `MEMORY_ORG_ID` when you enter one at the prompt (or when `MEMORY_ORG_ID` is already set in the environment). `od3sa-memory setup` writes the per-project values into a project-local env file and the MCP server configuration in `~/.claude.json`.
 
 ## Agent identity
 
-`memory setup` resolves the identity it writes using this precedence:
+`od3sa-memory setup` resolves the identity it writes using this precedence:
 
 1. Existing environment values (`MEMORY_AGENT_ID`, `MEMORY_USER_ID`) are respected and never overwritten.
 2. Interactive prompts, shown when the values are unset.
@@ -71,12 +71,12 @@ memory supports two authorization modes for cross-workspace access:
 
 ## Preflight checks for `setup`
 
-`memory setup` runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
+`od3sa-memory setup` runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
 
-1. **Health check** — executes `memory --db <path> health` against the target database and aborts if the reported status is not `ok`.
+1. **Health check** — executes `od3sa-memory --db <path> health` against the target database and aborts if the reported status is not `ok`.
 2. **MCP protocol version check** — verifies the compiled-in MCP server advertises the protocol version Claude Code expects (`2024-11-05`). If the binary advertises an incompatible version, setup aborts without writing config.
 
-If either check fails, no config files are mutated. Fix the underlying issue (update `memory`, create the database directory, or repair the binary path) and re-run `memory setup`.
+If either check fails, no config files are mutated. Fix the underlying issue (update `od3sa-memory`, create the database directory, or repair the binary path) and re-run `od3sa-memory setup`.
 
 ## Update variables
 
@@ -96,7 +96,7 @@ If either check fails, no config files are mutated. Fix the underlying issue (up
 
 ## Relay variables (relay)
 
-The dedicated `relay` binary reads these variables:
+The dedicated `od3sa-relay` binary reads these variables:
 
 | Variable | Maps to | Default | Description |
 |----------|---------|---------|-------------|
@@ -115,7 +115,7 @@ When you configure memory as an MCP server in `~/.claude.json`, put the variable
 ```json
 {
   "memory": {
-    "command": "/home/yourname/.local/bin/memory",
+    "command": "/home/yourname/.local/bin/od3sa-memory",
     "args": ["--db", "/home/yourname/.memory/default.db"],
     "env": {
       "MEMORY_LOG_LEVEL": "INFO",

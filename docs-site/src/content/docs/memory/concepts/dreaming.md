@@ -1,6 +1,6 @@
 ---
 title: Dreaming
-description: LLM-first memory curation with the memory_dream and memory_dream_apply MCP tools, the memory dream preview and apply CLI, and local ~/.memory/.env LLM provider configuration. Supports dry-run previews and json, md, and html output formats.
+description: LLM-first memory curation with the memory_dream and memory_dream_apply MCP tools, the od3sa-memory dream preview and apply CLI, and local ~/.memory/.env LLM provider configuration. Supports dry-run previews and json, md, and html output formats.
 content_type: concept
 keywords:
   - dreaming
@@ -10,7 +10,7 @@ keywords:
   - LLM curation
   - memory curation
   - MCP tools
-  - memory dream CLI
+  - od3sa-memory dream CLI
   - preview
   - apply
   - dry-run
@@ -28,7 +28,7 @@ There are two ways to run a dream:
 | Surface | Primary use |
 |---|---|
 | MCP tools `memory_dream` and `memory_dream_apply` | Called by an agent or IDE integration such as Claude Code. |
-| CLI `memory dream preview` and `memory dream apply` | Run directly in a terminal for ad-hoc curation. |
+| CLI `od3sa-memory dream preview` and `od3sa-memory dream apply` | Run directly in a terminal for ad-hoc curation. |
 
 This page documents the shipped MCP and CLI surfaces only.
 
@@ -86,7 +86,7 @@ The same surfaces are available on the command line.
 Preview without writing anything:
 
 ```bash
-memory --db ~/.memory/default.db dream preview \
+od3sa-memory --db ~/.memory/default.db dream preview \
   --topic "refactor safety" \
   --output-format md
 ```
@@ -94,7 +94,7 @@ memory --db ~/.memory/default.db dream preview \
 Preview and persist:
 
 ```bash
-memory --db ~/.memory/default.db dream preview \
+od3sa-memory --db ~/.memory/default.db dream preview \
   --topic "Tailscale" \
   --limit 30 \
   --output-format json \
@@ -107,10 +107,10 @@ Apply a persisted dream's staged actions:
 
 ```bash
 # Safe actions only
-memory --db ~/.memory/default.db dream apply <dream-id> --confirm
+od3sa-memory --db ~/.memory/default.db dream apply <dream-id> --confirm
 
 # Include destructive actions
-memory --db ~/.memory/default.db dream apply <dream-id> --approve-forget --confirm
+od3sa-memory --db ~/.memory/default.db dream apply <dream-id> --approve-forget --confirm
 ```
 
 ## LLM provider configuration
@@ -144,7 +144,7 @@ The format can be set per request in both the MCP tool and the CLI.
 
 ## Default behaviour
 
-Dreaming defaults to **dry-run / preview mode**. Whether you call `memory_dream` with no `dry_run` field or run `memory dream preview` without `--persist`, the result is returned but not written to the database. This keeps curation safe to experiment with.
+Dreaming defaults to **dry-run / preview mode**. Whether you call `memory_dream` with no `dry_run` field or run `od3sa-memory dream preview` without `--persist`, the result is returned but not written to the database. This keeps curation safe to experiment with.
 
 Persisting a result explicitly creates a `dream_record`, which is useful for turning a curated synthesis into durable team knowledge. Applying one back into the store is always a separate, confirmed step.
 

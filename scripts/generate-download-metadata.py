@@ -12,7 +12,7 @@ The manifest uses a per-binary schema:
             "linux-amd64": {
               "os": "linux",
               "arch": "amd64",
-              "filename": "memory-linux-amd64",
+              "filename": "od3sa-memory-linux-amd64",
               "downloadUrl": "...",
               "checksumUrl": "...",
               "sha256": "...",
@@ -24,8 +24,9 @@ The manifest uses a per-binary schema:
     }
 
 This script populates sha256 and sizeBytes for every artifact found in the
-asset directory. Missing artifacts keep their existing values so placeholder
-checksums (e.g. PUBLISHED_AT_RELEASE) survive between releases.
+asset directory. Validation is strict: an unknown binary key, a missing
+required platform key, or an artifact that is absent from the asset directory
+is a hard error, and the script exits non-zero without writing anything.
 """
 
 import argparse
@@ -76,7 +77,12 @@ def validate_manifest(manifest: dict, assets_dir: Path, verbose: bool = True) ->
 
     for binary_name, binary_meta in binaries.items():
         if binary_name not in SUPPORTED_BINARIES:
-            print(f"WARNING: unknown binary '{binary_name}' in manifest")
+            print(
+                f"ERROR: unknown binary '{binary_name}' in manifest "
+                f"(supported: {', '.join(sorted(SUPPORTED_BINARIES))})",
+                file=sys.stderr,
+            )
+            errors += 1
         platforms = binary_meta.get("platforms")
         if not isinstance(platforms, dict):
             print(f"ERROR: binary '{binary_name}' has no 'platforms' object", file=sys.stderr)
@@ -97,8 +103,10 @@ def validate_manifest(manifest: dict, assets_dir: Path, verbose: bool = True) ->
             fpath = assets_dir / filename
             if not fpath.exists():
                 print(
-                    f"WARNING: {binary_name}/{platform_key} artifact not found: {fpath}"
+                    f"ERROR: {binary_name}/{platform_key} artifact not found: {fpath}",
+                    file=sys.stderr,
                 )
+                errors += 1
             elif verbose:
                 print(f"OK: {binary_name}/{platform_key} -> {fpath}")
 
@@ -106,7 +114,13 @@ def validate_manifest(manifest: dict, assets_dir: Path, verbose: bool = True) ->
 
 
 def update_manifest(manifest: dict, assets_dir: Path) -> tuple[int, int]:
-    """Populate sha256/sizeBytes for present artifacts. Returns (updated, missing)."""
+    """Populate sha256/sizeBytes for present artifacts. Returns (updated, missing).
+
+    A missing artifact is NOT tolerated: the caller must treat a non-zero
+    `missing` as fatal. Retaining a previous sha256/sizeBytes for an artifact
+    that is no longer in the asset directory would publish a manifest whose
+    filenames 404 while CI stays green.
+    """
     updated = 0
     missing = 0
     binaries = manifest.setdefault("binaries", {})
@@ -121,6 +135,11 @@ def update_manifest(manifest: dict, assets_dir: Path) -> tuple[int, int]:
                 platform["sizeBytes"] = fpath.stat().st_size
                 updated += 1
             else:
+                print(
+                    f"ERROR: {binary_name}/{platform_key} has no artifact at {fpath}; "
+                    f"refusing to keep the previous sha256/sizeBytes.",
+                    file=sys.stderr,
+                )
                 missing += 1
 
     return updated, missing
@@ -132,7 +151,7 @@ def main() -> int:
         "--tag",
         type=str,
         default=None,
-        help="Release tag (e.g. memory-v0.4.0, or historical v0.3.70). The 'memory-v'/'v' prefix is stripped for the manifest version, and released is set to today (UTC).",
+        help="Release tag (e.g. v0.4.0). The 'v' prefix is stripped for the manifest version, and released is set to today (UTC).",
     )
     parser.add_argument(
         "--assets-dir",
@@ -171,7 +190,14 @@ def main() -> int:
         return 1
 
     updated, missing = update_manifest(manifest, args.assets_dir)
-    print(f"Updated {updated} platform(s); {missing} platform(s) retain existing placeholders.")
+    if missing:
+        print(
+            f"FATAL: {missing} platform(s) have no artifact in {args.assets_dir}; "
+            f"no files written.",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"Updated {updated} platform(s).")
 
     if args.dry_run:
         print("Dry-run: no files written.")

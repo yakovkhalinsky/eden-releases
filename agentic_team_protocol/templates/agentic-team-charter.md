@@ -31,7 +31,7 @@ Purpose: <Short description of what the project does and why it uses the Agentic
 
 - This project declares its Memory workspace identity in `.claude/agentic-team-config.yaml` as `org_id` and `workspace_id`.
 - Every ATP Memory call (`memory_recall`, `memory_remember`, `memory_search`, `memory_edit`, `memory_forget`) must include these explicit values so the team does not recall or write memories that belong to other workspaces.
-- If `org_id` or `workspace_id` is empty, ATP commands must refuse to call Memory until the identity is resolved (e.g., by running `memory setup claude` and restarting Claude Code).
+- If `org_id` or `workspace_id` is empty, ATP commands must refuse to call Memory until the identity is resolved (e.g., by running `od3sa-memory setup claude` and restarting Claude Code).
 
 ## Roles/seats
 

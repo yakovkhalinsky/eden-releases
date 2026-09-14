@@ -50,7 +50,7 @@ mkdir -p "$OUT_DIR"
 PLATFORMS="${PLATFORMS//,/ }"
 
 for platform in $PLATFORMS; do
-  binary_name="memory-${platform}"
+  binary_name="od3sa-memory-${platform}"
   binary_path="${SOURCE_DIR}/${binary_name}"
 
   if [ ! -f "$binary_path" ]; then
@@ -59,13 +59,13 @@ for platform in $PLATFORMS; do
   fi
 
   # Build a per-platform staging directory.
-  stage_name="memory-${VERSION}-${platform}"
+  stage_name="od3sa-memory-${VERSION}-${platform}"
   stage_dir="${OUT_DIR}/${stage_name}"
   rm -rf "$stage_dir"
   mkdir -p "$stage_dir"
 
-  cp "$binary_path" "${stage_dir}/memory"
-  chmod +x "${stage_dir}/memory"
+  cp "$binary_path" "${stage_dir}/od3sa-memory"
+  chmod +x "${stage_dir}/od3sa-memory"
 
   if [ -d "$SKILLS_DIR" ] && [ "$(find "$SKILLS_DIR" -mindepth 1 -print -quit 2>/dev/null)" ]; then
     cp -r "$SKILLS_DIR" "${stage_dir}/agent-harness-skills"
@@ -73,11 +73,11 @@ for platform in $PLATFORMS; do
 
   # Add a small README inside the archive.
   cat > "${stage_dir}/README.txt" <<EOF
-memory ${RELEASE_TAG}
+od3sa-memory ${RELEASE_TAG}
 Platform: ${platform}
 Source: yakovkhalinsky/0d3sa ${VERSION}
 
-This archive contains the memory static binary plus bundled
+This archive contains the od3sa-memory static binary plus bundled
 agent-harness skills. Place the binary on your PATH and import the skills
 into your Hermes skill directory.
 EOF
