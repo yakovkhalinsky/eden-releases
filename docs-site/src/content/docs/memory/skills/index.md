@@ -16,13 +16,7 @@ The skill files below are installable prompts and rules. Download the raw `SKILL
 - [Install for Hermes Agent](/memory/skills/memory-hermes/)
 - [Install for another MCP client](/memory/skills/memory-mcp-usage/)
 
-## Download all skills
-
-Fetch every skill as a tarball from the latest GitHub release:
-
-```bash
-curl -fsSL https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/memory-skills.tar.gz | tar -xz
-```
+## All skills
 
 | Skill | Description |
 |-------|-------------|
