@@ -88,15 +88,16 @@ chmod +x ~/.local/bin/${BINARY}
 
 ## Release build targets
 
-From the `memory` repository source tree:
+From the `0d3sa` monorepo. The two binaries are separate projects with their own
+Makefiles, so each is built independently and writes to its own `dist/`:
 
 ```bash
-make release       # od3sa-memory for linux-amd64/arm64, darwin-amd64/arm64
-make release-relay # od3sa-relay for linux-amd64/arm64, darwin-amd64/arm64
-make release-all   # both of the above
+make -C apps/memory release # od3sa-memory for linux-amd64/arm64, darwin-amd64/arm64
+make -C apps/relay release  # od3sa-relay for linux-amd64/arm64, darwin-amd64/arm64
 ```
 
-This produces `dist/od3sa-memory-<platform>` and `dist/od3sa-relay-<platform>` for each supported platform.
+This produces `apps/memory/dist/od3sa-memory-<platform>` and
+`apps/relay/dist/od3sa-relay-<platform>` for each supported platform.
 
 ## Verify the binary
 

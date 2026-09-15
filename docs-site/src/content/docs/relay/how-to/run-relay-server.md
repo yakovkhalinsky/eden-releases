@@ -85,7 +85,9 @@ There is no `relay-register` CLI subcommand. Devices register with the relay in 
     --start-sync-loop
   ```
 
-- **The `memory_relay_register` MCP tool.** From an agent session, call `memory_relay_register` with the relay URL and account ID. The `memory_relay_server` MCP tool can also embed a relay inside an memory process.
+- **The `memory_relay_register` MCP tool.** From an agent session, call `memory_relay_register` with the relay URL and account ID.
+
+Serving a relay is always the standalone `od3sa-relay` binary installed above — `od3sa-memory` is only ever a relay *client*. The `memory_relay_server` MCP tool, which used to embed a relay inside the memory process, was removed in 0.6.0, so there is no longer a way to serve a relay from `od3sa-memory`.
 
 Once registered, start the foreground sync loop with `od3sa-memory sync loop start --relay-url ... --account-id ... --confirm`. See [Sync two devices with a relay](/memory/tutorials/sync-two-devices-relay/).
 

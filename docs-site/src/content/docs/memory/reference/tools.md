@@ -38,7 +38,6 @@ All inputs are JSON objects. Tools that read or write memories require `agent_id
 | `memory_sync` | One-shot bidirectional sync with a peer DB | Yes |
 | `memory_pair_device` | Pair with a local peer DB using SPAKE2 | Yes |
 | `memory_sync_loop` | Start/stop/status/once for relay sync loop | Yes (when running) |
-| `memory_relay_server` | Start/stop/status a local relay server | Yes (when starting) |
 | `memory_relay_register` | Register this device with a relay | Yes (relay directory) |
 | `memory_pair_create_invitation` | Create a relay-mediated PAKE invitation | Yes (relay enrolment) |
 | `memory_pair_accept_invitation` | Accept a relay-mediated PAKE invitation | Yes |
@@ -476,22 +475,6 @@ Start, stop, run once, or check status of the background relay sync loop.
 - `action`: `start`, `stop`, `status`, or `once`.
 - `start` requires `relay_url`, `account_id`, and a root-key passphrase.
 - `passphrase` falls back to `MEMORY_ROOT_KEY_PASSPHRASE` in the server environment.
-
-### `memory_relay_server`
-
-Start or stop a local HTTP relay server.
-
-```json
-{
-  "action": "start",
-  "addr": ":8787",
-  "relay_db_path": "/path/to/relay.db",
-  "confirm": true
-}
-```
-
-- `action`: `start`, `stop`, or `status`.
-- `start` requires `relay_db_path`.
 
 ### `memory_relay_register`
 

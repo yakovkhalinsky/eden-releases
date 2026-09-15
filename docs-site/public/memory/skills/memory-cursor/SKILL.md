@@ -38,7 +38,6 @@ tools:
     - memory_sync
     - memory_pair_device
     - memory_sync_loop
-    - memory_relay_server
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation

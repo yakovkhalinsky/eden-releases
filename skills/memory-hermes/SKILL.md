@@ -38,7 +38,6 @@ tools:
     - memory_sync
     - memory_pair_device
     - memory_sync_loop
-    - memory_relay_server
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation
@@ -114,7 +113,6 @@ Hermes exposes MCP tools as:
 - `mcp__memory__memory_sync`
 - `mcp__memory__memory_pair_device`
 - `mcp__memory__memory_sync_loop`
-- `mcp__memory__memory_relay_server`
 - `mcp__memory__memory_relay_register`
 - `mcp__memory__memory_pair_create_invitation`
 - `mcp__memory__memory_pair_accept_invitation`

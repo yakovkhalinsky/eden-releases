@@ -37,7 +37,6 @@ tools:
     - memory_sync
     - memory_pair_device
     - memory_sync_loop
-    - memory_relay_server
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation
@@ -111,7 +110,6 @@ Efficiency notes:
 | `memory_sync` | One-shot sync with a peer database |
 | `memory_pair_device` | Pair with a local peer database |
 | `memory_sync_loop` | Background relay sync loop |
-| `memory_relay_server` | Start/stop a local relay server |
 | `memory_relay_register` | Register with a relay directory |
 | `memory_pair_create_invitation` | Create a relay-mediated pairing invitation |
 | `memory_pair_accept_invitation` | Accept a relay-mediated pairing invitation |
