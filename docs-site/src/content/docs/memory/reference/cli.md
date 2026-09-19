@@ -4,18 +4,26 @@ description: memory command-line reference for sync, pairing, relay, and related
 content_type: reference
 ---
 
-memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the setup, sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the [fallback slash commands](/memory/reference/fallback-slash-commands/) installed by `od3sa-memory setup`.
+memory is primarily an MCP server, but it also exposes a CLI for setup, maintenance, and multi-device sync. This page covers the setup, sync, pairing, and relay subcommands. For day-to-day memory operations, use the MCP tools or the [fallback slash commands](/memory/reference/fallback-slash-commands/) installed by `od3sa-memory setup claude`.
 
 ## `setup`
+
+Bare `setup` creates or updates the identity file at `~/.memory/.env` with `MEMORY_ORG_ID`. Run it once after the installer to configure your organization scope.
+
+```bash
+od3sa-memory setup
+```
+
+This is identity-only and does not wire any MCP client.
+
+## `setup claude`
 
 Wire the current project directory to Claude Code CLI. The helper prompts for an agent identity and a user identity, asks whether the project is personal or team/org (which derives `MEMORY_AUTHORIZATION_MODE`), writes a project-local `.env` file, registers the project in `~/.claude.json`, removes any stale user-level `memory` MCP entry, and installs fallback slash commands in `~/.claude/commands/`.
 
 ```bash
 cd ~/project-a
-od3sa-memory setup
+od3sa-memory setup claude
 ```
-
-`setup claude` is accepted as an alias for the same behavior.
 
 | Flag | Required | Description |
 |------|----------|-------------|
@@ -36,10 +44,10 @@ The project `.env` file (default `./.env`) receives `MEMORY_DB_PATH`, `MEMORY_AG
 
 ### `--dry-run`
 
-Use `--dry-run` to validate preflight checks and inspect what `setup` would configure before it writes anything:
+Use `--dry-run` to validate preflight checks and inspect what `setup claude` would configure before it writes anything:
 
 ```bash
-od3sa-memory setup --db ~/.memory/default.db --org-id your-org --dry-run
+od3sa-memory setup claude --db ~/.memory/default.db --org-id your-org --dry-run
 ```
 
 In dry-run mode the command:

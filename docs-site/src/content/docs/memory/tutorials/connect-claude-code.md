@@ -37,7 +37,7 @@ The easiest way is to run the setup helper from the project directory you launch
 
 ```bash
 cd ~/project-a
-od3sa-memory setup
+od3sa-memory setup claude
 ```
 
 Setup prompts for an agent identity (`MEMORY_AGENT_ID`) and a user identity (`MEMORY_USER_ID`), then asks whether the project is personal or team/org — the answer sets `MEMORY_AUTHORIZATION_MODE` (`easy` for personal, `enterprise` for default-deny cross-workspace access).
