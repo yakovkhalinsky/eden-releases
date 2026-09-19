@@ -32,7 +32,11 @@ od3sa-relay \
   --addr 127.0.0.1:8787
 ```
 
-You can also set `MEMORY_RELAY_DB` and `MEMORY_RELAY_ADDR` instead of passing flags. The relay binds to loopback by default; to bind a non-loopback interface such as `--addr 192.168.1.10:8787`, add `--allow-remote-bind` (or set `MEMORY_RELAY_ALLOW_REMOTE_BIND=1`). For TLS, supply `--tls-cert` and `--tls-key` (or `MEMORY_TLS_CERT` and `MEMORY_TLS_KEY`).
+You can also set `MEMORY_RELAY_DB` and `MEMORY_RELAY_ADDR` instead of passing flags. The relay binds to loopback by default; to bind a non-loopback interface such as `--addr 192.168.1.10:8787`, add `--allow-remote-bind` (or set `MEMORY_RELAY_ALLOW_REMOTE_BIND=1`). For non-loopback **without TLS** (trusted LAN / private mesh only), also add `--insecure-bind`. For TLS, supply `--tls-cert` and `--tls-key` (or `MEMORY_TLS_CERT` and `MEMORY_TLS_KEY`).
+
+:::danger[Never use `--insecure-bind` on the public internet]
+`--insecure-bind` is for trusted LANs and private meshes only. On public networks, always use TLS.
+:::
 
 ## 2. Verify relay reachability
 
@@ -53,11 +57,11 @@ od3sa-memory --db ~/.memory/device.db \
   sync loop once \
   --relay-url http://relay.example.com:8787 \
   --account-id your-account \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
-If you set `MEMORY_RELAY_URL`, `MEMORY_ACCOUNT_ID`, and `MEMORY_ROOT_KEY_PASSPHRASE` in the environment, you can omit those flags.
+If you set `MEMORY_RELAY_URL`, `MEMORY_ACCOUNT_ID`, and `MEMORY_ROOT_KEY_PASSPHRASE` in the environment, you can omit those flags. Use files with `0600` permissions for all secrets.
 
 ## 4. Register additional devices
 
@@ -65,28 +69,49 @@ Repeat the `sync loop once` command on every other device that will sync. Each d
 
 ## 5. Pair devices with a relay-mediated invitation
 
+First, create files for the pairing password with restricted permissions:
+
+```bash
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+chmod 0600 ~/.memory/pairing-password.txt
+```
+
 On the source device, create an invitation:
 
 ```bash
 od3sa-memory --db ~/.memory/device.db \
   pair create-invitation \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --password "correct-horse-battery-staple" \
+  --password-file ~/.memory/pairing-password.txt \
   --device-name "Studio Desktop" \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
-Share the printed invitation code and password with the joining device through a trusted channel.
+:::warning[Share on separate channels]
+Share the invitation code and pairing password through **different trusted channels**. Never send both on the same channel.
+:::
 
-On the joining device, accept the invitation and start the loop:
+On the joining device, save the code and password to files (received through separate channels):
+
+```bash
+install -m 0600 /dev/null ~/.memory/invitation-code.txt
+echo "INVITATION_CODE" > ~/.memory/invitation-code.txt
+
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+```
+
+Then accept the invitation and start the loop:
 
 ```bash
 od3sa-memory --db ~/.memory/device.db \
   pair accept-invitation \
-  --code INVITATION_CODE \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --code-file ~/.memory/invitation-code.txt \
+  --password-file ~/.memory/pairing-password.txt \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --start-sync-loop \
   --confirm
 ```
@@ -100,9 +125,9 @@ If you did not already start a loop, start it on the source device:
 ```bash
 od3sa-memory --db ~/.memory/device.db \
   sync loop start \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
@@ -121,9 +146,9 @@ You can override the default 30-second interval with `--sync-interval` or `MEMOR
    ```bash
    od3sa-memory --db ~/.memory/device.db \
      sync loop once \
-     --relay-url http://relay.example.com:8787 \
+     --relay-url https://relay.example.com \
      --account-id your-account \
-     --root-key-passphrase "$(cat passphrase.txt)"
+     --root-key-passphrase-file ~/.memory/root-key-passphrase.txt
    ```
 3. Recall the same memory on the joining device.
 
@@ -143,7 +168,7 @@ If both devices run continuous loops, the memory should appear within one loop i
 A `connection refused` error during registration, pairing, or sync is almost always a topology misconfiguration, not an authentication failure. Diagnose it in this order:
 
 1. **Relay is not running** — confirm the relay process is up and logged no startup errors. The relay must start before any client command.
-2. **Wrong relay host or port** — check that `MEMORY_RELAY_URL` or `--relay-url` points to the interface and port the relay is actually listening on. The relay binds to loopback `127.0.0.1:8787` by default; a non-loopback address needs `--allow-remote-bind`.
+2. **Wrong relay host or port** — check that `MEMORY_RELAY_URL` or `--relay-url` points to the interface and port the relay is actually listening on. The relay binds to loopback `127.0.0.1:8787` by default; a non-loopback address needs `--allow-remote-bind`, and non-loopback without TLS also needs `--insecure-bind`.
 3. **Firewall or network path** — confirm the client can reach the relay host and port. `telnet relay.example.com 8787` or `nc -vz relay.example.com 8787` is a faster check than the memory command.
 4. **Reverse proxy or TLS mismatch** — if the relay is behind a reverse proxy, use the external URL and scheme (`https://` when TLS terminates at the proxy). If the relay serves TLS directly, use `https://` and the correct port.
 
