@@ -174,9 +174,10 @@ if [ "${BIN_NAME}" = "od3sa-memory" ]; then
         echo "${YELLOW}Note:${RESET} Memories are scoped by organization."
         echo "      Create ${CYAN}${MEMORY_ENV_FILE}${RESET} with:"
         echo "        MEMORY_ORG_ID=your-org"
-        echo ""
-        echo "      Then run ${CYAN}od3sa-memory setup claude${RESET} in each project to set MEMORY_WORKSPACE_ID."
     fi
+    echo ""
+    echo "${YELLOW}Important:${RESET} MCP will not start without both ${CYAN}MEMORY_ORG_ID${RESET} and ${CYAN}MEMORY_WORKSPACE_ID${RESET}."
+    echo "           Run ${CYAN}od3sa-memory setup claude${RESET} in your project directory to configure them."
 fi
 
 echo ""
@@ -206,7 +207,7 @@ case "${BIN_NAME}" in
         cat <<EOF
   ${CYAN}od3sa-memory --db ~/.memory/default.db${RESET}
   ${CYAN}od3sa-memory health${RESET}
-  ${CYAN}od3sa-memory remember --agent-id eve --user-id yakov --content "hello world"${RESET}
+  ${CYAN}od3sa-memory remember --agent-id claude-code-cli --user-id \${USER} --content "hello world"${RESET}
   ${CYAN}od3sa-memory tree${RESET}
 EOF
         ;;
@@ -217,3 +218,14 @@ EOF
 EOF
         ;;
 esac
+
+if [ "${BIN_NAME}" = "od3sa-memory" ]; then
+    printf "\n%sNext steps:%s\n\n" "${GREEN}" "${RESET}"
+    printf "  %sClaude Code:%s\n" "${CYAN}" "${RESET}"
+    printf "    cd ~/your-project && ${CYAN}od3sa-memory setup claude${RESET}\n\n"
+    printf "  %sOther MCP clients (Cursor, etc.):%s\n" "${CYAN}" "${RESET}"
+    printf "    Add this stdio server to your mcpServers config:\n"
+    printf "      command: ${CYAN}%s${RESET}\n" "${TARGET}"
+    printf "      args:    ${CYAN}--db ~/.memory/default.db${RESET}\n"
+    printf "    See ${CYAN}https://od3sa.com/memory/mcp-clients/${RESET} for full JSON examples.\n"
+fi
