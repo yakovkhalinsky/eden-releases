@@ -16,6 +16,16 @@ od3sa-memory setup
 
 This is identity-only and does not wire any MCP client.
 
+### `--print-mcp-json`
+
+Print a JSON snippet suitable for MCP clients that accept `mcpServers` configuration (Cursor, generic harnesses). The snippet includes the absolute binary path, absolute `--db` path, and any resolved identity environment variables (`MEMORY_ORG_ID`, `MEMORY_WORKSPACE_ID`).
+
+```bash
+od3sa-memory setup --print-mcp-json
+```
+
+This prints to stdout and exits — it does **not** write any files. Use it to generate paste-ready config for Cursor or other MCP clients that don't use Claude Code's `~/.claude.json` format. See [Connect Cursor](/memory/tutorials/connect-cursor/) and [MCP clients](/memory/mcp-clients/).
+
 ## `setup claude`
 
 Wire the current project directory to Claude Code CLI. The helper prompts for an agent identity and a user identity, asks whether the project is personal or team/org (which derives `MEMORY_AUTHORIZATION_MODE`), writes a project-local `.env` file, registers the project in `~/.claude.json`, removes any stale user-level `memory` MCP entry, and installs fallback slash commands in `~/.claude/commands/`.
