@@ -25,6 +25,12 @@ For example, passing `--db local.db` on the command line overrides `MEMORY_DB_PA
 | `MEMORY_LOG_FORMAT` | `--log-format` | `text` | `text` or `json`. |
 | `MEMORY_SYNC_DISABLED` | `--sync-disabled` | `0` / unset | Skip the v3 sync schema and run local-only. |
 
+## HTTP MCP server variables
+
+| Variable | Maps to | Default | Description |
+|----------|---------|---------|-------------|
+| `MEMORY_MCP_API_KEY` | `--api-key-file` | none | Bearer token for HTTP MCP authentication. Required when running `mcp --http`. Prefer `--api-key-file` to avoid exposing the key in process listings. |
+
 ## Sync and pairing variables
 
 | Variable | Maps to | Default | Description |

@@ -69,6 +69,8 @@ For other clients, memory speaks MCP over stdio. Pick the tutorial for your clie
 - [Connect Cursor](/memory/tutorials/connect-cursor/)
 - [Connect another MCP client](/memory/tutorials/connect-mcp-client/)
 
+If your MCP client uses Streamable HTTP instead of stdio, see [Run a local HTTP MCP server](/memory/tutorials/streamable-http-local/).
+
 If you already know your client's `mcpServers` JSON, the server command is:
 
 ```bash

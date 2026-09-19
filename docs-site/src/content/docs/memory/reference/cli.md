@@ -60,6 +60,41 @@ In dry-run mode the command:
 - Does **not** install slash commands in `~/.claude/commands/`.
 - Aborts with an error if `org_id` or `workspace_id` cannot be determined, instead of prompting interactively.
 
+## `mcp`
+
+Start the MCP server. By default, memory runs as a stdio MCP server. With `--http`, it runs as a self-hosted Streamable HTTP server instead.
+
+### Stdio mode (default)
+
+Running `od3sa-memory --db ~/.memory/default.db` with no subcommand starts the stdio MCP server. MCP clients spawn this process and communicate over stdin/stdout.
+
+### HTTP mode
+
+```bash
+od3sa-memory --db ~/.memory/default.db mcp --http 127.0.0.1:8788 \
+  --api-key-file ~/.memory/mcp-api-key.txt
+```
+
+| Flag | Env var | Description |
+|------|---------|-------------|
+| `--http` | — | Listen address for the HTTP server (e.g., `127.0.0.1:8788`). Required for HTTP mode. |
+| `--api-key-file` | `MEMORY_MCP_API_KEY` | Path to a file containing the bearer token (must have `0600` or `0400` permissions). Required for HTTP mode. |
+
+The HTTP server exposes:
+
+- `GET /.well-known/mcp/server-card.json` — server card for auto-discovery (no auth required).
+- `POST /` — MCP protocol endpoint (requires `Authorization: Bearer <token>`).
+
+:::caution[Self-hosted only]
+The HTTP MCP server is self-hosted. This is **not** a managed, hosted, or multi-tenant service — you run and operate the server yourself.
+:::
+
+:::caution[Binding to all interfaces]
+Passing `:8788` or `0.0.0.0:8788` exposes the server to your network. Only do this behind a firewall, VPN, or TLS terminator. For local development, bind to `127.0.0.1:8788`.
+:::
+
+See [Run a local HTTP MCP server](/memory/tutorials/streamable-http-local/) for a full walkthrough.
+
 ## Global flags
 
 These flags can appear before or after the subcommand:
@@ -523,6 +558,7 @@ Pass `--sync-disabled` (or set `MEMORY_SYNC_DISABLED=1`) to skip the v3 sync sch
 - [Environment variables](/memory/reference/environment-variables/)
 - [Fallback slash commands](/memory/reference/fallback-slash-commands/)
 - [Troubleshooting](/memory/reference/troubleshooting/)
+- [Run a local HTTP MCP server](/memory/tutorials/streamable-http-local/)
 - [Knowledge packets](/memory/concepts/knowledge-packets/)
 - [Build a knowledge packet](/memory/how-to/build-knowledge-packet/)
 - [How sync works](/memory/concepts/how-sync-works/)

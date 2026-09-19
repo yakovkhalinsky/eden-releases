@@ -54,6 +54,7 @@ export default defineConfig({
 								{ label: 'Connect Claude Code', slug: 'memory/tutorials/connect-claude-code' },
 								{ label: 'Connect Cursor', slug: 'memory/tutorials/connect-cursor' },
 								{ label: 'Connect another MCP client', slug: 'memory/mcp-clients' },
+								{ label: 'Run a local HTTP MCP server', slug: 'memory/tutorials/streamable-http-local' },
 								{ label: 'Sync two devices with a relay', slug: 'memory/tutorials/sync-two-devices-relay' },
 								{ label: 'Sync two databases locally', slug: 'memory/tutorials/sync-local-databases' },
 							],
