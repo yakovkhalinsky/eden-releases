@@ -43,11 +43,11 @@ For example, passing `--db local.db` on the command line overrides `MEMORY_DB_PA
 
 If a tool call does not pass `org_id` or `workspace_id`, the MCP server falls back to these environment variables. This is useful for project-scoped Claude Code processes that always tag memories with the current workspace.
 
-The public installer creates or updates `~/.memory/.env` with `MEMORY_ORG_ID` when you enter one at the prompt (or when `MEMORY_ORG_ID` is already set in the environment). `od3sa-memory setup` writes the per-project values into a project-local env file and the MCP server configuration in `~/.claude.json`.
+The public installer creates or updates `~/.memory/.env` with `MEMORY_ORG_ID` when you enter one at the prompt (or when `MEMORY_ORG_ID` is already set in the environment). `od3sa-memory setup claude` writes the per-project values into a project-local env file and the MCP server configuration in `~/.claude.json`.
 
 ## Agent identity
 
-`od3sa-memory setup` resolves the identity it writes using this precedence:
+`od3sa-memory setup claude` resolves the identity it writes using this precedence:
 
 1. Existing environment values (`MEMORY_AGENT_ID`, `MEMORY_USER_ID`) are respected and never overwritten.
 2. Interactive prompts, shown when the values are unset.
@@ -67,16 +67,16 @@ memory supports two authorization modes for cross-workspace access:
 | `MEMORY_AUTHORIZATION_MODE` | `setup`, MCP tools, CLI | `easy` | `easy` allows cross-workspace lookups; `enterprise` is default-deny and requires an allowlist. |
 | `MEMORY_CROSS_WORKSPACE_IDS` | `enterprise` mode | none | Comma-separated allowlist of workspace IDs that may be accessed cross-workspace (hard cap 50). |
 
-`setup` asks whether the project is personal or team/org and derives the mode from the answer (`personal` → `easy`, `team` → `enterprise`). In `enterprise` mode, cross-workspace lookups (`lookup-cross-workspace`, `memory_lookup_cross`) only succeed for workspaces in the allowlist.
+`setup claude` asks whether the project is personal or team/org and derives the mode from the answer (`personal` → `easy`, `team` → `enterprise`). In `enterprise` mode, cross-workspace lookups (`lookup-cross-workspace`, `memory_lookup_cross`) only succeed for workspaces in the allowlist.
 
-## Preflight checks for `setup`
+## Preflight checks for `setup claude`
 
-`od3sa-memory setup` runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
+`od3sa-memory setup claude` runs two preflight checks before modifying `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/commands/`:
 
 1. **Health check** — executes `od3sa-memory --db <path> health` against the target database and aborts if the reported status is not `ok`.
 2. **MCP protocol version check** — verifies the compiled-in MCP server advertises the protocol version Claude Code expects (`2024-11-05`). If the binary advertises an incompatible version, setup aborts without writing config.
 
-If either check fails, no config files are mutated. Fix the underlying issue (update `od3sa-memory`, create the database directory, or repair the binary path) and re-run `od3sa-memory setup`.
+If either check fails, no config files are mutated. Fix the underlying issue (update `od3sa-memory`, create the database directory, or repair the binary path) and re-run `od3sa-memory setup claude`.
 
 ## Update variables
 

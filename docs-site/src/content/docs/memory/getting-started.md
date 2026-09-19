@@ -58,10 +58,10 @@ You should see a version string and a health report with `status: ok`. If either
 If you use Claude Code, the fastest path is the built-in setup helper, run from your project directory:
 
 ```bash
-cd ~/my-project && od3sa-memory setup
+cd ~/my-project && od3sa-memory setup claude
 ```
 
-It prompts for an agent identity and a personal-vs-team scope, then writes a project-local `.env`, registers the MCP server, and installs `/memory-*` slash commands. See [Connect Claude Code](/memory/tutorials/connect-claude-code/) for the full walkthrough.
+It prompts for an agent identity and a personal-vs-team scope, then writes a project-local `.env`, registers the MCP server in `~/.claude.json`, and installs `/memory-*` slash commands. See [Connect Claude Code](/memory/tutorials/connect-claude-code/) for the full walkthrough.
 
 For other clients, memory speaks MCP over stdio. Pick the tutorial for your client:
 

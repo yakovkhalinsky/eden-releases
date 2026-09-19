@@ -81,7 +81,7 @@ Memories are scoped by `org_id`/`workspace_id`. memory supports two authorizatio
 - **`easy`** (default) — cross-workspace lookups are allowed for any workspace in the same org.
 - **`enterprise`** (default-deny) — cross-workspace lookups only succeed for workspaces listed in `MEMORY_CROSS_WORKSPACE_IDS` (hard cap 50).
 
-`od3sa-memory setup` asks whether the project is personal or team/org and writes the mode to the project `.env`. Cross-workspace reads go through `lookup-cross-workspace` / `memory_lookup_cross` and are auditable in the read-op audit log.
+`od3sa-memory setup claude` asks whether the project is personal or team/org and writes the mode to the project `.env`. Cross-workspace reads go through `lookup-cross-workspace` / `memory_lookup_cross` and are auditable in the read-op audit log.
 
 ## Sidecar security
 
