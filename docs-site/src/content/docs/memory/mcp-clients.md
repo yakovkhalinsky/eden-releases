@@ -15,6 +15,14 @@ Follow the tutorial for your harness:
 - [Connect another MCP client](/memory/tutorials/connect-mcp-client/)
 - [Install the Hermes skill](/memory/skills/memory-hermes/)
 
+## HTTP transport
+
+If your MCP client supports Streamable HTTP instead of stdio, you can run memory as a self-hosted HTTP server:
+
+- [Run a local HTTP MCP server](/memory/tutorials/streamable-http-local/)
+
+The HTTP server binds to a local address (default `127.0.0.1:8788`), requires bearer-token authentication, and exposes a server-card endpoint for auto-discovery.
+
 ## Generic server command
 
 If your client lets you enter a server command directly, use:
