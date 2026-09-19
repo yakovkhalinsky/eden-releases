@@ -118,10 +118,13 @@ These flags can appear before or after the subcommand:
 | `--sync-interval` | `MEMORY_SYNC_INTERVAL` | Background sync loop interval (default `30s`). |
 | `--relay-url` | `MEMORY_RELAY_URL` | Default relay URL for sync/pairing. |
 | `--account-id` | `MEMORY_ACCOUNT_ID` | Default fleet account ID for sync/pairing. |
-| `--root-key-passphrase` | `MEMORY_ROOT_KEY_PASSPHRASE` | Passphrase for the encrypted root-key sidecar. |
+| `--root-key-passphrase` | `MEMORY_ROOT_KEY_PASSPHRASE` | Passphrase for the encrypted root-key sidecar. Prefer `--root-key-passphrase-file`. |
+| `--root-key-passphrase-file` | — | Path to a file containing the root-key passphrase (must have `0600` or `0400` permissions). Preferred over `--root-key-passphrase`. |
 | `--device-name` | — | Human-readable name for this device, saved in the identity sidecar (used by `pair-device`, `pair create-invitation`, `pair accept-invitation`). |
 | `--local-name` | — | Local display-name override for a peer (used by `sync set-peer-name`). |
-| `--code` | — | Invitation code for `pair accept-invitation` (alternative to the positional argument). |
+| `--code` | — | Invitation code for `pair accept-invitation` (alternative to the positional argument). Prefer `--code-file`. |
+| `--code-file` | — | Path to a file containing the invitation code (must have `0600` or `0400` permissions). Preferred over `--code` to avoid exposing secrets in `ps`. |
+| `--password-file` | — | Path to a file containing the pairing password (must have `0600` or `0400` permissions). Preferred over `--password` to avoid exposing secrets in `ps`. |
 | `--start-sync-loop` | — | After `pair accept-invitation`, run the foreground sync loop in this process until SIGINT/SIGTERM. |
 
 ## `update`
@@ -375,16 +378,16 @@ Start, run once, stop, or check status of the background relay sync loop.
 ```bash
 # Start a foreground loop
 od3sa-memory --db local.db sync loop start \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 
 # Single round
 od3sa-memory --db local.db sync loop once \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --root-key-passphrase "$(cat passphrase.txt)"
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt
 
 # Status / stop
 od3sa-memory --db local.db sync loop status
@@ -396,7 +399,8 @@ od3sa-memory --db local.db sync loop stop
 | `action` | Yes | `start`, `once`, `stop`, or `status`. |
 | `--relay-url` | For `start`/`once` | Relay base URL. |
 | `--account-id` | For `start`/`once` | Fleet account ID. |
-| `--root-key-passphrase` | For `start`/`once` | Passphrase; prompted if omitted. |
+| `--root-key-passphrase-file` | For `start`/`once` | File containing the passphrase (must have `0600`/`0400` permissions). Preferred over `--root-key-passphrase`. |
+| `--root-key-passphrase` | For `start`/`once` | Passphrase; prompted if omitted. Prefer `--root-key-passphrase-file`. |
 | `--sync-interval` | No | Loop interval (default `30s`). |
 | `--batch-size` | No | Maximum deltas per batch (default 1000). |
 | `--confirm` | For `start` | Confirm starting the background goroutine. |
@@ -445,7 +449,7 @@ Pair the local database with a peer database in the same process using SPAKE2.
 od3sa-memory --db local.db pair-device \
   --peer-db peer.db \
   --account-id your-account \
-  --password "shared-secret" \
+  --password-file ~/.memory/pairing-password.txt \
   --confirm
 ```
 
@@ -453,12 +457,13 @@ od3sa-memory --db local.db pair-device \
 |------|----------|-------------|
 | `--peer-db` | Yes | Path to the peer SQLite database. |
 | `--account-id` | Yes | Fleet account ID. |
-| `--password` | Yes* | Pairing password; prompted if omitted. |
+| `--password-file` | Yes* | Path to a file containing the pairing password (must have `0600`/`0400` permissions). Preferred over `--password`. |
+| `--password` | Yes* | Pairing password; prompted if omitted. Avoid — secrets on argv are visible to `ps`. |
 | `--device-name` | No | Human-readable name saved in the identity sidecar. |
 | `--confirm` | Yes* | Confirm pairing. |
 | `--dry-run` | No | Preview without writing peer records. |
 
-\* `pair-device` aborts unless `--confirm` or `--dry-run` is passed. The password is prompted if omitted.
+\* `pair-device` aborts unless `--confirm` or `--dry-run` is passed. The password is prompted if omitted. Use `--password-file` instead of `--password` to keep secrets off the command line.
 
 ## `pair`
 
@@ -468,24 +473,29 @@ Relay-mediated PAKE pairing for devices on different hosts.
 
 ```bash
 od3sa-memory --db local.db pair create-invitation \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --password "correct-horse-battery-staple" \
+  --password-file ~/.memory/pairing-password.txt \
   --device-name "Studio Desktop" \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
 Response includes an invitation code to share with the joining device, plus a
-short rendezvous code used to look up the PAKE enrolment on the relay. The
-pairing password must be shared separately and must be at least 10 characters
-long with at least 40 bits estimated entropy.
+short rendezvous code used to look up the PAKE enrolment on the relay.
+
+:::warning[Share on separate channels]
+The invitation code and pairing password must be shared through **different trusted channels**. Never send both on the same channel — if that channel is compromised, an attacker can complete the pairing.
+:::
+
+The pairing password must be at least 10 characters long with at least 40 bits estimated entropy.
 
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--relay-url` | Yes | Relay base URL. |
 | `--account-id` | Yes | Fleet account ID. |
-| `--password` | Yes* | Pairing password; prompted if omitted. |
+| `--password-file` | Yes* | Path to a file containing the pairing password (must have `0600`/`0400` permissions). Preferred over `--password`. |
+| `--password` | Yes* | Pairing password; prompted if omitted. Avoid — secrets on argv are visible to `ps`. |
 | `--device-name` | No | Human-readable name saved in the identity sidecar. |
 | `--root-key-passphrase` | Yes* | Root-key sidecar passphrase; prompted if omitted. |
 | `--confirm` | Yes* | Confirm creating the enrolment. |
@@ -494,19 +504,21 @@ long with at least 40 bits estimated entropy.
 ### `pair accept-invitation`
 
 ```bash
-od3sa-memory --db local.db pair accept-invitation <code> \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+od3sa-memory --db local.db pair accept-invitation \
+  --code-file ~/.memory/invitation-code.txt \
+  --password-file ~/.memory/pairing-password.txt \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
-Or pass the code with `--code` and auto-start the foreground sync loop after
-pairing completes:
+Or auto-start the foreground sync loop after pairing completes:
 
 ```bash
 od3sa-memory --db local.db pair accept-invitation \
-  --code <code> \
+  --code-file ~/.memory/invitation-code.txt \
+  --password-file ~/.memory/pairing-password.txt \
   --start-sync-loop \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
@@ -516,11 +528,15 @@ it also starts the foreground relay sync loop in the same process.
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `code` (positional) | Yes* | Compact invitation code from the initiator. |
-| `--code` | Yes* | Alternative way to pass the invitation code. |
+| `code` (positional) | Yes* | Compact invitation code from the initiator. Prefer `--code-file`. |
+| `--code-file` | Yes* | Path to a file containing the invitation code (must have `0600`/`0400` permissions). Preferred over `--code`. |
+| `--code` | Yes* | Alternative way to pass the invitation code. Avoid — secrets on argv are visible to `ps`. |
+| `--password-file` | Yes* | Path to a file containing the pairing password (must have `0600`/`0400` permissions). Preferred over `--password`. |
+| `--password` | Yes* | Pairing password; prompted if omitted. Avoid — secrets on argv are visible to `ps`. |
 | `--device-name` | No | Human-readable name saved in the identity sidecar. |
 | `--start-sync-loop` | No | Start the foreground sync loop after pairing completes. |
-| `--root-key-passphrase` | Yes* | Passphrase to encrypt the new root-key sidecar; prompted if omitted. |
+| `--root-key-passphrase-file` | Yes* | File containing the passphrase (must have `0600`/`0400` permissions). Preferred over `--root-key-passphrase`. |
+| `--root-key-passphrase` | Yes* | Passphrase; prompted if omitted. Prefer `--root-key-passphrase-file`. |
 | `--confirm` | Yes* | Confirm accepting the invitation. |
 | `--dry-run` | No | Preview without mutating the store. |
 
@@ -534,12 +550,25 @@ od3sa-relay \
   --addr 127.0.0.1:8787
 ```
 
-The relay binds to loopback by default; add `--allow-remote-bind` with a non-loopback `--addr` to accept off-host connections. With TLS:
+The relay binds to loopback by default; add `--allow-remote-bind` with a non-loopback `--addr` to accept off-host connections.
+
+For **non-loopback without TLS** (trusted LAN / private mesh only), also add `--insecure-bind`:
 
 ```bash
 od3sa-relay \
   --db /var/lib/relay/relay.db \
-  --addr 127.0.0.1:443 \
+  --addr 192.168.1.10:8787 \
+  --allow-remote-bind \
+  --insecure-bind
+```
+
+For **public internet** or untrusted networks, use TLS:
+
+```bash
+od3sa-relay \
+  --db /var/lib/relay/relay.db \
+  --addr 0.0.0.0:443 \
+  --allow-remote-bind \
   --tls-cert /path/to/cert.pem \
   --tls-key /path/to/key.pem
 ```
@@ -548,13 +577,18 @@ od3sa-relay \
 |------|---------|-------------|
 | `--db` | `MEMORY_RELAY_DB` | Relay SQLite database path (required). |
 | `--addr` | `MEMORY_RELAY_ADDR` | Listen address (default `127.0.0.1:8787`). |
+| `--allow-remote-bind` | `MEMORY_RELAY_ALLOW_REMOTE_BIND` | Allow binding to a non-loopback address. Required for any non-loopback `--addr`. |
+| `--insecure-bind` | `MEMORY_RELAY_INSECURE_BIND` | Allow serving plain HTTP to off-host clients. Required for non-loopback without TLS. **Never use on public internet.** |
 | `--tls-cert` | `MEMORY_TLS_CERT` | TLS certificate path. Must be supplied with `--tls-key`. |
 | `--tls-key` | `MEMORY_TLS_KEY` | TLS private-key path. Must be supplied with `--tls-cert`. |
-| `--allow-remote-bind` | `MEMORY_RELAY_ALLOW_REMOTE_BIND` | Allow binding to a non-loopback address. |
 | `--log-format` | `MEMORY_LOG_FORMAT` | `text` or `json`. |
 | `--log-level` | `MEMORY_LOG_LEVEL` | `DEBUG`, `INFO`, `WARN`, `ERROR`. |
 
-The relay binds to loopback by default and warns when serving plain HTTP. See the [relay reference](/relay/reference/) for endpoints and deployment guidance.
+:::danger[Never use `--insecure-bind` on the public internet]
+`--insecure-bind` is for trusted LANs and private meshes only. On public networks, always use `--tls-cert`/`--tls-key` or put the relay behind a reverse proxy that terminates TLS.
+:::
+
+See the [relay reference](/relay/reference/) for endpoints and deployment guidance.
 
 Devices register with a relay through `pair create-invitation` / `pair accept-invitation`, or through the `memory_relay_register` MCP tool.
 

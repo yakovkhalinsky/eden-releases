@@ -20,9 +20,10 @@ od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
 |------|---------|-------------|
 | `--db` | `$MEMORY_RELAY_DB` | SQLite database path for the relay device directory. **Required.** |
 | `--addr` | `$MEMORY_RELAY_ADDR` or `127.0.0.1:8787` | Listen address. Non-loopback addresses require `--allow-remote-bind`. |
+| `--allow-remote-bind` | `$MEMORY_RELAY_ALLOW_REMOTE_BIND` or `false` | Allow binding to a non-loopback address. |
+| `--insecure-bind` | `$MEMORY_RELAY_INSECURE_BIND` or `false` | Allow serving plain HTTP to off-host clients. Required for non-loopback without TLS. **Never use on public internet.** |
 | `--tls-cert` | `$MEMORY_TLS_CERT` | TLS certificate path. Enables HTTPS when both cert and key are set. |
 | `--tls-key` | `$MEMORY_TLS_KEY` | TLS private key path. Required when `--tls-cert` is set. |
-| `--allow-remote-bind` | `$MEMORY_RELAY_ALLOW_REMOTE_BIND` or `false` | Allow binding to a non-loopback address. |
 | `--log-format` | `$MEMORY_LOG_FORMAT` or `text` | Log format: `text` or `json`. |
 | `--log-level` | `$MEMORY_LOG_LEVEL` or `INFO` | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`. |
 | `--version` | — | Print the version and exit. |
@@ -33,15 +34,17 @@ od3sa-relay --db /var/lib/relay/relay.db --addr 127.0.0.1:8787
 |----------|---------|-------------|
 | `MEMORY_RELAY_ADDR` | `127.0.0.1:8787` | Listen address, used when `--addr` is not passed. |
 | `MEMORY_RELAY_DB` | — | Relay database path, used when `--db` is not passed. |
-| `MEMORY_TLS_CERT` / `MEMORY_TLS_KEY` | — | TLS certificate and key paths. Both must be set to enable HTTPS. |
 | `MEMORY_RELAY_ALLOW_REMOTE_BIND` | `false` | Set to `1`/`true` to allow non-loopback binding. |
+| `MEMORY_RELAY_INSECURE_BIND` | `false` | Set to `1`/`true` to allow plain HTTP to off-host clients. **Never use on public internet.** |
+| `MEMORY_TLS_CERT` / `MEMORY_TLS_KEY` | — | TLS certificate and key paths. Both must be set to enable HTTPS. |
 | `MEMORY_LOG_FORMAT` | `text` | Log format: `text` or `json`. |
 | `MEMORY_LOG_LEVEL` | `INFO` | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`. |
 
 ## Binding and TLS
 
 - **Loopback by default.** The relay refuses to bind a non-loopback address (or a hostname) unless `--allow-remote-bind` is set. This prevents an accidental public expose.
-- **Plain HTTP warning.** Without `--tls-cert`/`--tls-key` the relay serves plain HTTP and logs a warning at startup. Put it behind a TLS-terminating reverse proxy, or give it a certificate directly, when devices sync over the internet.
+- **No plain HTTP to off-host clients by default.** For non-loopback without TLS, you must also pass `--insecure-bind`. Without it, the relay exits at startup.
+- **`--insecure-bind` is for trusted LANs only.** Never use it on the public internet. For public deployments, always use `--tls-cert`/`--tls-key` or put the relay behind a TLS-terminating reverse proxy.
 - Certificates are loaded at startup only; restart the process after renewing them (see the [VPS deploy guide](/relay/how-to/deploy-public-vps/#12-cert-renewal-hook)).
 
 ## REST endpoints

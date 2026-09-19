@@ -12,9 +12,10 @@ This tutorial keeps the same memory database in sync across two devices through 
 
 - Two devices running Linux or macOS.
 - `od3sa-memory` installed on both (or the ability to run the install script).
-- A relay URL. You can run your own relay or use one provided by your team.
+- A relay URL from a self-hosted or team-run relay.
 - A fleet `account-id` shared by both devices.
-- A strong root-key passphrase to encrypt the sidecar files.
+- A strong root-key passphrase to encrypt the sidecar files (stored in a file with `0600` permissions).
+- A strong pairing password (stored in a file with `0600` permissions).
 
 ## 1. Install the binary on both devices
 
@@ -45,41 +46,96 @@ od3sa-relay \
   --addr 127.0.0.1:8787
 ```
 
-The relay needs a persistent SQLite database path and a listen address. It binds to loopback by default; to accept connections from other devices, add `--allow-remote-bind` and a non-loopback `--addr`. Default port is `8787`. For a production relay, see [Run your own relay server](/relay/how-to/run-relay-server/).
+The relay needs a persistent SQLite database path and a listen address. It binds to **loopback by default**. The table below summarizes when to use each binding mode:
 
-If someone else is hosting the relay, write down the base URL (for example, `http://relay.example.com:8787`).
+| Scenario | `--addr` | `--allow-remote-bind` | `--insecure-bind` | TLS flags | Example URL |
+|----------|----------|----------------------|-------------------|-----------|-------------|
+| Local testing (same machine) | `127.0.0.1:8787` | No | No | — | `http://127.0.0.1:8787` |
+| LAN / private mesh (Tailscale) | `100.64.x.x:8787` | Yes | Yes | — | `http://100.64.0.1:8787` |
+| Public internet (direct TLS) | `0.0.0.0:443` | Yes | No | `--tls-cert` `--tls-key` | `https://relay.example.com` |
+| Public internet (reverse proxy) | `127.0.0.1:8787` | No | No | — (proxy terminates TLS) | `https://relay.example.com` |
 
-## 3. Create a pairing invitation on the first device
+- **`--allow-remote-bind`** — required for any non-loopback `--addr`. Without it, the relay exits.
+- **`--insecure-bind`** — required for non-loopback without TLS. The relay refuses to serve plain HTTP to off-host clients unless you explicitly opt in.
+
+:::danger[Never use `--insecure-bind` on the public internet]
+`--insecure-bind` is for trusted LANs and private meshes only. On public networks, always use `--tls-cert`/`--tls-key` for direct TLS or put the relay behind a reverse proxy that terminates TLS.
+:::
+
+For a production relay with TLS, see [Run your own relay server](/relay/how-to/run-relay-server/).
+
+If your team runs a relay, get the base URL from the relay operator (for example, `https://relay.example.com`).
+
+## 3. Prepare secret files
+
+Before pairing, create files for the pairing password and root-key passphrase with restricted permissions:
+
+```bash
+# Create password file (at least 10 characters, 40+ bits entropy)
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+chmod 0600 ~/.memory/pairing-password.txt
+
+# Create passphrase file if not already present
+install -m 0600 /dev/null ~/.memory/root-key-passphrase.txt
+# ... write your passphrase ...
+chmod 0600 ~/.memory/root-key-passphrase.txt
+```
+
+:::caution[Never put secrets on the command line]
+Secrets passed via `--password` or `--code` are visible to `ps` and process-list tools. Always use `--password-file` and `--code-file` instead, with files that have `0600` (owner read/write only) permissions.
+:::
+
+## 4. Create a pairing invitation on the first device
 
 On the device that already has data (or that you want to treat as the source), run:
 
 ```bash
 od3sa-memory --db ~/.memory/device.db \
   pair create-invitation \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --password "correct-horse-battery-staple" \
+  --password-file ~/.memory/pairing-password.txt \
   --device-name "Studio Desktop" \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
-The command prints an invitation code and a short rendezvous code. The pairing password must be at least 10 characters long and have at least 40 bits of estimated entropy. Share the **invitation code** and the **password** with the second device through a trusted channel.
+The command prints an invitation code and a short rendezvous code.
 
-## 4. Accept the invitation on the second device
+:::warning[Share on separate channels]
+Share the **invitation code** and the **pairing password** through **different trusted channels**. For example, send the invitation code via a secure messaging app and share the password in person or via a password manager. Never send both on the same channel — if that channel is compromised, an attacker can complete the pairing.
+:::
 
-On the joining device, run:
+## 5. Accept the invitation on the second device
+
+On the joining device, create files for the invitation code and password (received through separate channels):
+
+```bash
+# Save the invitation code to a file
+install -m 0600 /dev/null ~/.memory/invitation-code.txt
+echo "INVITATION_CODE" > ~/.memory/invitation-code.txt
+chmod 0600 ~/.memory/invitation-code.txt
+
+# Save the pairing password to a file
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+chmod 0600 ~/.memory/pairing-password.txt
+```
+
+Then accept the invitation:
 
 ```bash
 od3sa-memory --db ~/.memory/device.db \
   pair accept-invitation \
-  --code INVITATION_CODE \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --code-file ~/.memory/invitation-code.txt \
+  --password-file ~/.memory/pairing-password.txt \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --start-sync-loop \
   --confirm
 ```
 
-Replace `INVITATION_CODE` with the code from step 3. The `--start-sync-loop` flag starts a foreground sync loop in the same process. Without it, the device records the initiator as a peer and you can start the loop separately.
+The `--start-sync-loop` flag starts a foreground sync loop in the same process. Without it, the device records the initiator as a peer and you can start the loop separately.
 
 Accepting the invitation does three things:
 
@@ -87,16 +143,16 @@ Accepting the invitation does three things:
 2. Records the initiator as a peer.
 3. Registers the joining device with the relay.
 
-## 5. Start the sync loop on the first device
+## 6. Start the sync loop on the first device
 
 If you did not use `--start-sync-loop` on the source device, start the loop there:
 
 ```bash
 od3sa-memory --db ~/.memory/device.db \
   sync loop start \
-  --relay-url http://relay.example.com:8787 \
+  --relay-url https://relay.example.com \
   --account-id your-account \
-  --root-key-passphrase "$(cat passphrase.txt)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
@@ -108,16 +164,16 @@ Check the loop status at any time:
 od3sa-memory --db ~/.memory/device.db sync loop status
 ```
 
-## 6. Verify sync
+## 7. Verify sync
 
 1. Store a memory on the first device through your MCP client or the CLI fallback.
 2. On the second device, force a single sync round:
    ```bash
    od3sa-memory --db ~/.memory/device.db \
      sync loop once \
-     --relay-url http://relay.example.com:8787 \
+     --relay-url https://relay.example.com \
      --account-id your-account \
-     --root-key-passphrase "$(cat passphrase.txt)"
+     --root-key-passphrase-file ~/.memory/root-key-passphrase.txt
    ```
 3. Recall the same memory on the second device.
 
@@ -138,9 +194,10 @@ A `peer_count` greater than zero means the relay has registered peers.
 
 ## Troubleshooting
 
-- **Relay is unreachable** — check the relay URL and firewall rules. The relay listens on the address you passed to `--addr`.
+- **Relay is unreachable** — check the relay URL and firewall rules. The relay listens on the address you passed to `--addr`. If connecting over the internet, use `https://` and ensure the relay has TLS configured.
 - **Password rejected** — ensure the password is at least 10 characters with enough entropy.
-- **Root-key passphrase prompt** — store the passphrase in a file or environment variable. The command falls back to `MEMORY_ROOT_KEY_PASSPHRASE` if set.
+- **Secret file permissions** — `--password-file` and `--code-file` require files with `0600` or `0400` permissions. Check with `ls -l` and fix with `chmod 0600`.
+- **Root-key passphrase prompt** — use `--root-key-passphrase-file` with a `0600` file, or set `MEMORY_ROOT_KEY_PASSPHRASE` in the environment.
 - **Pending key changes** — if a peer key rotation is staged, approve it with `sync approve-key-change`. See [Approve a peer key rotation](/memory/how-to/approve-peer-key-change/).
 - **Loop not registering** — confirm both devices use the same `--account-id` and relay URL, and that each device has a unique device identity sidecar. See [Sidecar files](/memory/concepts/sidecar-files/) and [How sync works](/memory/concepts/how-sync-works/).
 

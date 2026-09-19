@@ -38,7 +38,7 @@ For example, passing `--db local.db` on the command line overrides `MEMORY_DB_PA
 | `MEMORY_SYNC_INTERVAL` | `--sync-interval` | `30s` | Background relay sync loop interval. |
 | `MEMORY_RELAY_URL` | `--relay-url` | none | Default relay URL for sync and pairing. |
 | `MEMORY_ACCOUNT_ID` | `--account-id` | none | Default fleet account ID for sync and pairing. |
-| `MEMORY_ROOT_KEY_PASSPHRASE` | `--root-key-passphrase` | prompted | Passphrase for the encrypted root-key sidecar. |
+| `MEMORY_ROOT_KEY_PASSPHRASE` | `--root-key-passphrase` | prompted | Passphrase for the encrypted root-key sidecar. Prefer `--root-key-passphrase-file` to avoid exposing secrets in process listings. |
 
 ## Scope defaults for MCP tools
 
@@ -109,6 +109,7 @@ The dedicated `od3sa-relay` binary reads these variables:
 | `MEMORY_RELAY_DB` | `--db` | none | Relay SQLite database path. Required to start the relay. |
 | `MEMORY_RELAY_ADDR` | `--addr` | `127.0.0.1:8787` | Listen address for the relay HTTP server. |
 | `MEMORY_RELAY_ALLOW_REMOTE_BIND` | `--allow-remote-bind` | `0` / unset | Set to `1`/`true` to allow binding to a non-loopback address. |
+| `MEMORY_RELAY_INSECURE_BIND` | `--insecure-bind` | `0` / unset | Set to `1`/`true` to allow plain HTTP to off-host clients. Required for non-loopback without TLS. **Never use on public internet.** |
 | `MEMORY_TLS_CERT` | `--tls-cert` | none | TLS certificate path. Must be supplied with `MEMORY_TLS_KEY`. |
 | `MEMORY_TLS_KEY` | `--tls-key` | none | TLS private-key path. Must be supplied with `MEMORY_TLS_CERT`. |
 

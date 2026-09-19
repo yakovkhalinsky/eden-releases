@@ -262,6 +262,16 @@ session.
 You can pair a new device through the relay after the first device is
 registered.
 
+First, create password and passphrase files with restricted permissions:
+
+```bash
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+
+install -m 0600 /dev/null ~/.memory/root-key-passphrase.txt
+# ... write your passphrase ...
+```
+
 On a device already in the fleet:
 
 ```bash
@@ -269,22 +279,35 @@ od3sa-memory --db ~/.memory/default.db \
   pair create-invitation \
   --relay-url https://relay.example.com \
   --account-id your-account \
-  --password "correct-horse-battery-staple" \
+  --password-file ~/.memory/pairing-password.txt \
   --device-name "Studio Desktop" \
-  --root-key-passphrase "$(cat /path/to/root-key-passphrase)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 
-Share the printed invitation code and the pairing password through separate,
-secure channels.
+:::warning[Share on separate channels]
+Share the invitation code and the pairing password through **different trusted channels**. Never send both on the same channel — if that channel is compromised, an attacker can complete the pairing.
+:::
 
-On the new device:
+On the new device, save the code and password to files (received through separate channels):
+
+```bash
+install -m 0600 /dev/null ~/.memory/invitation-code.txt
+echo "<code>" > ~/.memory/invitation-code.txt
+
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+```
+
+Then accept the invitation:
 
 ```bash
 od3sa-memory --db ~/.memory/default.db \
-  pair accept-invitation --code <code> \
+  pair accept-invitation \
+  --code-file ~/.memory/invitation-code.txt \
+  --password-file ~/.memory/pairing-password.txt \
   --start-sync-loop \
-  --root-key-passphrase "$(cat /path/to/root-key-passphrase)" \
+  --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
   --confirm
 ```
 

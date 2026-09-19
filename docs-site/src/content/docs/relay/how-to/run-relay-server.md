@@ -39,19 +39,31 @@ od3sa-relay \
   --addr 127.0.0.1:8787
 ```
 
-The relay binds to **loopback** by default (`127.0.0.1:8787`). To accept connections from other devices, opt in with `--allow-remote-bind` and pass a non-loopback address:
+The relay binds to **loopback** by default (`127.0.0.1:8787`). To accept connections from other devices on a **trusted LAN or private mesh**, opt in with `--allow-remote-bind` and `--insecure-bind`:
 
 ```bash
 od3sa-relay \
   --db /var/lib/relay/relay.db \
   --addr 192.168.1.10:8787 \
-  --allow-remote-bind
+  --allow-remote-bind \
+  --insecure-bind
 ```
 
-Without `--allow-remote-bind`, a non-loopback `--addr` is rejected at startup. See [CLI, env vars, and endpoints](/relay/reference/) for all flags, including `--tls-cert`/`--tls-key` for HTTPS.
+For **public internet** or untrusted networks, use TLS instead of `--insecure-bind`:
 
-:::caution
-Without `--tls-cert` and `--tls-key` the relay serves plain HTTP and logs a warning. Use TLS whenever devices sync over an untrusted network.
+```bash
+od3sa-relay \
+  --db /var/lib/relay/relay.db \
+  --addr 0.0.0.0:443 \
+  --allow-remote-bind \
+  --tls-cert /path/to/cert.pem \
+  --tls-key /path/to/key.pem
+```
+
+Without `--allow-remote-bind`, a non-loopback `--addr` is rejected at startup. Without `--insecure-bind` or TLS, the relay refuses to serve plain HTTP to off-host clients. See [CLI, env vars, and endpoints](/relay/reference/) for all flags.
+
+:::danger[Never use `--insecure-bind` on the public internet]
+`--insecure-bind` is for trusted LANs and private meshes only. On public networks, always use `--tls-cert`/`--tls-key` or put the relay behind a reverse proxy that terminates TLS.
 :::
 
 ## 3. Verify the relay is running
@@ -71,19 +83,36 @@ There is no `relay-register` CLI subcommand. Devices register with the relay in 
 - **Pairing (recommended).** `pair create-invitation` / `pair accept-invitation` register both devices with the relay as part of the PAKE exchange:
 
   ```bash
+  # Prepare password and passphrase files with restricted permissions
+  install -m 0600 /dev/null ~/.memory/pairing-password.txt
+  echo "correct-horse-battery-staple" > ~/.memory/pairing-password.txt
+  
+  install -m 0600 /dev/null ~/.memory/root-key-passphrase.txt
+  # ... write your passphrase ...
+
   # On a device already in the fleet
   od3sa-memory --db ~/.memory/default.db pair create-invitation \
-    --relay-url http://relay.example.com:8787 \
+    --relay-url https://relay.example.com \
     --account-id your-account \
-    --password "correct-horse-battery-staple"
+    --password-file ~/.memory/pairing-password.txt \
+    --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
+    --confirm
 
-  # On the new device
+  # On the new device (after receiving code and password on SEPARATE channels)
+  install -m 0600 /dev/null ~/.memory/invitation-code.txt
+  echo "<invitation-code>" > ~/.memory/invitation-code.txt
+  
   od3sa-memory --db ~/.memory/default.db pair accept-invitation \
-    --code <invitation-code> \
-    --relay-url http://relay.example.com:8787 \
-    --account-id your-account \
-    --start-sync-loop
+    --code-file ~/.memory/invitation-code.txt \
+    --password-file ~/.memory/pairing-password.txt \
+    --root-key-passphrase-file ~/.memory/root-key-passphrase.txt \
+    --start-sync-loop \
+    --confirm
   ```
+
+  :::warning[Share on separate channels]
+  Share the invitation code and pairing password through **different trusted channels**. Never send both on the same channel.
+  :::
 
 - **The `memory_relay_register` MCP tool.** From an agent session, call `memory_relay_register` with the relay URL and account ID.
 
@@ -110,7 +139,7 @@ Group=relay
 WantedBy=multi-user.target
 ```
 
-If the relay must accept off-host connections directly (no reverse proxy), add `--allow-remote-bind --addr 0.0.0.0:8787` to `ExecStart`. Create a dedicated user, set the file permissions on `/var/lib/relay`, and reload systemd.
+If the relay must accept off-host connections directly (no reverse proxy), add `--allow-remote-bind --addr 0.0.0.0:443 --tls-cert /path/to/cert.pem --tls-key /path/to/key.pem` to `ExecStart`. For trusted LAN only, you can use `--insecure-bind` instead of TLS, but **never on the public internet**. Create a dedicated user, set the file permissions on `/var/lib/relay`, and reload systemd.
 
 ## 6. Secure the relay
 

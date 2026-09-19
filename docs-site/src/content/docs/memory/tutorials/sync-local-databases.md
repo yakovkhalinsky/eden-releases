@@ -47,20 +47,33 @@ od3sa-memory --db ~/.memory/default.db \
 
 ## 3. Pair the databases for repeated sync (optional)
 
-If you plan to sync the same two databases regularly, pair them once with SPAKE2 so each store pins the other's public key:
+If you plan to sync the same two databases regularly, pair them once with SPAKE2 so each store pins the other's public key.
+
+First, create a password file with restricted permissions:
+
+```bash
+install -m 0600 /dev/null ~/.memory/pairing-password.txt
+echo "shared-secret-at-least-10-chars" > ~/.memory/pairing-password.txt
+```
+
+Then pair:
 
 ```bash
 od3sa-memory --db ~/.memory/default.db \
   pair-device \
   --peer-db /mnt/shared/peer.db \
   --account-id your-account \
-  --password "shared-secret" \
+  --password-file ~/.memory/pairing-password.txt \
   --confirm
 ```
 
-Use the same `--account-id` on both stores and choose a strong password. After pairing, subsequent `sync` commands can optionally verify the peer by its pinned key.
+Use the same `--account-id` on both stores and choose a strong password (at least 10 characters). After pairing, subsequent `sync` commands can optionally verify the peer by its pinned key.
 
 To preview the pairing without writing peer records, add `--dry-run`.
+
+:::caution[Never put secrets on the command line]
+Use `--password-file` instead of `--password` to avoid exposing secrets in `ps` output.
+:::
 
 ## 4. Verify the sync
 
@@ -101,10 +114,12 @@ And `memory_pair_device` for pairing:
 {
   "peer_db_path": "/mnt/shared/peer.db",
   "account_id": "your-account",
-  "password": "shared-secret",
+  "password_file": "~/.memory/pairing-password.txt",
   "confirm": true
 }
 ```
+
+Note: The `password_file` must have `0600` or `0400` permissions.
 
 ## Troubleshooting
 
