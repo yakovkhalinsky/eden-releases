@@ -1,6 +1,6 @@
 {
-  "version": "0.6.2",
-  "released": "2026-09-15",
+  "version": "0.7.0",
+  "released": "2026-09-19",
   "binaries": {
     "memory": {
       "platforms": {
@@ -10,8 +10,8 @@
           "filename": "od3sa-memory-linux-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-linux-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-linux-amd64.sha256",
-          "sha256": "514a3e6db3662ab8d48e5aa5dae791094aba24fe674d126b99d15741eec3ed2a",
-          "sizeBytes": 108445856
+          "sha256": "52703e17c2bc053c59dd5b6e21ff678fd5751a6b800407bc1549adfb048f4d0e",
+          "sizeBytes": 108511392
         },
         "linux-arm64": {
           "os": "linux",
@@ -19,8 +19,8 @@
           "filename": "od3sa-memory-linux-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-linux-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-linux-arm64.sha256",
-          "sha256": "5a8a55476e4c67e7c064a0294f095b2b7124b4a1fed3039edf233ae9a760ade3",
-          "sizeBytes": 70713504
+          "sha256": "377999e466e0a933cf66697828bb3e35113ffc4d2f71fec3e51c2887dc8e02d6",
+          "sizeBytes": 70779040
         },
         "darwin-amd64": {
           "os": "darwin",
@@ -28,8 +28,8 @@
           "filename": "od3sa-memory-darwin-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-darwin-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-darwin-amd64.sha256",
-          "sha256": "bffec26a772de21e44492df5228ec25c38fe33cda97a8a6336823a98d46e37c0",
-          "sizeBytes": 67910864
+          "sha256": "dd7f2bffc1f1d87cd6f27362c11e0b066fd54fd9d7cc51c9b314c1d7031f95b4",
+          "sizeBytes": 67977456
         },
         "darwin-arm64": {
           "os": "darwin",
@@ -37,8 +37,8 @@
           "filename": "od3sa-memory-darwin-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-darwin-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-memory-darwin-arm64.sha256",
-          "sha256": "f60d1635a0c5e55944a1a5c126352ed3d68289c71f98ebb211182cc5df7792f9",
-          "sizeBytes": 67577650
+          "sha256": "87e7dcfb435e4e44628370912cb6ff1a06f7ca5dbf8db110a254b245c0bee3d4",
+          "sizeBytes": 67628242
         }
       }
     },
@@ -50,8 +50,8 @@
           "filename": "od3sa-relay-linux-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-linux-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-linux-amd64.sha256",
-          "sha256": "079c055e73272d0b72f1f675929600255220dd346267ea06bb6d4e074f92cbae",
-          "sizeBytes": 11493536
+          "sha256": "38e9843b52872bf7b1d549eb4d1ec377345aefce7af66779656f8096696a6738",
+          "sizeBytes": 11522208
         },
         "linux-arm64": {
           "os": "linux",
@@ -59,7 +59,7 @@
           "filename": "od3sa-relay-linux-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-linux-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-linux-arm64.sha256",
-          "sha256": "17df0bb6b57457de9f0451cf8f5892ee7fc3688ec27da6b2e09ddee679963f3d",
+          "sha256": "0b04740ca39a0af63236e4bdf75d9ddbff80e28ca2faf5787bebcd000fcc8793",
           "sizeBytes": 10944672
         },
         "darwin-amd64": {
@@ -68,8 +68,8 @@
           "filename": "od3sa-relay-darwin-amd64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-darwin-amd64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-darwin-amd64.sha256",
-          "sha256": "c6d9bbff83382c0da377e246eb666190ffee40c1076eeb9e9a98a0c8efd52160",
-          "sizeBytes": 11749904
+          "sha256": "f46584535bd73516a6d73649990f7659c85a9d79c2c1d8807ec8680642a70e97",
+          "sizeBytes": 11779248
         },
         "darwin-arm64": {
           "os": "darwin",
@@ -77,8 +77,8 @@
           "filename": "od3sa-relay-darwin-arm64",
           "downloadUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-darwin-arm64",
           "checksumUrl": "https://github.com/yakovkhalinsky/eden-releases/releases/latest/download/od3sa-relay-darwin-arm64.sha256",
-          "sha256": "4bbd878e7cdc24a765b89cabb9ed6beffda6d97279162be11fbd1efb317c52db",
-          "sizeBytes": 11171954
+          "sha256": "61ba8c6ee8a25498ace39facef095b42337bfa88020c39b5dc3870c0f72d2d1c",
+          "sizeBytes": 11205650
         }
       }
     }
