@@ -24,9 +24,19 @@ curl -fsSL https://0d3sa.com/memory/install.sh | sh
 
 This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. Make sure the directory is on the PATH your client sees, or use the absolute binary path in the server config.
 
-## 2. Add the server config
+## 2. Generate a config snippet
 
-The server command is:
+The setup command can print a paste-ready JSON snippet with absolute paths for your system:
+
+```bash
+od3sa-memory setup --print-mcp-json
+```
+
+This prints an `mcpServers` JSON block with the resolved binary path and database path. If you have set `MEMORY_ORG_ID` or `MEMORY_WORKSPACE_ID`, or run `setup claude` in a project directory for Claude identity wiring, the snippet includes those in the `env` block as well. The command prints to stdout — it does **not** write any files.
+
+## 3. Add the server config
+
+Use the generated snippet, or construct the config manually. The server command is:
 
 ```bash
 od3sa-memory --db /home/yourname/.memory/default.db
@@ -34,7 +44,7 @@ od3sa-memory --db /home/yourname/.memory/default.db
 
 Use your real username. The `--db` path must be absolute, and the parent directory must exist.
 
-If your client uses a `mcpServers` JSON config, add this:
+If your client uses a `mcpServers` JSON config, paste the output from `setup --print-mcp-json`, or add this manually:
 
 ```json
 {
@@ -55,11 +65,11 @@ If your client uses a `mcpServers` JSON config, add this:
 
 Replace `/home/yourname` with your actual home path. If `od3sa-memory` is on the client's PATH, you can use the bare command name.
 
-## 3. Restart your client
+## 4. Restart your client
 
 MCP servers are usually loaded when the client starts. Restart or reload the client after adding the server.
 
-## 4. Verify the connection
+## 5. Verify the connection
 
 Ask your agent to run `memory_health`. You should see a JSON health report. If it fails:
 
@@ -71,7 +81,7 @@ Ask your agent to run `memory_health`. You should see a JSON health report. If i
 3. Confirm the parent directory for the database exists.
 4. Check that the binary path in the server config is correct for the client's environment.
 
-## 5. Test remember and recall
+## 6. Test remember and recall
 
 Ask your agent to store a fact:
 

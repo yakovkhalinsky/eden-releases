@@ -24,23 +24,56 @@ curl -fsSL https://0d3sa.com/memory/install.sh | sh
 
 This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. Make sure `~/.local/bin` is on the PATH Cursor sees, or use the full binary path in step 2.
 
-## 2. Add the MCP server in Cursor
+## 2. Generate the MCP config snippet
 
-Open **Settings** → **MCP** and add a new stdio server:
+The setup command can print a paste-ready JSON snippet with absolute paths for your system:
+
+```bash
+od3sa-memory setup --print-mcp-json
+```
+
+This prints an `mcpServers` JSON block with the resolved binary path and database path. If you have set `MEMORY_ORG_ID` or `MEMORY_WORKSPACE_ID`, or run `setup claude` in a project directory for Claude identity wiring, the snippet also includes those environment variables.
+
+Example output:
+
+```json
+{
+  "mcpServers": {
+    "memory": {
+      "command": "/home/yourname/.local/bin/od3sa-memory",
+      "args": [
+        "--db",
+        "/home/yourname/.memory/default.db"
+      ],
+      "env": {
+        "MEMORY_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+The command prints the snippet to stdout — it does **not** write Cursor's config automatically.
+
+## 3. Add the server in Cursor
+
+Open **Settings** → **MCP** and add a new stdio server using the values from the generated snippet:
 
 | Field | Value |
 |-------|-------|
 | Name | `memory` |
-| Command | `/home/yourname/.local/bin/od3sa-memory` |
-| Arguments | `--db /home/yourname/.memory/default.db` |
+| Command | Use the `command` value from the snippet |
+| Arguments | Use the `args` array values (e.g., `--db /home/yourname/.memory/default.db`) |
 
-Replace `/home/yourname` with your actual home path. If `od3sa-memory` is on the PATH that Cursor sees, you can use the bare command name instead of the absolute path.
+Alternatively, if your Cursor version supports importing JSON directly, paste the `mcpServers` object.
 
-## 3. Start a fresh chat
+If you prefer to configure manually without running the setup command, use absolute paths for both the binary and the `--db` flag.
+
+## 4. Start a fresh chat
 
 Cursor discovers tools when a chat starts. Open a new Composer or agent chat so the memory tools are loaded.
 
-## 4. Verify the connection
+## 5. Verify the connection
 
 Ask Cursor to check health:
 
@@ -56,7 +89,7 @@ curl -fsSL https://0d3sa.com/memory/install.sh | sh
 
 Then check that the command path in the MCP settings is absolute and that the parent directory for the database exists.
 
-## 5. Test recall
+## 6. Test recall
 
 Ask Cursor to remember a preference:
 

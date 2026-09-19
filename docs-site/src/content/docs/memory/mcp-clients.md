@@ -23,9 +23,21 @@ If your MCP client supports Streamable HTTP instead of stdio, you can run memory
 
 The HTTP server binds to a local address (default `127.0.0.1:8788`), requires bearer-token authentication, and exposes a server-card endpoint for auto-discovery.
 
+## Generate a config snippet
+
+The setup command can print a paste-ready JSON snippet with absolute paths:
+
+```bash
+od3sa-memory setup --print-mcp-json
+```
+
+This prints an `mcpServers` JSON block with the resolved binary path and database path. If you have set `MEMORY_ORG_ID` or `MEMORY_WORKSPACE_ID` (or run `setup claude` in a project directory first), the snippet includes those in the `env` block as well.
+
+The command prints to stdout — it does **not** write any config files automatically.
+
 ## Generic server command
 
-If your client lets you enter a server command directly, use:
+If your client lets you enter a server command directly, use the `command` and `args` from the generated snippet, or construct them manually:
 
 ```bash
 /home/yourname/.local/bin/od3sa-memory --db /home/yourname/.memory/default.db
@@ -35,7 +47,7 @@ Replace `/home/yourname` with your actual home path. The `--db` path must be abs
 
 ## Generic JSON shape
 
-If your client uses a `mcpServers` JSON config, add this:
+If your client uses a `mcpServers` JSON config, paste the output from `setup --print-mcp-json`, or add this manually:
 
 ```json
 {
@@ -55,6 +67,8 @@ If your client uses a `mcpServers` JSON config, add this:
 ```
 
 Use absolute paths and restart the client after adding the server.
+
+**Note**: Claude Code CLI uses a different config file (`~/.claude.json`) with project-scoped MCP entries — see [Connect Claude Code](/memory/tutorials/connect-claude-code/). Most other MCP clients (Cursor, generic harnesses) use the `mcpServers` JSON shape shown above.
 
 ## Available tools
 
