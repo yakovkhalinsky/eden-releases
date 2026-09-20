@@ -50,6 +50,7 @@ import Base from '../layouts/Base.astro';
             <a href="#register" class="btn btn-primary">Register</a>
             <a href="#install" class="btn btn-secondary">Install locally</a>
           </div>
+          <p class="hero-cta-micro text-mute text-xs">Account is for org and control-plane. Local recall never needs one.</p>
           <p class="hero-trust text-mute text-small">No cloud account for local recall · Register is optional if you only run local</p>
         </div>
         <div class="hero-card-wrap" id="register">
@@ -69,9 +70,48 @@ import Base from '../layouts/Base.astro';
       </div>
     </section>
 
+    <!-- Trust Chips -->
+    <section class="trust-chips-section">
+      <div class="container">
+        <div class="trust-chips">
+          <span class="trust-chip">Private preview</span>
+          <span class="trust-chip">Continues on staging console</span>
+          <span class="trust-chip">Local free forever</span>
+          <span class="trust-chip">Self-host relay free forever</span>
+          <span class="trust-chip">Hosted Team not GA</span>
+          <span class="trust-chip">Install on <code>0d3sa.com</code></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Free Forever -->
+    <section class="band-section">
+      <div class="container">
+        <h2>Free forever</h2>
+        <p>Local memory and self-hosted relay are free forever. No account required for recall.</p>
+      </div>
+    </section>
+
+    <!-- Coding Agents / MCP -->
+    <section class="band-section band-alt">
+      <div class="container">
+        <h2>Coding agents / MCP</h2>
+        <p>Works with Claude Code, Cursor, any MCP client. Streamable HTTP MCP is for self-hosted operators (v0.7.0+) — not a hosted MCP gateway.</p>
+      </div>
+    </section>
+
+    <!-- Sync -->
+    <section class="band-section">
+      <div class="container">
+        <h2>Sync</h2>
+        <p>Optional encrypted multi-device sync via self-hosted <code>od3sa-relay</code>. Opaque envelopes — the relay never sees plaintext.</p>
+      </div>
+    </section>
+
     <!-- Why Register -->
     <section class="why-section">
       <div class="container">
+        <h2 class="why-heading">Why register <span class="staging-label">staging</span></h2>
         <div class="why-grid">
           <div class="why-beat">
             <h3>Org</h3>
@@ -84,6 +124,39 @@ import Base from '../layouts/Base.astro';
           <div class="why-beat">
             <h3>Optional relay</h3>
             <p>Point at a self-hosted <code>od3sa-relay</code> for encrypted multi-device sync (not a hosted Team product claim).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Honesty -->
+    <section class="band-section band-alt">
+      <div class="container">
+        <h2>Pricing honesty</h2>
+        <p>Free forever: local memory + self-hosted relay. Hosted Team relay is paid (not GA yet). No fake prices.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="container">
+        <h2>FAQ</h2>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>Site password ≠ account?</h3>
+            <p>The site password protects the private preview. Your od3sa account is separate — created after you pass the site password.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Digit-zero vs letter-o?</h3>
+            <p>Install curl uses <code>0d3sa.com</code> (digit-zero) — the CDN. This marketing site is <code>od3sa.com</code> (letter-o).</p>
+          </div>
+          <div class="faq-item">
+            <h3>Dreaming ≠ Mem0 Dream?</h3>
+            <p>od3sa Memory is unrelated to Mem0 or its Dream feature. Different project, different architecture.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Self-hosted HTTP MCP?</h3>
+            <p>Streamable HTTP MCP (v0.7.0+) is for self-hosted operators running their own relay. It's not a hosted MCP gateway.</p>
           </div>
         </div>
       </div>
@@ -293,6 +366,10 @@ import Base from '../layouts/Base.astro';
     margin-bottom: 20px;
   }
 
+  .hero-cta-micro {
+    margin-bottom: 12px;
+  }
+
   .hero-trust {
     margin: 0;
   }
@@ -343,12 +420,92 @@ import Base from '../layouts/Base.astro';
     width: 100%;
   }
 
+  /* Trust Chips */
+  .trust-chips-section {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .trust-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ink-mute);
+    background: var(--fog);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+  }
+
+  .trust-chip code {
+    font-size: 0.6875rem;
+    background: var(--paper-2);
+    padding: 1px 4px;
+    border-radius: var(--r-sm);
+  }
+
+  /* Band Sections */
+  .band-section {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .band-section.band-alt {
+    background: var(--fog);
+  }
+
+  .band-section h2 {
+    margin-bottom: 12px;
+  }
+
+  .band-section p {
+    max-width: 640px;
+    line-height: 1.6;
+  }
+
+  .band-section code {
+    background: var(--paper-2);
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+    font-size: 0.8125rem;
+  }
+
+  .band-alt code {
+    background: var(--paper);
+  }
+
   /* Why Section */
   .why-section {
     padding: 64px 0;
-    background: var(--fog);
-    border-top: 1px solid var(--line);
+    background: var(--paper);
     border-bottom: 1px solid var(--line);
+  }
+
+  .why-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .staging-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--warn);
+    background: rgba(138, 109, 29, 0.1);
+    padding: 4px 8px;
+    border-radius: var(--r-sm);
   }
 
   .why-grid {
@@ -366,6 +523,40 @@ import Base from '../layouts/Base.astro';
   }
 
   .why-beat code {
+    background: var(--paper-2);
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+    font-size: 0.8125rem;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    padding: 64px 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .faq-section > .container > h2 {
+    margin-bottom: 32px;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 32px;
+  }
+
+  .faq-item h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .faq-item p {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .faq-item code {
     background: var(--paper-2);
     padding: 2px 6px;
     border-radius: var(--r-sm);
@@ -512,6 +703,11 @@ import Base from '../layouts/Base.astro';
     .why-grid {
       grid-template-columns: 1fr;
       gap: 24px;
+    }
+
+    .faq-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
   }
 
