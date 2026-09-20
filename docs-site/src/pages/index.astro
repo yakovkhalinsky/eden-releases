@@ -1,11 +1,11 @@
 ---
-// Landing page for 0d3sa.com.
+// Landing page for od3sa.com — pre-launch (password-gated).
 // Conversion-focused: hero, install steps, product split, binaries, decision map.
 
 const memoryCard = {
   tag: 'Memory & sync',
-  name: 'memory',
-  desc: 'Local-first SQLite memory with vector embeddings, an MCP server, knowledge packets, dreaming, and encrypted multi-device sync.',
+  name: 'od3sa-memory',
+  desc: 'Local-first SQLite memory with vector embeddings, an MCP server, knowledge packets, dreaming, and encrypted multi-device sync. Streamable HTTP MCP is available for self-hosted operators (v0.7.0+) — run od3sa-memory with --http on your machine or VPS. This is not a hosted MCP gateway.',
   href: '/memory/',
   links: [
     { label: 'Quick start', href: '/memory/getting-started/' },
@@ -16,7 +16,7 @@ const memoryCard = {
 
 const relayCard = {
   tag: 'Self-hosted relay',
-  name: 'relay',
+  name: 'od3sa-relay',
   desc: 'A lightweight, single-binary sync relay for always-on hosts. Opaque to the operator: it stores directory data and encrypted envelopes, nothing else.',
   href: '/relay/',
   links: [
@@ -27,8 +27,8 @@ const relayCard = {
 };
 
 const binaries = [
-  { name: 'memory', role: 'Memory, MCP server, sync, and device pairing', href: '/memory/', size: '~66–107 MB' },
-  { name: 'relay', role: 'Self-hosted relay for encrypted multi-device sync', href: '/relay/', size: '~10–11 MB' },
+  { name: 'od3sa-memory', role: 'Memory, MCP server, sync, and device pairing', href: '/memory/', size: '~66–107 MB' },
+  { name: 'od3sa-relay', role: 'Self-hosted relay for encrypted multi-device sync', href: '/relay/', size: '~10–11 MB' },
 ];
 
 const memoryInstall = 'curl -fsSL https://0d3sa.com/memory/install.sh | sh';
@@ -80,27 +80,33 @@ const skills = [
       <nav class="nav-links" aria-label="Primary">
         <a href="/docs/" class="btn btn-sm btn-sm-primary">Docs</a>
         <a href="/memory/getting-started/" class="nav-link">Quick start</a>
-        <a href="https://github.com/yakovkhalinsky/eden-releases" target="_blank" rel="noreferrer" class="nav-link">GitHub</a>
+        <a href="https://github.com/yakovkhalinsky/0d3sa" target="_blank" rel="noreferrer" class="nav-link">GitHub</a>
         <a href="/memory/reference/downloads/" class="btn btn-sm">Downloads</a>
       </nav>
     </div>
   </header>
+
+  <div class="preview-banner" role="status">
+    <span class="preview-dot" aria-hidden="true"></span>
+    <span class="preview-text">Private preview — invite password required until public launch</span>
+  </div>
 
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-wrap">
         <div class="hero-text">
           <div class="product-meta">
-            <span class="status-chip ready"><span class="status-dot" aria-hidden="true"></span>Production ready</span>
-            <span class="call-sheet-id">Local-first · no cloud account</span>
+            <span class="status-chip preview"><span class="status-dot" aria-hidden="true"></span>Private preview</span>
+            <span class="call-sheet-id">No cloud account for recall · MCP-native · Self-host the relay</span>
           </div>
-          <h1 id="hero-title">Memory</h1>
+          <p class="eyebrow">0d3sa</p>
+          <h1 id="hero-title">Local-first memory for coding agents</h1>
           <p class="lead">
-            Local-first memory for coding agents. Semantic recall, keyword search, knowledge packets, and dreaming — all in one SQLite file on your machine, with encrypted sync between your devices.
+            Semantic recall, knowledge packets, and dreaming — in one SQLite file on your machine. Optional encrypted sync via self-hosted relay.
           </p>
           <div class="hero-actions">
-            <a href="#install" class="btn btn-primary">Install in moments</a>
-            <a href="/docs/" class="btn btn-secondary">Read the docs</a>
+            <a href="#install" class="btn btn-primary">Install memory</a>
+            <a href="/docs/" class="btn btn-secondary">Docs</a>
           </div>
         </div>
         <div class="hero-visual" aria-hidden="true">
@@ -322,14 +328,17 @@ const skills = [
     <div class="wrap footer-row">
       <span class="footer-copy">© 2026 0d3sa. Open source under MIT.</span>
       <nav class="footer-links" aria-label="Footer">
-        <a href="https://github.com/yakovkhalinsky/eden-releases">GitHub</a>
+        <a href="https://github.com/yakovkhalinsky/0d3sa">GitHub</a>
         <span class="sep" aria-hidden="true">·</span>
         <a href="/docs/">Docs</a>
         <span class="sep" aria-hidden="true">·</span>
         <a href="/memory/reference/downloads/">Downloads</a>
         <span class="sep" aria-hidden="true">·</span>
-        <a href="https://github.com/yakovkhalinsky/eden-releases/releases">Release notes</a>
+        <a href="https://github.com/yakovkhalinsky/0d3sa/releases">Release notes</a>
       </nav>
+    </div>
+    <div class="wrap footer-preview">
+      <span class="footer-preview-text">Private preview · Questions? <a href="mailto:support@od3sa.com">support@od3sa.com</a></span>
     </div>
   </footer>
 
@@ -517,6 +526,33 @@ const skills = [
     color: var(--obsidian);
   }
 
+  /* Preview banner */
+  .preview-banner {
+    background: var(--abyss);
+    border-bottom: 1px solid var(--graphite);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .preview-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yellow);
+  }
+
+  .preview-text {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--yellow);
+  }
+
   /* Status chips */
   .status-chip {
     display: inline-flex;
@@ -537,6 +573,12 @@ const skills = [
     background: rgba(61, 220, 145, 0.12);
     color: var(--neon);
     border-color: var(--neon-border);
+  }
+
+  .status-chip.preview {
+    background: rgba(255, 205, 72, 0.12);
+    color: var(--yellow);
+    border-color: rgba(255, 205, 72, 0.3);
   }
 
   .status-dot {
@@ -576,15 +618,25 @@ const skills = [
     letter-spacing: 0.05em;
   }
 
+  .hero-text .eyebrow {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--neon);
+    margin: 0 0 12px;
+  }
+
   h1 {
     font-family: var(--display);
-    font-size: clamp(2.6rem, 6vw, 4.2rem);
-    line-height: 1.05;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1.08;
     font-weight: 500;
     letter-spacing: -0.03em;
     margin: 0 0 18px;
     color: var(--white);
-    text-transform: uppercase;
   }
 
   .lead {
@@ -1000,7 +1052,7 @@ const skills = [
   /* Footer */
   .site-footer {
     border-top: 1px solid var(--graphite);
-    padding: 40px 0;
+    padding: 40px 0 24px;
     color: var(--slate);
     font-size: 0.86rem;
     background: var(--obsidian);
@@ -1016,6 +1068,25 @@ const skills = [
   .footer-links a { color: var(--slate); }
   .footer-links a:hover { color: var(--white); }
   .footer-links .sep { margin: 0 6px; color: var(--graphite); }
+
+  .footer-preview {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--graphite);
+    text-align: center;
+  }
+
+  .footer-preview-text {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--slate);
+  }
+
+  .footer-preview-text a {
+    color: var(--neon);
+  }
 
   /* Responsive */
   @media (max-width: 900px) {

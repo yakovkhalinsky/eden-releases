@@ -40,7 +40,7 @@ export default defineConfig({
 				},
 			],
 			social: [
-				{ icon: 'github', label: 'Releases', href: 'https://github.com/yakovkhalinsky/eden-releases' },
+				{ icon: 'github', label: 'Releases', href: 'https://github.com/yakovkhalinsky/0d3sa' },
 			],
 			sidebar: [
 				{
