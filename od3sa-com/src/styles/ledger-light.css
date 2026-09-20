@@ -1,0 +1,216 @@
+/* Ledger Light Design Tokens — od3sa.com */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Figtree:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Surface */
+  --paper: #F3EEE6;
+  --paper-2: #E8E1D6;
+  --fog: #F7F5F1;
+
+  /* Text */
+  --ink: #1A1814;
+  --ink-mute: #5C574E;
+  --line: #D4CBBE;
+
+  /* Accent */
+  --clay: #C45C3A;
+  --clay-deep: #9A3F28;
+
+  /* Semantic */
+  --good: #2F6F4E;
+  --warn: #8A6D1D;
+
+  /* Inverse */
+  --inverse: #1A1814;
+  --inverse-text: #F3EEE6;
+
+  /* Shape */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+
+  /* Layout */
+  --max-width: 1080px;
+  --pad-x: 24px;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-ui: 'Figtree', 'Source Sans 3', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100vh;
+}
+
+/* Typography scale */
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+h2 {
+  font-family: var(--font-ui);
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+h3 {
+  font-family: var(--font-ui);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+p {
+  color: var(--ink-mute);
+}
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--clay);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 14px 24px;
+  border-radius: var(--r-md);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s, opacity 0.15s;
+  min-height: 44px;
+}
+
+.btn-primary {
+  background: var(--clay);
+  color: var(--inverse-text);
+}
+
+.btn-primary:hover {
+  background: var(--clay-deep);
+  color: var(--inverse-text);
+}
+
+.btn-primary:disabled,
+.btn-primary[aria-disabled="true"] {
+  background: var(--line);
+  color: var(--ink-mute);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+}
+
+.btn-secondary:hover {
+  background: var(--ink);
+  color: var(--inverse-text);
+}
+
+/* Cards */
+.card {
+  background: var(--fog);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 24px;
+}
+
+/* Code blocks */
+.code-block {
+  background: var(--inverse);
+  color: var(--inverse-text);
+  border-radius: var(--r-md);
+  padding: 16px 20px;
+  overflow-x: auto;
+}
+
+.code-block code {
+  color: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* Utilities */
+.text-mute {
+  color: var(--ink-mute);
+}
+
+.text-small {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.8125rem;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Focus states */
+:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--clay);
+  color: var(--inverse-text);
+}
