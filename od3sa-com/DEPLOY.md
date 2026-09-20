@@ -14,16 +14,13 @@ Output: `od3sa-com/dist/` — deploy this directory.
 
 ## Caddy Configuration
 
-### Auth Fragment (0600)
+### Users Fragment
 
-Create a Caddyfile fragment with 0600 permissions **outside of git**:
+Create a users fragment readable by Caddy **outside of git**:
 
 ```sh
-# /etc/caddy/od3sa-users (0600, root:root)
-basic_auth {
-  realm "0d3sa pre-launch (internal)"
-  preview <bcrypt-hash>
-}
+# /etc/caddy/od3sa-users (root:caddy 0640 — caddy must read it)
+od3sa <bcrypt-hash>
 ```
 
 Generate the bcrypt hash:
@@ -32,17 +29,21 @@ caddy hash-password
 # Enter your site password when prompted
 ```
 
-Set permissions:
+Set permissions (0640 so caddy user can read; 0600 root-only broke OD3-82):
 ```sh
-chmod 0600 /etc/caddy/od3sa-users
-chown root:root /etc/caddy/od3sa-users
+chown root:caddy /etc/caddy/od3sa-users
+chmod 0640 /etc/caddy/od3sa-users
 ```
+
+Username `od3sa` is ops convention. Password stays out of git.
 
 ### Site Block
 
 ```caddyfile
 od3sa.com {
-    import /etc/caddy/od3sa-users
+    basic_auth bcrypt "0d3sa pre-launch (internal)" {
+        import /etc/caddy/od3sa-users
+    }
 
     root * /srv/od3sa-com/dist
     file_server
@@ -52,6 +53,8 @@ od3sa.com {
         X-Content-Type-Options "nosniff"
         Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
         X-Robots-Tag "noindex, nofollow"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
     }
 
     handle_errors {
@@ -67,13 +70,12 @@ www.od3sa.com {
 
 ### Inline Alternative
 
-If fragment import is unavailable, inline the auth block:
+If fragment import is unavailable, inline the credentials:
 
 ```caddyfile
 od3sa.com {
-    basic_auth {
-        realm "0d3sa pre-launch (internal)"
-        preview $2a$14$your-hash-here
+    basic_auth bcrypt "0d3sa pre-launch (internal)" {
+        od3sa $2a$14$your-hash-here
     }
 
     root * /srv/od3sa-com/dist
@@ -84,6 +86,8 @@ od3sa.com {
         X-Content-Type-Options "nosniff"
         Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
         X-Robots-Tag "noindex, nofollow"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
     }
 
     handle_errors {
@@ -97,6 +101,20 @@ www.od3sa.com {
 }
 ```
 
+## Bake Check: handle_errors and 401
+
+**Verify handle_errors doesn't turn 401→200.** The `handle_errors` block is for 404 SPA fallback. Confirm that unauthenticated requests still return 401 (not 200 with index.html). Test:
+
+```sh
+curl -I https://od3sa.com/
+# Should return 401 Unauthorized (not 200 OK)
+
+curl -I -u od3sa:password https://od3sa.com/
+# Should return 200 OK
+```
+
+If 401 is being swallowed, remove `handle_errors` or scope it to specific status codes.
+
 ## Control Plane Gate
 
 The Register CTA links to the staging console signup. For the control-plane to accept open registration:
@@ -106,7 +124,7 @@ The Register CTA links to the staging console signup. For the control-plane to a
 CONTROL_PLANE_OPEN_REGISTER=true
 ```
 
-**Keep this flag `false` until OD3-85 Caddy gate is up.** The site password protects the marketing site; open register on the control-plane should only be enabled once both gates are in place.
+**Keep this flag `false` until OD3-85 Caddy gate proves.** The site password protects the marketing site; open register on the control-plane should only be enabled once both gates are in place.
 
 ## Security Headers
 
@@ -117,6 +135,8 @@ CONTROL_PLANE_OPEN_REGISTER=true
 | `Content-Security-Policy` | See above | Restrict resource loading |
 | `frame-ancestors` | `'none'` | CSP clickjacking protection |
 | `X-Robots-Tag` | `noindex, nofollow` | Prevent indexing |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Control referrer leakage |
+| `Permissions-Policy` | `geolocation=(), microphone=(), camera=()` | Disable sensitive APIs |
 
 ## HTTPS
 
