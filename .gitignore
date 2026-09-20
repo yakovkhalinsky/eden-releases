@@ -78,3 +78,6 @@ __pycache__/
 # Local tool state and npm artifacts (repo uses pnpm)
 .pi/
 docs-site/package-lock.json
+od3sa-com/package-lock.json
+od3sa-com/node_modules/
+od3sa-com/.astro/
