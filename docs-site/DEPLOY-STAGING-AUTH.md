@@ -37,9 +37,10 @@ Use Caddy's automatic HTTPS with Let's Encrypt for:
 
 ```caddyfile
 od3sa.com {
-    # Basic auth — password from environment or 0600 htpasswd file
+    # Basic auth — password from environment or 0600 users file
     # DO NOT commit actual password hashes to git
-    basicauth * {
+    basic_auth * {
+        realm "0d3sa pre-launch (internal)"
         {$SITE_USER} {$SITE_PASSWORD_HASH}
     }
 
@@ -81,24 +82,36 @@ export SITE_USER="preview"
 export SITE_PASSWORD_HASH="$(caddy hash-password --plaintext 'YOUR_PASSWORD_HERE')"
 ```
 
-**Option B — htpasswd file with 0600 permissions:**
+**Option B — 0600 users file (preferred):**
+
+Create a Caddy users fragment file with restricted permissions:
 ```bash
-# Create htpasswd file
-caddy hash-password --plaintext 'YOUR_PASSWORD_HERE' > /etc/caddy/.htpasswd
-chmod 0600 /etc/caddy/.htpasswd
-chown caddy:caddy /etc/caddy/.htpasswd
+# Generate bcrypt hash
+HASH=$(caddy hash-password --plaintext 'YOUR_PASSWORD_HERE')
+
+# Create users file with proper Caddyfile syntax
+cat > /etc/caddy/od3sa-users <<EOF
+basic_auth {
+    realm "0d3sa pre-launch (internal)"
+    preview $HASH
+}
+EOF
+
+chmod 0600 /etc/caddy/od3sa-users
+chown caddy:caddy /etc/caddy/od3sa-users
 ```
 
-Then reference in Caddyfile:
+Then import in the site block:
 ```caddyfile
-basicauth * {
-    import /etc/caddy/.htpasswd
+od3sa.com {
+    import /etc/caddy/od3sa-users
+    # ... rest of config
 }
 ```
 
-### Realm suggestion (Jen)
+### Realm (Jen/ZC)
 
-Browser auth dialog will show:
+The `realm` directive sets the browser auth dialog title:
 ```
 0d3sa pre-launch (internal)
 ```
