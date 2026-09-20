@@ -52,14 +52,23 @@ Output: `dist/`
 1. **Banner** — Private preview notice
 2. **Nav** — Wordmark, Docs, Install, Register (filled)
 3. **Hero** — Story left, Register card right
-4. **Why Register** — 3 beats: Org, Devices, Optional relay
-5. **Install** — Steps with digit-zero curl (`0d3sa.com`)
-6. **Honesty** — Local CLIs don't require Register
-7. **Footer** — Copyright, Docs, support email
+4. **Trust chips** — Private preview, staging console, free forever, etc.
+5. **Free forever** — Local memory + self-hosted relay
+6. **Coding agents / MCP** — Claude Code, Cursor, any MCP client
+7. **Sync** — Optional encrypted multi-device sync
+8. **Why Register** — 3 beats: Org, Devices, Optional relay (staging labelled)
+9. **Pricing honesty** — Free forever local + self-host
+10. **FAQ** — 4 items
+11. **Install** — Steps with digit-zero curl (`0d3sa.com`)
+12. **Honesty** — Local CLIs don't require Register
+13. **Footer** — Copyright, Docs, support email
+
+## Register
+
+Register CTA links to staging console: `https://console.relay-staging.od3sa.com/signup`
 
 ## Constraints
 
-- Register submit **disabled** ("Coming soon — open signup wiring")
 - Install curl must use digit-zero: `https://0d3sa.com/memory/install.sh`
 - No secrets in git
 - `noindex, nofollow` until public launch
@@ -67,6 +76,8 @@ Output: `dist/`
 ## Deploy
 
 See [DEPLOY.md](./DEPLOY.md) for Caddy configuration with basic auth.
+
+**Control-plane gate:** Ops must set `CONTROL_PLANE_OPEN_REGISTER=true` on control-plane **only behind Caddy**. Keep flag `false` until OD3-85 gate is up.
 
 ## Related
 
