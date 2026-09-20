@@ -5,7 +5,7 @@
 const memoryCard = {
   tag: 'Memory & sync',
   name: 'od3sa-memory',
-  desc: 'Local-first SQLite memory with vector embeddings, an MCP server, knowledge packets, dreaming, and encrypted multi-device sync.',
+  desc: 'Local-first SQLite memory with vector embeddings, an MCP server, knowledge packets, dreaming, and encrypted multi-device sync. Streamable HTTP MCP is available for self-hosted operators (v0.7.0+) — run od3sa-memory with --http on your machine or VPS. This is not a hosted MCP gateway.',
   href: '/memory/',
   links: [
     { label: 'Quick start', href: '/memory/getting-started/' },
@@ -31,7 +31,7 @@ const binaries = [
   { name: 'od3sa-relay', role: 'Self-hosted relay for encrypted multi-device sync', href: '/relay/', size: '~10–11 MB' },
 ];
 
-const memoryInstall = 'curl -fsSL https://od3sa.com/memory/install.sh | sh';
+const memoryInstall = 'curl -fsSL https://0d3sa.com/memory/install.sh | sh';
 const setupCmd = 'cd ~/my-project && od3sa-memory setup claude';
 const healthCmd = 'od3sa-memory health';
 
