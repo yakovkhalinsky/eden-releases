@@ -6,7 +6,7 @@ content_type: tutorial
 
 # Connect another MCP client
 
-memory speaks the Model Context Protocol (MCP) over stdio. This tutorial shows the generic server config for any MCP-compatible client, plus a quick verification.
+od3sa-memory speaks the Model Context Protocol (MCP) over stdio. This tutorial shows the generic server config for any MCP-compatible client, plus a quick verification.
 
 ## Prerequisites
 

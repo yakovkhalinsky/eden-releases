@@ -63,7 +63,7 @@ cd ~/my-project && od3sa-memory setup claude
 
 It prompts for an agent identity and a personal-vs-team scope, then writes a project-local `.env`, registers the MCP server in `~/.claude.json`, and installs `/memory-*` slash commands. See [Connect Claude Code](/memory/tutorials/connect-claude-code/) for the full walkthrough.
 
-For other clients, memory speaks MCP over stdio. Pick the tutorial for your client:
+For other clients, od3sa-memory speaks MCP over stdio. Pick the tutorial for your client:
 
 - [Connect Claude Code](/memory/tutorials/connect-claude-code/)
 - [Connect Cursor](/memory/tutorials/connect-cursor/)
