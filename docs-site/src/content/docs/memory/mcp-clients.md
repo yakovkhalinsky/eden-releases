@@ -4,7 +4,7 @@ description: Hub page for connecting memory to Claude Code, Cursor, Hermes, or a
 content_type: concept
 ---
 
-memory speaks the Model Context Protocol (MCP) over stdio. Once you add it as a server, your agent can call `memory_remember`, `memory_recall`, `memory_search`, and the rest of the memory tool set.
+od3sa-memory speaks the Model Context Protocol (MCP) over stdio. Once you add it as a server, your agent can call `memory_remember`, `memory_recall`, `memory_search`, and the rest of the memory tool set.
 
 ## Per-client setup
 
