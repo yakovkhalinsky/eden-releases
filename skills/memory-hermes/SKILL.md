@@ -41,7 +41,7 @@ tools:
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation
-install_hint: curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+install_hint: curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 harness: hermes
 mcp_config:
   server_name: memory
@@ -59,7 +59,7 @@ related_skills:
 ## Install the binary
 
 ```bash
-curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 This installs the `od3sa-memory` Go binary to `~/.local/bin/od3sa-memory`.
@@ -155,6 +155,6 @@ delegate_task:
 - **Stale Python wrapper from an old install**: if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
   rm -f ~/.local/bin/od3sa-memory
-  curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+  curl -fsSL https://get.od3sa.com/memory/install.sh | sh
   ```
 - **Still not connecting**: run `od3sa-memory --db ~/.memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Hermes MCP config or PATH.

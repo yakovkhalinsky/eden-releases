@@ -40,7 +40,7 @@ tools:
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation
-install_hint: curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+install_hint: curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 related_skills:
   - memory-claude
   - memory-cursor

@@ -88,7 +88,7 @@ If either check fails, no config files are mutated. Fix the underlying issue (up
 
 | Variable | Used by | Default | Description |
 |----------|---------|---------|-------------|
-| `MEMORY_UPDATE_PREFIX` | `update` | `https://opensource.od3sa.com/memory/` | Base URL that hosts the `VERSION` file and platform binaries for `memory update`. |
+| `MEMORY_UPDATE_PREFIX` | `update` | `https://get.od3sa.com/memory/` | Base URL that hosts the `VERSION` file and platform binaries for `memory update`. |
 | `MEMORY_BIN` | `update`, `setup` | running binary | Path to the binary to update; also written by `setup`. |
 
 ## Recall and search tuning

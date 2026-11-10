@@ -406,7 +406,7 @@ Add to `astro.config.mjs` `defineConfig` root:
 
 ```javascript
 export default defineConfig({
-  site: 'https://opensource.od3sa.com',
+  site: 'https://get.od3sa.com',
   base: '/',
   redirects: {
     // No page moves yet in Phase 1–2; add here if any slugs are renamed.

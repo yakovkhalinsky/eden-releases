@@ -153,7 +153,7 @@ od3sa-memory update --prefix https://example.com/memory/
 | `--check` | — | Only report whether an update is available; do not download. |
 | `--dry-run` | — | Print the remote version, download URL, and backup location without changing files. |
 | `--rollback` | — | Restore the latest backup from `~/.cache/memory/backups/`. |
-| `--prefix` | `MEMORY_UPDATE_PREFIX` | Base URL that hosts `VERSION` and platform binaries (default `https://opensource.od3sa.com/memory/`). |
+| `--prefix` | `MEMORY_UPDATE_PREFIX` | Base URL that hosts `VERSION` and platform binaries (default `https://get.od3sa.com/memory/`). |
 | `--binary-path` | `MEMORY_BIN` | Path to the binary to update (defaults to the running executable). |
 
 ## `packet`

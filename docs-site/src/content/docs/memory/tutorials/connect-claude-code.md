@@ -19,14 +19,14 @@ This tutorial walks through installing memory and wiring it to Claude Code CLI s
 Run the installer:
 
 ```bash
-curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. If your terminal is interactive, the installer prompts for `MEMORY_ORG_ID` and writes it to `~/.memory/.env`. Leave it empty to configure later, or pre-set it for non-interactive installs:
 
 ```bash
 export MEMORY_ORG_ID=your-org
-curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 Make sure `~/.local/bin` is on your PATH, or use the full path in the next step.
@@ -89,7 +89,7 @@ You can also use the fallback slash command if MCP tools are not yet loaded:
 You should see a JSON health report. If it fails, re-run the install:
 
 ```bash
-curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 Do not proceed with memory-dependent work until `memory_health` succeeds.

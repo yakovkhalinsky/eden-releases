@@ -34,8 +34,8 @@ The Agentic Team Protocol — team mode — is a role-based agent team protocol 
 Quick install for the global primitives:
 
 ```bash
-curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
-curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
 The installers are designed to be piped to `sh`. If you run a script from a local
@@ -45,18 +45,18 @@ clone instead, the file is tracked with executable permissions; otherwise run
 Check for ATP updates without modifying files:
 
 ```bash
-curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
+curl -fsSL https://get.od3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
 ```
 
 Detailed steps:
 
 1. Install `od3sa-memory` and make sure it is on your `PATH`:
    ```bash
-   curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+   curl -fsSL https://get.od3sa.com/memory/install.sh | sh
    ```
 2. Install the global ATP primitives:
    ```bash
-   curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh
+   curl -fsSL https://get.od3sa.com/agentic-team-protocol/install.sh | sh
    ```
 3. In every project where you will use ATP, wire the Memory MCP server:
    ```bash
@@ -65,7 +65,7 @@ Detailed steps:
    ```
 4. Install the project-local ATP templates:
    ```bash
-   curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh -s -- --local
+   curl -fsSL https://get.od3sa.com/agentic-team-protocol/install.sh | sh -s -- --local
    ```
 5. Restart Claude Code completely so the MCP server, agents, and slash commands load.
 

@@ -24,7 +24,7 @@ Secondary audiences:
 
 ## Product Purpose
 
-`opensource.od3sa.com` is the public documentation and release surface for `memory` and `relay` — a local-first memory layer for AI agents and its dedicated sync relay. It makes the binaries learnable, installable, and verifiable outside of the source repositories.
+`get.od3sa.com` is the public documentation and release surface for `memory` and `relay` — a local-first memory layer for AI agents and its dedicated sync relay. It makes the binaries learnable, installable, and verifiable outside of the source repositories.
 
 Success means a developer can land on the site, install `memory`, wire their client with `memory setup`, and be remembering and recalling facts across sessions without hunting across READMEs, GitHub releases, or multiple repos.
 
@@ -38,7 +38,7 @@ Meaningful difference: the docs are generated from the same skill source files t
 
 ## Operating Context
 
-- The canonical public URL is `https://opensource.od3sa.com` (CNAME present).
+- The canonical public URL is `https://get.od3sa.com` (CNAME present).
 - The site is deployed via GitHub Pages from this repo (`eden-releases`).
 - Binary releases are published as GitHub Release assets in `yakovkhalinsky/eden-releases`; `binaries/manifest.json` is the source of truth for platform metadata.
 - `memory` CI normally auto-cuts releases, updates the manifest, and regenerates `docs-site/src/data/downloads.json`.
@@ -71,7 +71,7 @@ Explicitly undecided / inferred only:
 
 ## Brand Commitments
 
-- Name: `opensource.od3sa.com` and `eden-releases`; product names `memory` and `relay`.
+- Name: `get.od3sa.com` and `eden-releases`; product names `memory` and `relay`.
 - Voice: direct, technical, operational. Favors concrete commands, file paths, and flags over aspirational claims.
 - Identity: local-first, no cloud account, self-hosted sync, MIT-licensed binaries.
 - Visual world: "Obsidian command center" — dark obsidian ground (#132322), deep-abyss panels (#0e1a19), graphite hairline borders (#424f4f), neon green primary (#3ddc91), signal yellow illustration accents (#ffcd48); Chakra Petch display, Saira body, JetBrains Mono for code. Dark-mode only; see `DESIGN.md`.

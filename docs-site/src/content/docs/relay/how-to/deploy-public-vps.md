@@ -33,7 +33,7 @@ The easiest path is the installer, which downloads the right binary for your
 platform:
 
 ```bash
-curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh -s od3sa-relay
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh -s od3sa-relay
 ```
 
 Alternatively, download the latest release binary manually. Replace
