@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Install the Team Protocol Claude Code primitives.
 # Usage:
-#   curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
+#   curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh
 #   curl -fsSL ... | sh -s -- --local                 # project-local templates
 #   curl -fsSL ... | sh -s -- --local --dry-run        # show what would be installed
 #   curl -fsSL ... | sh -s -- --local --claude-md      # also write protocol rules into ./CLAUDE.md
@@ -109,7 +109,7 @@ LOCAL_INSTALL=false
 CLAUDE_MD_INSTALL=false
 DRY_RUN=false
 CHECK=false
-VERSION_URL="https://0d3sa.com/agentic-team-protocol/VERSION"
+VERSION_URL="https://opensource.od3sa.com/agentic-team-protocol/VERSION"
 while [ $# -gt 0 ]; do
   case "$1" in
     --local) LOCAL_INSTALL=true; shift ;;
@@ -209,13 +209,13 @@ if [ ! -d "${PACKAGE_DIR}/agents" ] || [ ! -f "${PACKAGE_DIR}/SKILL.md" ]; then
     TMPDIR="$(mktemp -d)"
     trap 'rm -rf "$TMPDIR"' EXIT
     echo "Downloading Team Protocol package..."
-    TARBALL_URL="https://0d3sa.com/agentic-team-protocol/agentic-team-protocol.tar.gz"
+    TARBALL_URL="https://opensource.od3sa.com/agentic-team-protocol/agentic-team-protocol.tar.gz"
     if curl -fsSL "${TARBALL_URL}" -o "${TMPDIR}/agentic-team-protocol.tar.gz" 2>/dev/null; then
       tar -xzf "${TMPDIR}/agentic-team-protocol.tar.gz" -C "$TMPDIR"
       PACKAGE_DIR="${TMPDIR}/agentic-team-protocol"
     else
       echo "Note: tarball unavailable; installing individual files from public URLs."
-      BASE_URL="https://0d3sa.com/agentic-team-protocol"
+      BASE_URL="https://opensource.od3sa.com/agentic-team-protocol"
       mkdir -p "${TMPDIR}/files/agents" "${TMPDIR}/files/commands" "${TMPDIR}/files/templates"
       # Download with explicit failure messages so a 404 is obvious.
       _download() {
@@ -318,7 +318,7 @@ if [ "$LOCAL_INSTALL" = true ]; then
       if ! grep -q '^worktree_policy:' "${PROJECT_CLAUDE_DIR}/agentic-team-config.yaml"; then
         echo "  Note: your existing agentic-team-config.yaml does not contain worktree_policy."
         echo "        Worktree-per-goal isolation is disabled until you add the worktree_policy block."
-        echo "        See https://0d3sa.com/agentic-team-protocol/how-to/parallel-goals/"
+        echo "        See https://opensource.od3sa.com/agentic-team-protocol/how-to/parallel-goals/"
       fi
     fi
 

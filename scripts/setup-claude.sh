@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Set up the memory MCP server for Claude Code CLI.
-# Usage: curl -fsSL https://0d3sa.com/memory/setup-claude.sh | sh
-# Usage with explicit agent_id: curl -fsSL https://0d3sa.com/memory/setup-claude.sh | sh -s -- my-agent
+# Usage: curl -fsSL https://opensource.od3sa.com/memory/setup-claude.sh | sh
+# Usage with explicit agent_id: curl -fsSL https://opensource.od3sa.com/memory/setup-claude.sh | sh -s -- my-agent
 #
 # Agent identity precedence:
 # 1. Explicit positional argument (e.g. `sh -s -- my-agent`).

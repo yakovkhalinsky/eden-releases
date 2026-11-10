@@ -55,8 +55,8 @@
         "inherits": "memory-mcp-usage",
         "prefix": "mcp__memory__"
       },
-      "install_hint": "curl -fsSL https://0d3sa.com/memory/install.sh | sh",
-      "download_url": "https://0d3sa.com/memory/skills/memory-claude/SKILL.md",
+      "install_hint": "curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh",
+      "download_url": "https://opensource.od3sa.com/memory/skills/memory-claude/SKILL.md",
       "harness": "claude-code",
       "mcp_config": {
         "server_name": "memory",
@@ -127,8 +127,8 @@
         "inherits": "memory-mcp-usage",
         "prefix": "mcp__memory__"
       },
-      "install_hint": "curl -fsSL https://0d3sa.com/memory/install.sh | sh",
-      "download_url": "https://0d3sa.com/memory/skills/memory-cursor/SKILL.md",
+      "install_hint": "curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh",
+      "download_url": "https://opensource.od3sa.com/memory/skills/memory-cursor/SKILL.md",
       "harness": "cursor",
       "mcp_config": {
         "server_name": "memory",
@@ -196,8 +196,8 @@
         "inherits": "memory-mcp-usage",
         "prefix": "mcp__memory__"
       },
-      "install_hint": "curl -fsSL https://0d3sa.com/memory/install.sh | sh",
-      "download_url": "https://0d3sa.com/memory/skills/memory-hermes/SKILL.md",
+      "install_hint": "curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh",
+      "download_url": "https://opensource.od3sa.com/memory/skills/memory-hermes/SKILL.md",
       "harness": "hermes",
       "mcp_config": {
         "server_name": "memory",
@@ -262,8 +262,8 @@
           "memory_pair_accept_invitation"
         ]
       },
-      "install_hint": "curl -fsSL https://0d3sa.com/memory/install.sh | sh",
-      "download_url": "https://0d3sa.com/memory/skills/memory-mcp-usage/SKILL.md",
+      "install_hint": "curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh",
+      "download_url": "https://opensource.od3sa.com/memory/skills/memory-mcp-usage/SKILL.md",
       "related_skills": [
         "memory-claude",
         "memory-cursor",

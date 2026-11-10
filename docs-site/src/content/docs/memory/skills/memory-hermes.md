@@ -9,7 +9,7 @@ skill_tags: mcp, memory, hermes, skill, prompt, subagent
 skill_discoverable: true
 skill_tools: memory_remember, memory_recall, memory_search, memory_search_semantic, memory_lookup, memory_lookup_cross, memory_edit, memory_forget, memory_forget_expired, memory_health, memory_vacuum, memory_prune, memory_migrate, memory_packet, memory_packet_publish, memory_packet_list, memory_packet_export, memory_report, memory_document, memory_document_publish, memory_document_list, memory_document_export, memory_dream, memory_dream_apply, memory_export_snapshot, memory_import_snapshot, memory_sync, memory_pair_device, memory_sync_loop, memory_relay_register, memory_pair_create_invitation, memory_pair_accept_invitation
 skill_inherits: memory-mcp-usage
-skill_install_hint: 'curl -fsSL https://0d3sa.com/memory/install.sh | sh'
+skill_install_hint: 'curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh'
 skill_related: memory-mcp-usage
 ---
 
@@ -25,13 +25,13 @@ The installable artifact is the raw `SKILL.md` file:
 - Or fetch it from the terminal:
 
   ```bash
-  curl -fsSL https://0d3sa.com/memory/skills/memory-hermes/SKILL.md -o memory-hermes/SKILL.md
+  curl -fsSL https://opensource.od3sa.com/memory/skills/memory-hermes/SKILL.md -o memory-hermes/SKILL.md
   ```
 
 ## Install the binary
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 ```
 
 ## Verify

@@ -41,7 +41,7 @@ tools:
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation
-install_hint: curl -fsSL https://0d3sa.com/memory/install.sh | sh
+install_hint: curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 harness: claude-code
 mcp_config:
   server_name: memory
@@ -91,7 +91,7 @@ memory redundant for project work.
 ## Install the binary
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 ```
 
 This installs the `od3sa-memory` Go binary to `~/.local/bin/od3sa-memory`.
@@ -140,7 +140,7 @@ At the start of every session, call `mcp__memory__memory_health`. If the call
 fails, stop and re-run the install:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 ```
 
 Do not proceed with memory-dependent work until `memory_health` succeeds.
@@ -280,7 +280,7 @@ A healthy install prints a JSON report with `"status":"ok"`. If this fails, fix 
 - **Stale Python wrapper from an old install**: if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
   rm -f ~/.local/bin/od3sa-memory
-  curl -fsSL https://0d3sa.com/memory/install.sh | sh
+  curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
   ```
 - **Still not connecting**: run `od3sa-memory health`. If it prints a JSON health report, the binary is healthy and the issue is Claude Code config or PATH.
 - **Tools missing after `/mcp` connects:** fully exit Claude Code (`/exit`) and reopen it; agents often only load tools at startup.

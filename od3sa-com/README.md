@@ -4,7 +4,7 @@ Marketing site for od3sa (letter-o) with register-first flow.
 
 ## Design
 
-**Ledger Light** — warm paper/ink/clay palette, anti-clone to the digit-zero 0d3sa.com docs.
+**Ledger Light** — warm paper/ink/clay palette, anti-clone to the digit-zero opensource.od3sa.com docs.
 
 ### Tokens
 
@@ -59,7 +59,7 @@ Output: `dist/`
 8. **Why Register** — 3 beats: Org, Devices, Optional relay (staging labelled)
 9. **Pricing honesty** — Free forever local + self-host
 10. **FAQ** — 4 items
-11. **Install** — Steps with digit-zero curl (`0d3sa.com`)
+11. **Install** — Steps with digit-zero curl (`opensource.od3sa.com`)
 12. **Honesty** — Local CLIs don't require Register
 13. **Footer** — Copyright, Docs, support email
 
@@ -69,7 +69,7 @@ Register CTA links to staging console: `https://console.relay-staging.od3sa.com/
 
 ## Constraints
 
-- Install curl must use digit-zero: `https://0d3sa.com/memory/install.sh`
+- Install curl must use digit-zero: `https://opensource.od3sa.com/memory/install.sh`
 - No secrets in git
 - `noindex, nofollow` until public launch
 

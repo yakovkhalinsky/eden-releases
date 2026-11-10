@@ -22,7 +22,7 @@ This tutorial keeps the same memory database in sync across two devices through 
 On each device, run:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 ```
 
 Confirm the install:
@@ -39,7 +39,7 @@ Both devices should return a version string and a `status: ok` health report.
 If you are running your own relay, install and start the dedicated `od3sa-relay` binary on an always-on host:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh -s od3sa-relay
 
 od3sa-relay \
   --db /var/lib/relay/relay.db \

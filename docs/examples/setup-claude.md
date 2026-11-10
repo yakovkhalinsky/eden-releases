@@ -53,12 +53,12 @@ slightly different order because it has no `--agent-id` flag:
 
 ```bash
 # Positional argument sets the agent ID
-curl -fsSL https://0d3sa.com/memory/setup-claude.sh | sh -s -- my-agent
+curl -fsSL https://opensource.od3sa.com/memory/setup-claude.sh | sh -s -- my-agent
 # Agent ID becomes my-agent
 ```
 
 ```bash
 # Fallback when no argument is supplied
-curl -fsSL https://0d3sa.com/memory/setup-claude.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/setup-claude.sh | sh
 # Agent ID becomes claude-code-cli
 ```

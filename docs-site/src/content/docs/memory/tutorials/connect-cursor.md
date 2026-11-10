@@ -19,7 +19,7 @@ This tutorial walks through adding memory as a stdio MCP server in Cursor so Com
 Run the installer:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 ```
 
 This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. Make sure `~/.local/bin` is on the PATH Cursor sees, or use the full binary path in step 2.
@@ -84,7 +84,7 @@ Call memory_health.
 You should see a JSON health report. If it fails, re-run the install:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 ```
 
 Then check that the command path in the MCP settings is absolute and that the parent directory for the database exists.
@@ -119,7 +119,7 @@ Cursor should recall the fact from the local store.
 - **Stale Python wrapper from an old install** — if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
   rm -f ~/.local/bin/od3sa-memory
-  curl -fsSL https://0d3sa.com/memory/install.sh | sh
+  curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
   ```
 
 ## Next steps

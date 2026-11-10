@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 # Installer for the memory monorepo binaries (od3sa-memory, od3sa-relay).
 # Usage:
-#   curl -fsSL https://0d3sa.com/memory/install.sh | sh
-#   curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
+#   curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+#   curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh -s od3sa-relay
 #
 # You can also pre-set MEMORY_ORG_ID for a non-interactive install:
 #   export MEMORY_ORG_ID=your-org
-#   curl -fsSL https://0d3sa.com/memory/install.sh | sh
+#   curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
 #
 # Defaults to installing od3sa-memory. Valid binaries: od3sa-memory, od3sa-relay.
 

@@ -3,7 +3,7 @@
 Role-based agent teams with a durable Memory trail. **Lite mode** is now the default for everyday tasks; the full seven-stage lifecycle remains available via `/team-full`.
 
 - **Source paper:** *A Protocol for Role-Based Agent Teams* — https://yakov.khalinsky.com/agentic-team-protocol/
-- **Requires:** [memory](https://0d3sa.com/memory/) (`~/.local/bin/od3sa-memory`) and Claude Code CLI.
+- **Requires:** [memory](https://opensource.od3sa.com/memory/) (`~/.local/bin/od3sa-memory`) and Claude Code CLI.
 
 ## What's included
 
@@ -37,8 +37,8 @@ This package installs Claude Code primitives (skills, subagents, slash commands)
 Install memory first, then the ATP global primitives:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
-curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh
+curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh
 ```
 
 The installers are designed to be piped to `sh`, so you do not need to `chmod +x`
@@ -48,7 +48,7 @@ tracked with executable permissions (`./install.sh`).
 Check for updates without modifying any files:
 
 ```bash
-curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
+curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh -s -- --check
 ```
 
 In each project where you will use ATP, wire the Memory MCP server:
@@ -73,7 +73,7 @@ To install the global primitives *and* opt a project in with a `CLAUDE.md` file 
 ```bash
 cd ~/my-project
 od3sa-memory setup claude
-curl -fsSL https://0d3sa.com/agentic-team-protocol/install.sh | sh -s -- --local --claude-md
+curl -fsSL https://opensource.od3sa.com/agentic-team-protocol/install.sh | sh -s -- --local --claude-md
 ```
 
 This creates:

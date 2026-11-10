@@ -22,7 +22,7 @@ A relay-first topology makes the relay the fixed point of your sync network. You
 Install and start the dedicated `od3sa-relay` binary:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
+curl -fsSL https://opensource.od3sa.com/memory/install.sh | sh -s od3sa-relay
 
 sudo mkdir -p /var/lib/relay
 sudo chown $(whoami):$(whoami) /var/lib/relay

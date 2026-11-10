@@ -16,7 +16,7 @@ This page lists common memory problems, the most likely cause, and the fix. If a
 | MCP server exits in Claude Code | The MCP config uses a relative path or a missing binary. | Use absolute paths for `command` and `--db`. Re-run `od3sa-memory setup claude`. |
 | `od3sa-memory setup claude` aborts with a health error | The database cannot be opened or `--db` points to a missing directory. | Run `od3sa-memory --db <path> health` manually, fix the path, then re-run setup. |
 | `od3sa-memory setup claude` aborts with a protocol-version error | The `od3sa-memory` binary advertises an MCP protocol version incompatible with Claude Code. | Update to a release that supports `2024-11-05` and re-run setup. |
-| `ModuleNotFoundError: No module named 'memory_memory'` | A stale Python wrapper is installed at `~/.local/bin/od3sa-memory`. | Remove the wrapper and reinstall: `rm -f ~/.local/bin/od3sa-memory; curl -fsSL https://0d3sa.com/memory/install.sh \| sh`. |
+| `ModuleNotFoundError: No module named 'memory_memory'` | A stale Python wrapper is installed at `~/.local/bin/od3sa-memory`. | Remove the wrapper and reinstall: `rm -f ~/.local/bin/od3sa-memory; curl -fsSL https://opensource.od3sa.com/memory/install.sh \| sh`. |
 
 ## Slow first recall
 
