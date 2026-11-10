@@ -23,7 +23,7 @@ This guide covers running a local HTTP MCP server on your own machine. This is *
 Run the installer to get the latest release:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 If you already have the binary, check for updates:

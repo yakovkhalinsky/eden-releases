@@ -78,7 +78,7 @@ def install_section(fm: dict, slug: str, name: str) -> str:
     return f"""## Install the binary
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 ## Verify
@@ -191,7 +191,7 @@ The installable artifact is the raw `SKILL.md` file:
 - Or fetch it from the terminal:
 
   ```bash
-  curl -fsSL https://0d3sa.com{download_url(slug)} -o {name}/SKILL.md
+  curl -fsSL https://get.od3sa.com{download_url(slug)} -o {name}/SKILL.md
   ```
 
 {install_section(fm, slug, name)}
@@ -219,7 +219,7 @@ The installable artifact is the raw `SKILL.md` file:
                 "list": tool_list,
             },
             "install_hint": install_hint,
-            "download_url": f"https://0d3sa.com{download_url(slug)}",
+            "download_url": f"https://get.od3sa.com{download_url(slug)}",
         }
         if inherits:
             registry_entry["tools"]["inherits"] = inherits
@@ -283,7 +283,7 @@ The installable artifact is the raw `SKILL.md` file:
             "## Install hint",
             "",
             "```bash",
-            "curl -fsSL https://0d3sa.com/memory/install.sh | sh",
+            "curl -fsSL https://get.od3sa.com/memory/install.sh | sh",
             "```",
         ]
     )

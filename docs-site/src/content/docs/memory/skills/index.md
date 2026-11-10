@@ -34,5 +34,5 @@ harness skill without the user memorizing tool names.
 ## Install hint
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```

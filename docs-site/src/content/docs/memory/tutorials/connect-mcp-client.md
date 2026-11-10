@@ -19,7 +19,7 @@ od3sa-memory speaks the Model Context Protocol (MCP) over stdio. This tutorial s
 Run the installer:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 This downloads the right binary for your platform, verifies its checksum, and installs it to `~/.local/bin/od3sa-memory`. Make sure the directory is on the PATH your client sees, or use the absolute binary path in the server config.
@@ -75,7 +75,7 @@ Ask your agent to run `memory_health`. You should see a JSON health report. If i
 
 1. Re-run the install:
    ```bash
-   curl -fsSL https://0d3sa.com/memory/install.sh | sh
+   curl -fsSL https://get.od3sa.com/memory/install.sh | sh
    ```
 2. Confirm the `--db` path is absolute.
 3. Confirm the parent directory for the database exists.

@@ -2,14 +2,14 @@
 
 Public releases and documentation for memory.
 
-Live docs: <https://0d3sa.com>
+Live docs: <https://get.od3sa.com>
 
 Latest release: <https://github.com/yakovkhalinsky/eden-releases/releases/latest>
 
 ## What's here
 
 - `binaries/manifest.json` — platform metadata for the published binaries.
-- `docs-site/` — Astro Starlight site that becomes <https://0d3sa.com>.
+- `docs-site/` — Astro Starlight site that becomes <https://get.od3sa.com>.
 - `skills/` — agent skills for memory; generated into the site via `scripts/generate-skills-site.py`.
 - `.github/workflows/` — CI that deploys the site to GitHub Pages and cuts releases.
 - `scripts/` — helpers for metadata and skill-page generation.

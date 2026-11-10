@@ -15,7 +15,7 @@ For a full public-internet VPS deployment with Let's Encrypt, systemd, firewall 
 - The `od3sa-relay` binary installed on the relay host:
 
   ```bash
-  curl -fsSL https://0d3sa.com/memory/install.sh | sh -s od3sa-relay
+  curl -fsSL https://get.od3sa.com/memory/install.sh | sh -s od3sa-relay
   ```
 
 - A reachable host and port (default `8787`).

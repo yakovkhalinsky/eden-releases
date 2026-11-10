@@ -4,7 +4,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://0d3sa.com',
+	site: 'https://get.od3sa.com',
 	base: '/',
 	redirects: {
 		'/memory/how-to/run-relay-server/': '/relay/how-to/run-relay-server/',

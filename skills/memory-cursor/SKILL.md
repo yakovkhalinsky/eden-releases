@@ -41,7 +41,7 @@ tools:
     - memory_relay_register
     - memory_pair_create_invitation
     - memory_pair_accept_invitation
-install_hint: curl -fsSL https://0d3sa.com/memory/install.sh | sh
+install_hint: curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 harness: cursor
 mcp_config:
   server_name: memory
@@ -59,7 +59,7 @@ related_skills:
 ## Install the binary
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 This installs the `od3sa-memory` Go binary to `~/.local/bin/od3sa-memory`.
@@ -87,7 +87,7 @@ If `od3sa-memory` is not on the PATH that Cursor sees, use the absolute path:
 At the start of a session, ask Cursor to call `memory_health`. If it fails, re-run the install:
 
 ```bash
-curl -fsSL https://0d3sa.com/memory/install.sh | sh
+curl -fsSL https://get.od3sa.com/memory/install.sh | sh
 ```
 
 ## Usage pattern
@@ -143,6 +143,6 @@ Context: Alice prefers small components. Use memory_recall if you need more conv
 - **Stale Python wrapper from an old install**: if `od3sa-memory` fails with `ModuleNotFoundError: No module named 'memory_memory'`, remove the broken wrapper and reinstall:
   ```bash
   rm -f ~/.local/bin/od3sa-memory
-  curl -fsSL https://0d3sa.com/memory/install.sh | sh
+  curl -fsSL https://get.od3sa.com/memory/install.sh | sh
   ```
 - **Still not connecting**: run `od3sa-memory --db ~/.memory/default.db` directly. If it prints usage and exits, the binary is healthy and the issue is the Cursor MCP config or PATH.

@@ -158,4 +158,4 @@ Copy to your web root (e.g., `/srv/od3sa-com/dist/`).
 - Site password is NOT the same as user account credentials
 - The banner clarifies this distinction for visitors
 - Register links to staging console: `console.relay-staging.od3sa.com/signup`
-- Install curl points to digit-zero `0d3sa.com` (separate host)
+- Install curl points to digit-zero `get.od3sa.com` (separate host)
